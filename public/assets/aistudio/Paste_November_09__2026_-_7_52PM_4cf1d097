@@ -1,0 +1,1814 @@
+MASTER BUILD PROMPT — MOMENTUM
+
+Personal Life Operating System & Productivity Platform
+
+You are an elite product designer, senior full-stack engineer, software architect, UX specialist, database engineer, and application security engineer.
+
+Your mission is to design and develop a complete, production-quality personal productivity and life-management web application called MOMENTUM.
+
+Do not create a generic task management application, a static dashboard, or a simple collection of CRUD pages.
+
+Build a cohesive Personal Life Operating System that helps people transform long-term ambitions into daily actions, develop discipline, manage their responsibilities, and measure their progress across different areas of life.
+
+The application should feel like a premium, carefully designed digital product that a professional product studio would build.
+
+You are responsible for the entire development process: architecture, design, implementation, database, authentication, integrations, testing, security, and documentation.
+
+⸻
+
+1. PRODUCT IDENTITY
+
+Product name: MOMENTUM
+
+Tagline: Your life. Your goals. Your progress.
+
+Product philosophy:
+
+“Don’t just track what you do. Track who you’re becoming.”
+
+MOMENTUM should help users:
+
+* Define their long-term vision.
+* Set meaningful personal goals.
+* Break goals into achievable milestones.
+* Convert milestones into projects and actionable tasks.
+* Organize their daily schedules.
+* Develop positive habits.
+* Track learning and professional development.
+* Manage physical fitness.
+* Reflect on their decisions and progress.
+* Understand their productivity through meaningful analytics.
+
+The product must prioritize consistency, clarity, and actual execution over gamification and unnecessary complexity.
+
+Target audience:
+
+* Students.
+* Professionals.
+* Developers.
+* Entrepreneurs.
+* People interested in self-development.
+* People who want to organize multiple areas of their lives.
+
+Primary experience: Desktop-first responsive web application, optimized for mobile and tablet.
+
+Architecture: Full-stack web application with a scalable, modular structure.
+
+⸻
+
+2. VISUAL IDENTITY AND DESIGN SYSTEM
+
+IMPORTANT: The following four colors are mandatory brand colors. Use the exact hexadecimal values.
+
+Official color palette
+
+Primary Brown:
+#64432B
+
+Warm Amber:
+#D2925B
+
+Charcoal Blue:
+#333C44
+
+Muted Sage:
+#868A7A
+
+Additional neutral colors may be introduced for text, borders, backgrounds, and states, but the four official colors must remain the foundation of the identity.
+
+Color usage
+
+Main application background:
+#333C44 or a carefully chosen darker variation.
+
+Sidebar:
+#64432B.
+
+Primary buttons:
+#D2925B.
+
+Active navigation indicators:
+#D2925B.
+
+Secondary elements:
+#868A7A.
+
+Main text:
+#F4F0E9.
+
+Secondary text:
+Muted warm grey.
+
+Cards:
+Subtle variations of charcoal, brown, and dark neutral surfaces.
+
+Borders:
+Subtle low-contrast neutral borders.
+
+Success:
+A restrained green.
+
+Warning:
+Warm amber.
+
+Danger:
+Muted red.
+
+Never use purple gradients, bright neon colors, generic blue SaaS styling, or excessive glassmorphism.
+
+Design direction
+
+The interface must feel:
+
+* Premium.
+* Minimalist.
+* Sophisticated.
+* Warm.
+* Calm.
+* Focus-oriented.
+* Modern.
+* Professional.
+
+Use visual hierarchy rather than excessive decoration.
+
+Typography:
+
+* Use Geist, Manrope, or another sophisticated modern sans-serif.
+* Use a distinctive display typeface for major headings if appropriate.
+* Maintain excellent readability.
+* Avoid oversized headings everywhere.
+
+Layout principles
+
+Desktop:
+
+* Persistent collapsible sidebar.
+* Main content area.
+* Optional contextual right panel.
+* Consistent spacing system.
+* Comfortable maximum content width.
+
+Mobile:
+
+* Responsive navigation.
+* Mobile-friendly bottom navigation or drawer.
+* Touch-friendly interactions.
+* No horizontal overflow.
+* Properly adapted dashboards and charts.
+
+Interface details
+
+Implement:
+
+* Smooth page transitions.
+* Subtle hover states.
+* Micro-interactions.
+* Animated progress indicators.
+* Skeleton loading states.
+* Meaningful empty states.
+* Confirmation dialogs.
+* Toast notifications.
+* Tooltips.
+* Dropdown menus.
+* Keyboard shortcuts.
+* Accessible focus indicators.
+
+Animations must be smooth and restrained. Respect reduced-motion preferences.
+
+Do not use excessive shadows, oversized rounded cards, or repetitive layouts.
+
+⸻
+
+3. TECHNOLOGY STACK
+
+Use the following stack unless an important technical limitation requires a documented alternative.
+
+Frontend:
+
+* Next.js with App Router.
+* React.
+* TypeScript with strict mode.
+* Tailwind CSS.
+* shadcn/ui as a component foundation, customized to match the brand.
+
+Backend:
+
+* Next.js server-side functionality.
+* Server Actions or Route Handlers where appropriate.
+* Server-side validation.
+
+Database:
+
+* PostgreSQL.
+* Supabase for managed PostgreSQL and authentication.
+
+Authentication:
+
+* Supabase Auth.
+* Email/password authentication.
+* Password reset.
+* Email verification.
+* Secure session management.
+* Optional OAuth providers, implemented only when properly configured.
+
+Data validation:
+
+* Zod.
+
+Forms:
+
+* React Hook Form.
+
+Charts:
+
+* Recharts.
+
+Icons:
+
+* Lucide React.
+
+Date handling:
+
+* date-fns.
+
+Animations:
+
+* Framer Motion / Motion.
+
+Testing:
+
+* Vitest.
+* React Testing Library.
+* Playwright.
+* Appropriate API and integration tests.
+
+Deployment:
+
+* Vercel or a compatible hosting platform.
+* Supabase for database and authentication.
+
+Use stable compatible package versions.
+
+Avoid unnecessary dependencies and overly complicated architecture.
+
+The application must work without paid AI APIs or external AI services.
+
+⸻
+
+4. APPLICATION ARCHITECTURE AND NAVIGATION
+
+Create a consistent application shell.
+
+Main sidebar navigation:
+
+1. Overview
+2. Today
+3. Tasks
+4. Calendar
+5. Goals
+6. Projects
+7. Learning
+8. Fitness
+9. Habits
+10. Analytics
+11. Journal
+12. Resources
+
+Bottom sidebar:
+
+* Settings.
+* Help and documentation.
+* User profile.
+
+The sidebar should support:
+
+* Expanded mode.
+* Collapsed mode.
+* Active navigation highlighting.
+* Tooltips when collapsed.
+* Mobile navigation drawer.
+
+Top navigation:
+
+* Current page title.
+* Breadcrumbs when useful.
+* Global search.
+* Quick-add button.
+* Notification center.
+* User avatar and account menu.
+
+Use a reusable component system. Do not duplicate navigation or layout code across pages.
+
+⸻
+
+5. AUTHENTICATION AND ONBOARDING
+
+Create a complete authentication experience.
+
+Authentication pages
+
+* Sign up.
+* Login.
+* Forgot password.
+* Reset password.
+* Email verification.
+* Logout.
+
+Include:
+
+* Email validation.
+* Password strength feedback.
+* Show/hide password.
+* Clear validation errors.
+* Loading states.
+* Secure error handling.
+
+Never expose sensitive authentication details.
+
+Onboarding experience
+
+After registration, guide the user through a short onboarding process.
+
+Step 1: Welcome to MOMENTUM.
+
+Step 2: Personal profile.
+
+* First name.
+* Profile picture.
+* Timezone.
+* Preferred language.
+
+Step 3: Life areas.
+
+Allow users to select:
+
+* Education.
+* Career.
+* Health.
+* Fitness.
+* Financial development.
+* Personal development.
+* Relationships.
+* Other.
+
+Step 4: Long-term vision.
+
+Ask:
+“What kind of person do you want to become?”
+
+Allow a free-text response.
+
+Step 5: Main goals.
+
+Allow the user to create their first goals.
+
+Step 6: Daily availability.
+
+Ask how much time they can realistically dedicate to personal development.
+
+Step 7: Finish.
+
+Generate a personalized initial dashboard based on their choices.
+
+Allow users to skip optional steps and complete onboarding later.
+
+⸻
+
+6. OVERVIEW — MAIN DASHBOARD
+
+The dashboard is the central command center.
+
+It should communicate what matters without overwhelming the user.
+
+Display:
+
+Welcome section
+
+Personalized greeting based on local time.
+
+Example:
+
+“Good evening. Let’s make today count.”
+
+Display current date and a short motivational message.
+
+Do not show random motivational quotes on every page.
+
+Daily progress
+
+Show:
+
+* Tasks completed.
+* Tasks remaining.
+* Habits completed.
+* Focus time.
+* Daily completion percentage.
+
+Use clear progress visualization.
+
+Today’s priorities
+
+Show the user’s three most important daily priorities.
+
+Each priority should support:
+
+* Completion.
+* Editing.
+* Reordering.
+* Deadline.
+* Related goal.
+* Related project.
+
+Upcoming tasks
+
+Display tasks due today and upcoming deadlines.
+
+Allow quick completion and editing.
+
+Goals overview
+
+Display active goals with:
+
+* Goal title.
+* Category.
+* Deadline.
+* Progress.
+* Status.
+
+Habit overview
+
+Show today’s habit completion.
+
+Focus statistics
+
+Display focus sessions completed and total focus time.
+
+Weekly overview
+
+Show a compact chart of daily productivity.
+
+Quick actions
+
+Allow:
+
+* Add task.
+* Create goal.
+* Start focus session.
+* Add habit.
+* Write journal entry.
+* Create project.
+
+Dashboard widgets should be configurable. Users should be able to hide, show, and reorder suitable widgets.
+
+Provide meaningful empty states for new users.
+
+⸻
+
+7. TODAY — DAILY COMMAND CENTER
+
+This is one of the most important modules.
+
+Build a complete daily planning experience.
+
+Daily planning
+
+Display:
+
+* Current date.
+* Daily priorities.
+* Scheduled tasks.
+* Unscheduled tasks.
+* Habits.
+* Focus sessions.
+* Daily notes.
+
+Allow the user to plan their day.
+
+Three-priority system
+
+The application should encourage users to select three major priorities.
+
+These are not necessarily the only tasks for the day.
+
+Allow:
+
+* Selecting existing tasks.
+* Creating new priorities.
+* Reordering priorities.
+* Marking priorities complete.
+* Linking priorities to goals.
+
+Do not force exactly three tasks. Allow fewer or more when necessary, but visually emphasize the top three.
+
+Daily schedule
+
+Provide a timeline view.
+
+Allow users to:
+
+* Add scheduled activities.
+* Set start and end times.
+* Edit activities.
+* Move activities.
+* View conflicts.
+* Mark activities completed.
+
+Daily completion
+
+Calculate daily progress using transparent rules.
+
+Do not reward users simply for creating many tasks.
+
+Show a useful end-of-day summary.
+
+Daily reflection
+
+At the end of the day, ask:
+
+* What went well?
+* What could have been better?
+* What did I learn?
+* What should I prioritize tomorrow?
+
+Save responses as journal entries.
+
+⸻
+
+8. TASK MANAGEMENT
+
+Create a powerful but simple task management system.
+
+Task properties
+
+Each task should support:
+
+* Title.
+* Description.
+* Status.
+* Priority.
+* Due date.
+* Start date.
+* Estimated duration.
+* Actual duration.
+* Category.
+* Tags.
+* Related goal.
+* Related project.
+* Subtasks.
+* Notes.
+* Creation date.
+* Completion date.
+
+Task statuses:
+
+* Inbox.
+* Not started.
+* In progress.
+* Completed.
+* Cancelled.
+
+Priorities:
+
+* Low.
+* Medium.
+* High.
+* Urgent.
+
+Views
+
+Provide:
+
+* List view.
+* Board/Kanban view.
+* Calendar view.
+* Today view.
+* Upcoming view.
+* Completed view.
+
+Include filters for:
+
+* Status.
+* Priority.
+* Category.
+* Project.
+* Goal.
+* Date.
+
+Implement search, sorting, pagination or efficient loading, and bulk actions where useful.
+
+Task creation
+
+Create a fast task-creation interface.
+
+The user should be able to create a task without navigating away from the current page.
+
+Include quick-add functionality from the global navigation.
+
+⸻
+
+9. GOALS — LONG-TERM VISION
+
+This module is central to the product philosophy.
+
+Allow users to define their desired future and translate it into actionable objectives.
+
+Goal categories
+
+* Education.
+* Career.
+* Financial.
+* Health.
+* Fitness.
+* Personal development.
+* Relationships.
+* Other.
+
+Goal properties
+
+* Title.
+* Description.
+* Category.
+* Start date.
+* Target date.
+* Status.
+* Priority.
+* Progress.
+* Success criteria.
+* Motivation.
+* Related projects.
+* Milestones.
+
+Goal hierarchy
+
+Support:
+
+Long-term vision
+→ Annual goals
+→ 90-day objectives
+→ Milestones
+→ Projects
+→ Tasks.
+
+A user should be able to see the relationship between these levels.
+
+90-day planning
+
+Allow users to create a 90-day plan.
+
+Each plan should contain:
+
+* Main objective.
+* Why it matters.
+* Expected outcome.
+* Start date.
+* End date.
+* Milestones.
+* Related tasks.
+* Weekly checkpoints.
+* Review notes.
+
+Provide a timeline showing progress.
+
+Goal progress
+
+Support:
+
+* Manual progress.
+* Milestone-based progress.
+* Count-based progress where appropriate.
+
+Clearly explain how progress is calculated.
+
+Never invent progress or automatically mark milestones complete.
+
+Goal review
+
+Allow users to:
+
+* Review a goal.
+* Change its deadline.
+* Update milestones.
+* Pause a goal.
+* Complete a goal.
+* Archive a goal.
+
+⸻
+
+10. PROJECT MANAGEMENT
+
+Build a dedicated project management module.
+
+Projects can belong to:
+
+* Education.
+* Career.
+* Personal development.
+* Business.
+* Fitness.
+* Other.
+
+Project properties:
+
+* Name.
+* Description.
+* Cover image or color.
+* Status.
+* Priority.
+* Start date.
+* Deadline.
+* Related goals.
+* Project members if multi-user functionality is added later.
+* Tasks.
+* Milestones.
+* Notes.
+* Resources.
+
+Project statuses:
+
+* Planning.
+* Active.
+* On hold.
+* Completed.
+* Archived.
+
+Project views:
+
+* Grid.
+* List.
+* Kanban.
+* Timeline.
+
+Every project should have a dedicated detail page.
+
+Display:
+
+* Project overview.
+* Progress.
+* Tasks.
+* Milestones.
+* Resources.
+* Notes.
+* Activity history.
+
+Allow projects to connect to larger goals.
+
+⸻
+
+11. LEARNING — KNOWLEDGE CENTER
+
+Build a learning management module for university students and independent learners.
+
+Learning categories
+
+Allow custom learning areas, such as:
+
+* University.
+* Cybersecurity.
+* Programming.
+* Networking.
+* Linux.
+* Cloud computing.
+* DevSecOps.
+* Languages.
+* Other.
+
+Learning structure
+
+Learning area
+→ Course or module
+→ Lessons
+→ Notes
+→ Resources
+→ Projects
+→ Tasks.
+
+Course management
+
+Each course should support:
+
+* Title.
+* Description.
+* Instructor.
+* Category.
+* Start date.
+* End date.
+* Progress.
+* Status.
+
+Lessons
+
+Each lesson should support:
+
+* Title.
+* Rich text content.
+* Learning objectives.
+* Completion status.
+* Study duration.
+* Notes.
+* Related resources.
+
+Study sessions
+
+Track:
+
+* Subject.
+* Start time.
+* End time.
+* Duration.
+* Notes.
+* What was learned.
+
+Resources
+
+Support:
+
+* External URLs.
+* PDF references.
+* Documents.
+* Images.
+* File attachments.
+* Notes.
+
+Implement secure file upload with type and size validation.
+
+Learning analytics
+
+Display:
+
+* Study hours.
+* Study consistency.
+* Course completion.
+* Lessons completed.
+* Learning progress over time.
+
+Do not confuse time spent with actual mastery.
+
+⸻
+
+12. FITNESS — PHYSICAL DEVELOPMENT
+
+Create a fitness tracking module.
+
+Workout management
+
+Allow users to create workout routines.
+
+Examples:
+
+* Push.
+* Pull.
+* Legs.
+* Upper body.
+* Lower body.
+* Full body.
+* Custom routines.
+
+Exercise properties
+
+* Exercise name.
+* Muscle group.
+* Equipment.
+* Sets.
+* Repetitions.
+* Weight.
+* Rest duration.
+* Notes.
+
+Workout sessions
+
+Record:
+
+* Workout date.
+* Exercises.
+* Sets.
+* Repetitions.
+* Weight.
+* Duration.
+* Notes.
+
+Progress
+
+Show:
+
+* Workout frequency.
+* Training consistency.
+* Exercise progression.
+* Personal records.
+* Training volume.
+* Weekly activity.
+
+Avoid making medical claims or prescribing treatment.
+
+Allow users to customize their fitness objectives.
+
+⸻
+
+13. HABITS — CONSISTENCY ENGINE
+
+Build a dedicated habit tracker.
+
+Habit properties
+
+* Name.
+* Description.
+* Category.
+* Frequency.
+* Target.
+* Start date.
+* Optional end date.
+* Reminder preference.
+* Color or icon.
+* Active/inactive status.
+
+Support:
+
+* Daily habits.
+* Specific weekdays.
+* Weekly frequency targets.
+* Custom schedules.
+
+Habit tracking
+
+Users should be able to:
+
+* Mark habits completed.
+* Undo completion.
+* Skip a day with a reason.
+* View previous completions.
+* Edit habit schedules.
+
+Visualizations
+
+Implement:
+
+* Monthly calendar.
+* Completion heatmap.
+* Current streak.
+* Longest streak.
+* Weekly completion rate.
+* Monthly trends.
+
+Important:
+
+Do not shame users for missed days.
+
+Do not make streak preservation more important than sustainable behavior.
+
+Provide a supportive interface focused on consistency.
+
+⸻
+
+14. ANALYTICS — MEASURE YOUR PROGRESS
+
+Create a useful personal analytics dashboard.
+
+Productivity analytics
+
+* Tasks completed.
+* Tasks overdue.
+* Daily completion.
+* Weekly trends.
+* Monthly trends.
+
+Learning analytics
+
+* Study time.
+* Study frequency.
+* Lessons completed.
+* Course progress.
+
+Fitness analytics
+
+* Workouts completed.
+* Training frequency.
+* Exercise progression.
+
+Habit analytics
+
+* Habit completion.
+* Consistency.
+* Weekly performance.
+* Monthly performance.
+
+Goal analytics
+
+* Active goals.
+* Completed goals.
+* Milestone completion.
+* Progress over time.
+
+Focus analytics
+
+* Focus sessions.
+* Total focus time.
+* Average session duration.
+* Weekly focus trends.
+
+Allow date filters:
+
+* Last 7 days.
+* Last 30 days.
+* Last 90 days.
+* Custom range.
+
+Use clear charts with appropriate labels.
+
+Never create misleading metrics.
+
+Distinguish:
+
+* Planned work.
+* Completed work.
+* Time spent.
+* Progress toward outcomes.
+
+Allow users to export relevant data in CSV format.
+
+⸻
+
+15. JOURNAL — PERSONAL REFLECTION
+
+Create a private journaling module.
+
+Journal entry types
+
+* Daily reflection.
+* Weekly review.
+* Monthly review.
+* Personal thoughts.
+* Gratitude.
+* Lessons learned.
+* Free writing.
+
+Each entry should support:
+
+* Title.
+* Content.
+* Date.
+* Category.
+* Optional mood selection.
+* Tags.
+
+Include a clean writing interface with autosave or explicit save confirmation.
+
+Allow searching and filtering entries.
+
+Journal entries must remain private to their owner.
+
+Do not expose private journal content to analytics or third-party services without explicit consent.
+
+⸻
+
+16. RESOURCES AND FILE MANAGEMENT
+
+Create a central resource library.
+
+Users should be able to save:
+
+* Websites.
+* Articles.
+* Books.
+* PDFs.
+* Videos.
+* Documents.
+* Images.
+* Study materials.
+
+Resource properties:
+
+* Title.
+* Description.
+* Resource type.
+* URL or file.
+* Category.
+* Tags.
+* Related project.
+* Related goal.
+* Related course.
+* Creation date.
+
+Implement:
+
+* Search.
+* Filtering.
+* Sorting.
+* File upload.
+* File download.
+* File deletion.
+* Storage limits.
+
+Use private storage by default.
+
+Validate uploads and restrict dangerous file types.
+
+Never trust file extensions alone.
+
+⸻
+
+17. FOCUS TIMER
+
+Create a functional focus timer.
+
+Support configurable presets:
+
+* 25-minute focus.
+* 5-minute break.
+* 50-minute focus.
+* 10-minute break.
+* Custom duration.
+
+Features:
+
+* Start.
+* Pause.
+* Resume.
+* Reset.
+* Session completion.
+* Optional sound notifications.
+* Full-screen focus mode.
+* Link session to a task or project.
+
+Store completed focus sessions.
+
+The timer must remain accurate when the browser tab is inactive or refreshed.
+
+Do not rely exclusively on a JavaScript interval for elapsed-time accuracy. Calculate elapsed time from timestamps.
+
+⸻
+
+18. CALENDAR
+
+Create an integrated calendar.
+
+Views:
+
+* Month.
+* Week.
+* Day.
+* Agenda.
+
+Display:
+
+* Tasks.
+* Deadlines.
+* Scheduled activities.
+* Study sessions.
+* Workouts.
+* Goal milestones.
+
+Allow users to create and edit scheduled events.
+
+Support timezone-aware date storage and display.
+
+Prevent accidental duplicate events.
+
+Provide clear visual differentiation between event types.
+
+External Google Calendar synchronization can be added as an optional future integration. Do not pretend it is connected without actual authorization and implementation.
+
+⸻
+
+19. NOTIFICATIONS AND REMINDERS
+
+Implement an in-app notification center.
+
+Support:
+
+* Upcoming task deadlines.
+* Overdue tasks.
+* Scheduled reminders.
+* Goal milestones.
+* Weekly reviews.
+
+Users must control notification preferences.
+
+Do not generate excessive notifications.
+
+Browser notifications should be optional and require permission.
+
+Email notifications should remain disabled until a real email provider is configured.
+
+⸻
+
+20. GLOBAL SEARCH AND QUICK ACTIONS
+
+Implement global search across:
+
+* Tasks.
+* Goals.
+* Projects.
+* Learning modules.
+* Lessons.
+* Notes.
+* Resources.
+* Journal entries.
+
+Include keyboard shortcuts.
+
+Recommended:
+
+* Cmd/Ctrl + K: Open global search.
+* Cmd/Ctrl + N: Quick create.
+* Escape: Close dialogs.
+
+Build a quick-action menu for common operations.
+
+Ensure shortcuts do not interfere with normal text input.
+
+⸻
+
+21. SETTINGS AND PERSONALIZATION
+
+Create a complete settings section.
+
+Profile:
+
+* Name.
+* Avatar.
+* Email.
+* Timezone.
+* Language.
+
+Appearance:
+
+* Dark theme.
+* Light theme.
+* System theme.
+* Accent color customization within the approved palette.
+
+Preferences:
+
+* Start of week.
+* Time format.
+* Date format.
+* Default dashboard.
+* Default task view.
+
+Notifications:
+
+* In-app preferences.
+* Browser notifications.
+* Reminder settings.
+
+Privacy:
+
+* Account information.
+* Data export.
+* Account deletion.
+
+Security:
+
+* Password management.
+* Active sessions where supported.
+* Security-related account information.
+
+Provide confirmation before destructive actions.
+
+⸻
+
+22. OPTIONAL AI PERSONAL COACH
+
+Design the application so an AI assistant can be added later.
+
+Do not make an AI provider mandatory for the core application.
+
+Potential AI capabilities:
+
+* Help break large goals into smaller milestones.
+* Suggest realistic daily priorities.
+* Summarize weekly progress.
+* Identify patterns in task completion.
+* Help users reflect on their progress.
+* Suggest improvements to planning.
+
+The AI must never automatically change goals, delete tasks, or modify schedules without explicit user approval.
+
+Use a server-side integration for any future AI API.
+
+Do not expose API keys in the browser.
+
+Do not invent personal analytics or claim to know user behavior without actual data.
+
+Provide a graceful fallback when no AI provider is configured.
+
+⸻
+
+23. NOTION INTEGRATION
+
+The initial architecture should support optional integration with an existing Notion Life OS.
+
+Do not require Notion for the core application to function.
+
+Create a modular integration layer.
+
+Potential synchronization:
+
+* Tasks.
+* Goals.
+* Projects.
+* Learning modules.
+* Notes.
+* Resources.
+
+Requirements:
+
+* Use Notion’s official API.
+* Store integration credentials server-side.
+* Use environment variables.
+* Provide a clear connection flow.
+* Respect Notion permissions.
+* Handle rate limits.
+* Handle API failures.
+* Provide synchronization status.
+* Avoid creating duplicate records.
+* Provide a clear conflict-resolution strategy.
+
+Do not claim full synchronization if only one-way synchronization is implemented.
+
+The user should be able to use MOMENTUM independently if Notion is disconnected.
+
+⸻
+
+24. DATABASE DESIGN
+
+Design a normalized PostgreSQL schema.
+
+Create suitable tables for:
+
+* profiles
+* user_preferences
+* life_areas
+* tasks
+* task_subtasks
+* daily_priorities
+* goals
+* goal_milestones
+* goal_reviews
+* ninety_day_plans
+* projects
+* project_milestones
+* project_resources
+* learning_areas
+* courses
+* lessons
+* study_sessions
+* habits
+* habit_completions
+* workout_routines
+* exercises
+* workout_sessions
+* workout_sets
+* focus_sessions
+* calendar_events
+* journal_entries
+* resources
+* notifications
+* tags
+* entity_tags
+
+Use UUID primary keys where appropriate.
+
+Every user-owned record must be associated with the authenticated user.
+
+Implement:
+
+* Foreign keys.
+* Appropriate indexes.
+* Unique constraints.
+* Cascading behavior where safe.
+* Created and updated timestamps.
+* Database migrations.
+
+Use Row Level Security (RLS) for user-owned data.
+
+Users must never be able to access another user’s private data.
+
+Validate ownership on the server, not only in the interface.
+
+Do not store unnecessary personal information.
+
+⸻
+
+25. SECURITY REQUIREMENTS
+
+Security is a core product requirement.
+
+Implement:
+
+Authentication:
+
+* Secure authentication.
+* Secure session handling.
+* Password reset protection.
+* Email verification where configured.
+
+Authorization:
+
+* Verify ownership of every user-specific record.
+* Enforce least privilege.
+* Use PostgreSQL RLS.
+* Validate permissions server-side.
+
+Input validation:
+
+* Validate all incoming data.
+* Use Zod schemas.
+* Sanitize user-generated rich text.
+* Prevent stored XSS.
+
+Web security:
+
+* Protect against CSRF where applicable.
+* Prevent SQL injection through parameterized queries and safe ORM/database access.
+* Apply rate limiting to sensitive endpoints.
+* Use secure HTTP headers.
+* Apply a suitable Content Security Policy.
+* Protect against IDOR.
+* Avoid leaking sensitive errors.
+
+Secrets:
+
+* Keep credentials in environment variables.
+* Never expose Supabase service-role keys in client code.
+* Never commit .env files.
+* Provide a .env.example without real credentials.
+
+File uploads:
+
+* Restrict file types and sizes.
+* Validate actual file content where possible.
+* Use private storage.
+* Generate secure access links.
+* Prevent unauthorized file access.
+
+Privacy:
+
+* Keep journal entries private.
+* Minimize personal data collection.
+* Provide account deletion and data export mechanisms.
+
+⸻
+
+26. TESTING AND QUALITY ASSURANCE
+
+Implement a meaningful test suite.
+
+Unit tests:
+
+* Task progress calculations.
+* Goal progress calculations.
+* Habit schedules.
+* Streak calculations.
+* Daily progress.
+* Date and timezone handling.
+
+Integration tests:
+
+* Authentication.
+* Database operations.
+* Authorization.
+* RLS behavior.
+* Task creation.
+* Goal creation.
+* Habit completion.
+* File access.
+
+End-to-end tests:
+
+* Registration.
+* Login.
+* Onboarding.
+* Create a goal.
+* Create a project.
+* Add tasks.
+* Complete a habit.
+* Start and finish a focus session.
+* Complete a weekly review.
+* Export data.
+
+Test security-sensitive behavior, especially cross-user access.
+
+Ensure tests do not depend on real user accounts or production data.
+
+Do not claim tests pass unless they have actually been executed.
+
+⸻
+
+27. PERFORMANCE AND ACCESSIBILITY
+
+Performance:
+
+* Optimize images.
+* Use lazy loading where appropriate.
+* Avoid unnecessary client-side JavaScript.
+* Use server rendering where beneficial.
+* Optimize database queries.
+* Avoid excessive component re-rendering.
+* Implement appropriate loading states.
+* Keep dependencies reasonable.
+
+Accessibility:
+
+* Semantic HTML.
+* Keyboard navigation.
+* Accessible labels.
+* Screen-reader-friendly controls.
+* Sufficient color contrast.
+* Visible focus indicators.
+* Reduced-motion support.
+
+Target WCAG 2.2 AA where practical.
+
+The application must work well on:
+
+* Desktop.
+* Laptop.
+* Tablet.
+* Mobile.
+
+⸻
+
+28. SAMPLE DATA AND DEMONSTRATION EXPERIENCE
+
+Create an optional demo mode with realistic sample data.
+
+Example goals:
+
+* Master cybersecurity fundamentals.
+* Complete a personal portfolio project.
+* Improve physical fitness.
+* Read more consistently.
+
+Example projects:
+
+* Secure student management application.
+* Personal portfolio website.
+* DevSecOps pipeline.
+
+Example habits:
+
+* Study for one hour.
+* Exercise.
+* Read.
+* Review daily priorities.
+
+Sample tasks should have realistic deadlines and relationships.
+
+Never mix demo data with real user data.
+
+Provide a clear way to remove demonstration data.
+
+⸻
+
+29. DEVELOPMENT WORKFLOW
+
+Work in structured development phases.
+
+PHASE 1 — Foundation:
+
+* Initialize the project.
+* Configure TypeScript.
+* Configure Tailwind.
+* Establish design tokens.
+* Build the application shell.
+* Implement navigation.
+* Build responsive layouts.
+* Create reusable components.
+
+PHASE 2 — Backend:
+
+* Configure PostgreSQL and Supabase.
+* Create database migrations.
+* Implement authentication.
+* Configure RLS.
+* Create secure server-side data access.
+
+PHASE 3 — Core productivity:
+
+* Dashboard.
+* Today.
+* Tasks.
+* Daily priorities.
+* Calendar.
+* Focus timer.
+
+PHASE 4 — Personal development:
+
+* Goals.
+* 90-day planning.
+* Milestones.
+* Projects.
+* Habits.
+
+PHASE 5 — Additional modules:
+
+* Learning.
+* Fitness.
+* Journal.
+* Resources.
+* Analytics.
+
+PHASE 6 — Integrations:
+
+* Notion integration.
+* Notifications.
+* Optional AI architecture.
+
+PHASE 7 — Quality:
+
+* Automated testing.
+* Security review.
+* Performance optimization.
+* Accessibility review.
+* Responsive testing.
+
+PHASE 8 — Deployment:
+
+* Production build.
+* Environment configuration.
+* Database migrations.
+* Deployment documentation.
+* Final verification.
+
+At the end of each phase:
+
+1. Verify the implementation.
+2. Run relevant tests.
+3. Fix errors.
+4. Check responsive behavior.
+5. Update documentation.
+6. Explain what was completed and what remains.
+
+Do not move forward while major errors from the current phase remain unresolved.
+
+⸻
+
+30. PROJECT STRUCTURE
+
+Use a clean, modular structure similar to:
+
+src/
+app/
+(auth)/
+login/
+register/
+forgot-password/
+(dashboard)/
+overview/
+today/
+tasks/
+calendar/
+goals/
+projects/
+learning/
+fitness/
+habits/
+analytics/
+journal/
+resources/
+settings/
+api/
+components/
+layout/
+navigation/
+dashboard/
+tasks/
+goals/
+projects/
+habits/
+calendar/
+charts/
+forms/
+ui/
+features/
+auth/
+tasks/
+goals/
+projects/
+learning/
+fitness/
+habits/
+journal/
+analytics/
+lib/
+auth/
+database/
+validation/
+security/
+integrations/
+utilities/
+hooks/
+types/
+styles/
+
+supabase/
+migrations/
+seed.sql/
+
+tests/
+unit/
+integration/
+e2e/
+
+public/
+images/
+icons/
+
+Use the exact structure only where it fits the chosen implementation. Avoid unnecessary abstraction.
+
+⸻
+
+31. REQUIRED DELIVERABLES
+
+The final result must include:
+
+1. A fully functional responsive web application.
+2. Complete source code.
+3. Database schema and migrations.
+4. Authentication implementation.
+5. Security policies.
+6. Reusable UI component library.
+7. Working application navigation.
+8. Functional productivity modules.
+9. Sample/demo data.
+10. Automated tests.
+11. .env.example.
+12. README.md.
+13. Installation instructions.
+14. Database setup instructions.
+15. Deployment instructions.
+16. Security documentation.
+17. Known limitations and future improvements.
+
+⸻
+
+32. IMPORTANT IMPLEMENTATION RULES
+
+These rules are mandatory.
+
+1. Do not build a static mockup and call it a completed application.
+2. Do not create buttons that have no functionality.
+3. Do not use fake charts or hardcoded productivity statistics in the real application.
+4. Do not use placeholder links for supposedly working features.
+5. Every implemented form must validate and save real data.
+6. Every user-specific page must load the authenticated user’s actual data.
+7. Every destructive action must require appropriate confirmation.
+8. Every page must have loading, error, empty, and success states where appropriate.
+9. Do not expose API keys or sensitive information.
+10. Do not overcomplicate the initial implementation.
+11. Prioritize a stable, working MVP before adding optional features.
+12. Do not silently ignore errors.
+13. Do not claim that an integration, test, deployment, or security feature works unless it has been verified.
+14. Keep the interface consistent with the official brand palette.
+15. Maintain clean, readable, maintainable TypeScript.
+16. Make the application usable without any paid third-party service beyond what is explicitly configured.
+17. Do not add unnecessary gamification, leaderboards, social feeds, or distracting features.
+18. Never sacrifice user privacy for analytics or personalization.
+
+⸻
+
+33. FINAL PRODUCT VISION
+
+MOMENTUM should become the user’s central environment for managing life.
+
+When a user opens the application, they should immediately understand:
+
+* What matters today.
+* What they need to accomplish.
+* Which goals they are progressing toward.
+* What they have already achieved.
+* What needs their attention.
+* What they should focus on next.
+
+The experience should connect daily execution with long-term personal development.
+
+The application should make progress visible without making the user feel guilty for being human.
+
+The ultimate objective is not to make people spend more time inside MOMENTUM.
+
+It is to help them spend their time better outside it.
+
+⸻
+
+YOUR FIRST ACTION
+
+Before writing implementation code:
+
+1. Inspect the existing repository and identify its current structure.
+2. Check the installed runtime and available dependencies.
+3. Identify whether Supabase credentials are available.
+4. Create a concise technical implementation plan.
+5. Define the database architecture.
+6. Establish the design system using the four official colors.
+7. Create the initial responsive application shell.
+8. Present the implementation plan and begin Phase 1.
+
+Do not stop after generating a plan or screenshots.
+
+Proceed with actual implementation, test each feature, and continue until the working MVP is delivered.
+
+If an external service requires credentials or user authorization, implement the integration boundary and document the exact configuration needed rather than inventing credentials.
+
+Your standard is production-quality engineering, not a superficial prototype.
+
+Build MOMENTUM.

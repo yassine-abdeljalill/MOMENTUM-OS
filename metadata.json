@@ -1,0 +1,6 @@
+{
+  "name": "MOMENTUM — Personal Life Operating System",
+  "description": "Your life. Your goals. Your progress. A cohesive Personal Life Operating System that helps you transform long-term ambitions into daily actions.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
