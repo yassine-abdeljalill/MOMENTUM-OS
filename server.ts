@@ -5,6 +5,7 @@ import express from 'express';
 import { getDb } from './server/db.ts';
 import authRoutes from './server/routes/auth.ts';
 import financeRoutes from './server/routes/finance.ts';
+import learningRoutes from './server/routes/learning.ts';
 
 dotenv.config();
 
@@ -17,7 +18,7 @@ async function startServer() {
 
   const app = express();
   app.set('trust proxy', 1);
-  app.use(express.json({ limit: '1mb' }));
+  app.use(express.json({ limit: '2mb' }));
 
   app.get('/api/health', (_req, res) => {
     res.json({ status: 'ok', service: 'momentum-life-os' });
@@ -25,6 +26,7 @@ async function startServer() {
 
   app.use('/api/auth', authRoutes);
   app.use('/api/finance', financeRoutes);
+  app.use('/api/learning', learningRoutes);
 
   // Error handler for malformed JSON or unexpected API errors
   app.use('/api', (err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {

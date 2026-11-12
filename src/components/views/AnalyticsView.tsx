@@ -24,7 +24,7 @@ import {
 } from '../common/MotionPrimitives';
 
 export const AnalyticsView: React.FC = () => {
-  const { state, showToast } = useApp();
+  const { state, learningData, showToast } = useApp();
   const [dateRange, setDateRange] = useState<'7d' | '30d' | '90d'>('30d');
 
   // Compute metrics
@@ -36,7 +36,19 @@ export const AnalyticsView: React.FC = () => {
     .filter(s => s.sessionType === 'focus')
     .reduce((acc, s) => acc + s.durationMinutes, 0);
 
-  const totalStudyMinutes = state.studySessions.reduce((acc, s) => acc + s.durationMinutes, 0);
+  const learningStudySessions = learningData?.studySessions || [];
+  const totalStudyMinutes =
+    learningData
+      ? learningStudySessions.reduce((acc, s) => acc + s.durationMinutes, 0)
+      : state.studySessions.reduce((acc, s) => acc + s.durationMinutes, 0);
+  const learningModulesCount = learningData ? learningData.modules.length : state.courses.length;
+  const learningLessonsCount = learningData
+    ? learningData.lessons.length
+    : state.courses.reduce((acc, c) => acc + c.lessons.length, 0);
+  const learningCompletedLessons = learningData
+    ? learningData.lessons.filter(l => l.status === 'completed').length
+    : state.courses.reduce((acc, c) => acc + c.lessons.filter(l => l.completed).length, 0);
+  const studySessionCount = learningData ? learningStudySessions.length : state.studySessions.length;
 
   const totalWorkouts = state.workoutSessions.length;
   const totalVolumeKg = state.workoutSessions.reduce((acc, sess) => {
@@ -246,12 +258,14 @@ export const AnalyticsView: React.FC = () => {
               <span className="font-mono font-bold text-[#3B2418]">{formatMinutes(totalStudyMinutes)}</span>
             </div>
             <div className="flex justify-between items-center text-xs">
-              <span className="text-[#6E5648]">Courses In Progress:</span>
-              <span className="font-mono font-bold text-[#1E5A99]">{state.courses.length} active</span>
+              <span className="text-[#6E5648]">Modules & Lessons Completed:</span>
+              <span className="font-mono font-bold text-[#1E5A99]">
+                {learningModulesCount} modules · {learningCompletedLessons}/{learningLessonsCount} lessons
+              </span>
             </div>
             <div className="flex justify-between items-center text-xs">
               <span className="text-[#6E5648]">Study Log Entries:</span>
-              <span className="font-mono font-bold text-[#3E7B52]">{state.studySessions.length} sessions</span>
+              <span className="font-mono font-bold text-[#3E7B52]">{studySessionCount} sessions</span>
             </div>
           </div>
         </motion.div>

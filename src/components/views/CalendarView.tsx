@@ -19,7 +19,15 @@ type CalendarViewMode = 'month' | 'agenda';
 
 export const CalendarView: React.FC = () => {
   const prefersReduced = useReducedMotion();
-  const { state, addScheduleActivity, showToast } = useApp();
+  const {
+    state,
+    learningData,
+    addScheduleActivity,
+    setCurrentView,
+    setSelectedLearningModuleId,
+    setSelectedLearningLessonId,
+    showToast,
+  } = useApp();
   const [viewMode, setViewMode] = useState<CalendarViewMode>('month');
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDateStr, setSelectedDateStr] = useState(
@@ -46,15 +54,17 @@ export const CalendarView: React.FC = () => {
   const firstDayIndex = new Date(year, month, 1).getDay(); // 0 is Sunday
   const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-  // Combine items for the selected month/date
+  // Combine items for the selected month/date (learning tasks are already in state.tasks)
   const getItemsForDate = (dateStr: string) => {
     const tasks = state.tasks.filter(t => t.dueDate === dateStr);
     const schedule = (state.dailySchedule || []).filter(s => s.date === dateStr);
     const workouts = state.workoutSessions.filter(w => w.date === dateStr);
     const study = state.studySessions.filter(s => s.date === dateStr);
+    const learningLessons = (learningData?.lessons || []).filter(l => l.lessonDate === dateStr);
+    const learningStudy = (learningData?.studySessions || []).filter(s => s.date === dateStr);
     const goalsDue = state.goals.filter(g => g.targetDate === dateStr);
 
-    return { tasks, schedule, workouts, study, goalsDue };
+    return { tasks, schedule, workouts, study, learningLessons, learningStudy, goalsDue };
   };
 
   const handleCreateEvent = (e: React.FormEvent) => {
@@ -194,7 +204,9 @@ export const CalendarView: React.FC = () => {
                       items.tasks.length +
                       items.schedule.length +
                       items.workouts.length +
-                      items.study.length;
+                      items.study.length +
+                      items.learningLessons.length +
+                      items.learningStudy.length;
 
                     return (
                       <motion.div
@@ -238,6 +250,16 @@ export const CalendarView: React.FC = () => {
                               {t.title}
                             </div>
                           ))}
+                          {items.learningLessons.slice(0, 1).map(l => (
+                            <div
+                              key={l.id}
+                              className={`text-[9px] truncate px-1 rounded ${
+                                isSelected ? 'bg-[#4D3021] text-[#8EC5FF]' : 'bg-[#EAE0D0] text-[#1E5A99]'
+                              }`}
+                            >
+                              Lesson: {l.title}
+                            </div>
+                          ))}
                           {items.workouts.slice(0, 1).map(w => (
                             <div
                               key={w.id}
@@ -270,7 +292,9 @@ export const CalendarView: React.FC = () => {
                     items.schedule.length +
                     items.tasks.length +
                     items.workouts.length +
-                    items.study.length;
+                    items.study.length +
+                    items.learningLessons.length +
+                    items.learningStudy.length;
                   if (count === 0) return null;
 
                   const isSelected = selectedDateStr === dateStr;
@@ -297,7 +321,16 @@ export const CalendarView: React.FC = () => {
                           <div key={s.id} className="truncate">• {s.startTime} {s.title}</div>
                         ))}
                         {items.tasks.map(t => (
-                          <div key={t.id} className="truncate">• Task: {t.title}</div>
+                          <div key={t.id} className="truncate">
+                            • {t.learningModuleTitle ? `Learning (${t.learningModuleTitle}): ` : 'Task: '}
+                            {t.title}
+                          </div>
+                        ))}
+                        {items.learningLessons.map(l => (
+                          <div key={l.id} className="truncate">• Lesson: {l.title}</div>
+                        ))}
+                        {items.learningStudy.map(s => (
+                          <div key={s.id} className="truncate">• Study ({s.durationMinutes}m): {s.subject}</div>
                         ))}
                         {items.workouts.map(w => (
                           <div key={w.id} className="truncate">• Workout: {w.routineName}</div>
@@ -359,14 +392,67 @@ export const CalendarView: React.FC = () => {
               {selectedItems.tasks.map(t => (
                 <div
                   key={t.id}
-                  className="p-3 rounded-xl bg-[#F2E8DA] border border-[#D6C6B2] text-xs space-y-1 card-hover"
+                  onClick={() => {
+                    if (t.learningModuleId) {
+                      setSelectedLearningModuleId(t.learningModuleId);
+                      setSelectedLearningLessonId(t.learningLessonId || null);
+                      setCurrentView('learning');
+                    }
+                  }}
+                  className={`p-3 rounded-xl bg-[#F2E8DA] border border-[#D6C6B2] text-xs space-y-1 card-hover ${
+                    t.learningModuleId ? 'cursor-pointer hover:border-[#8EC5FF]' : ''
+                  }`}
                 >
                   <div className="flex items-center justify-between">
                     <span className="font-semibold text-[#3B2418]">{t.title}</span>
                     <span className="text-[10px] font-mono uppercase font-semibold text-[#1E5A99]">{t.priority}</span>
                   </div>
-                  <span className="text-[10px] text-[#6E5648] uppercase font-mono">
-                    Task Deadline
+                  <span className="text-[10px] text-[#6E5648] uppercase font-mono block">
+                    {t.learningModuleTitle
+                      ? `Learning Deadline · ${t.learningModuleTitle}`
+                      : 'Task Deadline'}
+                  </span>
+                </div>
+              ))}
+
+              {/* Scheduled Learning Lessons */}
+              {selectedItems.learningLessons.map(l => {
+                const mod = learningData?.modules.find(m => m.id === l.moduleId);
+                return (
+                  <div
+                    key={l.id}
+                    onClick={() => {
+                      setSelectedLearningModuleId(l.moduleId);
+                      setSelectedLearningLessonId(l.id);
+                      setCurrentView('learning');
+                    }}
+                    className="p-3 rounded-xl bg-[#F2E8DA] border border-[#D6C6B2] hover:border-[#8EC5FF] text-xs space-y-1 cursor-pointer card-hover"
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="font-semibold text-[#3B2418] truncate">{l.title}</span>
+                      <span className="text-[10px] font-mono text-[#1E5A99] shrink-0">
+                        {l.studyDurationMinutes}m
+                      </span>
+                    </div>
+                    <span className="text-[10px] text-[#6E5648] uppercase font-mono block truncate">
+                      Lesson{mod ? ` · ${mod.title}` : ''}{l.teacherName ? ` · ${l.teacherName}` : ''}
+                    </span>
+                  </div>
+                );
+              })}
+
+              {/* Learning Study Sessions */}
+              {selectedItems.learningStudy.map(s => (
+                <div
+                  key={s.id}
+                  className="p-3 rounded-xl bg-[#F2E8DA] border border-[#D6C6B2] text-xs space-y-1 card-hover"
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="font-semibold text-[#3B2418]">{s.subject}</span>
+                    <span className="text-[10px] font-mono text-[#3E7B52]">{s.durationMinutes}m</span>
+                  </div>
+                  <span className="text-[10px] text-[#6E5648] uppercase font-mono block">
+                    Study Session
                   </span>
                 </div>
               ))}
@@ -389,7 +475,9 @@ export const CalendarView: React.FC = () => {
 
               {selectedItems.tasks.length === 0 &&
                 selectedItems.schedule.length === 0 &&
-                selectedItems.workouts.length === 0 && (
+                selectedItems.workouts.length === 0 &&
+                selectedItems.learningLessons.length === 0 &&
+                selectedItems.learningStudy.length === 0 && (
                   <div className="py-8 text-center text-[#6E5648] text-xs">
                     No scheduled activities on this date.
                   </div>

@@ -67,6 +67,11 @@ export interface Task {
   notes?: string;
   isDailyPriority?: boolean;
   priorityRank?: number; // 1, 2, 3 for top priorities
+  learningModuleId?: string;
+  learningModuleTitle?: string;
+  learningLessonId?: string;
+  learningLessonTitle?: string;
+  learningTaskKind?: 'task' | 'assignment' | 'lab' | 'exercise';
   createdAt: string;
   completedAt?: string;
 }
@@ -351,4 +356,4 @@ export interface AppNotification {
 }
 
 export * from './finance';
-
+export * from './learning';

@@ -23,8 +23,15 @@ import {
   UserPreferences,
   NinetyDayPlan,
   AuthUser,
+  LearningBootstrapData,
+  LearningTask,
 } from '../types';
-import { authApi } from './financeApi';
+import { ApiError, authApi } from './financeApi';
+import { learningApi } from './learningApi';
+import {
+  mapAppTaskStatusToLearningStatus,
+  mapLearningTaskToAppTask,
+} from './learning';
 
 const EXPLICIT_SIGNOUT_KEY = 'momentum_explicit_signed_out';
 
@@ -145,6 +152,17 @@ interface AppContextType {
   toggleLessonCompleted: (courseId: string, lessonId: string) => void;
   addStudySession: (session: Omit<StudySession, 'id' | 'userId'>) => void;
 
+  // Learning Management Center (SQLite-backed)
+  learningData: LearningBootstrapData | null;
+  learningLoading: boolean;
+  learningError: string;
+  selectedLearningModuleId: string | null;
+  setSelectedLearningModuleId: (id: string | null) => void;
+  selectedLearningLessonId: string | null;
+  setSelectedLearningLessonId: (id: string | null) => void;
+  refreshLearningData: () => Promise<void>;
+  updateLearningData: (updater: (prev: LearningBootstrapData) => LearningBootstrapData) => void;
+
   // Fitness
   addWorkoutRoutine: (routine: Omit<WorkoutRoutine, 'id' | 'userId'>) => WorkoutRoutine;
   logWorkoutSession: (session: Omit<WorkoutSession, 'id' | 'userId' | 'createdAt'>) => void;
@@ -202,6 +220,52 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const profileNameRef = useRef(state.profile.fullName);
   profileNameRef.current = state.profile.fullName;
 
+  // Learning Management Center State (SQLite-backed per authenticated user)
+  const [learningData, setLearningDataState] = useState<LearningBootstrapData | null>(null);
+  const [learningLoading, setLearningLoading] = useState(false);
+  const [learningError, setLearningError] = useState('');
+  const [selectedLearningModuleId, setSelectedLearningModuleId] = useState<string | null>(null);
+  const [selectedLearningLessonId, setSelectedLearningLessonId] = useState<string | null>(null);
+
+  const reconcileLearningTasksIntoAppState = useCallback((boot: LearningBootstrapData | null) => {
+    setState(prev => {
+      const nonLearningTasks = prev.tasks.filter(t => !t.learningModuleId);
+      if (!boot) {
+        if (nonLearningTasks.length === prev.tasks.length) return prev;
+        return { ...prev, tasks: nonLearningTasks };
+      }
+      const existingById = new Map(prev.tasks.map(t => [t.id, t]));
+      const modulesById = new Map(boot.modules.map(m => [m.id, m]));
+      const lessonsById = new Map(boot.lessons.map(l => [l.id, l]));
+      const mappedLearningTasks = boot.tasks.map(lt =>
+        mapLearningTaskToAppTask(lt, modulesById, lessonsById, existingById.get(lt.id))
+      );
+      return {
+        ...prev,
+        tasks: [...mappedLearningTasks, ...nonLearningTasks],
+      };
+    });
+  }, []);
+
+  const updateLearningData = useCallback(
+    (updater: (prev: LearningBootstrapData) => LearningBootstrapData) => {
+      setLearningDataState(prev => {
+        const base: LearningBootstrapData = prev || {
+          modules: [],
+          lessons: [],
+          notes: [],
+          resources: [],
+          tasks: [],
+          studySessions: [],
+        };
+        const next = updater(base);
+        reconcileLearningTasksIntoAppState(next);
+        return next;
+      });
+    },
+    [reconcileLearningTasksIntoAppState]
+  );
+
   const setAuthUser = useCallback((user: AuthUser | null) => {
     setAuthUserState(user);
     if (user) {
@@ -220,8 +284,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
           },
         }));
       }
+    } else {
+      setLearningDataState(null);
+      setSelectedLearningModuleId(null);
+      setSelectedLearningLessonId(null);
+      reconcileLearningTasksIntoAppState(null);
     }
-  }, []);
+  }, [reconcileLearningTasksIntoAppState]);
 
   const logoutAuth = useCallback(async () => {
     if (typeof window !== 'undefined') {
@@ -233,7 +302,50 @@ export function AppProvider({ children }: { children: ReactNode }) {
       // Ignore network errors on logout
     }
     setAuthUserState(null);
-  }, []);
+    setLearningDataState(null);
+    setSelectedLearningModuleId(null);
+    setSelectedLearningLessonId(null);
+    reconcileLearningTasksIntoAppState(null);
+  }, [reconcileLearningTasksIntoAppState]);
+
+  const refreshLearningData = useCallback(async () => {
+    if (!authUser) {
+      setLearningDataState(null);
+      reconcileLearningTasksIntoAppState(null);
+      return;
+    }
+    setLearningLoading(true);
+    setLearningError('');
+    try {
+      const boot = await learningApi.bootstrap();
+      setLearningDataState(boot);
+      reconcileLearningTasksIntoAppState(boot);
+    } catch (err: any) {
+      const status = err instanceof ApiError ? err.status : err?.status;
+      if (status === 401) {
+        authApi.clearToken();
+        if (authUser.isWorkspace) {
+          try {
+            const { user: refreshed } = await authApi.ensureWorkspaceSession(profileNameRef.current);
+            setAuthUser(refreshed);
+            const bootRetry = await learningApi.bootstrap();
+            setLearningDataState(bootRetry);
+            reconcileLearningTasksIntoAppState(bootRetry);
+            return;
+          } catch {
+            // Fall through to error message
+          }
+        } else {
+          setAuthUser(null);
+          setIsAuthModalOpen(true);
+          return;
+        }
+      }
+      setLearningError(err?.message || 'Failed to load Learning workspace.');
+    } finally {
+      setLearningLoading(false);
+    }
+  }, [authUser, reconcileLearningTasksIntoAppState, setAuthUser]);
 
   useEffect(() => {
     let cancelled = false;
@@ -264,6 +376,15 @@ export function AppProvider({ children }: { children: ReactNode }) {
       cancelled = true;
     };
   }, [setAuthUser]);
+
+  useEffect(() => {
+    if (authChecked && authUser) {
+      refreshLearningData();
+    } else if (authChecked && !authUser) {
+      setLearningDataState(null);
+      reconcileLearningTasksIntoAppState(null);
+    }
+  }, [authChecked, authUser?.id, refreshLearningData, reconcileLearningTasksIntoAppState]);
 
   // Action Feedback Toasts
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
@@ -447,27 +568,86 @@ export function AppProvider({ children }: { children: ReactNode }) {
   );
 
   const updateTask = useCallback((id: string, updates: Partial<Task>) => {
-    setState(prev => ({
-      ...prev,
-      tasks: prev.tasks.map(t => (t.id === id ? { ...t, ...updates } : t)),
-    }));
+    let learningTaskPatch: Parameters<typeof learningApi.updateTask>[1] | null = null;
+
+    setState(prev => {
+      const target = prev.tasks.find(t => t.id === id);
+      if (target?.learningModuleId) {
+        learningTaskPatch = {
+          ...(updates.title !== undefined ? { title: updates.title } : {}),
+          ...(updates.description !== undefined ? { description: updates.description || '' } : {}),
+          ...(updates.status !== undefined
+            ? { status: mapAppTaskStatusToLearningStatus(updates.status) }
+            : {}),
+          ...(updates.priority !== undefined ? { priority: updates.priority } : {}),
+          ...(updates.dueDate !== undefined ? { dueDate: updates.dueDate || '' } : {}),
+          ...(updates.subtasks !== undefined ? { subtasks: updates.subtasks } : {}),
+        };
+      }
+      return {
+        ...prev,
+        tasks: prev.tasks.map(t => (t.id === id ? { ...t, ...updates } : t)),
+      };
+    });
+
+    if (learningTaskPatch) {
+      setLearningDataState(prev => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          tasks: prev.tasks.map(lt =>
+            lt.id === id
+              ? {
+                  ...lt,
+                  ...(learningTaskPatch!.title !== undefined ? { title: learningTaskPatch!.title } : {}),
+                  ...(learningTaskPatch!.description !== undefined ? { description: learningTaskPatch!.description } : {}),
+                  ...(learningTaskPatch!.status !== undefined ? { status: learningTaskPatch!.status } : {}),
+                  ...(learningTaskPatch!.priority !== undefined ? { priority: learningTaskPatch!.priority } : {}),
+                  ...(learningTaskPatch!.dueDate !== undefined ? { dueDate: learningTaskPatch!.dueDate } : {}),
+                  ...(learningTaskPatch!.subtasks !== undefined ? { subtasks: learningTaskPatch!.subtasks } : {}),
+                }
+              : lt
+          ),
+        };
+      });
+      learningApi.updateTask(id, learningTaskPatch).catch(err => {
+        console.error('Failed to sync learning task update:', err);
+      });
+    }
   }, []);
 
   const deleteTask = useCallback((id: string) => {
-    setState(prev => ({
-      ...prev,
-      tasks: prev.tasks.filter(t => t.id !== id),
-      dailySchedule: prev.dailySchedule.filter(a => a.taskId !== id),
-    }));
+    let isLearningTask = false;
+    setState(prev => {
+      const target = prev.tasks.find(t => t.id === id);
+      isLearningTask = Boolean(target?.learningModuleId);
+      return {
+        ...prev,
+        tasks: prev.tasks.filter(t => t.id !== id),
+        dailySchedule: prev.dailySchedule.filter(a => a.taskId !== id),
+      };
+    });
+    if (isLearningTask) {
+      setLearningDataState(prev =>
+        prev ? { ...prev, tasks: prev.tasks.filter(lt => lt.id !== id) } : prev
+      );
+      learningApi.deleteTask(id).catch(err => {
+        console.error('Failed to sync learning task deletion:', err);
+      });
+    }
     showToast('Task removed.', 'info');
   }, [showToast]);
 
   const toggleTaskCompleted = useCallback((id: string) => {
+    let nextLearningStatus: LearningTask['status'] | null = null;
     setState(prev => ({
       ...prev,
       tasks: prev.tasks.map(t => {
         if (t.id !== id) return t;
         const isNowCompleted = t.status !== 'completed';
+        if (t.learningModuleId) {
+          nextLearningStatus = isNowCompleted ? 'completed' : 'todo';
+        }
         return {
           ...t,
           status: isNowCompleted ? 'completed' : 'in_progress',
@@ -475,21 +655,63 @@ export function AppProvider({ children }: { children: ReactNode }) {
         };
       }),
     }));
+
+    if (nextLearningStatus) {
+      const statusToSave = nextLearningStatus;
+      setLearningDataState(prev => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          tasks: prev.tasks.map(lt =>
+            lt.id === id
+              ? {
+                  ...lt,
+                  status: statusToSave,
+                  completedAt: statusToSave === 'completed' ? new Date().toISOString() : undefined,
+                }
+              : lt
+          ),
+        };
+      });
+      learningApi.updateTask(id, { status: statusToSave }).catch(err => {
+        console.error('Failed to sync learning task completion:', err);
+      });
+    }
   }, []);
 
   const toggleSubtaskCompleted = useCallback((taskId: string, subtaskId: string) => {
+    let syncedSubtasks: Task['subtasks'] | null = null;
     setState(prev => ({
       ...prev,
       tasks: prev.tasks.map(t => {
         if (t.id !== taskId) return t;
+        const updatedSubtasks = t.subtasks.map(st =>
+          st.id === subtaskId ? { ...st, completed: !st.completed } : st
+        );
+        if (t.learningModuleId) {
+          syncedSubtasks = updatedSubtasks;
+        }
         return {
           ...t,
-          subtasks: t.subtasks.map(st =>
-            st.id === subtaskId ? { ...st, completed: !st.completed } : st
-          ),
+          subtasks: updatedSubtasks,
         };
       }),
     }));
+
+    if (syncedSubtasks) {
+      const nextSubtasks = syncedSubtasks;
+      setLearningDataState(prev =>
+        prev
+          ? {
+              ...prev,
+              tasks: prev.tasks.map(lt => (lt.id === taskId ? { ...lt, subtasks: nextSubtasks } : lt)),
+            }
+          : prev
+      );
+      learningApi.updateTask(taskId, { subtasks: nextSubtasks }).catch(err => {
+        console.error('Failed to sync learning subtask update:', err);
+      });
+    }
   }, []);
 
   const setDailyPriorityRank = useCallback((taskId: string, rank: number | undefined) => {
@@ -1116,6 +1338,16 @@ export function AppProvider({ children }: { children: ReactNode }) {
         deleteCourse,
         toggleLessonCompleted,
         addStudySession,
+
+        learningData,
+        learningLoading,
+        learningError,
+        selectedLearningModuleId,
+        setSelectedLearningModuleId,
+        selectedLearningLessonId,
+        setSelectedLearningLessonId,
+        refreshLearningData,
+        updateLearningData,
 
         addWorkoutRoutine,
         logWorkoutSession,

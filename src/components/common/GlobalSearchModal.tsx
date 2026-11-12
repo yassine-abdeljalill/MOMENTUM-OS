@@ -20,10 +20,13 @@ export const GlobalSearchModal: React.FC = () => {
     isSearchOpen,
     setIsSearchOpen,
     state,
+    learningData,
     setCurrentView,
     setSelectedGoalId,
     setSelectedProjectId,
     setSelectedCourseId,
+    setSelectedLearningModuleId,
+    setSelectedLearningLessonId,
   } = useApp();
 
   const [query, setQuery] = useState('');
@@ -96,25 +99,76 @@ export const GlobalSearchModal: React.FC = () => {
       }
     }
 
-    // Search courses
-    for (const c of state.courses) {
-      if (c.title.toLowerCase().includes(q) || c.description.toLowerCase().includes(q)) {
-        results.push({
-          id: `course-${c.id}`,
-          title: c.title,
-          subtitle: `Course • ${c.category} • ${c.lessons.length} lessons`,
-          category: 'Learning',
-          icon: GraduationCap,
-          view: 'learning',
-          action: () => setSelectedCourseId(c.id),
-        });
-      }
-      for (const l of c.lessons) {
-        if (l.title.toLowerCase().includes(q) || (l.notes && l.notes.toLowerCase().includes(q))) {
+    // Search Learning Modules, Lessons & Rich-Text Notes
+    if (learningData) {
+      const modulesById = new Map(learningData.modules.map(m => [m.id, m]));
+      const lessonsById = new Map(learningData.lessons.map(l => [l.id, l]));
+
+      for (const m of learningData.modules) {
+        if (m.title.toLowerCase().includes(q) || m.description.toLowerCase().includes(q)) {
+          const count = learningData.lessons.filter(l => l.moduleId === m.id).length;
           results.push({
-            id: `lesson-${l.id}`,
+            id: `lmod-${m.id}`,
+            title: m.title,
+            subtitle: `Learning Module • ${count} lesson${count === 1 ? '' : 's'}`,
+            category: 'Learning',
+            icon: GraduationCap,
+            view: 'learning',
+            action: () => {
+              setSelectedLearningLessonId(null);
+              setSelectedLearningModuleId(m.id);
+            },
+          });
+        }
+      }
+
+      for (const l of learningData.lessons) {
+        if (
+          l.title.toLowerCase().includes(q) ||
+          l.description.toLowerCase().includes(q) ||
+          l.teacherName.toLowerCase().includes(q)
+        ) {
+          const mod = modulesById.get(l.moduleId);
+          results.push({
+            id: `lles-${l.id}`,
             title: l.title,
-            subtitle: `Lesson in ${c.title}`,
+            subtitle: `Lesson${mod ? ` in ${mod.title}` : ''}${l.teacherName ? ` • ${l.teacherName}` : ''}`,
+            category: 'Learning',
+            icon: GraduationCap,
+            view: 'learning',
+            action: () => {
+              setSelectedLearningModuleId(l.moduleId);
+              setSelectedLearningLessonId(l.id);
+            },
+          });
+        }
+      }
+
+      for (const n of learningData.notes) {
+        if (n.title.toLowerCase().includes(q) || n.plainText.toLowerCase().includes(q)) {
+          const les = lessonsById.get(n.lessonId);
+          results.push({
+            id: `lnote-${n.id}`,
+            title: n.title,
+            subtitle: `Lesson Note${les ? ` • ${les.title}` : ''}`,
+            category: 'Notes',
+            icon: BookOpen,
+            view: 'learning',
+            action: () => {
+              if (les) setSelectedLearningModuleId(les.moduleId);
+              setSelectedLearningLessonId(n.lessonId);
+            },
+          });
+        }
+      }
+    } else {
+      // Fallback legacy courses search if learningData hasn't loaded
+      for (const c of state.courses) {
+        if (c.title.toLowerCase().includes(q) || c.description.toLowerCase().includes(q)) {
+          results.push({
+            id: `course-${c.id}`,
+            title: c.title,
+            subtitle: `Course • ${c.category} • ${c.lessons.length} lessons`,
             category: 'Learning',
             icon: GraduationCap,
             view: 'learning',
@@ -167,7 +221,16 @@ export const GlobalSearchModal: React.FC = () => {
     }
 
     return results.slice(0, 15);
-  }, [query, state, setSelectedGoalId, setSelectedProjectId, setSelectedCourseId]);
+  }, [
+    query,
+    state,
+    learningData,
+    setSelectedGoalId,
+    setSelectedProjectId,
+    setSelectedCourseId,
+    setSelectedLearningModuleId,
+    setSelectedLearningLessonId,
+  ]);
 
   return (
     <ModalShell

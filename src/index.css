@@ -130,3 +130,117 @@ body {
   }
 }
 
+/* Learning Rich-Text Note Editor Formatting */
+.learning-note-editor {
+  outline: none;
+  line-height: 1.65;
+  color: #3B2418;
+  font-size: 0.875rem;
+}
+
+.learning-note-editor h1 {
+  font-size: 1.375rem;
+  font-weight: 700;
+  color: #3B2418;
+  margin-top: 0.9rem;
+  margin-bottom: 0.45rem;
+  line-height: 1.3;
+}
+
+.learning-note-editor h2 {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #3B2418;
+  margin-top: 0.75rem;
+  margin-bottom: 0.35rem;
+  line-height: 1.35;
+}
+
+.learning-note-editor h3 {
+  font-size: 0.975rem;
+  font-weight: 700;
+  color: #1E5A99;
+  margin-top: 0.65rem;
+  margin-bottom: 0.25rem;
+}
+
+.learning-note-editor p {
+  margin-bottom: 0.5rem;
+}
+
+.learning-note-editor ul:not([data-type="checklist"]) {
+  list-style-type: disc;
+  padding-left: 1.4rem;
+  margin-bottom: 0.6rem;
+}
+
+.learning-note-editor ol {
+  list-style-type: decimal;
+  padding-left: 1.4rem;
+  margin-bottom: 0.6rem;
+}
+
+.learning-note-editor li {
+  margin-bottom: 0.2rem;
+}
+
+.learning-note-editor code {
+  font-family: var(--font-mono);
+  font-size: 0.8em;
+  background-color: #EAE0D0;
+  color: #3B2418;
+  padding: 0.1rem 0.35rem;
+  border-radius: 0.3rem;
+  border: 1px solid #D6C6B2;
+}
+
+.learning-note-editor pre {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  line-height: 1.55;
+  background-color: #2B1A11;
+  color: #F2E8DA;
+  padding: 0.85rem 1rem;
+  border-radius: 0.65rem;
+  border: 1px solid #5A3927;
+  overflow-x: auto;
+  margin: 0.65rem 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.learning-note-editor pre code {
+  background: transparent;
+  color: inherit;
+  border: none;
+  padding: 0;
+  font-size: inherit;
+}
+
+.learning-note-editor ul[data-type="checklist"] {
+  list-style: none;
+  padding-left: 0;
+  margin: 0.4rem 0 0.7rem 0;
+}
+
+.learning-note-editor ul[data-type="checklist"] li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 0.2rem 0.25rem;
+  border-radius: 0.35rem;
+}
+
+.learning-note-editor ul[data-type="checklist"] li input[type="checkbox"] {
+  margin-top: 0.25rem;
+  width: 0.95rem;
+  height: 0.95rem;
+  accent-color: #1E5A99;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.learning-note-editor ul[data-type="checklist"] li[data-checked="true"] > span {
+  text-decoration: line-through;
+  color: #6E5648;
+}

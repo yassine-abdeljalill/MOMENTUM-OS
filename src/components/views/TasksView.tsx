@@ -372,6 +372,13 @@ export const TasksView: React.FC = () => {
                                 </p>
                               )}
 
+                              {task.learningModuleTitle && (
+                                <div className="text-[10px] text-[#1E5A99] font-medium truncate">
+                                  {task.learningModuleTitle}
+                                  {task.learningLessonTitle ? ` · ${task.learningLessonTitle}` : ''}
+                                </div>
+                              )}
+
                               {/* Subtasks Progress if any */}
                               {task.subtasks.length > 0 && (
                                 <div className="text-[10px] text-[#6E5648] flex items-center gap-1 font-mono">
@@ -451,8 +458,14 @@ export const TasksView: React.FC = () => {
                           <span className={`text-xs font-semibold truncate transition-colors ${isDone ? 'line-through text-[#6E5648]' : 'text-[#3B2418]'}`}>
                             {task.title}
                           </span>
-                          <div className="flex items-center gap-2 text-[10px] text-[#6E5648] mt-0.5">
+                          <div className="flex flex-wrap items-center gap-2 text-[10px] text-[#6E5648] mt-0.5">
                             <span className="capitalize">{task.category}</span>
+                            {task.learningModuleTitle && (
+                              <span className="text-[#1E5A99] font-medium truncate max-w-[220px]">
+                                • {task.learningModuleTitle}
+                                {task.learningLessonTitle ? ` · ${task.learningLessonTitle}` : ''}
+                              </span>
+                            )}
                             {task.dueDate && <span>• Due {task.dueDate}</span>}
                             {task.subtasks.length > 0 && (
                               <span>

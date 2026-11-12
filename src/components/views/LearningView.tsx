@@ -1,454 +1,1186 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
-  GraduationCap,
-  Plus,
+  ArrowDown,
+  ArrowUp,
   BookOpen,
-  CheckCircle2,
-  Circle,
-  Clock,
-  Play,
-  Layers,
-  Sparkles,
+  Calendar,
+  CheckSquare,
   ChevronRight,
-  TrendingUp,
-  FileText,
+  Clock,
+  Edit3,
+  FolderOpen,
+  GraduationCap,
+  GripVertical,
+  History,
+  Layers,
+  Loader2,
+  LogIn,
+  Plus,
+  RefreshCw,
+  Search,
+  Trash2,
 } from 'lucide-react';
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
+import type {
+  LearningLesson,
+  LearningModule,
+  LearningModuleIcon,
+  LearningStatus,
+  LearningStudySession,
+  LearningTask,
+} from '../../types/learning';
 import { useApp } from '../../lib/context';
-import { Course, Lesson, StudySession } from '../../types';
+import { learningApi } from '../../lib/learningApi';
+import {
+  computeModuleStats,
+  LEARNING_STATUS_META,
+  LEARNING_TASK_KIND_LABELS,
+  reorderListByIds,
+} from '../../lib/learning';
 import { formatMinutes } from '../../lib/logic';
 import {
-  ModalShell,
+  AnimatedCheckButton,
   AnimatedNumber,
   AnimatedProgressBar,
-  AnimatedCheckButton,
+  MOMENTUM_EASE,
   StaggerContainer,
   StaggerItem,
-  MOMENTUM_EASE,
 } from '../common/MotionPrimitives';
+import {
+  ConfirmDeleteDialog,
+  LessonModal,
+  ModuleIconView,
+  ModuleModal,
+  StatusLabel,
+} from '../learning/LearningShared';
+import { ModuleDetailPage } from '../learning/ModuleDetailPage';
+import { LessonWorkspace } from '../learning/LessonWorkspace';
+
+type DashboardTab = 'overview' | 'sessions';
 
 export const LearningView: React.FC = () => {
   const prefersReduced = useReducedMotion();
   const {
-    state,
-    addCourse,
-    updateCourse,
-    toggleLessonCompleted,
-    addStudySession,
-    selectedCourseId,
-    setSelectedCourseId,
-    startFocusTimer,
-    setIsFocusTimerOpen,
+    authUser,
+    authChecked,
+    setIsAuthModalOpen,
+    learningData,
+    learningLoading,
+    learningError,
+    refreshLearningData,
+    updateLearningData,
+    selectedLearningModuleId,
+    setSelectedLearningModuleId,
+    selectedLearningLessonId,
+    setSelectedLearningLessonId,
     showToast,
   } = useApp();
 
-  const [activeTab, setActiveTab] = useState<'courses' | 'sessions'>('courses');
-  const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(null);
+  const [dashboardTab, setDashboardTab] = useState<DashboardTab>('overview');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState<'all' | LearningStatus>('all');
 
-  // New study session logger form
-  const [sessionSubject, setSessionSubject] = useState('');
-  const [sessionDuration, setSessionDuration] = useState(60);
-  const [sessionLearned, setSessionLearned] = useState('');
-  const [showLogSession, setShowLogSession] = useState(false);
+  // Module modal & deletion
+  const [moduleModalOpen, setModuleModalOpen] = useState(false);
+  const [editingModule, setEditingModule] = useState<LearningModule | null>(null);
+  const [deleteModuleTarget, setDeleteModuleTarget] = useState<LearningModule | null>(null);
+  const [deletingModule, setDeletingModule] = useState(false);
 
-  // New course modal state
-  const [showNewCourseModal, setShowNewCourseModal] = useState(false);
-  const [courseTitle, setCourseTitle] = useState('');
-  const [courseCategory, setCourseCategory] = useState('Cybersecurity');
-  const [courseInstructor, setCourseInstructor] = useState('');
-  const [courseDescription, setCourseDescription] = useState('');
+  // Lesson modal & deletion (triggered from LessonWorkspace)
+  const [lessonModalOpen, setLessonModalOpen] = useState(false);
+  const [editingLesson, setEditingLesson] = useState<LearningLesson | null>(null);
+  const [deleteLessonTarget, setDeleteLessonTarget] = useState<LearningLesson | null>(null);
+  const [deletingLesson, setDeletingLesson] = useState(false);
 
-  const currentCourse = selectedCourseId
-    ? state.courses.find(c => c.id === selectedCourseId) || state.courses[0]
-    : state.courses[0];
+  // Drag state for module reordering
+  const [draggedModuleId, setDraggedModuleId] = useState<string | null>(null);
+  const [dragOverModuleId, setDragOverModuleId] = useState<string | null>(null);
 
-  const totalStudyMinutes = state.studySessions.reduce((acc, s) => acc + s.durationMinutes, 0);
-  const totalLessons = state.courses.reduce((acc, c) => acc + c.lessons.length, 0);
-  const completedLessons = state.courses.reduce(
-    (acc, c) => acc + c.lessons.filter(l => l.completed).length,
-    0
+  // Study Session logger
+  const [showLogForm, setShowLogForm] = useState(false);
+  const [logModuleId, setLogModuleId] = useState<string>('');
+  const [logSubject, setLogSubject] = useState('');
+  const [logDate, setLogDate] = useState(() => new Date().toISOString().slice(0, 10));
+  const [logDuration, setLogDuration] = useState(50);
+  const [logLearned, setLogLearned] = useState('');
+  const [savingLog, setSavingLog] = useState(false);
+  const [deleteSessionTarget, setDeleteSessionTarget] = useState<LearningStudySession | null>(null);
+  const [deletingSession, setDeletingSession] = useState(false);
+
+  const modules = learningData?.modules || [];
+  const lessons = learningData?.lessons || [];
+  const notes = learningData?.notes || [];
+  const resources = learningData?.resources || [];
+  const tasks = learningData?.tasks || [];
+  const studySessions = learningData?.studySessions || [];
+
+  const sortedModules = useMemo(
+    () => [...modules].sort((a, b) => a.sortOrder - b.sortOrder || a.createdAt.localeCompare(b.createdAt)),
+    [modules]
   );
 
-  const handleLogStudySession = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!sessionSubject.trim() || !sessionLearned.trim()) return;
+  // Active drill-down targets
+  const activeModule = useMemo(
+    () => (selectedLearningModuleId ? modules.find(m => m.id === selectedLearningModuleId) || null : null),
+    [modules, selectedLearningModuleId]
+  );
+  const activeLesson = useMemo(
+    () =>
+      activeModule && selectedLearningLessonId
+        ? lessons.find(l => l.id === selectedLearningLessonId && l.moduleId === activeModule.id) || null
+        : null,
+    [activeModule, lessons, selectedLearningLessonId]
+  );
 
-    addStudySession({
-      courseId: currentCourse?.id,
-      subject: sessionSubject.trim(),
-      date: new Date().toISOString().split('T')[0],
-      startTime: '10:00',
-      endTime: '11:00',
-      durationMinutes: sessionDuration,
-      whatWasLearned: sessionLearned.trim(),
+  // Global metrics
+  const globalStats = useMemo(() => {
+    const totalLessons = lessons.length;
+    const completedLessons = lessons.filter(l => l.status === 'completed').length;
+    const overallProgressPct =
+      totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0;
+    const pendingAssignments = tasks.filter(t => t.status !== 'completed').length;
+    const completedModules = modules.filter(m => m.status === 'completed').length;
+    const totalStudyMinutes = studySessions.reduce((acc, s) => acc + s.durationMinutes, 0);
+    return {
+      totalLessons,
+      completedLessons,
+      overallProgressPct,
+      pendingAssignments,
+      completedModules,
+      totalStudyMinutes,
+    };
+  }, [lessons, tasks, modules, studySessions]);
+
+  const recentlyOpenedLessons = useMemo(() => {
+    return [...lessons]
+      .filter(l => Boolean(l.lastOpenedAt) || Boolean(l.updatedAt))
+      .sort((a, b) => {
+        const aTime = a.lastOpenedAt || a.updatedAt;
+        const bTime = b.lastOpenedAt || b.updatedAt;
+        return bTime.localeCompare(aTime);
+      })
+      .slice(0, 5);
+  }, [lessons]);
+
+  const upcomingDeadlines = useMemo(() => {
+    return [...tasks]
+      .filter(t => t.status !== 'completed')
+      .sort((a, b) => {
+        if (a.dueDate && b.dueDate) return a.dueDate.localeCompare(b.dueDate);
+        if (a.dueDate) return -1;
+        if (b.dueDate) return 1;
+        return b.createdAt.localeCompare(a.createdAt);
+      })
+      .slice(0, 6);
+  }, [tasks]);
+
+  const filteredModules = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    return sortedModules.filter(mod => {
+      if (statusFilter !== 'all' && mod.status !== statusFilter) return false;
+      if (q) {
+        const matchesMod =
+          mod.title.toLowerCase().includes(q) || mod.description.toLowerCase().includes(q);
+        const matchesLesson = lessons.some(
+          l =>
+            l.moduleId === mod.id &&
+            (l.title.toLowerCase().includes(q) || l.teacherName.toLowerCase().includes(q))
+        );
+        return matchesMod || matchesLesson;
+      }
+      return true;
     });
+  }, [sortedModules, statusFilter, searchQuery, lessons]);
 
-    setSessionSubject('');
-    setSessionLearned('');
-    setShowLogSession(false);
-    showToast('Study session logged');
+  const todayStr = new Date().toISOString().slice(0, 10);
+
+  // Module CRUD handlers
+  const handleSaveModule = async (payload: {
+    title: string;
+    description: string;
+    color: string;
+    icon: LearningModuleIcon;
+    status: LearningStatus;
+  }) => {
+    if (editingModule) {
+      const { module: updated } = await learningApi.updateModule(editingModule.id, payload);
+      updateLearningData(prev => ({
+        ...prev,
+        modules: prev.modules.map(m => (m.id === updated.id ? updated : m)),
+      }));
+      showToast('Module updated');
+    } else {
+      const { module: created } = await learningApi.createModule(payload);
+      updateLearningData(prev => ({
+        ...prev,
+        modules: [...prev.modules, created],
+      }));
+      showToast('Module created');
+    }
   };
 
-  const handleCreateCourse = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!courseTitle.trim()) return;
-
-    const newC = addCourse({
-      title: courseTitle.trim(),
-      description: courseDescription.trim(),
-      category: courseCategory,
-      instructor: courseInstructor.trim() || undefined,
-      startDate: new Date().toISOString().split('T')[0],
-      status: 'active',
-      lessons: [
-        {
-          id: `les-${Date.now()}-1`,
-          courseId: '',
-          title: 'Module 1: Foundational Theory & Architecture',
-          learningObjectives: ['Understand core terminology', 'Review system specifications'],
-          content: 'Introductory concepts, protocol mechanics, and foundational mental models.',
-          completed: false,
-          studyDurationMinutes: 60,
-          order: 1,
-        },
-      ],
-    });
-
-    setCourseTitle('');
-    setCourseDescription('');
-    setShowNewCourseModal(false);
-    setSelectedCourseId(newC.id);
-    showToast('Course added to Knowledge Center');
+  const handleConfirmDeleteModule = async () => {
+    if (!deleteModuleTarget) return;
+    setDeletingModule(true);
+    try {
+      const deletedId = deleteModuleTarget.id;
+      await learningApi.deleteModule(deletedId);
+      updateLearningData(prev => {
+        const deletedLessonIds = new Set(
+          prev.lessons.filter(l => l.moduleId === deletedId).map(l => l.id)
+        );
+        return {
+          ...prev,
+          modules: prev.modules.filter(m => m.id !== deletedId),
+          lessons: prev.lessons.filter(l => l.moduleId !== deletedId),
+          notes: prev.notes.filter(n => !deletedLessonIds.has(n.lessonId)),
+          resources: prev.resources.filter(r => r.moduleId !== deletedId),
+          tasks: prev.tasks.filter(t => t.moduleId !== deletedId),
+        };
+      });
+      if (selectedLearningModuleId === deletedId) {
+        setSelectedLearningModuleId(null);
+        setSelectedLearningLessonId(null);
+      }
+      setDeleteModuleTarget(null);
+      showToast('Module deleted', 'info');
+    } catch (err: any) {
+      showToast(err?.message || 'Failed to delete module.', 'error');
+    } finally {
+      setDeletingModule(false);
+    }
   };
 
-  return (
-    <div className="space-y-6 max-w-7xl mx-auto pb-16">
-      {/* Header Card */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] shadow-xs">
-        <div className="space-y-1">
-          <h1 className="text-xl md:text-2xl font-bold text-[#3B2418] tracking-tight">
-            Knowledge Center & Learning
-          </h1>
-          <p className="text-xs text-[#6E5648]">
-            Curated coursework, lesson objectives, and deliberate study session logs.
-          </p>
-        </div>
+  const persistModuleOrder = async (reordered: LearningModule[]) => {
+    const orderedIds = reordered.map(m => m.id);
+    const indexMap = new Map<string, number>();
+    orderedIds.forEach((id, idx) => indexMap.set(id, idx));
 
-        <div className="flex items-center gap-3">
-          <div className="flex bg-[#F2E8DA] p-1 rounded-xl border border-[#D6C6B2] text-xs relative">
-            {([
-              { id: 'courses', label: `Courses (${state.courses.length})` },
-              { id: 'sessions', label: `Study Logs (${state.studySessions.length})` },
-            ] as const).map(tab => {
-              const isActive = activeTab === tab.id;
-              return (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`relative z-10 px-3 py-1.5 rounded-lg transition-colors ${
-                    isActive ? 'text-[#3B2418] font-bold' : 'text-[#6E5648] hover:text-[#3B2418] font-medium'
-                  }`}
-                >
-                  {isActive && (
-                    <motion.span
-                      layoutId="learning-tab-pill"
-                      transition={{ duration: prefersReduced ? 0.01 : 0.2, ease: MOMENTUM_EASE }}
-                      className="absolute inset-0 bg-[#8EC5FF] rounded-lg shadow-xs -z-10"
-                    />
-                  )}
-                  {tab.label}
-                </button>
-              );
-            })}
+    updateLearningData(prev => ({
+      ...prev,
+      modules: prev.modules.map(m =>
+        indexMap.has(m.id) ? { ...m, sortOrder: indexMap.get(m.id)! } : m
+      ),
+    }));
+
+    try {
+      const { modules: savedModules } = await learningApi.reorderModules(orderedIds);
+      updateLearningData(prev => ({ ...prev, modules: savedModules }));
+    } catch (err: any) {
+      showToast(err?.message || 'Failed to reorder modules.', 'error');
+    }
+  };
+
+  const handleMoveModule = (moduleId: string, direction: -1 | 1) => {
+    const idx = sortedModules.findIndex(m => m.id === moduleId);
+    const targetIdx = idx + direction;
+    if (idx === -1 || targetIdx < 0 || targetIdx >= sortedModules.length) return;
+    const copy = [...sortedModules];
+    const [moved] = copy.splice(idx, 1);
+    copy.splice(targetIdx, 0, moved);
+    void persistModuleOrder(copy);
+  };
+
+  // Lesson Edit/Delete triggered from inside LessonWorkspace
+  const handleSaveWorkspaceLesson = async (payload: {
+    title: string;
+    description: string;
+    teacherName: string;
+    lessonDate: string;
+    status: LearningStatus;
+    studyDurationMinutes: number;
+    learningObjectives: string[];
+  }) => {
+    if (!editingLesson) return;
+    const { lesson: updated } = await learningApi.updateLesson(editingLesson.id, payload);
+    updateLearningData(prev => ({
+      ...prev,
+      lessons: prev.lessons.map(l => (l.id === updated.id ? updated : l)),
+    }));
+    showToast('Lesson updated');
+  };
+
+  const handleConfirmDeleteWorkspaceLesson = async () => {
+    if (!deleteLessonTarget) return;
+    setDeletingLesson(true);
+    try {
+      const deletedId = deleteLessonTarget.id;
+      await learningApi.deleteLesson(deletedId);
+      updateLearningData(prev => ({
+        ...prev,
+        lessons: prev.lessons.filter(l => l.id !== deletedId),
+        notes: prev.notes.filter(n => n.lessonId !== deletedId),
+        resources: prev.resources.filter(r => r.lessonId !== deletedId),
+        tasks: prev.tasks.filter(t => t.lessonId !== deletedId),
+      }));
+      if (selectedLearningLessonId === deletedId) {
+        setSelectedLearningLessonId(null);
+      }
+      setDeleteLessonTarget(null);
+      showToast('Lesson deleted', 'info');
+    } catch (err: any) {
+      showToast(err?.message || 'Failed to delete lesson.', 'error');
+    } finally {
+      setDeletingLesson(false);
+    }
+  };
+
+  const handleToggleUpcomingTask = async (task: LearningTask) => {
+    const nextStatus = task.status === 'completed' ? 'todo' : 'completed';
+    try {
+      const { task: updated } = await learningApi.updateTask(task.id, { status: nextStatus });
+      updateLearningData(prev => ({
+        ...prev,
+        tasks: prev.tasks.map(t => (t.id === updated.id ? updated : t)),
+      }));
+    } catch (err: any) {
+      showToast(err?.message || 'Failed to update task.', 'error');
+    }
+  };
+
+  const handleCreateStudySession = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!logSubject.trim() || !logLearned.trim()) return;
+    setSavingLog(true);
+    try {
+      const { studySession } = await learningApi.createStudySession({
+        moduleId: logModuleId || null,
+        subject: logSubject.trim(),
+        date: logDate,
+        durationMinutes: Math.max(1, Number(logDuration) || 45),
+        whatWasLearned: logLearned.trim(),
+      });
+      updateLearningData(prev => ({
+        ...prev,
+        studySessions: [studySession, ...prev.studySessions],
+      }));
+      setLogSubject('');
+      setLogLearned('');
+      setShowLogForm(false);
+      showToast('Study session logged');
+    } catch (err: any) {
+      showToast(err?.message || 'Failed to log study session.', 'error');
+    } finally {
+      setSavingLog(false);
+    }
+  };
+
+  const handleConfirmDeleteSession = async () => {
+    if (!deleteSessionTarget) return;
+    setDeletingSession(true);
+    try {
+      await learningApi.deleteStudySession(deleteSessionTarget.id);
+      updateLearningData(prev => ({
+        ...prev,
+        studySessions: prev.studySessions.filter(s => s.id !== deleteSessionTarget.id),
+      }));
+      setDeleteSessionTarget(null);
+      showToast('Study log removed', 'info');
+    } catch (err: any) {
+      showToast(err?.message || 'Failed to remove study log.', 'error');
+    } finally {
+      setDeletingSession(false);
+    }
+  };
+
+  // Signed-out guard
+  if (authChecked && !authUser) {
+    return (
+      <div className="max-w-2xl mx-auto py-16">
+        <div className="p-8 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] text-center space-y-4 shadow-xs">
+          <div className="w-12 h-12 rounded-2xl bg-[#3B2418] text-[#8EC5FF] flex items-center justify-center mx-auto">
+            <GraduationCap className="w-6 h-6" />
           </div>
-
+          <div className="space-y-1">
+            <h2 className="text-lg font-bold text-[#3B2418]">Sign in to access your Learning Center</h2>
+            <p className="text-xs text-[#6E5648] max-w-md mx-auto">
+              Your modules, lesson notes, uploaded PDFs and slides, and coursework tasks are saved securely to your MOMENTUM account.
+            </p>
+          </div>
           <button
-            onClick={() => setShowNewCourseModal(true)}
-            className="btn-press group flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#8EC5FF] hover:bg-[#73B6FC] text-[#3B2418] border border-[#3B2418]/15 font-bold text-xs shadow-xs transition-all"
+            type="button"
+            onClick={() => setIsAuthModalOpen(true)}
+            className="btn-press inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#8EC5FF] hover:bg-[#73B6FC] text-[#3B2418] border border-[#3B2418]/15 font-bold text-xs shadow-xs"
           >
-            <Plus className="w-4 h-4 stroke-[2.5] transition-transform duration-200 group-hover:rotate-90" />
-            <span>New Course</span>
+            <LogIn className="w-4 h-4" />
+            <span>Sign In or Restore Workspace</span>
           </button>
         </div>
       </div>
+    );
+  }
 
-      {/* Learning Metrics Bar */}
-      <StaggerContainer className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <StaggerItem className="p-4 rounded-xl bg-[#FAF5ED] border border-[#D6C6B2] shadow-xs card-hover">
-          <span className="text-[10px] font-mono uppercase text-[#6E5648]">Total Study Time</span>
-          <div className="font-mono text-2xl font-bold text-[#3B2418] mt-1">
-            <AnimatedNumber value={totalStudyMinutes} formatter={formatMinutes} />
-          </div>
-        </StaggerItem>
-        <StaggerItem className="p-4 rounded-xl bg-[#FAF5ED] border border-[#D6C6B2] shadow-xs card-hover">
-          <span className="text-[10px] font-mono uppercase text-[#6E5648]">Lessons Completed</span>
-          <div className="font-mono text-2xl font-bold text-[#1E5A99] mt-1">
-            <AnimatedNumber value={completedLessons} /> / {totalLessons}
-          </div>
-        </StaggerItem>
-        <StaggerItem className="p-4 rounded-xl bg-[#FAF5ED] border border-[#D6C6B2] shadow-xs card-hover">
-          <span className="text-[10px] font-mono uppercase text-[#6E5648]">Active Courses</span>
-          <div className="font-mono text-2xl font-bold text-[#3B2418] mt-1">
-            <AnimatedNumber value={state.courses.filter(c => c.status === 'active').length} />
-          </div>
-        </StaggerItem>
-        <StaggerItem className="p-4 rounded-xl bg-[#FAF5ED] border border-[#D6C6B2] shadow-xs card-hover">
-          <span className="text-[10px] font-mono uppercase text-[#6E5648]">Logged Sessions</span>
-          <div className="font-mono text-2xl font-bold text-[#3E7B52] mt-1">
-            <AnimatedNumber value={state.studySessions.length} />
-          </div>
-        </StaggerItem>
-      </StaggerContainer>
+  // Initial load state
+  if ((!authChecked || learningLoading) && !learningData) {
+    return (
+      <div className="max-w-7xl mx-auto py-16 flex flex-col items-center justify-center gap-3 text-[#6E5648]">
+        <Loader2 className="w-6 h-6 animate-spin text-[#1E5A99]" />
+        <span className="text-xs font-medium">Loading Learning Management Center...</span>
+      </div>
+    );
+  }
 
-      {/* Main Content */}
-      <AnimatePresence mode="wait" initial={false}>
-        {activeTab === 'courses' ? (
-          <motion.div
-            key="learning-courses"
-            initial={prefersReduced ? { opacity: 1 } : { opacity: 0, y: 6 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={prefersReduced ? { opacity: 0 } : { opacity: 0, y: -4 }}
-            transition={{ duration: prefersReduced ? 0.01 : 0.16, ease: MOMENTUM_EASE }}
-            className="grid grid-cols-1 lg:grid-cols-12 gap-6"
+  // Error fallback
+  if (learningError && !learningData) {
+    return (
+      <div className="max-w-xl mx-auto py-16">
+        <div className="p-6 rounded-2xl bg-[#FAF5ED] border border-[#B84A44]/40 text-center space-y-3">
+          <p className="text-sm font-bold text-[#3B2418]">Unable to load Learning Center</p>
+          <p className="text-xs text-[#9E3530]">{learningError}</p>
+          <button
+            type="button"
+            onClick={() => void refreshLearningData()}
+            className="btn-press inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#8EC5FF] text-[#3B2418] text-xs font-bold"
           >
-            {/* Courses List (5 cols) */}
-            <div className="lg:col-span-5 space-y-3">
-              <span className="text-xs font-bold uppercase tracking-wider text-[#6E5648] block px-1">
-                Curriculum Modules
-              </span>
+            <RefreshCw className="w-3.5 h-3.5" />
+            <span>Retry</span>
+          </button>
+        </div>
+      </div>
+    );
+  }
 
-              {state.courses.map(course => {
-                const isSelected = currentCourse && currentCourse.id === course.id;
-                const completedCount = course.lessons.filter(l => l.completed).length;
-                const pct = course.lessons.length > 0
-                  ? Math.round((completedCount / course.lessons.length) * 100)
-                  : 0;
+  // Route 1: Dedicated Lesson Workspace
+  if (activeModule && activeLesson) {
+    const moduleLessons = lessons
+      .filter(l => l.moduleId === activeModule.id)
+      .sort((a, b) => a.sortOrder - b.sortOrder || a.createdAt.localeCompare(b.createdAt));
 
+    return (
+      <>
+        <LessonWorkspace
+          module={activeModule}
+          lesson={activeLesson}
+          moduleLessons={moduleLessons}
+          notes={notes.filter(n => n.lessonId === activeLesson.id)}
+          resources={resources.filter(r => r.lessonId === activeLesson.id)}
+          tasks={tasks.filter(t => t.lessonId === activeLesson.id)}
+          onBackToDashboard={() => {
+            setSelectedLearningLessonId(null);
+            setSelectedLearningModuleId(null);
+          }}
+          onBackToModule={() => setSelectedLearningLessonId(null)}
+          onSelectLesson={lessonId => setSelectedLearningLessonId(lessonId)}
+          onEditLesson={les => {
+            setEditingLesson(les);
+            setLessonModalOpen(true);
+          }}
+          onDeleteLesson={les => setDeleteLessonTarget(les)}
+        />
+
+        <LessonModal
+          isOpen={lessonModalOpen}
+          onClose={() => {
+            setLessonModalOpen(false);
+            setEditingLesson(null);
+          }}
+          editingLesson={editingLesson}
+          onSubmit={handleSaveWorkspaceLesson}
+        />
+
+        <ConfirmDeleteDialog
+          isOpen={Boolean(deleteLessonTarget)}
+          title="Delete Lesson"
+          description={`Delete "${deleteLessonTarget?.title || ''}"? All notes, files, and tasks inside this lesson will be permanently removed.`}
+          busy={deletingLesson}
+          onCancel={() => setDeleteLessonTarget(null)}
+          onConfirm={handleConfirmDeleteWorkspaceLesson}
+        />
+      </>
+    );
+  }
+
+  // Route 2: Dedicated Module Overview Page
+  if (activeModule) {
+    const activeModuleLessons = lessons.filter(l => l.moduleId === activeModule.id);
+    const activeLessonIds = new Set(activeModuleLessons.map(l => l.id));
+    return (
+      <>
+        <ModuleDetailPage
+          module={activeModule}
+          lessons={activeModuleLessons}
+          notes={notes.filter(n => activeLessonIds.has(n.lessonId))}
+          resources={resources.filter(r => r.moduleId === activeModule.id)}
+          tasks={tasks.filter(t => t.moduleId === activeModule.id)}
+          onBackToDashboard={() => {
+            setSelectedLearningLessonId(null);
+            setSelectedLearningModuleId(null);
+          }}
+          onOpenLesson={lessonId => setSelectedLearningLessonId(lessonId)}
+          onEditModule={mod => {
+            setEditingModule(mod);
+            setModuleModalOpen(true);
+          }}
+          onDeleteModule={mod => setDeleteModuleTarget(mod)}
+        />
+
+        <ModuleModal
+          isOpen={moduleModalOpen}
+          onClose={() => {
+            setModuleModalOpen(false);
+            setEditingModule(null);
+          }}
+          editingModule={editingModule}
+          onSubmit={handleSaveModule}
+        />
+
+        <ConfirmDeleteDialog
+          isOpen={Boolean(deleteModuleTarget)}
+          title="Delete Learning Module"
+          description={`Delete "${deleteModuleTarget?.title || ''}" and all lessons, notes, uploaded resources, and tasks inside it? This cannot be undone.`}
+          busy={deletingModule}
+          onCancel={() => setDeleteModuleTarget(null)}
+          onConfirm={handleConfirmDeleteModule}
+        />
+      </>
+    );
+  }
+
+  // Route 3: Main Learning Management Center Dashboard
+  return (
+    <div className="space-y-6 max-w-7xl mx-auto pb-16">
+      {/* Header Card */}
+      <div className="p-6 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] shadow-xs space-y-4">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+          <div className="space-y-1">
+            <h1 className="text-xl md:text-2xl font-bold text-[#3B2418] tracking-tight">
+              Learning Management Center
+            </h1>
+            <p className="text-xs text-[#6E5648]">
+              Structured academic modules, interactive lessons, rich-text study notes, uploaded materials, and synced assignments.
+            </p>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2.5 shrink-0">
+            <div className="flex bg-[#F2E8DA] p-1 rounded-xl border border-[#D6C6B2] text-xs relative">
+              {([
+                { id: 'overview', label: `Modules (${modules.length})` },
+                { id: 'sessions', label: `Study Logs (${studySessions.length})` },
+              ] as const).map(tab => {
+                const isActive = dashboardTab === tab.id;
                 return (
-                  <div
-                    key={course.id}
-                    onClick={() => {
-                      setSelectedCourseId(course.id);
-                      setSelectedLesson(course.lessons[0] || null);
-                    }}
-                    className={`p-4 rounded-xl border transition-all duration-200 cursor-pointer space-y-2.5 card-hover ${
-                      isSelected
-                        ? 'bg-[#3B2418] border-[#5A3927] shadow-md'
-                        : 'bg-[#FAF5ED] border-[#D6C6B2] hover:border-[#8EC5FF]'
+                  <button
+                    key={tab.id}
+                    type="button"
+                    onClick={() => setDashboardTab(tab.id)}
+                    className={`relative z-10 px-3 py-1.5 rounded-lg transition-colors whitespace-nowrap ${
+                      isActive
+                        ? 'text-[#3B2418] font-bold'
+                        : 'text-[#6E5648] hover:text-[#3B2418] font-medium'
                     }`}
                   >
-                    <div className="flex items-start justify-between gap-2">
-                      <h3 className={`text-sm font-semibold truncate transition-colors ${isSelected ? 'text-[#F2E8DA]' : 'text-[#3B2418]'}`}>
-                        {course.title}
-                      </h3>
-                      <span className={`font-mono text-xs font-bold shrink-0 ${isSelected ? 'text-[#8EC5FF]' : 'text-[#1E5A99]'}`}>
-                        {pct}%
-                      </span>
-                    </div>
-
-                    <AnimatedProgressBar
-                      percentage={pct}
-                      trackClassName={`w-full h-1.5 rounded-full overflow-hidden ${isSelected ? 'bg-[#4D3021]' : 'bg-[#EAE0D0]'}`}
-                      fillClassName="bg-[#8EC5FF] h-full rounded-full"
-                    />
-
-                    <div className={`flex items-center justify-between text-[11px] ${isSelected ? 'text-[#D8C7B4]' : 'text-[#6E5648]'}`}>
-                      <span>{course.category}</span>
-                      <span>{completedCount}/{course.lessons.length} lessons</span>
-                    </div>
-                  </div>
+                    {isActive && (
+                      <motion.span
+                        layoutId="learning-dashboard-tab-pill"
+                        transition={{ duration: prefersReduced ? 0.01 : 0.2, ease: MOMENTUM_EASE }}
+                        className="absolute inset-0 bg-[#8EC5FF] rounded-lg shadow-xs -z-10"
+                      />
+                    )}
+                    {tab.label}
+                  </button>
                 );
               })}
             </div>
 
-            {/* Course Details & Lessons (7 cols) */}
-            <div className="lg:col-span-7">
-              <AnimatePresence mode="wait" initial={false}>
-                {currentCourse ? (
-                  <motion.div
-                    key={currentCourse.id}
-                    initial={prefersReduced ? { opacity: 1 } : { opacity: 0, y: 6 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={prefersReduced ? { opacity: 0 } : { opacity: 0, y: -4 }}
-                    transition={{ duration: prefersReduced ? 0.01 : 0.16, ease: MOMENTUM_EASE }}
-                    className="p-6 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] shadow-xs space-y-6"
+            <button
+              type="button"
+              onClick={() => {
+                setEditingModule(null);
+                setModuleModalOpen(true);
+              }}
+              className="btn-press group inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#8EC5FF] hover:bg-[#73B6FC] text-[#3B2418] border border-[#3B2418]/15 font-bold text-xs shadow-xs whitespace-nowrap"
+            >
+              <Plus className="w-4 h-4 stroke-[2.5] transition-transform duration-200 group-hover:rotate-90" />
+              <span>New Module</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Search & Filter Row (when viewing modules) */}
+        {dashboardTab === 'overview' && (
+          <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-[#D6C6B2]">
+            <div className="flex flex-wrap items-center gap-1.5">
+              {(['all', 'not_started', 'in_progress', 'completed'] as const).map(st => (
+                <button
+                  key={st}
+                  type="button"
+                  onClick={() => setStatusFilter(st)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors whitespace-nowrap ${
+                    statusFilter === st
+                      ? 'bg-[#3B2418] text-[#8EC5FF] border-[#3B2418]'
+                      : 'bg-[#F2E8DA] text-[#6E5648] border-[#D6C6B2] hover:text-[#3B2418]'
+                  }`}
+                >
+                  {st === 'all' ? 'All Statuses' : LEARNING_STATUS_META[st].label}
+                </button>
+              ))}
+            </div>
+
+            <div className="relative w-full sm:w-72">
+              <Search className="w-3.5 h-3.5 text-[#6E5648] absolute left-3 top-2.5" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+                placeholder="Search modules, lessons, or teachers..."
+                className="w-full pl-8 pr-3 py-1.5 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
+              />
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* 4 Global Learning KPIs */}
+      <StaggerContainer className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <StaggerItem className="p-4 rounded-xl bg-[#FAF5ED] border border-[#D6C6B2] shadow-xs card-hover space-y-2">
+          <div className="flex items-center justify-between gap-2">
+            <span className="text-[10px] font-mono uppercase text-[#6E5648]">Overall Progress</span>
+            <span className="font-mono text-xs font-bold text-[#1E5A99] tabular-nums">
+              {globalStats.overallProgressPct}%
+            </span>
+          </div>
+          <AnimatedProgressBar
+            percentage={globalStats.overallProgressPct}
+            trackClassName="w-full h-2 rounded-full bg-[#EAE0D0] overflow-hidden"
+            fillClassName="h-full bg-[#3E7B52] rounded-full"
+          />
+          <span className="text-[11px] text-[#6E5648] block tabular-nums">
+            {globalStats.completedLessons} of {globalStats.totalLessons} lessons done
+          </span>
+        </StaggerItem>
+
+        <StaggerItem className="p-4 rounded-xl bg-[#FAF5ED] border border-[#D6C6B2] shadow-xs card-hover">
+          <span className="text-[10px] font-mono uppercase text-[#6E5648]">Completed Lessons</span>
+          <div className="font-mono text-2xl font-bold text-[#1E5A99] tabular-nums mt-1">
+            <AnimatedNumber value={globalStats.completedLessons} /> / {globalStats.totalLessons}
+          </div>
+          <span className="text-[11px] text-[#6E5648]">
+            Across {modules.length} module{modules.length === 1 ? '' : 's'}
+          </span>
+        </StaggerItem>
+
+        <StaggerItem className="p-4 rounded-xl bg-[#FAF5ED] border border-[#D6C6B2] shadow-xs card-hover">
+          <span className="text-[10px] font-mono uppercase text-[#6E5648]">Pending Assignments</span>
+          <div className="font-mono text-2xl font-bold text-[#3B2418] tabular-nums mt-1">
+            <AnimatedNumber value={globalStats.pendingAssignments} />
+          </div>
+          <span className="text-[11px] text-[#6E5648]">Synced with Tasks & Calendar</span>
+        </StaggerItem>
+
+        <StaggerItem className="p-4 rounded-xl bg-[#FAF5ED] border border-[#D6C6B2] shadow-xs card-hover">
+          <span className="text-[10px] font-mono uppercase text-[#6E5648]">Logged Study Time</span>
+          <div className="font-mono text-2xl font-bold text-[#3E7B52] tabular-nums mt-1">
+            <AnimatedNumber value={globalStats.totalStudyMinutes} formatter={formatMinutes} />
+          </div>
+          <span className="text-[11px] text-[#6E5648]">
+            {globalStats.completedModules}/{modules.length} modules completed
+          </span>
+        </StaggerItem>
+      </StaggerContainer>
+
+      <AnimatePresence mode="wait" initial={false}>
+        {dashboardTab === 'overview' ? (
+          <motion.div
+            key="learning-dashboard-overview"
+            initial={prefersReduced ? { opacity: 1 } : { opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={prefersReduced ? { opacity: 0 } : { opacity: 0, y: -4 }}
+            transition={{ duration: prefersReduced ? 0.01 : 0.16, ease: MOMENTUM_EASE }}
+            className="space-y-6"
+          >
+            {/* Modules Section */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between px-1">
+                <div className="flex items-center gap-2">
+                  <Layers className="w-4 h-4 text-[#1E5A99]" />
+                  <h2 className="text-sm font-bold text-[#3B2418]">
+                    Learning Modules ({filteredModules.length})
+                  </h2>
+                </div>
+                {sortedModules.length > 1 && (
+                  <span className="text-[11px] text-[#6E5648]">
+                    Drag cards or use arrows to reorder modules
+                  </span>
+                )}
+              </div>
+
+              {modules.length === 0 ? (
+                <div className="p-12 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] text-center space-y-4">
+                  <div className="w-12 h-12 rounded-2xl bg-[#3B2418] text-[#8EC5FF] flex items-center justify-center mx-auto">
+                    <GraduationCap className="w-6 h-6" />
+                  </div>
+                  <div className="space-y-1">
+                    <h3 className="text-base font-bold text-[#3B2418]">
+                      Build Your Personal Learning Workspace
+                    </h3>
+                    <p className="text-xs text-[#6E5648] max-w-lg mx-auto leading-relaxed">
+                      Organize university courses, technical certifications, and self-study tracks into modules. Each lesson gives you rich-text notes, uploaded slides & PDFs, and practical exercises synced to your Tasks and Calendar.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setEditingModule(null);
+                      setModuleModalOpen(true);
+                    }}
+                    className="btn-press inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-[#8EC5FF] hover:bg-[#73B6FC] text-[#3B2418] border border-[#3B2418]/15 font-bold text-xs shadow-xs"
                   >
-                    <div className="flex items-start justify-between gap-4 pb-4 border-b border-[#D6C6B2]">
-                      <div className="space-y-1">
-                        <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-[#3B2418] text-[#8EC5FF] border border-[#5A3927]">
-                          {currentCourse.category}
-                        </span>
-                        <h2 className="text-lg font-bold text-[#3B2418] pt-1">
-                          {currentCourse.title}
-                        </h2>
-                        {currentCourse.instructor && (
-                          <p className="text-xs text-[#6E5648]">
-                            Instructor: {currentCourse.instructor}
-                          </p>
-                        )}
-                        <p className="text-xs text-[#6E5648] leading-relaxed">
-                          {currentCourse.description}
-                        </p>
-                      </div>
+                    <Plus className="w-4 h-4 stroke-[2.5]" />
+                    <span>Create First Module</span>
+                  </button>
+                </div>
+              ) : filteredModules.length === 0 ? (
+                <div className="p-10 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] text-center space-y-2">
+                  <Search className="w-7 h-7 text-[#1E5A99] mx-auto opacity-60" />
+                  <p className="text-sm font-semibold text-[#3B2418]">No modules match your search</p>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSearchQuery('');
+                      setStatusFilter('all');
+                    }}
+                    className="text-xs font-semibold text-[#1E5A99] hover:underline"
+                  >
+                    Clear filters
+                  </button>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {filteredModules.map((mod, idx) => {
+                    const modLessons = lessons.filter(l => l.moduleId === mod.id);
+                    const modTasks = tasks.filter(t => t.moduleId === mod.id && t.status !== 'completed');
+                    const modResources = resources.filter(r => r.moduleId === mod.id);
+                    const stats = computeModuleStats(modLessons);
+                    const isDarkBg =
+                      mod.color === '#3B2418' || mod.color === '#4D3021' || mod.color === '#1E5A99';
+                    const isDragTarget = dragOverModuleId === mod.id && draggedModuleId !== mod.id;
 
-                      <button
-                        onClick={() => {
-                          startFocusTimer(50, { id: currentCourse.id, title: `Study: ${currentCourse.title}` });
-                          setIsFocusTimerOpen(true);
+                    return (
+                      <div
+                        key={mod.id}
+                        draggable
+                        onDragStart={e => {
+                          setDraggedModuleId(mod.id);
+                          e.dataTransfer.effectAllowed = 'move';
+                          e.dataTransfer.setData('text/plain', mod.id);
                         }}
-                        className="btn-press flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#8EC5FF] hover:bg-[#73B6FC] text-[#3B2418] border border-[#3B2418]/15 text-xs font-bold shrink-0 transition-colors shadow-xs"
+                        onDragOver={e => {
+                          e.preventDefault();
+                          if (dragOverModuleId !== mod.id) setDragOverModuleId(mod.id);
+                        }}
+                        onDrop={e => {
+                          e.preventDefault();
+                          const sourceId = draggedModuleId || e.dataTransfer.getData('text/plain');
+                          setDraggedModuleId(null);
+                          setDragOverModuleId(null);
+                          if (sourceId && sourceId !== mod.id) {
+                            const reordered = reorderListByIds(sortedModules, sourceId, mod.id);
+                            void persistModuleOrder(reordered);
+                          }
+                        }}
+                        onDragEnd={() => {
+                          setDraggedModuleId(null);
+                          setDragOverModuleId(null);
+                        }}
+                        onClick={() => {
+                          setSelectedLearningLessonId(null);
+                          setSelectedLearningModuleId(mod.id);
+                        }}
+                        className={`p-5 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between gap-4 card-hover ${
+                          isDragTarget
+                            ? 'bg-[#8EC5FF]/20 border-[#1E5A99]'
+                            : 'bg-[#FAF5ED] border-[#D6C6B2] hover:border-[#8EC5FF]'
+                        }`}
                       >
-                        <Play className="w-3.5 h-3.5 fill-current" />
-                        <span>Start Study Timer</span>
-                      </button>
-                    </div>
+                        <div className="space-y-3">
+                          <div className="flex items-start justify-between gap-2">
+                            <div className="flex items-center gap-3 min-w-0">
+                              <div
+                                className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border border-[#3B2418]/15"
+                                style={{ backgroundColor: mod.color }}
+                              >
+                                <ModuleIconView
+                                  icon={mod.icon}
+                                  className={`w-5 h-5 ${isDarkBg ? 'text-[#F2E8DA]' : 'text-[#3B2418]'}`}
+                                />
+                              </div>
+                              <div className="min-w-0">
+                                <h3 className="text-sm font-bold text-[#3B2418] truncate" title={mod.title}>
+                                  {mod.title}
+                                </h3>
+                                <div className="pt-0.5">
+                                  <StatusLabel status={mod.status} compact />
+                                </div>
+                              </div>
+                            </div>
 
-                    {/* Lessons List */}
-                    <div className="space-y-3">
-                      <span className="text-xs font-bold uppercase tracking-wider text-[#3B2418] block">
-                        Lessons & Modules ({currentCourse.lessons.length})
-                      </span>
-
-                      <div className="space-y-2">
-                        {currentCourse.lessons.map(lesson => (
-                          <div
-                            key={lesson.id}
-                            onClick={() => setSelectedLesson(lesson)}
-                            className={`p-3 rounded-xl border transition-all duration-200 cursor-pointer flex items-center justify-between ${
-                              selectedLesson?.id === lesson.id
-                                ? 'bg-[#8EC5FF]/25 border-[#8EC5FF]'
-                                : 'bg-[#F2E8DA] border-[#D6C6B2] hover:border-[#8EC5FF]'
-                            }`}
-                          >
-                            <div className="flex items-center gap-2.5 min-w-0">
-                              <AnimatedCheckButton
-                                checked={lesson.completed}
-                                size="sm"
-                                onClick={e => {
-                                  e.stopPropagation();
-                                  toggleLessonCompleted(currentCourse.id, lesson.id);
+                            <div
+                              className="flex items-center gap-0.5 shrink-0"
+                              onClick={e => e.stopPropagation()}
+                            >
+                              <span
+                                className="p-1 text-[#6E5648] cursor-grab active:cursor-grabbing hidden sm:inline-flex"
+                                title="Drag to reorder module"
+                              >
+                                <GripVertical className="w-3.5 h-3.5" />
+                              </span>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setEditingModule(mod);
+                                  setModuleModalOpen(true);
                                 }}
-                              />
-                              <span className={`text-xs font-medium truncate transition-colors ${lesson.completed ? 'line-through text-[#6E5648]' : 'text-[#3B2418]'}`}>
-                                {lesson.title}
+                                className="btn-press p-1 rounded-md text-[#6E5648] hover:text-[#3B2418] hover:bg-[#EAE0D0]"
+                                title="Edit module"
+                                aria-label="Edit module"
+                              >
+                                <Edit3 className="w-3.5 h-3.5" />
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => setDeleteModuleTarget(mod)}
+                                className="btn-press p-1 rounded-md text-[#6E5648] hover:text-[#B84A44] hover:bg-[#EAE0D0]"
+                                title="Delete module"
+                                aria-label="Delete module"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
+                          </div>
+
+                          <p className="text-xs text-[#6E5648] line-clamp-2 leading-relaxed min-h-[2.25rem]">
+                            {mod.description || 'No description provided yet.'}
+                          </p>
+                        </div>
+
+                        <div className="space-y-3 pt-3 border-t border-[#D6C6B2]/80">
+                          <div className="space-y-1.5">
+                            <div className="flex items-center justify-between text-[11px]">
+                              <span className="font-mono text-[#6E5648] tabular-nums">
+                                {stats.completed}/{stats.total} lessons
+                              </span>
+                              <span className="font-mono font-bold text-[#1E5A99] tabular-nums">
+                                {stats.progressPct}%
                               </span>
                             </div>
-                            <span className="font-mono text-[10px] text-[#6E5648] shrink-0">
-                              {lesson.studyDurationMinutes}m
-                            </span>
+                            <AnimatedProgressBar
+                              percentage={stats.progressPct}
+                              trackClassName="w-full h-1.5 rounded-full bg-[#EAE0D0] overflow-hidden"
+                              fillClassName="h-full bg-[#3E7B52] rounded-full"
+                            />
                           </div>
-                        ))}
-                      </div>
-                    </div>
 
-                    {/* Selected Lesson Reader / Objectives */}
-                    <AnimatePresence mode="wait" initial={false}>
-                      {selectedLesson && (
-                        <motion.div
-                          key={selectedLesson.id}
-                          initial={prefersReduced ? { opacity: 1 } : { opacity: 0, y: 4 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={prefersReduced ? { opacity: 0 } : { opacity: 0 }}
-                          transition={{ duration: prefersReduced ? 0.01 : 0.15, ease: MOMENTUM_EASE }}
-                          className="p-4 rounded-xl bg-[#F2E8DA] border border-[#D6C6B2] space-y-3"
-                        >
-                          <h3 className="text-xs font-bold text-[#1E5A99] uppercase tracking-wider font-mono">
-                            Lesson Objectives & Notes
-                          </h3>
-                          <p className="text-xs text-[#3B2418] leading-relaxed">
-                            {selectedLesson.content}
-                          </p>
-                          {selectedLesson.learningObjectives?.length > 0 && (
-                            <div className="space-y-1 pt-1">
-                              <span className="text-[10px] text-[#6E5648] uppercase font-mono block">Learning Objectives:</span>
-                              <ul className="text-xs text-[#6E5648] list-disc list-inside space-y-0.5">
-                                {selectedLesson.learningObjectives.map((obj, i) => (
-                                  <li key={i}>{obj}</li>
-                                ))}
-                              </ul>
+                          <div className="flex items-center justify-between text-[11px] text-[#6E5648]">
+                            <div className="flex items-center gap-2 font-mono tabular-nums">
+                              <span className="inline-flex items-center gap-1">
+                                <CheckSquare className="w-3 h-3 text-[#1E5A99]" />
+                                {modTasks.length} open
+                              </span>
+                              <span aria-hidden="true">·</span>
+                              <span className="inline-flex items-center gap-1">
+                                <FolderOpen className="w-3 h-3 text-[#1E5A99]" />
+                                {modResources.length} files
+                              </span>
                             </div>
-                          )}
-                          {selectedLesson.notes && (
-                            <div className="p-2.5 rounded-lg bg-[#FAF5ED] border border-[#D6C6B2] text-xs text-[#6E5648] italic">
-                              Note: {selectedLesson.notes}
+
+                            <div className="flex items-center gap-1" onClick={e => e.stopPropagation()}>
+                              {statusFilter === 'all' && !searchQuery.trim() && sortedModules.length > 1 && (
+                                <>
+                                  <button
+                                    type="button"
+                                    disabled={idx === 0}
+                                    onClick={() => handleMoveModule(mod.id, -1)}
+                                    className="btn-press p-1 rounded text-[#6E5648] hover:text-[#3B2418] disabled:opacity-30"
+                                    title="Move module up"
+                                    aria-label="Move module up"
+                                  >
+                                    <ArrowUp className="w-3 h-3" />
+                                  </button>
+                                  <button
+                                    type="button"
+                                    disabled={idx === sortedModules.length - 1}
+                                    onClick={() => handleMoveModule(mod.id, 1)}
+                                    className="btn-press p-1 rounded text-[#6E5648] hover:text-[#3B2418] disabled:opacity-30"
+                                    title="Move module down"
+                                    aria-label="Move module down"
+                                  >
+                                    <ArrowDown className="w-3 h-3" />
+                                  </button>
+                                </>
+                              )}
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setSelectedLearningLessonId(null);
+                                  setSelectedLearningModuleId(mod.id);
+                                }}
+                                className="inline-flex items-center gap-0.5 font-semibold text-[#1E5A99] hover:underline ml-1"
+                              >
+                                <span>Open</span>
+                                <ChevronRight className="w-3.5 h-3.5" />
+                              </button>
                             </div>
-                          )}
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </motion.div>
-                ) : (
-                  <div className="p-12 text-center text-[#6E5648]">No course selected</div>
-                )}
-              </AnimatePresence>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </div>
+
+            {/* Bottom Two-Column Row: Recently Opened Lessons & Upcoming Learning Deadlines */}
+            {(recentlyOpenedLessons.length > 0 || upcomingDeadlines.length > 0) && (
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Recently Opened Lessons */}
+                <div className="p-5 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] shadow-xs space-y-3">
+                  <div className="flex items-center justify-between pb-2 border-b border-[#D6C6B2]">
+                    <div className="flex items-center gap-2">
+                      <History className="w-4 h-4 text-[#1E5A99]" />
+                      <h3 className="text-sm font-bold text-[#3B2418]">Recently Opened Lessons</h3>
+                    </div>
+                    <span className="text-[11px] font-mono text-[#6E5648] tabular-nums">
+                      {recentlyOpenedLessons.length} shown
+                    </span>
+                  </div>
+
+                  {recentlyOpenedLessons.length === 0 ? (
+                    <p className="text-xs text-[#6E5648] py-6 text-center">
+                      Open a lesson to pick up where you left off.
+                    </p>
+                  ) : (
+                    <div className="space-y-2">
+                      {recentlyOpenedLessons.map(les => {
+                        const mod = modules.find(m => m.id === les.moduleId);
+                        return (
+                          <div
+                            key={les.id}
+                            onClick={() => {
+                              setSelectedLearningModuleId(les.moduleId);
+                              setSelectedLearningLessonId(les.id);
+                            }}
+                            className="p-3 rounded-xl bg-[#F2E8DA] border border-[#D6C6B2] hover:border-[#8EC5FF] cursor-pointer flex items-center justify-between gap-3 transition-colors"
+                          >
+                            <div className="min-w-0 space-y-0.5">
+                              <div className="flex items-center gap-2">
+                                {mod && (
+                                  <span
+                                    className="w-2 h-2 rounded-full shrink-0"
+                                    style={{ backgroundColor: mod.color }}
+                                  />
+                                )}
+                                <span className="text-xs font-bold text-[#3B2418] truncate">
+                                  {les.title}
+                                </span>
+                              </div>
+                              <div className="text-[11px] text-[#6E5648] flex items-center gap-1.5 truncate">
+                                <span>{mod?.title || 'Module'}</span>
+                                {les.teacherName && (
+                                  <>
+                                    <span aria-hidden="true">·</span>
+                                    <span>{les.teacherName}</span>
+                                  </>
+                                )}
+                                <span aria-hidden="true">·</span>
+                                <span className="font-mono tabular-nums">
+                                  {new Date(les.lastOpenedAt || les.updatedAt).toLocaleDateString()}
+                                </span>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-2 shrink-0">
+                              <StatusLabel status={les.status} compact />
+                              <ChevronRight className="w-4 h-4 text-[#6E5648]" />
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+
+                {/* Upcoming Learning Deadlines */}
+                <div className="p-5 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] shadow-xs space-y-3">
+                  <div className="flex items-center justify-between pb-2 border-b border-[#D6C6B2]">
+                    <div className="flex items-center gap-2">
+                      <Calendar className="w-4 h-4 text-[#1E5A99]" />
+                      <h3 className="text-sm font-bold text-[#3B2418]">Upcoming Learning Deadlines</h3>
+                    </div>
+                    <span className="text-[11px] font-mono text-[#6E5648] tabular-nums">
+                      {globalStats.pendingAssignments} pending
+                    </span>
+                  </div>
+
+                  {upcomingDeadlines.length === 0 ? (
+                    <p className="text-xs text-[#6E5648] py-6 text-center">
+                      No pending assignments, labs, or exercises.
+                    </p>
+                  ) : (
+                    <div className="space-y-2">
+                      {upcomingDeadlines.map(t => {
+                        const mod = modules.find(m => m.id === t.moduleId);
+                        const les = t.lessonId ? lessons.find(l => l.id === t.lessonId) : null;
+                        const isOverdue = Boolean(t.dueDate && t.dueDate < todayStr);
+                        return (
+                          <div
+                            key={t.id}
+                            className="p-3 rounded-xl bg-[#F2E8DA] border border-[#D6C6B2] hover:border-[#8EC5FF] flex items-center justify-between gap-3 transition-colors"
+                          >
+                            <div className="flex items-start gap-2.5 min-w-0">
+                              <div className="pt-0.5">
+                                <AnimatedCheckButton
+                                  checked={t.status === 'completed'}
+                                  size="sm"
+                                  onClick={() => void handleToggleUpcomingTask(t)}
+                                />
+                              </div>
+                              <div
+                                onClick={() => {
+                                  setSelectedLearningModuleId(t.moduleId);
+                                  setSelectedLearningLessonId(t.lessonId || null);
+                                }}
+                                className="min-w-0 cursor-pointer space-y-0.5"
+                              >
+                                <div className="text-xs font-bold text-[#3B2418] truncate hover:text-[#1E5A99]">
+                                  {t.title}
+                                </div>
+                                <div className="text-[11px] text-[#6E5648] flex flex-wrap items-center gap-1.5">
+                                  <span className="font-medium text-[#1E5A99]">
+                                    {LEARNING_TASK_KIND_LABELS[t.taskKind]}
+                                  </span>
+                                  {mod && (
+                                    <>
+                                      <span aria-hidden="true">·</span>
+                                      <span className="truncate max-w-[140px]">{mod.title}</span>
+                                    </>
+                                  )}
+                                  {les && (
+                                    <>
+                                      <span aria-hidden="true">·</span>
+                                      <span className="truncate max-w-[140px]">{les.title}</span>
+                                    </>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+
+                            {t.dueDate && (
+                              <span
+                                className={`text-[11px] font-mono tabular-nums shrink-0 ${
+                                  isOverdue ? 'text-[#B84A44] font-bold' : 'text-[#6E5648]'
+                                }`}
+                              >
+                                {isOverdue ? `Overdue · ${t.dueDate}` : t.dueDate}
+                              </span>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
           </motion.div>
         ) : (
-          /* Study Sessions Log Tab */
+          /* Study Sessions Tab (SQLite persisted) */
           <motion.div
-            key="learning-sessions"
+            key="learning-dashboard-sessions"
             initial={prefersReduced ? { opacity: 1 } : { opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
             exit={prefersReduced ? { opacity: 0 } : { opacity: 0, y: -4 }}
             transition={{ duration: prefersReduced ? 0.01 : 0.16, ease: MOMENTUM_EASE }}
             className="p-6 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] shadow-xs space-y-4"
           >
-            <div className="flex items-center justify-between">
-              <h2 className="text-xs font-bold uppercase tracking-wider text-[#3B2418]">
-                Deliberate Study Session Logs
-              </h2>
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h2 className="text-sm font-bold text-[#3B2418]">Deliberate Study Session Logs</h2>
+                <p className="text-xs text-[#6E5648]">
+                  Record focused study blocks and key takeaways linked to your modules.
+                </p>
+              </div>
               <button
-                onClick={() => setShowLogSession(!showLogSession)}
-                className="btn-press px-3 py-1.5 rounded-lg bg-[#8EC5FF] hover:bg-[#73B6FC] text-[#3B2418] border border-[#3B2418]/15 font-bold text-xs shadow-xs transition-colors"
+                type="button"
+                onClick={() => setShowLogForm(!showLogForm)}
+                className="btn-press px-3.5 py-2 rounded-xl bg-[#8EC5FF] hover:bg-[#73B6FC] text-[#3B2418] border border-[#3B2418]/15 font-bold text-xs shadow-xs"
               >
-                {showLogSession ? 'Close Form' : '+ Log Study Session'}
+                {showLogForm ? 'Close Form' : '+ Log Study Session'}
               </button>
             </div>
 
             <AnimatePresence initial={false}>
-              {showLogSession && (
+              {showLogForm && (
                 <motion.form
                   initial={prefersReduced ? { opacity: 1 } : { opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: 'auto' }}
                   exit={prefersReduced ? { opacity: 0 } : { opacity: 0, height: 0 }}
                   transition={{ duration: prefersReduced ? 0.01 : 0.2, ease: MOMENTUM_EASE }}
-                  onSubmit={handleLogStudySession}
+                  onSubmit={handleCreateStudySession}
                   className="overflow-hidden"
                 >
                   <div className="p-4 rounded-xl bg-[#F2E8DA] border border-[#D6C6B2] space-y-3">
-                    <div className="grid grid-cols-2 gap-3">
-                      <div>
-                        <label className="block text-xs font-semibold text-[#6E5648] mb-1">Subject / Topic</label>
+                    <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
+                      <div className="sm:col-span-2">
+                        <label className="block text-xs font-semibold text-[#6E5648] mb-1">
+                          Subject / Topic *
+                        </label>
                         <input
                           type="text"
                           required
-                          value={sessionSubject}
-                          onChange={e => setSessionSubject(e.target.value)}
-                          placeholder="e.g. Asymmetric Cryptography & ECDHE"
+                          value={logSubject}
+                          onChange={e => setLogSubject(e.target.value)}
+                          placeholder="e.g. TLS 1.3 Key Schedule & HKDF"
                           className="w-full px-3 py-1.5 rounded-lg bg-[#FAF5ED] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-semibold text-[#6E5648] mb-1">Duration (minutes)</label>
-                        <input
-                          type="number"
-                          min="5"
-                          max="300"
-                          value={sessionDuration}
-                          onChange={e => setSessionDuration(parseInt(e.target.value))}
-                          className="w-full px-3 py-1.5 rounded-lg bg-[#FAF5ED] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
-                        />
+                        <label className="block text-xs font-semibold text-[#6E5648] mb-1">Module (opt)</label>
+                        <select
+                          value={logModuleId}
+                          onChange={e => setLogModuleId(e.target.value)}
+                          className="w-full px-2.5 py-1.5 rounded-lg bg-[#FAF5ED] border border-[#D6C6B2] text-xs text-[#3B2418]"
+                        >
+                          <option value="">General Study</option>
+                          {sortedModules.map(m => (
+                            <option key={m.id} value={m.id}>
+                              {m.title}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2">
+                        <div>
+                          <label className="block text-xs font-semibold text-[#6E5648] mb-1">Date</label>
+                          <input
+                            type="date"
+                            value={logDate}
+                            onChange={e => setLogDate(e.target.value)}
+                            className="w-full px-2 py-1.5 rounded-lg bg-[#FAF5ED] border border-[#D6C6B2] text-xs text-[#3B2418]"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-semibold text-[#6E5648] mb-1">Minutes</label>
+                          <input
+                            type="number"
+                            min={1}
+                            max={600}
+                            value={logDuration}
+                            onChange={e => setLogDuration(Number(e.target.value))}
+                            className="w-full px-2 py-1.5 rounded-lg bg-[#FAF5ED] border border-[#D6C6B2] text-xs font-mono text-[#3B2418]"
+                          />
+                        </div>
                       </div>
                     </div>
 
                     <div>
-                      <label className="block text-xs font-semibold text-[#6E5648] mb-1">What Was Learned / Key Realization</label>
+                      <label className="block text-xs font-semibold text-[#6E5648] mb-1">
+                        What Was Learned / Key Takeaways *
+                      </label>
                       <textarea
                         rows={2}
                         required
-                        value={sessionLearned}
-                        onChange={e => setSessionLearned(e.target.value)}
-                        placeholder="Concrete insights, proof summaries, or mental models..."
+                        value={logLearned}
+                        onChange={e => setLogLearned(e.target.value)}
+                        placeholder="Summarize core concepts, solved problems, or lab findings..."
                         className="w-full px-3 py-1.5 rounded-lg bg-[#FAF5ED] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
                       />
                     </div>
@@ -456,16 +1188,17 @@ export const LearningView: React.FC = () => {
                     <div className="flex justify-end gap-2">
                       <button
                         type="button"
-                        onClick={() => setShowLogSession(false)}
-                        className="btn-press px-3 py-1 text-xs text-[#6E5648] hover:text-[#3B2418]"
+                        onClick={() => setShowLogForm(false)}
+                        className="px-3 py-1.5 text-xs text-[#6E5648] hover:text-[#3B2418]"
                       >
                         Cancel
                       </button>
                       <button
                         type="submit"
-                        className="btn-press px-4 py-1.5 rounded-lg bg-[#8EC5FF] hover:bg-[#73B6FC] text-[#3B2418] border border-[#3B2418]/15 font-bold text-xs shadow-xs transition-colors"
+                        disabled={savingLog}
+                        className="btn-press px-4 py-1.5 rounded-lg bg-[#8EC5FF] hover:bg-[#73B6FC] text-[#3B2418] font-bold text-xs border border-[#3B2418]/15"
                       >
-                        Save Log
+                        {savingLog ? 'Saving...' : 'Save Session'}
                       </button>
                     </div>
                   </div>
@@ -473,129 +1206,89 @@ export const LearningView: React.FC = () => {
               )}
             </AnimatePresence>
 
-            <div className="space-y-3">
-              <AnimatePresence initial={false}>
-                {state.studySessions.map(session => (
-                  <motion.div
-                    key={session.id}
-                    initial={prefersReduced ? { opacity: 1 } : { opacity: 0, y: 6 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={prefersReduced ? { opacity: 0 } : { opacity: 0 }}
-                    transition={{ duration: prefersReduced ? 0.01 : 0.18, ease: MOMENTUM_EASE }}
-                    className="p-4 rounded-xl bg-[#F2E8DA] border border-[#D6C6B2] space-y-2 card-hover"
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <BookOpen className="w-4 h-4 text-[#1E5A99]" />
-                        <span className="text-sm font-semibold text-[#3B2418]">{session.subject}</span>
+            {studySessions.length === 0 ? (
+              <div className="p-10 rounded-xl bg-[#F2E8DA] border border-[#D6C6B2] text-center space-y-2">
+                <Clock className="w-7 h-7 text-[#1E5A99] mx-auto opacity-60" />
+                <p className="text-sm font-semibold text-[#3B2418]">No study sessions logged yet</p>
+                <p className="text-xs text-[#6E5648]">
+                  Log deliberate study sessions to track total hours across modules and Calendar.
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-2.5">
+                {studySessions.map(s => {
+                  const mod = s.moduleId ? modules.find(m => m.id === s.moduleId) : null;
+                  return (
+                    <div
+                      key={s.id}
+                      className="p-4 rounded-xl bg-[#F2E8DA] border border-[#D6C6B2] space-y-1.5"
+                    >
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <div className="flex items-center gap-2 min-w-0">
+                          <BookOpen className="w-4 h-4 text-[#1E5A99] shrink-0" />
+                          <span className="text-sm font-bold text-[#3B2418] truncate">{s.subject}</span>
+                          {mod && (
+                            <span className="text-[11px] font-medium text-[#1E5A99] truncate">
+                              · {mod.title}
+                            </span>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-2.5 shrink-0">
+                          <span className="text-xs font-mono text-[#6E5648] tabular-nums">
+                            {s.date} · {s.durationMinutes}m
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => setDeleteSessionTarget(s)}
+                            className="p-1 rounded text-[#6E5648] hover:text-[#B84A44]"
+                            title="Delete study log"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-2 text-xs font-mono text-[#6E5648]">
-                        <span>{session.date}</span>
-                        <span>• {session.durationMinutes} mins</span>
-                      </div>
+                      <p className="text-xs text-[#6E5648] leading-relaxed pl-6">
+                        {s.whatWasLearned}
+                      </p>
                     </div>
-                    <p className="text-xs text-[#6E5648] leading-relaxed pl-6">
-                      {session.whatWasLearned}
-                    </p>
-                  </motion.div>
-                ))}
-              </AnimatePresence>
-            </div>
+                  );
+                })}
+              </div>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* New Course Modal */}
-      <ModalShell
-        isOpen={showNewCourseModal}
-        onClose={() => setShowNewCourseModal(false)}
-        maxWidthClass="max-w-lg"
-      >
-        <div className="flex items-center justify-between px-6 py-4 border-b border-[#5A3927] bg-[#3B2418]">
-          <div className="flex items-center gap-2">
-            <GraduationCap className="w-4 h-4 text-[#8EC5FF]" />
-            <h3 className="text-sm font-bold text-[#F2E8DA]">Create Course</h3>
-          </div>
-          <button
-            onClick={() => setShowNewCourseModal(false)}
-            className="text-[#D8C7B4] hover:text-[#F2E8DA] transition-colors"
-          >
-            ✕
-          </button>
-        </div>
+      {/* Module Create / Edit Modal */}
+      <ModuleModal
+        isOpen={moduleModalOpen}
+        onClose={() => {
+          setModuleModalOpen(false);
+          setEditingModule(null);
+        }}
+        editingModule={editingModule}
+        onSubmit={handleSaveModule}
+      />
 
-        <form onSubmit={handleCreateCourse} className="p-6 space-y-4">
-          <div>
-            <label className="block text-xs font-semibold text-[#6E5648] mb-1">Course Title</label>
-            <input
-              type="text"
-              required
-              value={courseTitle}
-              onChange={e => setCourseTitle(e.target.value)}
-              placeholder="e.g. Linux Kernel Security & Hardening"
-              className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
-              autoFocus
-            />
-          </div>
+      {/* Delete Module Confirmation */}
+      <ConfirmDeleteDialog
+        isOpen={Boolean(deleteModuleTarget)}
+        title="Delete Learning Module"
+        description={`Delete "${deleteModuleTarget?.title || ''}" and all lessons, notes, uploaded resources, and tasks inside it? This cannot be undone.`}
+        busy={deletingModule}
+        onCancel={() => setDeleteModuleTarget(null)}
+        onConfirm={handleConfirmDeleteModule}
+      />
 
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="block text-xs font-semibold text-[#6E5648] mb-1">Category</label>
-              <select
-                value={courseCategory}
-                onChange={e => setCourseCategory(e.target.value)}
-                className="w-full px-2.5 py-1.5 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
-              >
-                <option value="Cybersecurity">Cybersecurity</option>
-                <option value="Programming">Programming</option>
-                <option value="Networking">Networking</option>
-                <option value="Linux">Linux</option>
-                <option value="Cloud Computing">Cloud Computing</option>
-                <option value="DevSecOps">DevSecOps</option>
-                <option value="University">University</option>
-                <option value="Other">Other</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-xs font-semibold text-[#6E5648] mb-1">Instructor (opt)</label>
-              <input
-                type="text"
-                value={courseInstructor}
-                onChange={e => setCourseInstructor(e.target.value)}
-                placeholder="e.g. Dr. Vance"
-                className="w-full px-2.5 py-1.5 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-xs font-semibold text-[#6E5648] mb-1">Description</label>
-            <textarea
-              rows={2}
-              value={courseDescription}
-              onChange={e => setCourseDescription(e.target.value)}
-              placeholder="Core syllabus and target skills..."
-              className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
-            />
-          </div>
-
-          <div className="flex justify-end gap-2 pt-2 border-t border-[#D6C6B2]">
-            <button
-              type="button"
-              onClick={() => setShowNewCourseModal(false)}
-              className="btn-press px-3 py-1.5 text-xs text-[#6E5648] hover:text-[#3B2418]"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="btn-press px-4 py-1.5 rounded-lg text-xs font-bold bg-[#8EC5FF] text-[#3B2418] hover:bg-[#73B6FC] border border-[#3B2418]/15 shadow-xs transition-colors"
-            >
-              Create Course
-            </button>
-          </div>
-        </form>
-      </ModalShell>
+      {/* Delete Study Session Confirmation */}
+      <ConfirmDeleteDialog
+        isOpen={Boolean(deleteSessionTarget)}
+        title="Delete Study Log"
+        description={`Remove the study log "${deleteSessionTarget?.subject || ''}"?`}
+        busy={deletingSession}
+        onCancel={() => setDeleteSessionTarget(null)}
+        onConfirm={handleConfirmDeleteSession}
+      />
     </div>
   );
 };
