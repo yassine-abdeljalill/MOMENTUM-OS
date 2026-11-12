@@ -1,26 +1,22 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary-brown: #64432B;
-  --color-primary-brown-dark: #4E3320;
-  --color-primary-brown-light: #7E5437;
-  --color-warm-amber: #D2925B;
-  --color-warm-amber-hover: #C2824B;
-  --color-charcoal-blue: #333C44;
-  --color-charcoal-dark: #22292F;
-  --color-charcoal-surface: #2A333B;
-  --color-charcoal-card: #2E373F;
-  --color-charcoal-card-hover: #36414A;
-  --color-muted-sage: #868A7A;
-  --color-muted-sage-light: #A4A89A;
-  --color-brand-text: #F4F0E9;
-  --color-brand-muted: #A8A8A2;
-  --color-brand-subtle: #7A8086;
-  --color-brand-border: #434D56;
-  --color-brand-border-subtle: rgba(244, 240, 233, 0.1);
-  --color-status-success: #5B8C67;
-  --color-status-warning: #D2925B;
-  --color-status-danger: #B9534F;
+  --color-main-cream: #F2E8DA;
+  --color-cream-elevated: #FAF5ED;
+  --color-cream-inset: #EAE0D0;
+  --color-cream-hover: #E3D5C1;
+  --color-secondary-espresso: #3B2418;
+  --color-espresso-light: #4D3021;
+  --color-espresso-border: #5A3927;
+  --color-detail-sky: #8EC5FF;
+  --color-detail-sky-hover: #73B6FC;
+  --color-detail-sky-deep: #1E5A99;
+  --color-brand-text: #3B2418;
+  --color-brand-muted: #6E5648;
+  --color-brand-border: #D6C6B2;
+  --color-status-success: #3E7B52;
+  --color-status-warning: #A36116;
+  --color-status-danger: #B84A44;
   --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
   --font-serif: 'Playfair Display', Georgia, serif;
   --font-mono: 'JetBrains Mono', monospace;
@@ -28,8 +24,8 @@
 
 body {
   font-family: var(--font-sans);
-  background-color: #242B31;
-  color: #F4F0E9;
+  background-color: #F2E8DA;
+  color: #3B2418;
   min-height: 100vh;
   margin: 0;
   overflow-x: hidden;
@@ -44,11 +40,11 @@ body {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(134, 138, 122, 0.35);
+  background: rgba(59, 36, 24, 0.22);
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(210, 146, 91, 0.5);
+  background: rgba(142, 197, 255, 0.85);
 }
 
 /* Animation utilities */

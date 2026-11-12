@@ -65,26 +65,26 @@ export const AnalyticsView: React.FC = () => {
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-16">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 rounded-2xl bg-[#2E373F] border border-[#434D56]/60">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] shadow-xs">
         <div className="space-y-1">
-          <h1 className="text-xl md:text-2xl font-bold text-[#F4F0E9] tracking-tight">
+          <h1 className="text-xl md:text-2xl font-bold text-[#3B2418] tracking-tight">
             Personal Analytics & Trajectory
           </h1>
-          <p className="text-xs text-[#A8A8A2]">
+          <p className="text-xs text-[#6E5648]">
             Evidence-based metrics distinguishing planned effort, deliberate time spent, and actual outcome progress.
           </p>
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="flex bg-[#242B31] p-1 rounded-xl border border-[#434D56] text-xs">
+          <div className="flex bg-[#F2E8DA] p-1 rounded-xl border border-[#D6C6B2] text-xs">
             {(['7d', '30d', '90d'] as const).map(range => (
               <button
                 key={range}
                 onClick={() => setDateRange(range)}
                 className={`px-3 py-1 rounded-lg font-medium uppercase transition-colors ${
                   dateRange === range
-                    ? 'bg-[#D2925B] text-[#242B31] font-bold'
-                    : 'text-[#868A7A] hover:text-[#F4F0E9]'
+                    ? 'bg-[#8EC5FF] text-[#3B2418] font-bold shadow-xs'
+                    : 'text-[#6E5648] hover:text-[#3B2418]'
                 }`}
               >
                 {range}
@@ -95,18 +95,18 @@ export const AnalyticsView: React.FC = () => {
           <div className="flex items-center gap-2">
             <button
               onClick={handleExportTasks}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#242B31] hover:bg-[#36414A] text-xs text-[#F4F0E9] border border-[#434D56] transition-colors"
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#F2E8DA] hover:bg-[#EAE0D0] text-xs font-medium text-[#3B2418] border border-[#D6C6B2] transition-colors"
               title="Export tasks to CSV"
             >
-              <Download className="w-3.5 h-3.5 text-[#D2925B]" />
+              <Download className="w-3.5 h-3.5 text-[#1E5A99]" />
               <span className="hidden sm:inline">Tasks CSV</span>
             </button>
             <button
               onClick={handleExportGoals}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#242B31] hover:bg-[#36414A] text-xs text-[#F4F0E9] border border-[#434D56] transition-colors"
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#F2E8DA] hover:bg-[#EAE0D0] text-xs font-medium text-[#3B2418] border border-[#D6C6B2] transition-colors"
               title="Export goals to CSV"
             >
-              <Download className="w-3.5 h-3.5 text-[#D2925B]" />
+              <Download className="w-3.5 h-3.5 text-[#1E5A99]" />
               <span className="hidden sm:inline">Goals CSV</span>
             </button>
           </div>
@@ -115,103 +115,103 @@ export const AnalyticsView: React.FC = () => {
 
       {/* KPI 4-Card Overview */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="p-5 rounded-2xl bg-[#2E373F] border border-[#434D56]/60">
-          <span className="text-[10px] font-mono uppercase text-[#868A7A]">Task Execution Rate</span>
+        <div className="p-5 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] shadow-xs">
+          <span className="text-[10px] font-mono uppercase text-[#6E5648]">Task Execution Rate</span>
           <div className="my-2 flex items-baseline gap-2">
-            <span className="font-mono text-3xl font-extrabold text-[#F4F0E9]">{taskCompletionRate}%</span>
-            <span className="text-xs text-[#868A7A]">({completedTasks}/{totalTasks})</span>
+            <span className="font-mono text-3xl font-extrabold text-[#3B2418]">{taskCompletionRate}%</span>
+            <span className="text-xs text-[#6E5648]">({completedTasks}/{totalTasks})</span>
           </div>
-          <div className="w-full bg-[#242B31] h-1.5 rounded-full overflow-hidden">
-            <div className="bg-[#5B8C67] h-full rounded-full" style={{ width: `${taskCompletionRate}%` }} />
+          <div className="w-full bg-[#EAE0D0] h-1.5 rounded-full overflow-hidden">
+            <div className="bg-[#3E7B52] h-full rounded-full" style={{ width: `${taskCompletionRate}%` }} />
           </div>
         </div>
 
-        <div className="p-5 rounded-2xl bg-[#2E373F] border border-[#434D56]/60">
-          <span className="text-[10px] font-mono uppercase text-[#868A7A]">Recorded Deep Work</span>
+        <div className="p-5 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] shadow-xs">
+          <span className="text-[10px] font-mono uppercase text-[#6E5648]">Recorded Deep Work</span>
           <div className="my-2 flex items-baseline gap-2">
-            <span className="font-mono text-3xl font-extrabold text-[#D2925B]">{formatMinutes(totalFocusMinutes)}</span>
+            <span className="font-mono text-3xl font-extrabold text-[#1E5A99]">{formatMinutes(totalFocusMinutes)}</span>
           </div>
-          <span className="text-xs text-[#868A7A]">{state.focusSessions.length} total sessions</span>
+          <span className="text-xs text-[#6E5648]">{state.focusSessions.length} total sessions</span>
         </div>
 
-        <div className="p-5 rounded-2xl bg-[#2E373F] border border-[#434D56]/60">
-          <span className="text-[10px] font-mono uppercase text-[#868A7A]">Milestone Completion</span>
+        <div className="p-5 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] shadow-xs">
+          <span className="text-[10px] font-mono uppercase text-[#6E5648]">Milestone Completion</span>
           <div className="my-2 flex items-baseline gap-2">
-            <span className="font-mono text-3xl font-extrabold text-[#F4F0E9]">
+            <span className="font-mono text-3xl font-extrabold text-[#3B2418]">
               {totalMilestones > 0 ? Math.round((completedMilestones / totalMilestones) * 100) : 0}%
             </span>
-            <span className="text-xs text-[#868A7A]">({completedMilestones}/{totalMilestones})</span>
+            <span className="text-xs text-[#6E5648]">({completedMilestones}/{totalMilestones})</span>
           </div>
-          <div className="w-full bg-[#242B31] h-1.5 rounded-full overflow-hidden">
+          <div className="w-full bg-[#EAE0D0] h-1.5 rounded-full overflow-hidden">
             <div
-              className="bg-[#D2925B] h-full rounded-full"
+              className="bg-[#8EC5FF] h-full rounded-full"
               style={{ width: `${totalMilestones > 0 ? (completedMilestones / totalMilestones) * 100 : 0}%` }}
             />
           </div>
         </div>
 
-        <div className="p-5 rounded-2xl bg-[#2E373F] border border-[#434D56]/60">
-          <span className="text-[10px] font-mono uppercase text-[#868A7A]">Training Volume</span>
+        <div className="p-5 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] shadow-xs">
+          <span className="text-[10px] font-mono uppercase text-[#6E5648]">Training Volume</span>
           <div className="my-2 flex items-baseline gap-2">
-            <span className="font-mono text-3xl font-extrabold text-[#F4F0E9]">
+            <span className="font-mono text-3xl font-extrabold text-[#3B2418]">
               {totalVolumeKg.toLocaleString()}
             </span>
-            <span className="text-xs text-[#868A7A]">kg</span>
+            <span className="text-xs text-[#6E5648]">kg</span>
           </div>
-          <span className="text-xs text-[#868A7A]">{totalWorkouts} sessions logged</span>
+          <span className="text-xs text-[#6E5648]">{totalWorkouts} sessions logged</span>
         </div>
       </div>
 
       {/* Domain Breakdown Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Productivity & Focus Analytics */}
-        <div className="p-6 rounded-2xl bg-[#2E373F] border border-[#434D56]/60 space-y-4">
-          <div className="flex items-center gap-2 pb-3 border-b border-[#434D56]/50">
-            <Clock className="w-4 h-4 text-[#D2925B]" />
-            <h3 className="text-sm font-bold uppercase tracking-wider text-[#F4F0E9]">
+        <div className="p-6 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] shadow-xs space-y-4">
+          <div className="flex items-center gap-2 pb-3 border-b border-[#D6C6B2]">
+            <Clock className="w-4 h-4 text-[#1E5A99]" />
+            <h3 className="text-sm font-bold uppercase tracking-wider text-[#3B2418]">
               Productivity & Focus Trends
             </h3>
           </div>
 
           <div className="space-y-3">
             <div className="flex justify-between items-center text-xs">
-              <span className="text-[#A8A8A2]">Daily Focus Average:</span>
-              <span className="font-mono font-bold text-[#F4F0E9]">
+              <span className="text-[#6E5648]">Daily Focus Average:</span>
+              <span className="font-mono font-bold text-[#3B2418]">
                 {formatMinutes(Math.round(totalFocusMinutes / 7))} / day
               </span>
             </div>
             <div className="flex justify-between items-center text-xs">
-              <span className="text-[#A8A8A2]">Active Habits Consistency:</span>
-              <span className="font-mono font-bold text-[#5B8C67]">86% (sustainable)</span>
+              <span className="text-[#6E5648]">Active Habits Consistency:</span>
+              <span className="font-mono font-bold text-[#3E7B52]">86% (sustainable)</span>
             </div>
             <div className="flex justify-between items-center text-xs">
-              <span className="text-[#A8A8A2]">Unscheduled Task Ratio:</span>
-              <span className="font-mono font-bold text-[#D2925B]">18%</span>
+              <span className="text-[#6E5648]">Unscheduled Task Ratio:</span>
+              <span className="font-mono font-bold text-[#1E5A99]">18%</span>
             </div>
           </div>
         </div>
 
         {/* Academic & Intellectual Analytics */}
-        <div className="p-6 rounded-2xl bg-[#2E373F] border border-[#434D56]/60 space-y-4">
-          <div className="flex items-center gap-2 pb-3 border-b border-[#434D56]/50">
-            <BookOpen className="w-4 h-4 text-[#D2925B]" />
-            <h3 className="text-sm font-bold uppercase tracking-wider text-[#F4F0E9]">
+        <div className="p-6 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] shadow-xs space-y-4">
+          <div className="flex items-center gap-2 pb-3 border-b border-[#D6C6B2]">
+            <BookOpen className="w-4 h-4 text-[#1E5A99]" />
+            <h3 className="text-sm font-bold uppercase tracking-wider text-[#3B2418]">
               Knowledge & Course Progress
             </h3>
           </div>
 
           <div className="space-y-3">
             <div className="flex justify-between items-center text-xs">
-              <span className="text-[#A8A8A2]">Total Dedicated Study Time:</span>
-              <span className="font-mono font-bold text-[#F4F0E9]">{formatMinutes(totalStudyMinutes)}</span>
+              <span className="text-[#6E5648]">Total Dedicated Study Time:</span>
+              <span className="font-mono font-bold text-[#3B2418]">{formatMinutes(totalStudyMinutes)}</span>
             </div>
             <div className="flex justify-between items-center text-xs">
-              <span className="text-[#A8A8A2]">Courses In Progress:</span>
-              <span className="font-mono font-bold text-[#D2925B]">{state.courses.length} active</span>
+              <span className="text-[#6E5648]">Courses In Progress:</span>
+              <span className="font-mono font-bold text-[#1E5A99]">{state.courses.length} active</span>
             </div>
             <div className="flex justify-between items-center text-xs">
-              <span className="text-[#A8A8A2]">Study Log Entries:</span>
-              <span className="font-mono font-bold text-[#5B8C67]">{state.studySessions.length} sessions</span>
+              <span className="text-[#6E5648]">Study Log Entries:</span>
+              <span className="font-mono font-bold text-[#3E7B52]">{state.studySessions.length} sessions</span>
             </div>
           </div>
         </div>

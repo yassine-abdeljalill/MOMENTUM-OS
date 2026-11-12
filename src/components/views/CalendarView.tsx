@@ -76,22 +76,22 @@ export const CalendarView: React.FC = () => {
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-16">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 rounded-2xl bg-[#2E373F] border border-[#434D56]/60">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] shadow-xs">
         <div className="space-y-1">
-          <h1 className="text-xl md:text-2xl font-bold text-[#F4F0E9] tracking-tight">
+          <h1 className="text-xl md:text-2xl font-bold text-[#3B2418] tracking-tight">
             Integrated Master Calendar
           </h1>
-          <p className="text-xs text-[#A8A8A2]">
+          <p className="text-xs text-[#6E5648]">
             Synchronized view of tasks, deadlines, workouts, study blocks, and scheduled activities.
           </p>
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="flex bg-[#242B31] p-1 rounded-xl border border-[#434D56] text-xs">
+          <div className="flex bg-[#F2E8DA] p-1 rounded-xl border border-[#D6C6B2] text-xs">
             <button
               onClick={() => setViewMode('month')}
               className={`px-3 py-1.5 rounded-lg font-medium transition-colors ${
-                viewMode === 'month' ? 'bg-[#D2925B] text-[#242B31] font-bold' : 'text-[#868A7A]'
+                viewMode === 'month' ? 'bg-[#8EC5FF] text-[#3B2418] font-bold shadow-xs' : 'text-[#6E5648] hover:text-[#3B2418]'
               }`}
             >
               Month
@@ -99,7 +99,7 @@ export const CalendarView: React.FC = () => {
             <button
               onClick={() => setViewMode('agenda')}
               className={`px-3 py-1.5 rounded-lg font-medium transition-colors ${
-                viewMode === 'agenda' ? 'bg-[#D2925B] text-[#242B31] font-bold' : 'text-[#868A7A]'
+                viewMode === 'agenda' ? 'bg-[#8EC5FF] text-[#3B2418] font-bold shadow-xs' : 'text-[#6E5648] hover:text-[#3B2418]'
               }`}
             >
               Agenda
@@ -108,7 +108,7 @@ export const CalendarView: React.FC = () => {
 
           <button
             onClick={() => setShowAddEventModal(true)}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#D2925B] hover:bg-[#C2824B] text-[#242B31] font-bold text-xs shadow-sm transition-all"
+            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#8EC5FF] hover:bg-[#73B6FC] text-[#3B2418] border border-[#3B2418]/15 font-bold text-xs shadow-xs transition-all"
           >
             <Plus className="w-4 h-4 stroke-[2.5]" />
             <span>Schedule Activity</span>
@@ -119,26 +119,26 @@ export const CalendarView: React.FC = () => {
       {/* Main Calendar Card */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Calendar Grid (8 cols) */}
-        <div className="lg:col-span-8 p-6 rounded-2xl bg-[#2E373F] border border-[#434D56]/60 space-y-4">
-          <div className="flex items-center justify-between pb-3 border-b border-[#434D56]/60">
-            <h2 className="text-base font-bold text-[#F4F0E9]">{monthName}</h2>
+        <div className="lg:col-span-8 p-6 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] shadow-xs space-y-4">
+          <div className="flex items-center justify-between pb-3 border-b border-[#D6C6B2]">
+            <h2 className="text-base font-bold text-[#3B2418]">{monthName}</h2>
             <div className="flex items-center gap-1">
               <button
                 onClick={prevMonth}
-                className="p-1.5 rounded-lg text-[#868A7A] hover:text-[#F4F0E9] hover:bg-[#242B31]"
+                className="p-1.5 rounded-lg text-[#6E5648] hover:text-[#3B2418] hover:bg-[#F2E8DA]"
                 aria-label="Previous month"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
               <button
                 onClick={() => setCurrentDate(new Date())}
-                className="px-2.5 py-1 text-xs text-[#D2925B] hover:underline"
+                className="px-2.5 py-1 text-xs font-semibold text-[#1E5A99] hover:underline"
               >
                 Today
               </button>
               <button
                 onClick={nextMonth}
-                className="p-1.5 rounded-lg text-[#868A7A] hover:text-[#F4F0E9] hover:bg-[#242B31]"
+                className="p-1.5 rounded-lg text-[#6E5648] hover:text-[#3B2418] hover:bg-[#F2E8DA]"
                 aria-label="Next month"
               >
                 <ChevronRight className="w-4 h-4" />
@@ -147,7 +147,7 @@ export const CalendarView: React.FC = () => {
           </div>
 
           {/* Weekday Labels */}
-          <div className="grid grid-cols-7 gap-1 text-center font-mono text-[11px] text-[#868A7A] pb-1">
+          <div className="grid grid-cols-7 gap-1 text-center font-mono text-[11px] text-[#6E5648] pb-1">
             <span>Sun</span>
             <span>Mon</span>
             <span>Tue</span>
@@ -161,7 +161,7 @@ export const CalendarView: React.FC = () => {
           <div className="grid grid-cols-7 gap-1">
             {/* Empty slots before first day of month */}
             {Array.from({ length: firstDayIndex }).map((_, i) => (
-              <div key={`empty-${i}`} className="h-20 rounded-xl bg-[#242B31]/30 p-1 opacity-20" />
+              <div key={`empty-${i}`} className="h-20 rounded-xl bg-[#EAE0D0]/40 p-1 opacity-40" />
             ))}
 
             {/* Days of current month */}
@@ -183,22 +183,26 @@ export const CalendarView: React.FC = () => {
                   onClick={() => setSelectedDateStr(dateStr)}
                   className={`h-20 rounded-xl p-1.5 flex flex-col justify-between border cursor-pointer transition-all ${
                     isSelected
-                      ? 'bg-[#242B31] border-[#D2925B] shadow-sm'
+                      ? 'bg-[#3B2418] border-[#5A3927] shadow-sm'
                       : isToday
-                      ? 'bg-[#242B31] border-[#7E5437]'
-                      : 'bg-[#242B31]/60 border-[#434D56]/40 hover:border-[#868A7A]'
+                      ? 'bg-[#8EC5FF]/20 border-[#8EC5FF]'
+                      : 'bg-[#F2E8DA] border-[#D6C6B2] hover:border-[#8EC5FF]'
                   }`}
                 >
                   <div className="flex items-center justify-between">
                     <span
                       className={`text-xs font-mono font-bold ${
-                        isToday ? 'text-[#D2925B]' : 'text-[#F4F0E9]'
+                        isSelected
+                          ? 'text-[#F2E8DA]'
+                          : isToday
+                          ? 'text-[#1E5A99]'
+                          : 'text-[#3B2418]'
                       }`}
                     >
                       {dayNum}
                     </span>
                     {totalItems > 0 && (
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#D2925B]" />
+                      <span className={`w-1.5 h-1.5 rounded-full ${isSelected ? 'bg-[#8EC5FF]' : 'bg-[#1E5A99]'}`} />
                     )}
                   </div>
 
@@ -207,7 +211,9 @@ export const CalendarView: React.FC = () => {
                     {items.tasks.slice(0, 1).map(t => (
                       <div
                         key={t.id}
-                        className="text-[9px] truncate px-1 rounded bg-[#D2925B]/20 text-[#D2925B]"
+                        className={`text-[9px] truncate px-1 rounded ${
+                          isSelected ? 'bg-[#8EC5FF]/25 text-[#8EC5FF]' : 'bg-[#8EC5FF]/35 text-[#3B2418]'
+                        }`}
                       >
                         {t.title}
                       </div>
@@ -215,7 +221,9 @@ export const CalendarView: React.FC = () => {
                     {items.workouts.slice(0, 1).map(w => (
                       <div
                         key={w.id}
-                        className="text-[9px] truncate px-1 rounded bg-[#868A7A]/20 text-[#868A7A]"
+                        className={`text-[9px] truncate px-1 rounded ${
+                          isSelected ? 'bg-[#4D3021] text-[#D8C7B4]' : 'bg-[#EAE0D0] text-[#6E5648]'
+                        }`}
                       >
                         🏋️ {w.routineName.split(' ')[0]}
                       </div>
@@ -228,17 +236,17 @@ export const CalendarView: React.FC = () => {
         </div>
 
         {/* Selected Date Detail (4 cols) */}
-        <div className="lg:col-span-4 p-6 rounded-2xl bg-[#2E373F] border border-[#434D56]/60 space-y-4">
-          <div className="flex items-center justify-between pb-3 border-b border-[#434D56]/60">
+        <div className="lg:col-span-4 p-6 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] shadow-xs space-y-4">
+          <div className="flex items-center justify-between pb-3 border-b border-[#D6C6B2]">
             <div>
-              <span className="text-[10px] font-mono uppercase text-[#D2925B] block">
+              <span className="text-[10px] font-mono uppercase text-[#1E5A99] font-semibold block">
                 Selected Day
               </span>
-              <h3 className="text-sm font-bold text-[#F4F0E9]">{selectedDateStr}</h3>
+              <h3 className="text-sm font-bold text-[#3B2418]">{selectedDateStr}</h3>
             </div>
             <button
               onClick={() => setShowAddEventModal(true)}
-              className="text-xs text-[#D2925B] hover:underline"
+              className="text-xs font-semibold text-[#1E5A99] hover:underline"
             >
               + Add
             </button>
@@ -249,15 +257,15 @@ export const CalendarView: React.FC = () => {
             {selectedItems.schedule.map(s => (
               <div
                 key={s.id}
-                className="p-3 rounded-xl bg-[#242B31] border border-[#434D56] text-xs space-y-1"
+                className="p-3 rounded-xl bg-[#F2E8DA] border border-[#D6C6B2] text-xs space-y-1"
               >
                 <div className="flex items-center justify-between">
-                  <span className="font-semibold text-[#F4F0E9]">{s.title}</span>
-                  <span className="font-mono text-[10px] text-[#D2925B]">
+                  <span className="font-semibold text-[#3B2418]">{s.title}</span>
+                  <span className="font-mono text-[10px] font-semibold text-[#1E5A99]">
                     {s.startTime} - {s.endTime}
                   </span>
                 </div>
-                <span className="text-[10px] text-[#868A7A] uppercase font-mono">
+                <span className="text-[10px] text-[#6E5648] uppercase font-mono">
                   Scheduled Activity
                 </span>
               </div>
@@ -267,13 +275,13 @@ export const CalendarView: React.FC = () => {
             {selectedItems.tasks.map(t => (
               <div
                 key={t.id}
-                className="p-3 rounded-xl bg-[#242B31] border border-[#434D56] text-xs space-y-1"
+                className="p-3 rounded-xl bg-[#F2E8DA] border border-[#D6C6B2] text-xs space-y-1"
               >
                 <div className="flex items-center justify-between">
-                  <span className="font-semibold text-[#F4F0E9]">{t.title}</span>
-                  <span className="text-[10px] font-mono uppercase text-[#D2925B]">{t.priority}</span>
+                  <span className="font-semibold text-[#3B2418]">{t.title}</span>
+                  <span className="text-[10px] font-mono uppercase font-semibold text-[#1E5A99]">{t.priority}</span>
                 </div>
-                <span className="text-[10px] text-[#868A7A] uppercase font-mono">
+                <span className="text-[10px] text-[#6E5648] uppercase font-mono">
                   Task Deadline
                 </span>
               </div>
@@ -283,13 +291,13 @@ export const CalendarView: React.FC = () => {
             {selectedItems.workouts.map(w => (
               <div
                 key={w.id}
-                className="p-3 rounded-xl bg-[#242B31] border border-[#434D56] text-xs space-y-1"
+                className="p-3 rounded-xl bg-[#F2E8DA] border border-[#D6C6B2] text-xs space-y-1"
               >
                 <div className="flex items-center justify-between">
-                  <span className="font-semibold text-[#F4F0E9]">{w.routineName}</span>
-                  <span className="text-[10px] font-mono text-[#868A7A]">{w.durationMinutes}m</span>
+                  <span className="font-semibold text-[#3B2418]">{w.routineName}</span>
+                  <span className="text-[10px] font-mono text-[#6E5648]">{w.durationMinutes}m</span>
                 </div>
-                <span className="text-[10px] text-[#868A7A] uppercase font-mono">
+                <span className="text-[10px] text-[#6E5648] uppercase font-mono">
                   Workout Session
                 </span>
               </div>
@@ -298,7 +306,7 @@ export const CalendarView: React.FC = () => {
             {selectedItems.tasks.length === 0 &&
               selectedItems.schedule.length === 0 &&
               selectedItems.workouts.length === 0 && (
-                <div className="py-8 text-center text-[#868A7A] text-xs">
+                <div className="py-8 text-center text-[#6E5648] text-xs">
                   No scheduled activities on this date.
                 </div>
               )}
@@ -308,51 +316,51 @@ export const CalendarView: React.FC = () => {
 
       {/* Schedule Activity Modal */}
       {showAddEventModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#3B2418]/65 backdrop-blur-xs">
           <div
-            className="w-full max-w-sm bg-[#242B31] border border-[#434D56] rounded-2xl shadow-2xl overflow-hidden animate-fade-in"
+            className="w-full max-w-sm bg-[#FAF5ED] border border-[#D6C6B2] rounded-2xl shadow-2xl overflow-hidden animate-fade-in"
             onClick={e => e.stopPropagation()}
           >
-            <div className="px-5 py-3.5 border-b border-[#434D56] bg-[#22292F] flex items-center justify-between">
-              <span className="text-xs font-bold text-[#F4F0E9]">Schedule Block</span>
+            <div className="px-5 py-3.5 border-b border-[#5A3927] bg-[#3B2418] flex items-center justify-between">
+              <span className="text-xs font-bold text-[#F2E8DA]">Schedule Block</span>
               <button
                 onClick={() => setShowAddEventModal(false)}
-                className="text-[#868A7A] hover:text-[#F4F0E9]"
+                className="text-[#D8C7B4] hover:text-[#F2E8DA]"
               >
                 ✕
               </button>
             </div>
             <form onSubmit={handleCreateEvent} className="p-5 space-y-3">
               <div>
-                <label className="block text-[11px] font-semibold text-[#A8A8A2] mb-1">Title</label>
+                <label className="block text-[11px] font-semibold text-[#6E5648] mb-1">Title</label>
                 <input
                   type="text"
                   required
                   value={newEventTitle}
                   onChange={e => setNewEventTitle(e.target.value)}
                   placeholder="e.g. Deep Work: Architecture Spec"
-                  className="w-full px-3 py-1.5 rounded-lg bg-[#2E373F] border border-[#434D56] text-xs text-[#F4F0E9] focus:outline-hidden"
+                  className="w-full px-3 py-1.5 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
                   autoFocus
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <label className="block text-[11px] font-semibold text-[#A8A8A2] mb-1">Start</label>
+                  <label className="block text-[11px] font-semibold text-[#6E5648] mb-1">Start</label>
                   <input
                     type="time"
                     value={newEventStartTime}
                     onChange={e => setNewEventStartTime(e.target.value)}
-                    className="w-full px-2 py-1 rounded-lg bg-[#2E373F] border border-[#434D56] text-xs text-[#F4F0E9]"
+                    className="w-full px-2 py-1 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
                   />
                 </div>
                 <div>
-                  <label className="block text-[11px] font-semibold text-[#A8A8A2] mb-1">End</label>
+                  <label className="block text-[11px] font-semibold text-[#6E5648] mb-1">End</label>
                   <input
                     type="time"
                     value={newEventEndTime}
                     onChange={e => setNewEventEndTime(e.target.value)}
-                    className="w-full px-2 py-1 rounded-lg bg-[#2E373F] border border-[#434D56] text-xs text-[#F4F0E9]"
+                    className="w-full px-2 py-1 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
                   />
                 </div>
               </div>
@@ -361,13 +369,13 @@ export const CalendarView: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setShowAddEventModal(false)}
-                  className="px-3 py-1 text-xs text-[#868A7A]"
+                  className="px-3 py-1 text-xs text-[#6E5648] hover:text-[#3B2418]"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-3.5 py-1 rounded-lg bg-[#D2925B] text-[#242B31] font-semibold text-xs"
+                  className="px-3.5 py-1 rounded-lg bg-[#8EC5FF] hover:bg-[#73B6FC] text-[#3B2418] border border-[#3B2418]/15 font-bold text-xs shadow-xs"
                 >
                   Save Event
                 </button>

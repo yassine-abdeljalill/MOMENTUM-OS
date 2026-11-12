@@ -283,13 +283,13 @@ export function getLifeAreaLabel(area: LifeArea): string {
 export function getPriorityColor(priority: Priority): { bg: string; text: string; border: string } {
   switch (priority) {
     case 'urgent':
-      return { bg: 'bg-[#B9534F]/20', text: 'text-[#E57373]', border: 'border-[#B9534F]/40' };
+      return { bg: 'bg-[#B84A44]/15', text: 'text-[#9E3530]', border: 'border-[#B84A44]/40' };
     case 'high':
-      return { bg: 'bg-[#D2925B]/20', text: 'text-[#D2925B]', border: 'border-[#D2925B]/40' };
+      return { bg: 'bg-[#8EC5FF]/45', text: 'text-[#3B2418]', border: 'border-[#8EC5FF]' };
     case 'medium':
-      return { bg: 'bg-[#868A7A]/20', text: 'text-[#A4A89A]', border: 'border-[#868A7A]/40' };
+      return { bg: 'bg-[#3B2418]/10', text: 'text-[#3B2418]', border: 'border-[#3B2418]/25' };
     case 'low':
     default:
-      return { bg: 'bg-[#434D56]/20', text: 'text-[#B8B5AE]', border: 'border-[#434D56]/40' };
+      return { bg: 'bg-[#3B2418]/5', text: 'text-[#6E5648]', border: 'border-[#3B2418]/15' };
   }
 }

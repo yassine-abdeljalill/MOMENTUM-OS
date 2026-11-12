@@ -117,12 +117,12 @@ export const OverviewView: React.FC = () => {
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-12">
-      {/* Welcome Banner */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#64432B]/90 via-[#4E3320] to-[#2E373F] border border-[#7E5437]/50 p-6 md:p-8 shadow-lg">
+      {/* Welcome Banner (Secondary Espresso Anchor with Sky-Blue Details) */}
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#3B2418] via-[#4D3021] to-[#3B2418] border border-[#5A3927] p-6 md:p-8 shadow-lg">
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="space-y-1">
             <div className="flex items-center gap-2">
-              <span className="text-xs font-mono uppercase tracking-widest text-[#D2925B]">
+              <span className="text-xs font-mono uppercase tracking-widest text-[#8EC5FF]">
                 {new Date().toLocaleDateString(undefined, {
                   weekday: 'long',
                   month: 'long',
@@ -131,10 +131,10 @@ export const OverviewView: React.FC = () => {
                 })}
               </span>
             </div>
-            <h1 className="text-2xl md:text-3xl font-extrabold text-[#F4F0E9] tracking-tight">
+            <h1 className="text-2xl md:text-3xl font-extrabold text-[#F2E8DA] tracking-tight">
               {getGreeting()}, {state.profile.fullName.split(' ')[0]}.
             </h1>
-            <p className="text-sm text-[#A8A8A2] max-w-xl">
+            <p className="text-sm text-[#E6D8C7] max-w-xl">
               &ldquo;Don&apos;t just track what you do. Track who you&apos;re becoming.&rdquo; Focus on your 3 core priorities today.
             </p>
           </div>
@@ -143,56 +143,56 @@ export const OverviewView: React.FC = () => {
           <div className="flex flex-wrap items-center gap-2">
             <button
               onClick={() => setIsQuickAddOpen(true)}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#D2925B] hover:bg-[#C2824B] text-[#242B31] text-xs font-bold shadow-md transition-all active:scale-95"
+              className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#8EC5FF] hover:bg-[#73B6FC] text-[#3B2418] text-xs font-bold shadow-md transition-all active:scale-95"
             >
               <Plus className="w-4 h-4 stroke-[2.5]" />
               <span>Add Task</span>
             </button>
             <button
               onClick={() => setIsFocusTimerOpen(true)}
-              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#242B31]/80 hover:bg-[#242B31] text-[#F4F0E9] border border-[#7E5437]/60 text-xs font-semibold transition-colors"
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#4D3021] hover:bg-[#5A3927] text-[#F2E8DA] border border-[#8EC5FF]/40 text-xs font-semibold transition-colors"
             >
-              <Timer className="w-4 h-4 text-[#D2925B]" />
+              <Timer className="w-4 h-4 text-[#8EC5FF]" />
               <span>Focus Timer</span>
             </button>
             <div className="relative">
               <button
                 onClick={() => setShowSettingsPopover(!showSettingsPopover)}
-                className="p-2 rounded-xl bg-[#242B31]/80 hover:bg-[#242B31] text-[#868A7A] hover:text-[#F4F0E9] border border-[#7E5437]/60 transition-colors"
+                className="p-2 rounded-xl bg-[#4D3021] hover:bg-[#5A3927] text-[#F2E8DA] border border-[#5A3927] transition-colors"
                 title="Configure Dashboard Widgets"
                 aria-label="Configure widgets"
               >
-                <Settings2 className="w-4 h-4" />
+                <Settings2 className="w-4 h-4 text-[#8EC5FF]" />
               </button>
               {showSettingsPopover && (
-                <div className="absolute right-0 mt-2 w-48 bg-[#242B31] border border-[#434D56] rounded-xl shadow-xl p-3 z-30 space-y-2 text-xs">
-                  <span className="font-semibold text-[#F4F0E9] block border-b border-[#434D56] pb-1">
+                <div className="absolute right-0 mt-2 w-48 bg-[#FAF5ED] border border-[#D6C6B2] rounded-xl shadow-xl p-3 z-30 space-y-2 text-xs">
+                  <span className="font-semibold text-[#3B2418] block border-b border-[#D6C6B2] pb-1">
                     Toggle Widgets
                   </span>
-                  <label className="flex items-center gap-2 text-[#A8A8A2] cursor-pointer">
+                  <label className="flex items-center gap-2 text-[#6E5648] cursor-pointer">
                     <input
                       type="checkbox"
                       checked={showWeeklyChart}
                       onChange={e => setShowWeeklyChart(e.target.checked)}
-                      className="rounded accent-[#D2925B]"
+                      className="rounded accent-[#3B2418]"
                     />
                     Weekly Activity
                   </label>
-                  <label className="flex items-center gap-2 text-[#A8A8A2] cursor-pointer">
+                  <label className="flex items-center gap-2 text-[#6E5648] cursor-pointer">
                     <input
                       type="checkbox"
                       checked={showGoalsWidget}
                       onChange={e => setShowGoalsWidget(e.target.checked)}
-                      className="rounded accent-[#D2925B]"
+                      className="rounded accent-[#3B2418]"
                     />
                     Active Goals
                   </label>
-                  <label className="flex items-center gap-2 text-[#A8A8A2] cursor-pointer">
+                  <label className="flex items-center gap-2 text-[#6E5648] cursor-pointer">
                     <input
                       type="checkbox"
                       checked={showHabitsWidget}
                       onChange={e => setShowHabitsWidget(e.target.checked)}
-                      className="rounded accent-[#D2925B]"
+                      className="rounded accent-[#3B2418]"
                     />
                     Daily Habits
                   </label>
@@ -206,79 +206,87 @@ export const OverviewView: React.FC = () => {
       {/* Progress Cards Row */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Daily Completion Overall */}
-        <div className="p-5 rounded-2xl bg-[#2E373F] border border-[#434D56]/60 flex flex-col justify-between">
+        <div className="p-5 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] flex flex-col justify-between shadow-xs">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-[#868A7A]">
+            <span className="text-xs font-semibold uppercase tracking-wider text-[#6E5648]">
               Daily Progress
             </span>
-            <TrendingUp className="w-4 h-4 text-[#D2925B]" />
+            <div className="p-1.5 rounded-lg bg-[#8EC5FF]/40 text-[#3B2418]">
+              <TrendingUp className="w-4 h-4" />
+            </div>
           </div>
           <div className="my-3 flex items-baseline gap-2">
-            <span className="font-mono text-3xl font-extrabold text-[#F4F0E9]">
+            <span className="font-mono text-3xl font-extrabold text-[#3B2418]">
               {dailyScore.overallPercentage}%
             </span>
-            <span className="text-xs text-[#868A7A]">score</span>
+            <span className="text-xs text-[#6E5648]">score</span>
           </div>
-          <div className="w-full bg-[#242B31] h-2 rounded-full overflow-hidden">
+          <div className="w-full bg-[#EAE0D0] h-2 rounded-full overflow-hidden">
             <div
-              className="bg-[#D2925B] h-full rounded-full transition-all duration-500"
+              className="bg-[#8EC5FF] h-full rounded-full transition-all duration-500 border-r border-[#3B2418]/20"
               style={{ width: `${dailyScore.overallPercentage}%` }}
             />
           </div>
         </div>
 
         {/* Tasks Today */}
-        <div className="p-5 rounded-2xl bg-[#2E373F] border border-[#434D56]/60 flex flex-col justify-between">
+        <div className="p-5 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] flex flex-col justify-between shadow-xs">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-[#868A7A]">
+            <span className="text-xs font-semibold uppercase tracking-wider text-[#6E5648]">
               Tasks Completed
             </span>
-            <CheckCircle2 className="w-4 h-4 text-[#5B8C67]" />
+            <div className="p-1.5 rounded-lg bg-[#3E7B52]/15 text-[#3E7B52]">
+              <CheckCircle2 className="w-4 h-4" />
+            </div>
           </div>
           <div className="my-3 flex items-baseline gap-2">
-            <span className="font-mono text-3xl font-extrabold text-[#F4F0E9]">
+            <span className="font-mono text-3xl font-extrabold text-[#3B2418]">
               {tasksCompleted}
             </span>
-            <span className="text-xs text-[#868A7A]">/ {todayTasks.length} planned</span>
+            <span className="text-xs text-[#6E5648]">/ {todayTasks.length} planned</span>
           </div>
-          <div className="text-[11px] text-[#A8A8A2]">
+          <div className="text-[11px] text-[#6E5648]">
             {tasksRemaining === 0 ? 'All scheduled tasks done!' : `${tasksRemaining} remaining for today`}
           </div>
         </div>
 
         {/* Habits Today */}
-        <div className="p-5 rounded-2xl bg-[#2E373F] border border-[#434D56]/60 flex flex-col justify-between">
+        <div className="p-5 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] flex flex-col justify-between shadow-xs">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-[#868A7A]">
+            <span className="text-xs font-semibold uppercase tracking-wider text-[#6E5648]">
               Habits Checked
             </span>
-            <Sparkles className="w-4 h-4 text-[#D2925B]" />
+            <div className="p-1.5 rounded-lg bg-[#8EC5FF]/40 text-[#3B2418]">
+              <Sparkles className="w-4 h-4" />
+            </div>
           </div>
           <div className="my-3 flex items-baseline gap-2">
-            <span className="font-mono text-3xl font-extrabold text-[#F4F0E9]">
+            <span className="font-mono text-3xl font-extrabold text-[#3B2418]">
               {habitsCompletedToday}
             </span>
-            <span className="text-xs text-[#868A7A]">/ {activeHabits.length} habits</span>
+            <span className="text-xs text-[#6E5648]">/ {activeHabits.length} habits</span>
           </div>
-          <div className="text-[11px] text-[#A8A8A2]">
+          <div className="text-[11px] text-[#6E5648]">
             {Math.round((habitsCompletedToday / (activeHabits.length || 1)) * 100)}% consistency today
           </div>
         </div>
 
         {/* Focus Time */}
-        <div className="p-5 rounded-2xl bg-[#2E373F] border border-[#434D56]/60 flex flex-col justify-between">
+        <div className="p-5 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] flex flex-col justify-between shadow-xs">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-[#868A7A]">
+            <span className="text-xs font-semibold uppercase tracking-wider text-[#6E5648]">
               Focus Time
             </span>
-            <Timer className="w-4 h-4 text-[#868A7A]" />
+            <div className="p-1.5 rounded-lg bg-[#3B2418] text-[#8EC5FF]">
+              <Timer className="w-4 h-4" />
+            </div>
           </div>
           <div className="my-3 flex items-baseline gap-2">
-            <span className="font-mono text-3xl font-extrabold text-[#F4F0E9]">
+            <span className="font-mono text-3xl font-extrabold text-[#3B2418]">
               {formatMinutes(todayFocusMinutes)}
             </span>
           </div>
-          <div className="text-[11px] text-[#A8A8A2]">
+          <div className="text-[11px] text-[#6E5648]">
             {state.focusSessions.filter(s => s.startTime.startsWith(todayStr)).length} deep work sessions
           </div>
         </div>
@@ -288,17 +296,19 @@ export const OverviewView: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left Column (2 spans): Today's 3 Core Priorities */}
         <div className="lg:col-span-2 space-y-6">
-          <div className="p-6 rounded-2xl bg-[#2E373F] border border-[#434D56]/60 space-y-4">
+          <div className="p-6 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] space-y-4 shadow-xs">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Flame className="w-4 h-4 text-[#D2925B]" />
-                <h2 className="text-sm font-bold uppercase tracking-wider text-[#F4F0E9]">
+                <div className="p-1.5 rounded-lg bg-[#8EC5FF] text-[#3B2418]">
+                  <Flame className="w-4 h-4" />
+                </div>
+                <h2 className="text-sm font-bold uppercase tracking-wider text-[#3B2418]">
                   Today&apos;s Core Priorities (Rule of 3)
                 </h2>
               </div>
               <button
                 onClick={() => setCurrentView('today')}
-                className="text-xs text-[#D2925B] hover:underline flex items-center gap-1"
+                className="text-xs text-[#1E5A99] font-semibold hover:underline flex items-center gap-1"
               >
                 <span>Manage Today</span>
                 <ChevronRight className="w-3.5 h-3.5" />
@@ -306,15 +316,15 @@ export const OverviewView: React.FC = () => {
             </div>
 
             {dailyPriorities.length === 0 ? (
-              <div className="py-8 text-center text-[#868A7A] space-y-2 border border-dashed border-[#434D56] rounded-xl">
-                <Target className="w-8 h-8 mx-auto opacity-30 text-[#D2925B]" />
-                <p className="text-sm text-[#F4F0E9] font-medium">No core priorities selected for today</p>
-                <p className="text-xs text-[#A8A8A2]">
+              <div className="py-8 text-center text-[#6E5648] space-y-2 border border-dashed border-[#D6C6B2] rounded-xl bg-[#F2E8DA]/60">
+                <Target className="w-8 h-8 mx-auto opacity-50 text-[#1E5A99]" />
+                <p className="text-sm text-[#3B2418] font-medium">No core priorities selected for today</p>
+                <p className="text-xs text-[#6E5648]">
                   Select up to 3 major tasks in the Today tab to anchor your day.
                 </p>
                 <button
                   onClick={() => setCurrentView('today')}
-                  className="mt-2 px-3 py-1.5 rounded-lg bg-[#D2925B] text-[#242B31] font-semibold text-xs"
+                  className="mt-2 px-3 py-1.5 rounded-lg bg-[#8EC5FF] text-[#3B2418] font-semibold text-xs border border-[#3B2418]/15"
                 >
                   Set Priorities
                 </button>
@@ -332,17 +342,17 @@ export const OverviewView: React.FC = () => {
                       key={task.id}
                       className={`p-4 rounded-xl border transition-all flex items-start gap-3 group ${
                         isDone
-                          ? 'bg-[#242B31]/60 border-[#434D56]/40 opacity-75'
-                          : 'bg-[#242B31] border-[#434D56] hover:border-[#D2925B]/50'
+                          ? 'bg-[#EAE0D0]/60 border-[#D6C6B2] opacity-75'
+                          : 'bg-[#F2E8DA] border-[#D6C6B2] hover:border-[#8EC5FF] hover:shadow-xs'
                       }`}
                     >
                       <button
                         onClick={() => toggleTaskCompleted(task.id)}
-                        className="mt-0.5 text-[#868A7A] hover:text-[#5B8C67] transition-colors"
+                        className="mt-0.5 text-[#6E5648] hover:text-[#3E7B52] transition-colors"
                         aria-label={isDone ? 'Mark incomplete' : 'Mark completed'}
                       >
                         {isDone ? (
-                          <CheckCircle2 className="w-5 h-5 text-[#5B8C67] fill-[#5B8C67]/20" />
+                          <CheckCircle2 className="w-5 h-5 text-[#3E7B52] fill-[#3E7B52]/15" />
                         ) : (
                           <Circle className="w-5 h-5" />
                         )}
@@ -350,12 +360,12 @@ export const OverviewView: React.FC = () => {
 
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 flex-wrap">
-                          <span className="font-mono text-xs px-1.5 py-0.2 rounded bg-[#D2925B]/20 text-[#D2925B] font-bold">
+                          <span className="font-mono text-xs px-1.5 py-0.5 rounded bg-[#8EC5FF] text-[#3B2418] font-bold">
                             #{idx + 1}
                           </span>
                           <span
                             className={`text-sm font-semibold truncate ${
-                              isDone ? 'line-through text-[#868A7A]' : 'text-[#F4F0E9]'
+                              isDone ? 'line-through text-[#6E5648]' : 'text-[#3B2418]'
                             }`}
                           >
                             {task.title}
@@ -363,33 +373,33 @@ export const OverviewView: React.FC = () => {
                         </div>
 
                         {task.description && (
-                          <p className="text-xs text-[#A8A8A2] mt-1 line-clamp-1">
+                          <p className="text-xs text-[#6E5648] mt-1 line-clamp-1">
                             {task.description}
                           </p>
                         )}
 
                         <div className="flex items-center gap-2 mt-2 flex-wrap">
                           <span
-                            className={`text-[10px] font-mono px-2 py-0.5 rounded border uppercase ${pColor.bg} ${pColor.text} ${pColor.border}`}
+                            className={`text-[10px] font-mono px-2 py-0.5 rounded border uppercase font-semibold ${pColor.bg} ${pColor.text} ${pColor.border}`}
                           >
                             {task.priority}
                           </span>
 
                           {task.dueTime && (
-                            <span className="text-[11px] text-[#A8A8A2] flex items-center gap-1 font-mono">
-                              <Clock className="w-3 h-3 text-[#868A7A]" />
+                            <span className="text-[11px] text-[#6E5648] flex items-center gap-1 font-mono">
+                              <Clock className="w-3 h-3 text-[#3B2418]" />
                               {task.dueTime}
                             </span>
                           )}
 
                           {relatedGoal && (
-                            <span className="text-[11px] text-[#868A7A] truncate max-w-[150px]">
+                            <span className="text-[11px] text-[#6E5648] truncate max-w-[150px]">
                               🎯 {relatedGoal.title}
                             </span>
                           )}
 
                           {relatedProject && (
-                            <span className="text-[11px] text-[#868A7A] truncate max-w-[150px]">
+                            <span className="text-[11px] text-[#6E5648] truncate max-w-[150px]">
                               📁 {relatedProject.name}
                             </span>
                           )}
@@ -404,31 +414,31 @@ export const OverviewView: React.FC = () => {
 
           {/* Weekly Activity Summary Chart */}
           {showWeeklyChart && (
-            <div className="p-6 rounded-2xl bg-[#2E373F] border border-[#434D56]/60 space-y-4">
+            <div className="p-6 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] space-y-4 shadow-xs">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-bold uppercase tracking-wider text-[#F4F0E9]">
+                <span className="text-xs font-bold uppercase tracking-wider text-[#3B2418]">
                   Weekly Productivity Rhythm
                 </span>
-                <span className="text-xs text-[#868A7A]">Past 7 Days</span>
+                <span className="text-xs text-[#6E5648]">Past 7 Days</span>
               </div>
 
               <div className="h-36 flex items-end justify-between gap-2 pt-4 px-2">
                 {past7Days.map((day, i) => (
                   <div key={i} className="flex-1 flex flex-col items-center gap-2 h-full justify-end group">
-                    <span className="text-[10px] font-mono text-[#D2925B] opacity-0 group-hover:opacity-100 transition-opacity">
+                    <span className="text-[10px] font-mono text-[#1E5A99] font-bold opacity-0 group-hover:opacity-100 transition-opacity">
                       {day.heightPct}%
                     </span>
-                    <div className="w-full max-w-[36px] bg-[#242B31] rounded-t-md h-full flex items-end p-0.5">
+                    <div className="w-full max-w-[36px] bg-[#EAE0D0] rounded-t-md h-full flex items-end p-0.5 border border-[#D6C6B2]/50">
                       <div
                         className={`w-full rounded-t-sm transition-all duration-500 ${
-                          day.isToday ? 'bg-[#D2925B]' : 'bg-[#868A7A]/60 group-hover:bg-[#868A7A]'
+                          day.isToday ? 'bg-[#8EC5FF] border-t-2 border-[#3B2418]' : 'bg-[#3B2418]/65 group-hover:bg-[#3B2418]'
                         }`}
                         style={{ height: `${day.heightPct}%` }}
                       />
                     </div>
                     <span
                       className={`text-[11px] font-medium ${
-                        day.isToday ? 'text-[#D2925B] font-bold' : 'text-[#868A7A]'
+                        day.isToday ? 'text-[#3B2418] font-bold px-1.5 rounded bg-[#8EC5FF]/50' : 'text-[#6E5648]'
                       }`}
                     >
                       {day.dayName}
@@ -444,17 +454,17 @@ export const OverviewView: React.FC = () => {
         <div className="space-y-6">
           {/* Active Goals */}
           {showGoalsWidget && (
-            <div className="p-6 rounded-2xl bg-[#2E373F] border border-[#434D56]/60 space-y-4">
+            <div className="p-6 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] space-y-4 shadow-xs">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Target className="w-4 h-4 text-[#D2925B]" />
-                  <h2 className="text-xs font-bold uppercase tracking-wider text-[#F4F0E9]">
+                  <Target className="w-4 h-4 text-[#1E5A99]" />
+                  <h2 className="text-xs font-bold uppercase tracking-wider text-[#3B2418]">
                     Active Goals
                   </h2>
                 </div>
                 <button
                   onClick={() => setCurrentView('goals')}
-                  className="text-xs text-[#D2925B] hover:underline"
+                  className="text-xs text-[#1E5A99] font-semibold hover:underline"
                 >
                   View All
                 </button>
@@ -470,23 +480,23 @@ export const OverviewView: React.FC = () => {
                         setSelectedGoalId(goal.id);
                         setCurrentView('goals');
                       }}
-                      className="p-3.5 rounded-xl bg-[#242B31] border border-[#434D56] hover:border-[#D2925B]/50 cursor-pointer transition-all space-y-2 group"
+                      className="p-3.5 rounded-xl bg-[#F2E8DA] border border-[#D6C6B2] hover:border-[#8EC5FF] cursor-pointer transition-all space-y-2 group"
                     >
                       <div className="flex items-start justify-between gap-2">
-                        <h3 className="text-xs font-semibold text-[#F4F0E9] group-hover:text-[#D2925B] truncate">
+                        <h3 className="text-xs font-semibold text-[#3B2418] group-hover:text-[#1E5A99] truncate">
                           {goal.title}
                         </h3>
-                        <span className="text-[10px] font-mono font-bold text-[#D2925B] shrink-0">
+                        <span className="text-[10px] font-mono font-bold text-[#3B2418] px-1.5 py-0.5 rounded bg-[#8EC5FF]/60 shrink-0">
                           {progress}%
                         </span>
                       </div>
-                      <div className="w-full bg-[#2E373F] h-1.5 rounded-full overflow-hidden">
+                      <div className="w-full bg-[#EAE0D0] h-1.5 rounded-full overflow-hidden">
                         <div
-                          className="bg-[#D2925B] h-full rounded-full transition-all duration-300"
+                          className="bg-[#8EC5FF] h-full rounded-full transition-all duration-300"
                           style={{ width: `${progress}%` }}
                         />
                       </div>
-                      <div className="flex items-center justify-between text-[10px] text-[#868A7A]">
+                      <div className="flex items-center justify-between text-[10px] text-[#6E5648]">
                         <span className="capitalize">{goal.category.replace('_', ' ')}</span>
                         <span>Due {goal.targetDate}</span>
                       </div>
@@ -499,17 +509,17 @@ export const OverviewView: React.FC = () => {
 
           {/* Today's Habits Checkoff */}
           {showHabitsWidget && (
-            <div className="p-6 rounded-2xl bg-[#2E373F] border border-[#434D56]/60 space-y-4">
+            <div className="p-6 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] space-y-4 shadow-xs">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Sparkles className="w-4 h-4 text-[#D2925B]" />
-                  <h2 className="text-xs font-bold uppercase tracking-wider text-[#F4F0E9]">
+                  <Sparkles className="w-4 h-4 text-[#1E5A99]" />
+                  <h2 className="text-xs font-bold uppercase tracking-wider text-[#3B2418]">
                     Daily Habits
                   </h2>
                 </div>
                 <button
                   onClick={() => setCurrentView('habits')}
-                  className="text-xs text-[#D2925B] hover:underline"
+                  className="text-xs text-[#1E5A99] font-semibold hover:underline"
                 >
                   Habit Hub
                 </button>
@@ -525,29 +535,29 @@ export const OverviewView: React.FC = () => {
                   return (
                     <div
                       key={habit.id}
-                      className="flex items-center justify-between p-3 rounded-xl bg-[#242B31] border border-[#434D56] transition-colors"
+                      className="flex items-center justify-between p-3 rounded-xl bg-[#F2E8DA] border border-[#D6C6B2] transition-colors"
                     >
                       <div className="flex items-center gap-2.5 min-w-0">
                         <button
                           onClick={() => toggleHabitCompletion(habit.id, todayStr)}
-                          className="text-[#868A7A] hover:text-[#5B8C67] transition-colors shrink-0"
+                          className="text-[#6E5648] hover:text-[#3E7B52] transition-colors shrink-0"
                           aria-label={isDone ? 'Mark habit incomplete' : 'Mark habit complete'}
                         >
                           {isDone ? (
-                            <CheckCircle2 className="w-4 h-4 text-[#5B8C67] fill-[#5B8C67]/20" />
+                            <CheckCircle2 className="w-4 h-4 text-[#3E7B52] fill-[#3E7B52]/15" />
                           ) : (
                             <Circle className="w-4 h-4" />
                           )}
                         </button>
                         <span
                           className={`text-xs font-medium truncate ${
-                            isDone ? 'line-through text-[#868A7A]' : 'text-[#F4F0E9]'
+                            isDone ? 'line-through text-[#6E5648]' : 'text-[#3B2418]'
                           }`}
                         >
                           {habit.name}
                         </span>
                       </div>
-                      <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[#2E373F] text-[#D2925B] shrink-0 font-bold">
+                      <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[#3B2418] text-[#8EC5FF] shrink-0 font-bold">
                         🔥 {streak.currentStreak}d
                       </span>
                     </div>

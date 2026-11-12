@@ -60,7 +60,7 @@ const MainContent: React.FC = () => {
   };
 
   return (
-    <div className="flex h-screen w-screen overflow-hidden bg-[#242B31] text-[#F4F0E9]">
+    <div className="flex h-screen w-screen overflow-hidden bg-[#F2E8DA] text-[#3B2418]">
       {/* Persistent Left Sidebar */}
       <Sidebar />
 
@@ -70,7 +70,7 @@ const MainContent: React.FC = () => {
         <Header />
 
         {/* Dynamic Scrollable Page Content */}
-        <main className="flex-1 overflow-y-auto p-4 md:p-8 pt-16 md:pt-8 bg-[#242B31]">
+        <main className="flex-1 overflow-y-auto p-4 md:p-8 pt-16 md:pt-8 bg-[#F2E8DA]">
           {renderCurrentView()}
         </main>
       </div>

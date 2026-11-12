@@ -94,38 +94,38 @@ export const OnboardingModal: React.FC = () => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#3B2418]/75 backdrop-blur-md">
       <div
-        className="w-full max-w-xl bg-[#242B31] border border-[#434D56] rounded-2xl shadow-2xl overflow-hidden flex flex-col animate-fade-in"
+        className="w-full max-w-xl bg-[#FAF5ED] border border-[#D6C6B2] rounded-2xl shadow-2xl overflow-hidden flex flex-col animate-fade-in"
         onClick={e => e.stopPropagation()}
       >
         {/* Progress Bar & Header */}
-        <div className="bg-[#22292F] px-6 pt-5 pb-4 border-b border-[#434D56]">
+        <div className="bg-[#3B2418] px-6 pt-5 pb-4 border-b border-[#5A3927]">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
-              <div className="w-7 h-7 rounded-lg bg-[#D2925B] flex items-center justify-center text-[#242B31] font-bold">
-                <Compass className="w-4 h-4 text-[#242B31]" />
+              <div className="w-7 h-7 rounded-lg bg-[#8EC5FF] flex items-center justify-center text-[#3B2418] font-bold">
+                <Compass className="w-4 h-4 text-[#3B2418]" />
               </div>
-              <span className="font-mono text-xs font-bold text-[#F4F0E9] tracking-wider uppercase">
+              <span className="font-mono text-xs font-bold text-[#F2E8DA] tracking-wider uppercase">
                 MOMENTUM Setup
               </span>
             </div>
             <div className="flex items-center gap-3">
-              <span className="text-xs font-mono text-[#D2925B] font-semibold">
+              <span className="text-xs font-mono text-[#8EC5FF] font-semibold">
                 Step {step} of 7
               </span>
               <button
                 onClick={handleSkip}
-                className="text-xs text-[#868A7A] hover:text-[#F4F0E9] transition-colors"
+                className="text-xs text-[#D8C7B4] hover:text-[#F2E8DA] transition-colors"
               >
                 Skip for now
               </button>
             </div>
           </div>
 
-          <div className="w-full bg-[#2E373F] h-1.5 rounded-full overflow-hidden">
+          <div className="w-full bg-[#4D3021] h-1.5 rounded-full overflow-hidden">
             <div
-              className="bg-[#D2925B] h-full transition-all duration-300"
+              className="bg-[#8EC5FF] h-full transition-all duration-300"
               style={{ width: `${(step / 7) * 100}%` }}
             />
           </div>
@@ -135,17 +135,17 @@ export const OnboardingModal: React.FC = () => {
         <div className="p-6 md:p-8 min-h-[360px] flex flex-col justify-between">
           {step === 1 && (
             <div className="space-y-4 my-auto text-center">
-              <div className="w-16 h-16 rounded-2xl bg-[#64432B] border border-[#D2925B]/40 flex items-center justify-center mx-auto text-[#D2925B] shadow-lg">
+              <div className="w-16 h-16 rounded-2xl bg-[#3B2418] border-2 border-[#8EC5FF] flex items-center justify-center mx-auto text-[#8EC5FF] shadow-lg">
                 <Compass className="w-8 h-8" />
               </div>
-              <h2 className="text-2xl font-bold text-[#F4F0E9] tracking-tight">
+              <h2 className="text-2xl font-bold text-[#3B2418] tracking-tight">
                 Welcome to MOMENTUM
               </h2>
-              <p className="text-sm text-[#A8A8A2] max-w-md mx-auto leading-relaxed">
+              <p className="text-sm text-[#6E5648] max-w-md mx-auto leading-relaxed">
                 Your personal Life Operating System designed to help you transform long-term ambitions
                 into disciplined daily actions.
               </p>
-              <div className="p-4 rounded-xl bg-[#2E373F]/70 border border-[#434D56]/60 text-xs text-[#D2925B] font-serif italic max-w-sm mx-auto">
+              <div className="p-4 rounded-xl bg-[#3B2418] border border-[#5A3927] text-xs text-[#8EC5FF] font-serif italic max-w-sm mx-auto">
                 &ldquo;Don&apos;t just track what you do. Track who you&apos;re becoming.&rdquo;
               </div>
             </div>
@@ -153,37 +153,37 @@ export const OnboardingModal: React.FC = () => {
 
           {step === 2 && (
             <div className="space-y-4 my-auto">
-              <h2 className="text-lg font-bold text-[#F4F0E9]">Personal Profile</h2>
-              <p className="text-xs text-[#A8A8A2]">
+              <h2 className="text-lg font-bold text-[#3B2418]">Personal Profile</h2>
+              <p className="text-xs text-[#6E5648]">
                 Configure your basic identity details to personalize greetings and schedule timezones.
               </p>
 
               <div className="space-y-3 pt-2">
                 <div>
-                  <label className="block text-xs font-medium text-[#A8A8A2] mb-1">Full Name</label>
+                  <label className="block text-xs font-medium text-[#6E5648] mb-1">Full Name</label>
                   <input
                     type="text"
                     value={fullName}
                     onChange={e => setFullName(e.target.value)}
-                    className="w-full px-3 py-2 rounded-lg bg-[#2E373F] border border-[#434D56] text-[#F4F0E9] text-sm focus:border-[#D2925B] focus:outline-hidden"
+                    className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-[#3B2418] text-sm focus:border-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-xs font-medium text-[#A8A8A2] mb-1">Timezone</label>
+                    <label className="block text-xs font-medium text-[#6E5648] mb-1">Timezone</label>
                     <input
                       type="text"
                       value={timezone}
                       onChange={e => setTimezone(e.target.value)}
-                      className="w-full px-3 py-2 rounded-lg bg-[#2E373F] border border-[#434D56] text-[#F4F0E9] text-xs focus:border-[#D2925B] focus:outline-hidden"
+                      className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-[#3B2418] text-xs focus:border-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-[#A8A8A2] mb-1">Language</label>
+                    <label className="block text-xs font-medium text-[#6E5648] mb-1">Language</label>
                     <select
                       value={preferredLanguage}
                       onChange={e => setPreferredLanguage(e.target.value)}
-                      className="w-full px-3 py-2 rounded-lg bg-[#2E373F] border border-[#434D56] text-[#F4F0E9] text-xs focus:border-[#D2925B] focus:outline-hidden"
+                      className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-[#3B2418] text-xs focus:border-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
                     >
                       <option value="English">English</option>
                       <option value="French">French</option>
@@ -199,8 +199,8 @@ export const OnboardingModal: React.FC = () => {
 
           {step === 3 && (
             <div className="space-y-4 my-auto">
-              <h2 className="text-lg font-bold text-[#F4F0E9]">Select Life Areas</h2>
-              <p className="text-xs text-[#A8A8A2]">
+              <h2 className="text-lg font-bold text-[#3B2418]">Select Life Areas</h2>
+              <p className="text-xs text-[#6E5648]">
                 Choose the domains you actively manage. MOMENTUM balances goals and tasks across these categories.
               </p>
 
@@ -221,14 +221,14 @@ export const OnboardingModal: React.FC = () => {
                       key={area.id}
                       type="button"
                       onClick={() => toggleArea(area.id as LifeArea)}
-                      className={`p-3 rounded-xl border text-xs font-medium flex items-center justify-between transition-all ${
+                      className={`p-3 rounded-xl border text-xs font-semibold flex items-center justify-between transition-all ${
                         isSelected
-                          ? 'bg-[#D2925B]/20 border-[#D2925B] text-[#D2925B]'
-                          : 'bg-[#2E373F] border-[#434D56] text-[#A8A8A2] hover:text-[#F4F0E9]'
+                          ? 'bg-[#8EC5FF] border-[#3B2418] text-[#3B2418]'
+                          : 'bg-[#F2E8DA] border-[#D6C6B2] text-[#6E5648] hover:text-[#3B2418]'
                       }`}
                     >
                       <span>{area.label}</span>
-                      {isSelected && <Check className="w-3.5 h-3.5 text-[#D2925B]" />}
+                      {isSelected && <Check className="w-3.5 h-3.5 text-[#3B2418]" />}
                     </button>
                   );
                 })}
@@ -238,8 +238,8 @@ export const OnboardingModal: React.FC = () => {
 
           {step === 4 && (
             <div className="space-y-4 my-auto">
-              <h2 className="text-lg font-bold text-[#F4F0E9]">Your Long-Term Vision</h2>
-              <p className="text-xs text-[#A8A8A2]">
+              <h2 className="text-lg font-bold text-[#3B2418]">Your Long-Term Vision</h2>
+              <p className="text-xs text-[#6E5648]">
                 What kind of person do you want to become? Describe the character, capabilities, and life you are striving toward.
               </p>
 
@@ -248,35 +248,35 @@ export const OnboardingModal: React.FC = () => {
                 value={visionStatement}
                 onChange={e => setVisionStatement(e.target.value)}
                 placeholder="e.g. Become an elite engineer and disciplined leader who builds secure, impactful products while maintaining peak physical vitality and mental clarity..."
-                className="w-full px-4 py-3 rounded-xl bg-[#2E373F] border border-[#434D56] text-[#F4F0E9] text-sm focus:border-[#D2925B] focus:outline-hidden leading-relaxed"
+                className="w-full px-4 py-3 rounded-xl bg-[#F2E8DA] border border-[#D6C6B2] text-[#3B2418] text-sm focus:border-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden leading-relaxed"
               />
             </div>
           )}
 
           {step === 5 && (
             <div className="space-y-4 my-auto">
-              <h2 className="text-lg font-bold text-[#F4F0E9]">Establish Your First Goal</h2>
-              <p className="text-xs text-[#A8A8A2]">
+              <h2 className="text-lg font-bold text-[#3B2418]">Establish Your First Goal</h2>
+              <p className="text-xs text-[#6E5648]">
                 Translate your vision into a concrete objective with a 90-day execution milestone.
               </p>
 
               <div className="space-y-3 pt-2">
                 <div>
-                  <label className="block text-xs font-medium text-[#A8A8A2] mb-1">Goal Title</label>
+                  <label className="block text-xs font-medium text-[#6E5648] mb-1">Goal Title</label>
                   <input
                     type="text"
                     value={firstGoalTitle}
                     onChange={e => setFirstGoalTitle(e.target.value)}
                     placeholder="e.g. Complete Advanced System Architecture Lab"
-                    className="w-full px-3 py-2 rounded-lg bg-[#2E373F] border border-[#434D56] text-[#F4F0E9] text-sm focus:border-[#D2925B] focus:outline-hidden"
+                    className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-[#3B2418] text-sm focus:border-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-[#A8A8A2] mb-1">Primary Life Area</label>
+                  <label className="block text-xs font-medium text-[#6E5648] mb-1">Primary Life Area</label>
                   <select
                     value={firstGoalCategory}
                     onChange={e => setFirstGoalCategory(e.target.value as LifeArea)}
-                    className="w-full px-3 py-2 rounded-lg bg-[#2E373F] border border-[#434D56] text-[#F4F0E9] text-xs focus:border-[#D2925B] focus:outline-hidden"
+                    className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-[#3B2418] text-xs focus:border-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
                   >
                     {selectedAreas.map(a => (
                       <option key={a} value={a}>{a.replace('_', ' ')}</option>
@@ -289,16 +289,16 @@ export const OnboardingModal: React.FC = () => {
 
           {step === 6 && (
             <div className="space-y-4 my-auto">
-              <h2 className="text-lg font-bold text-[#F4F0E9]">Daily Availability</h2>
-              <p className="text-xs text-[#A8A8A2]">
+              <h2 className="text-lg font-bold text-[#3B2418]">Daily Availability</h2>
+              <p className="text-xs text-[#6E5648]">
                 How much dedicated time can you realistically commit each day to deliberate work, study, and training?
               </p>
 
               <div className="pt-4 text-center">
-                <span className="font-mono text-4xl font-extrabold text-[#D2925B]">
+                <span className="font-mono text-4xl font-extrabold text-[#3B2418] px-4 py-1.5 rounded-xl bg-[#8EC5FF]/50 border border-[#8EC5FF]">
                   {dailyHours} hrs / day
                 </span>
-                <p className="text-xs text-[#868A7A] mt-2">
+                <p className="text-xs text-[#6E5648] mt-3">
                   Equals ~{Math.round(dailyHours * 7)} hours of compounding weekly progress.
                 </p>
 
@@ -309,7 +309,7 @@ export const OnboardingModal: React.FC = () => {
                   step="0.5"
                   value={dailyHours}
                   onChange={e => setDailyHours(parseFloat(e.target.value))}
-                  className="w-full max-w-sm mt-6 accent-[#D2925B]"
+                  className="w-full max-w-sm mt-6 accent-[#3B2418]"
                 />
               </div>
             </div>
@@ -317,13 +317,13 @@ export const OnboardingModal: React.FC = () => {
 
           {step === 7 && (
             <div className="space-y-4 my-auto text-center">
-              <div className="w-14 h-14 rounded-2xl bg-[#5B8C67]/20 border border-[#5B8C67]/40 flex items-center justify-center mx-auto text-[#5B8C67]">
+              <div className="w-14 h-14 rounded-2xl bg-[#3E7B52]/15 border border-[#3E7B52]/40 flex items-center justify-center mx-auto text-[#3E7B52]">
                 <CheckCircle2 className="w-8 h-8" />
               </div>
-              <h2 className="text-2xl font-bold text-[#F4F0E9]">
+              <h2 className="text-2xl font-bold text-[#3B2418]">
                 Your Operating System is Ready
               </h2>
-              <p className="text-xs text-[#A8A8A2] max-w-sm mx-auto leading-relaxed">
+              <p className="text-xs text-[#6E5648] max-w-sm mx-auto leading-relaxed">
                 MOMENTUM has initialized your personalized Command Center, active goals, priority schedules,
                 and consistency tracker.
               </p>
@@ -331,12 +331,12 @@ export const OnboardingModal: React.FC = () => {
           )}
 
           {/* Navigation Controls */}
-          <div className="flex items-center justify-between pt-6 border-t border-[#434D56]/60 mt-6">
+          <div className="flex items-center justify-between pt-6 border-t border-[#D6C6B2] mt-6">
             {step > 1 ? (
               <button
                 type="button"
                 onClick={() => setStep(step - 1)}
-                className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-[#868A7A] hover:text-[#F4F0E9] rounded-lg transition-colors"
+                className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-[#6E5648] hover:text-[#3B2418] rounded-lg transition-colors"
               >
                 <ArrowLeft className="w-3.5 h-3.5" />
                 <span>Back</span>
@@ -347,7 +347,7 @@ export const OnboardingModal: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setStep(step + 1)}
-                className="flex items-center gap-1.5 px-5 py-2 text-xs font-semibold rounded-lg bg-[#D2925B] text-[#242B31] hover:bg-[#C2824B] shadow-sm transition-all"
+                className="flex items-center gap-1.5 px-5 py-2 text-xs font-semibold rounded-lg bg-[#8EC5FF] text-[#3B2418] hover:bg-[#73B6FC] border border-[#3B2418]/15 shadow-sm transition-all"
               >
                 <span>Continue</span>
                 <ArrowRight className="w-3.5 h-3.5" />
@@ -356,7 +356,7 @@ export const OnboardingModal: React.FC = () => {
               <button
                 type="button"
                 onClick={handleFinish}
-                className="flex items-center gap-1.5 px-6 py-2.5 text-xs font-bold rounded-lg bg-[#D2925B] text-[#242B31] hover:bg-[#C2824B] shadow-md transition-all active:scale-95"
+                className="flex items-center gap-1.5 px-6 py-2.5 text-xs font-bold rounded-lg bg-[#8EC5FF] text-[#3B2418] hover:bg-[#73B6FC] border border-[#3B2418]/15 shadow-md transition-all active:scale-95"
               >
                 <span>Launch MOMENTUM</span>
                 <ArrowRight className="w-4 h-4" />

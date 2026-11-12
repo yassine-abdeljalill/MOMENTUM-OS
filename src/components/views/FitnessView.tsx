@@ -83,22 +83,22 @@ export const FitnessView: React.FC = () => {
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-16">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 rounded-2xl bg-[#2E373F] border border-[#434D56]/60">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] shadow-xs">
         <div className="space-y-1">
-          <h1 className="text-xl md:text-2xl font-bold text-[#F4F0E9] tracking-tight">
+          <h1 className="text-xl md:text-2xl font-bold text-[#3B2418] tracking-tight">
             Physical Vitality & Training
           </h1>
-          <p className="text-xs text-[#A8A8A2]">
+          <p className="text-xs text-[#6E5648]">
             Build physical stamina, record compound lift progression, and track training volume.
           </p>
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="flex bg-[#242B31] p-1 rounded-xl border border-[#434D56] text-xs">
+          <div className="flex bg-[#F2E8DA] p-1 rounded-xl border border-[#D6C6B2] text-xs">
             <button
               onClick={() => setActiveTab('sessions')}
               className={`px-3 py-1.5 rounded-lg font-medium transition-colors ${
-                activeTab === 'sessions' ? 'bg-[#D2925B] text-[#242B31] font-bold' : 'text-[#868A7A]'
+                activeTab === 'sessions' ? 'bg-[#8EC5FF] text-[#3B2418] font-bold shadow-xs' : 'text-[#6E5648] hover:text-[#3B2418]'
               }`}
             >
               Logged Workouts ({state.workoutSessions.length})
@@ -106,7 +106,7 @@ export const FitnessView: React.FC = () => {
             <button
               onClick={() => setActiveTab('routines')}
               className={`px-3 py-1.5 rounded-lg font-medium transition-colors ${
-                activeTab === 'routines' ? 'bg-[#D2925B] text-[#242B31] font-bold' : 'text-[#868A7A]'
+                activeTab === 'routines' ? 'bg-[#8EC5FF] text-[#3B2418] font-bold shadow-xs' : 'text-[#6E5648] hover:text-[#3B2418]'
               }`}
             >
               Routines ({state.workoutRoutines.length})
@@ -115,7 +115,7 @@ export const FitnessView: React.FC = () => {
 
           <button
             onClick={() => setShowLogModal(true)}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#D2925B] hover:bg-[#C2824B] text-[#242B31] font-bold text-xs shadow-sm transition-all"
+            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#8EC5FF] hover:bg-[#73B6FC] text-[#3B2418] border border-[#3B2418]/15 font-bold text-xs shadow-xs transition-all"
           >
             <Plus className="w-4 h-4 stroke-[2.5]" />
             <span>Log Workout</span>
@@ -125,27 +125,27 @@ export const FitnessView: React.FC = () => {
 
       {/* Fitness Statistics */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <div className="p-4 rounded-xl bg-[#2E373F] border border-[#434D56]/60">
-          <span className="text-[10px] font-mono uppercase text-[#868A7A]">Total Sessions</span>
-          <div className="font-mono text-2xl font-bold text-[#F4F0E9] mt-1">
+        <div className="p-4 rounded-xl bg-[#FAF5ED] border border-[#D6C6B2] shadow-xs">
+          <span className="text-[10px] font-mono uppercase text-[#6E5648]">Total Sessions</span>
+          <div className="font-mono text-2xl font-bold text-[#3B2418] mt-1">
             {state.workoutSessions.length}
           </div>
         </div>
-        <div className="p-4 rounded-xl bg-[#2E373F] border border-[#434D56]/60">
-          <span className="text-[10px] font-mono uppercase text-[#868A7A]">Cumulative Volume</span>
-          <div className="font-mono text-2xl font-bold text-[#D2925B] mt-1">
+        <div className="p-4 rounded-xl bg-[#FAF5ED] border border-[#D6C6B2] shadow-xs">
+          <span className="text-[10px] font-mono uppercase text-[#6E5648]">Cumulative Volume</span>
+          <div className="font-mono text-2xl font-bold text-[#1E5A99] mt-1">
             {totalVolumeKg.toLocaleString()} kg
           </div>
         </div>
-        <div className="p-4 rounded-xl bg-[#2E373F] border border-[#434D56]/60">
-          <span className="text-[10px] font-mono uppercase text-[#868A7A]">Active Cadence</span>
-          <div className="font-mono text-2xl font-bold text-[#5B8C67] mt-1">
+        <div className="p-4 rounded-xl bg-[#FAF5ED] border border-[#D6C6B2] shadow-xs">
+          <span className="text-[10px] font-mono uppercase text-[#6E5648]">Active Cadence</span>
+          <div className="font-mono text-2xl font-bold text-[#3E7B52] mt-1">
             4x / week
           </div>
         </div>
-        <div className="p-4 rounded-xl bg-[#2E373F] border border-[#434D56]/60">
-          <span className="text-[10px] font-mono uppercase text-[#868A7A]">Bench Press PR</span>
-          <div className="font-mono text-2xl font-bold text-[#F4F0E9] mt-1">
+        <div className="p-4 rounded-xl bg-[#FAF5ED] border border-[#D6C6B2] shadow-xs">
+          <span className="text-[10px] font-mono uppercase text-[#6E5648]">Bench Press PR</span>
+          <div className="font-mono text-2xl font-bold text-[#3B2418] mt-1">
             87.5 kg
           </div>
         </div>
@@ -154,12 +154,12 @@ export const FitnessView: React.FC = () => {
       {/* Main Content */}
       {activeTab === 'sessions' ? (
         <div className="space-y-4">
-          <span className="text-xs font-bold uppercase tracking-wider text-[#A8A8A2] block px-1">
+          <span className="text-xs font-bold uppercase tracking-wider text-[#6E5648] block px-1">
             Recent Workout Sessions
           </span>
 
           {state.workoutSessions.length === 0 ? (
-            <div className="p-12 text-center text-[#868A7A] rounded-2xl bg-[#2E373F] border border-[#434D56]">
+            <div className="p-12 text-center text-[#6E5648] rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2]">
               No workouts logged yet. Hit &ldquo;Log Workout&rdquo; to record your first session!
             </div>
           ) : (
@@ -172,22 +172,22 @@ export const FitnessView: React.FC = () => {
               return (
                 <div
                   key={session.id}
-                  className="p-6 rounded-2xl bg-[#2E373F] border border-[#434D56]/60 space-y-4"
+                  className="p-6 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] shadow-xs space-y-4"
                 >
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-[#434D56]/60">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-[#D6C6B2]">
                     <div className="flex items-center gap-2">
-                      <Dumbbell className="w-4 h-4 text-[#D2925B]" />
-                      <h3 className="text-base font-bold text-[#F4F0E9]">
+                      <Dumbbell className="w-4 h-4 text-[#1E5A99]" />
+                      <h3 className="text-base font-bold text-[#3B2418]">
                         {session.routineName}
                       </h3>
                     </div>
-                    <div className="flex items-center gap-3 text-xs font-mono text-[#868A7A]">
+                    <div className="flex items-center gap-3 text-xs font-mono text-[#6E5648]">
                       <span>{session.date}</span>
                       <span>• {session.durationMinutes} mins</span>
-                      <span className="text-[#D2925B] font-bold">• {sessionVolume.toLocaleString()} kg</span>
+                      <span className="text-[#1E5A99] font-bold">• {sessionVolume.toLocaleString()} kg</span>
                       <button
                         onClick={() => deleteWorkoutSession(session.id)}
-                        className="text-[#868A7A] hover:text-[#E57373] transition-colors p-1"
+                        className="text-[#6E5648] hover:text-[#B84A44] transition-colors p-1"
                         title="Delete session"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
@@ -196,7 +196,7 @@ export const FitnessView: React.FC = () => {
                   </div>
 
                   {session.notes && (
-                    <p className="text-xs text-[#A8A8A2] italic">
+                    <p className="text-xs text-[#6E5648] italic">
                       Note: &ldquo;{session.notes}&rdquo;
                     </p>
                   )}
@@ -205,7 +205,7 @@ export const FitnessView: React.FC = () => {
                   <div className="overflow-x-auto">
                     <table className="w-full text-xs text-left">
                       <thead>
-                        <tr className="border-b border-[#434D56]/40 text-[#868A7A] font-mono uppercase text-[10px]">
+                        <tr className="border-b border-[#D6C6B2] text-[#6E5648] font-mono uppercase text-[10px]">
                           <th className="py-2">Exercise</th>
                           <th className="py-2">Set</th>
                           <th className="py-2">Weight</th>
@@ -213,14 +213,14 @@ export const FitnessView: React.FC = () => {
                           <th className="py-2 text-right">Volume</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-[#434D56]/30">
+                      <tbody className="divide-y divide-[#D6C6B2]/60">
                         {session.sets.map((set, sIdx) => (
-                          <tr key={sIdx} className="text-[#F4F0E9]">
+                          <tr key={sIdx} className="text-[#3B2418]">
                             <td className="py-2 font-medium">{set.exerciseName}</td>
-                            <td className="py-2 font-mono text-[#868A7A]">#{set.setNumber}</td>
+                            <td className="py-2 font-mono text-[#6E5648]">#{set.setNumber}</td>
                             <td className="py-2 font-mono">{set.weightKg} kg</td>
                             <td className="py-2 font-mono">{set.reps} reps</td>
-                            <td className="py-2 font-mono text-right text-[#D2925B]">
+                            <td className="py-2 font-mono text-right text-[#1E5A99] font-semibold">
                               {(set.reps * set.weightKg).toLocaleString()} kg
                             </td>
                           </tr>
@@ -239,30 +239,30 @@ export const FitnessView: React.FC = () => {
           {state.workoutRoutines.map(routine => (
             <div
               key={routine.id}
-              className="p-6 rounded-2xl bg-[#2E373F] border border-[#434D56]/60 space-y-4"
+              className="p-6 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] shadow-xs space-y-4"
             >
-              <div className="flex items-center justify-between pb-3 border-b border-[#434D56]/60">
+              <div className="flex items-center justify-between pb-3 border-b border-[#D6C6B2]">
                 <div className="flex items-center gap-2">
-                  <Flame className="w-4 h-4 text-[#D2925B]" />
-                  <h3 className="text-sm font-bold text-[#F4F0E9]">{routine.name}</h3>
+                  <Flame className="w-4 h-4 text-[#1E5A99]" />
+                  <h3 className="text-sm font-bold text-[#3B2418]">{routine.name}</h3>
                 </div>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#242B31] text-[#868A7A]">
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#3B2418] text-[#8EC5FF]">
                   {routine.exercises.length} exercises
                 </span>
               </div>
 
               {routine.description && (
-                <p className="text-xs text-[#A8A8A2]">{routine.description}</p>
+                <p className="text-xs text-[#6E5648]">{routine.description}</p>
               )}
 
               <div className="space-y-2">
                 {routine.exercises.map((ex, i) => (
                   <div
                     key={i}
-                    className="flex items-center justify-between p-2.5 rounded-lg bg-[#242B31] text-xs"
+                    className="flex items-center justify-between p-2.5 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2]/70 text-xs"
                   >
-                    <span className="font-medium text-[#F4F0E9]">{ex.exerciseName}</span>
-                    <span className="font-mono text-[#D2925B]">
+                    <span className="font-medium text-[#3B2418]">{ex.exerciseName}</span>
+                    <span className="font-mono text-[#1E5A99] font-semibold">
                       {ex.defaultSets} × {ex.defaultReps}
                     </span>
                   </div>
@@ -275,19 +275,19 @@ export const FitnessView: React.FC = () => {
 
       {/* Log Workout Modal */}
       {showLogModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#3B2418]/65 backdrop-blur-xs">
           <div
-            className="w-full max-w-xl bg-[#242B31] border border-[#434D56] rounded-2xl shadow-2xl overflow-hidden animate-fade-in flex flex-col max-h-[85vh]"
+            className="w-full max-w-xl bg-[#FAF5ED] border border-[#D6C6B2] rounded-2xl shadow-2xl overflow-hidden animate-fade-in flex flex-col max-h-[85vh]"
             onClick={e => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between px-6 py-4 border-b border-[#434D56] bg-[#22292F]">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-[#5A3927] bg-[#3B2418]">
               <div className="flex items-center gap-2">
-                <Dumbbell className="w-4 h-4 text-[#D2925B]" />
-                <h3 className="text-sm font-bold text-[#F4F0E9]">Log Training Session</h3>
+                <Dumbbell className="w-4 h-4 text-[#8EC5FF]" />
+                <h3 className="text-sm font-bold text-[#F2E8DA]">Log Training Session</h3>
               </div>
               <button
                 onClick={() => setShowLogModal(false)}
-                className="text-[#868A7A] hover:text-[#F4F0E9]"
+                className="text-[#D8C7B4] hover:text-[#F2E8DA]"
               >
                 ✕
               </button>
@@ -296,11 +296,11 @@ export const FitnessView: React.FC = () => {
             <form onSubmit={handleLogWorkout} className="p-6 space-y-4 overflow-y-auto flex-1">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-[#A8A8A2] mb-1">Routine</label>
+                  <label className="block text-xs font-semibold text-[#6E5648] mb-1">Routine</label>
                   <select
                     value={selectedRoutine}
                     onChange={e => setSelectedRoutine(e.target.value)}
-                    className="w-full px-2.5 py-1.5 rounded-lg bg-[#2E373F] border border-[#434D56] text-xs text-[#F4F0E9] focus:outline-hidden"
+                    className="w-full px-2.5 py-1.5 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
                   >
                     {state.workoutRoutines.map(r => (
                       <option key={r.id} value={r.name}>{r.name}</option>
@@ -310,26 +310,26 @@ export const FitnessView: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-[#A8A8A2] mb-1">Duration (min)</label>
+                  <label className="block text-xs font-semibold text-[#6E5648] mb-1">Duration (min)</label>
                   <input
                     type="number"
                     min="15"
                     max="180"
                     value={sessionDuration}
                     onChange={e => setSessionDuration(parseInt(e.target.value))}
-                    className="w-full px-2.5 py-1.5 rounded-lg bg-[#2E373F] border border-[#434D56] text-xs text-[#F4F0E9] focus:outline-hidden"
+                    className="w-full px-2.5 py-1.5 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
                   />
                 </div>
               </div>
 
               {/* Sets Editor */}
-              <div className="space-y-2 pt-2 border-t border-[#434D56]/60">
+              <div className="space-y-2 pt-2 border-t border-[#D6C6B2]">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold text-[#F4F0E9]">Recorded Sets</span>
+                  <span className="text-xs font-semibold text-[#3B2418]">Recorded Sets</span>
                   <button
                     type="button"
                     onClick={handleAddSet}
-                    className="text-xs text-[#D2925B] hover:underline"
+                    className="text-xs font-semibold text-[#1E5A99] hover:underline"
                   >
                     + Add Set
                   </button>
@@ -339,7 +339,7 @@ export const FitnessView: React.FC = () => {
                   {sets.map((set, idx) => (
                     <div
                       key={set.id}
-                      className="p-2.5 rounded-lg bg-[#2E373F] border border-[#434D56] flex flex-wrap items-center gap-2 text-xs"
+                      className="p-2.5 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] flex flex-wrap items-center gap-2 text-xs"
                     >
                       <input
                         type="text"
@@ -349,7 +349,7 @@ export const FitnessView: React.FC = () => {
                           updated[idx].exerciseName = e.target.value;
                           setSets(updated);
                         }}
-                        className="flex-1 min-w-[130px] px-2 py-1 rounded bg-[#242B31] border border-[#434D56] text-xs text-[#F4F0E9]"
+                        className="flex-1 min-w-[130px] px-2 py-1 rounded bg-[#FAF5ED] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
                       />
                       <div className="flex items-center gap-1">
                         <input
@@ -361,9 +361,9 @@ export const FitnessView: React.FC = () => {
                             updated[idx].weightKg = parseFloat(e.target.value) || 0;
                             setSets(updated);
                           }}
-                          className="w-14 px-1.5 py-1 rounded bg-[#242B31] border border-[#434D56] text-xs text-[#F4F0E9] text-center"
+                          className="w-14 px-1.5 py-1 rounded bg-[#FAF5ED] border border-[#D6C6B2] text-xs text-[#3B2418] text-center focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
                         />
-                        <span className="text-[10px] text-[#868A7A]">kg</span>
+                        <span className="text-[10px] text-[#6E5648]">kg</span>
                       </div>
                       <div className="flex items-center gap-1">
                         <input
@@ -374,14 +374,14 @@ export const FitnessView: React.FC = () => {
                             updated[idx].reps = parseInt(e.target.value) || 0;
                             setSets(updated);
                           }}
-                          className="w-12 px-1.5 py-1 rounded bg-[#242B31] border border-[#434D56] text-xs text-[#F4F0E9] text-center"
+                          className="w-12 px-1.5 py-1 rounded bg-[#FAF5ED] border border-[#D6C6B2] text-xs text-[#3B2418] text-center focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
                         />
-                        <span className="text-[10px] text-[#868A7A]">reps</span>
+                        <span className="text-[10px] text-[#6E5648]">reps</span>
                       </div>
                       <button
                         type="button"
                         onClick={() => handleRemoveSet(idx)}
-                        className="text-[#868A7A] hover:text-[#E57373] p-1"
+                        className="text-[#6E5648] hover:text-[#B84A44] p-1"
                       >
                         ✕
                       </button>
@@ -391,27 +391,27 @@ export const FitnessView: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-[#A8A8A2] mb-1">Session Notes</label>
+                <label className="block text-xs font-semibold text-[#6E5648] mb-1">Session Notes</label>
                 <textarea
                   rows={2}
                   value={sessionNotes}
                   onChange={e => setSessionNotes(e.target.value)}
                   placeholder="RPE, energy level, recovery..."
-                  className="w-full px-3 py-1.5 rounded-lg bg-[#2E373F] border border-[#434D56] text-xs text-[#F4F0E9] focus:outline-hidden"
+                  className="w-full px-3 py-1.5 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
                 />
               </div>
 
-              <div className="flex justify-end gap-2 pt-3 border-t border-[#434D56]">
+              <div className="flex justify-end gap-2 pt-3 border-t border-[#D6C6B2]">
                 <button
                   type="button"
                   onClick={() => setShowLogModal(false)}
-                  className="px-3 py-1.5 text-xs text-[#868A7A]"
+                  className="px-3 py-1.5 text-xs text-[#6E5648] hover:text-[#3B2418]"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-1.5 rounded-lg text-xs font-bold bg-[#D2925B] text-[#242B31] hover:bg-[#C2824B]"
+                  className="px-4 py-1.5 rounded-lg text-xs font-bold bg-[#8EC5FF] text-[#3B2418] hover:bg-[#73B6FC] border border-[#3B2418]/15 shadow-xs"
                 >
                   Save Workout
                 </button>

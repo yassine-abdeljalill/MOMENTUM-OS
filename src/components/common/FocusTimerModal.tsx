@@ -115,12 +115,12 @@ export const FocusTimerModal: React.FC = () => {
 
   return (
     <div
-      className={`fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm transition-all ${
+      className={`fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#3B2418]/70 backdrop-blur-sm transition-all ${
         isFullscreen ? 'p-0' : ''
       }`}
     >
       <div
-        className={`w-full bg-[#242B31] border border-[#434D56] shadow-2xl flex flex-col transition-all overflow-hidden ${
+        className={`w-full bg-[#3B2418] border border-[#5A3927] shadow-2xl flex flex-col transition-all overflow-hidden ${
           isFullscreen
             ? 'h-screen w-screen rounded-none border-0'
             : 'max-w-xl rounded-2xl'
@@ -128,14 +128,14 @@ export const FocusTimerModal: React.FC = () => {
         onClick={e => e.stopPropagation()}
       >
         {/* Top bar */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-[#434D56]/60 bg-[#22292F]">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[#5A3927] bg-[#4D3021]">
           <div className="flex items-center gap-2">
-            <Timer className="w-5 h-5 text-[#D2925B]" />
-            <h2 className="font-semibold text-sm text-[#F4F0E9] tracking-wide">
+            <Timer className="w-5 h-5 text-[#8EC5FF]" />
+            <h2 className="font-semibold text-sm text-[#F2E8DA] tracking-wide">
               {focusTimer.sessionType === 'focus' ? 'Deep Work Focus Timer' : 'Restorative Break'}
             </h2>
             {focusTimer.linkedTaskTitle && (
-              <span className="hidden sm:inline-block text-xs px-2 py-0.5 rounded bg-[#64432B]/80 text-[#D2925B] truncate max-w-[200px]">
+              <span className="hidden sm:inline-block text-xs px-2 py-0.5 rounded bg-[#8EC5FF]/20 text-[#8EC5FF] border border-[#8EC5FF]/30 truncate max-w-[200px]">
                 {focusTimer.linkedTaskTitle}
               </span>
             )}
@@ -144,21 +144,21 @@ export const FocusTimerModal: React.FC = () => {
           <div className="flex items-center gap-2">
             <button
               onClick={() => setSoundEnabled(!soundEnabled)}
-              className="p-1.5 rounded-lg text-[#868A7A] hover:text-[#F4F0E9] hover:bg-[#2E373F]"
+              className="p-1.5 rounded-lg text-[#D8C7B4] hover:text-[#F2E8DA] hover:bg-[#3B2418]"
               title={soundEnabled ? 'Mute chime' : 'Enable chime'}
             >
               {soundEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
             </button>
             <button
               onClick={() => setIsFullscreen(!isFullscreen)}
-              className="p-1.5 rounded-lg text-[#868A7A] hover:text-[#F4F0E9] hover:bg-[#2E373F]"
+              className="p-1.5 rounded-lg text-[#D8C7B4] hover:text-[#F2E8DA] hover:bg-[#3B2418]"
               title={isFullscreen ? 'Exit Fullscreen' : 'Fullscreen Focus Mode'}
             >
               {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
             </button>
             <button
               onClick={() => setIsFocusTimerOpen(false)}
-              className="p-1.5 rounded-lg text-[#868A7A] hover:text-[#F4F0E9] hover:bg-[#2E373F]"
+              className="p-1.5 rounded-lg text-[#D8C7B4] hover:text-[#F2E8DA] hover:bg-[#3B2418]"
               aria-label="Close timer"
             >
               <X className="w-4 h-4" />
@@ -176,7 +176,7 @@ export const FocusTimerModal: React.FC = () => {
                 cx="50%"
                 cy="50%"
                 r="44%"
-                className="stroke-[#2E373F]"
+                className="stroke-[#4D3021]"
                 strokeWidth="8"
                 fill="transparent"
               />
@@ -184,7 +184,7 @@ export const FocusTimerModal: React.FC = () => {
                 cx="50%"
                 cy="50%"
                 r="44%"
-                className="stroke-[#D2925B] transition-all duration-300"
+                className="stroke-[#8EC5FF] transition-all duration-300"
                 strokeWidth="8"
                 strokeDasharray="276%"
                 strokeDashoffset={`${276 - (276 * progressPercent) / 100}%`}
@@ -195,10 +195,10 @@ export const FocusTimerModal: React.FC = () => {
 
             {/* Inner Digits */}
             <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <span className="font-mono text-5xl sm:text-6xl font-extrabold text-[#F4F0E9] tracking-tight">
+              <span className="font-mono text-5xl sm:text-6xl font-extrabold text-[#F2E8DA] tracking-tight">
                 {timeFormatted}
               </span>
-              <span className="text-xs text-[#868A7A] font-medium uppercase tracking-widest mt-2">
+              <span className="text-xs text-[#8EC5FF] font-medium uppercase tracking-widest mt-2">
                 {focusTimer.isActive
                   ? focusTimer.isPaused
                     ? 'Paused'
@@ -214,7 +214,7 @@ export const FocusTimerModal: React.FC = () => {
               <>
                 <button
                   onClick={focusTimer.isPaused ? resumeFocusTimer : pauseFocusTimer}
-                  className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#D2925B] hover:bg-[#C2824B] text-[#242B31] font-bold text-sm shadow-md transition-all active:scale-95"
+                  className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#8EC5FF] hover:bg-[#73B6FC] text-[#3B2418] font-bold text-sm shadow-md transition-all active:scale-95"
                 >
                   {focusTimer.isPaused ? (
                     <>
@@ -230,14 +230,14 @@ export const FocusTimerModal: React.FC = () => {
                 </button>
                 <button
                   onClick={resetFocusTimer}
-                  className="p-2.5 rounded-xl bg-[#2E373F] hover:bg-[#36414A] text-[#868A7A] hover:text-[#F4F0E9] border border-[#434D56] transition-colors"
+                  className="p-2.5 rounded-xl bg-[#4D3021] hover:bg-[#5A3927] text-[#F2E8DA] border border-[#5A3927] transition-colors"
                   title="Reset Timer"
                 >
                   <RotateCcw className="w-4 h-4" />
                 </button>
                 <button
                   onClick={handleFinish}
-                  className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#5B8C67]/20 hover:bg-[#5B8C67]/30 text-[#5B8C67] border border-[#5B8C67]/40 font-semibold text-xs transition-colors"
+                  className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#3E7B52]/30 hover:bg-[#3E7B52]/40 text-[#9FE2B5] border border-[#3E7B52]/60 font-semibold text-xs transition-colors"
                   title="Complete session and record focus time"
                 >
                   <CheckCircle2 className="w-4 h-4" />
@@ -247,7 +247,7 @@ export const FocusTimerModal: React.FC = () => {
             ) : (
               <button
                 onClick={() => handleStartPreset(25, 'focus')}
-                className="flex items-center gap-2 px-8 py-3 rounded-xl bg-[#D2925B] hover:bg-[#C2824B] text-[#242B31] font-bold text-sm shadow-lg transition-all active:scale-95"
+                className="flex items-center gap-2 px-8 py-3 rounded-xl bg-[#8EC5FF] hover:bg-[#73B6FC] text-[#3B2418] font-bold text-sm shadow-lg transition-all active:scale-95"
               >
                 <Play className="w-4 h-4 fill-current" />
                 <span>Start 25m Focus</span>
@@ -258,32 +258,32 @@ export const FocusTimerModal: React.FC = () => {
 
         {/* Presets & Link to Task */}
         {!isFullscreen && (
-          <div className="p-6 border-t border-[#434D56]/60 bg-[#22292F] space-y-4">
+          <div className="p-6 border-t border-[#D6C6B2] bg-[#FAF5ED] space-y-4">
             {/* Presets */}
             <div className="flex flex-wrap items-center justify-between gap-2">
-              <span className="text-xs text-[#868A7A] font-medium">Presets:</span>
+              <span className="text-xs text-[#6E5648] font-medium">Presets:</span>
               <div className="flex flex-wrap gap-2">
                 <button
                   onClick={() => handleStartPreset(25, 'focus')}
-                  className="px-3 py-1 text-xs rounded-lg bg-[#2E373F] hover:bg-[#36414A] text-[#F4F0E9] border border-[#434D56]"
+                  className="px-3 py-1 text-xs rounded-lg bg-[#F2E8DA] hover:bg-[#8EC5FF] text-[#3B2418] font-medium border border-[#D6C6B2] transition-colors"
                 >
                   25m Focus
                 </button>
                 <button
                   onClick={() => handleStartPreset(50, 'focus')}
-                  className="px-3 py-1 text-xs rounded-lg bg-[#2E373F] hover:bg-[#36414A] text-[#F4F0E9] border border-[#434D56]"
+                  className="px-3 py-1 text-xs rounded-lg bg-[#F2E8DA] hover:bg-[#8EC5FF] text-[#3B2418] font-medium border border-[#D6C6B2] transition-colors"
                 >
                   50m Deep
                 </button>
                 <button
                   onClick={() => handleStartPreset(5, 'break')}
-                  className="px-3 py-1 text-xs rounded-lg bg-[#2E373F] hover:bg-[#36414A] text-[#868A7A] border border-[#434D56]"
+                  className="px-3 py-1 text-xs rounded-lg bg-[#F2E8DA] hover:bg-[#E3D5C1] text-[#6E5648] hover:text-[#3B2418] border border-[#D6C6B2] transition-colors"
                 >
                   5m Break
                 </button>
                 <button
                   onClick={() => handleStartPreset(10, 'break')}
-                  className="px-3 py-1 text-xs rounded-lg bg-[#2E373F] hover:bg-[#36414A] text-[#868A7A] border border-[#434D56]"
+                  className="px-3 py-1 text-xs rounded-lg bg-[#F2E8DA] hover:bg-[#E3D5C1] text-[#6E5648] hover:text-[#3B2418] border border-[#D6C6B2] transition-colors"
                 >
                   10m Break
                 </button>
@@ -292,14 +292,14 @@ export const FocusTimerModal: React.FC = () => {
 
             {/* Task Linking */}
             <div className="flex items-center gap-3">
-              <div className="flex items-center gap-1.5 text-xs text-[#868A7A] shrink-0">
-                <CheckSquare className="w-3.5 h-3.5" />
+              <div className="flex items-center gap-1.5 text-xs text-[#6E5648] shrink-0 font-medium">
+                <CheckSquare className="w-3.5 h-3.5 text-[#3B2418]" />
                 <span>Link Task:</span>
               </div>
               <select
                 value={selectedTaskId}
                 onChange={e => handleTaskChange(e.target.value)}
-                className="flex-1 px-3 py-1.5 rounded-lg bg-[#2E373F] border border-[#434D56] text-[#F4F0E9] text-xs focus:border-[#D2925B] focus:outline-hidden"
+                className="flex-1 px-3 py-1.5 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-[#3B2418] text-xs focus:border-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
               >
                 <option value="">No task linked (general focus)</option>
                 {state.tasks

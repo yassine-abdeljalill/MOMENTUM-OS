@@ -129,7 +129,7 @@ export const QuickAddModal: React.FC = () => {
       frequency: habitFrequency,
       targetCountPerDay: 1,
       startDate: new Date().toISOString().split('T')[0],
-      color: '#D2925B',
+      color: '#8EC5FF',
       active: true,
     });
 
@@ -145,7 +145,7 @@ export const QuickAddModal: React.FC = () => {
       name: projectName.trim(),
       description: projectDescription.trim(),
       category: projectCategory,
-      color: '#D2925B',
+      color: '#8EC5FF',
       status: 'active',
       priority: 'high',
       startDate: new Date().toISOString().split('T')[0],
@@ -180,20 +180,20 @@ export const QuickAddModal: React.FC = () => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#3B2418]/60 backdrop-blur-xs">
       <div
-        className="w-full max-w-lg bg-[#2E373F] border border-[#434D56] rounded-xl shadow-2xl overflow-hidden flex flex-col animate-fade-in"
+        className="w-full max-w-lg bg-[#FAF5ED] border border-[#D6C6B2] rounded-xl shadow-2xl overflow-hidden flex flex-col animate-fade-in"
         onClick={e => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-5 py-3.5 border-b border-[#434D56] bg-[#242B31]">
+        <div className="flex items-center justify-between px-5 py-3.5 border-b border-[#5A3927] bg-[#3B2418]">
           <div className="flex items-center gap-2">
-            <Plus className="w-4 h-4 text-[#D2925B]" />
-            <h2 className="font-semibold text-sm text-[#F4F0E9]">Quick Create</h2>
+            <Plus className="w-4 h-4 text-[#8EC5FF]" />
+            <h2 className="font-semibold text-sm text-[#F2E8DA]">Quick Create</h2>
           </div>
           <button
             onClick={() => setIsQuickAddOpen(false)}
-            className="p-1 rounded text-[#868A7A] hover:text-[#F4F0E9] hover:bg-[#36414A]"
+            className="p-1 rounded text-[#D8C7B4] hover:text-[#F2E8DA] hover:bg-[#4D3021]"
             aria-label="Close dialog"
           >
             <X className="w-4 h-4" />
@@ -201,7 +201,7 @@ export const QuickAddModal: React.FC = () => {
         </div>
 
         {/* Tabs */}
-        <div className="flex border-b border-[#434D56] bg-[#242B31]/50 px-3 pt-2 gap-1 overflow-x-auto">
+        <div className="flex border-b border-[#D6C6B2] bg-[#EAE0D0] px-3 pt-2 gap-1 overflow-x-auto">
           {[
             { id: 'task', label: 'Task', icon: CheckSquare },
             { id: 'goal', label: 'Goal', icon: Target },
@@ -215,10 +215,10 @@ export const QuickAddModal: React.FC = () => {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as CreationTab)}
-                className={`flex items-center gap-1.5 px-3 py-2 text-xs font-medium rounded-t-lg transition-colors border-b-2 ${
+                className={`flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-t-lg transition-colors border-b-2 ${
                   isActive
-                    ? 'border-[#D2925B] text-[#D2925B] bg-[#2E373F]'
-                    : 'border-transparent text-[#868A7A] hover:text-[#F4F0E9]'
+                    ? 'border-[#3B2418] text-[#3B2418] bg-[#FAF5ED]'
+                    : 'border-transparent text-[#6E5648] hover:text-[#3B2418]'
                 }`}
               >
                 <Icon className="w-3.5 h-3.5" />
@@ -233,8 +233,8 @@ export const QuickAddModal: React.FC = () => {
           {activeTab === 'task' && (
             <form onSubmit={handleCreateTask} className="space-y-4">
               <div>
-                <label className="block text-xs font-medium text-[#A8A8A2] mb-1">
-                  Task Title <span className="text-[#D2925B]">*</span>
+                <label className="block text-xs font-medium text-[#6E5648] mb-1">
+                  Task Title <span className="text-[#1E5A99]">*</span>
                 </label>
                 <input
                   type="text"
@@ -242,18 +242,18 @@ export const QuickAddModal: React.FC = () => {
                   value={taskTitle}
                   onChange={e => setTaskTitle(e.target.value)}
                   placeholder="e.g. Audit student portal authentication middleware"
-                  className="w-full px-3 py-2 rounded-lg bg-[#242B31] border border-[#434D56] text-[#F4F0E9] text-sm focus:border-[#D2925B] focus:outline-hidden"
+                  className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-[#3B2418] text-sm focus:border-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
                   autoFocus
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-medium text-[#A8A8A2] mb-1">Life Area</label>
+                  <label className="block text-xs font-medium text-[#6E5648] mb-1">Life Area</label>
                   <select
                     value={taskCategory}
                     onChange={e => setTaskCategory(e.target.value as LifeArea)}
-                    className="w-full px-3 py-2 rounded-lg bg-[#242B31] border border-[#434D56] text-[#F4F0E9] text-xs focus:border-[#D2925B] focus:outline-hidden"
+                    className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-[#3B2418] text-xs focus:border-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
                   >
                     <option value="education">Education</option>
                     <option value="career">Career</option>
@@ -266,11 +266,11 @@ export const QuickAddModal: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-[#A8A8A2] mb-1">Priority</label>
+                  <label className="block text-xs font-medium text-[#6E5648] mb-1">Priority</label>
                   <select
                     value={taskPriority}
                     onChange={e => setTaskPriority(e.target.value as Priority)}
-                    className="w-full px-3 py-2 rounded-lg bg-[#242B31] border border-[#434D56] text-[#F4F0E9] text-xs focus:border-[#D2925B] focus:outline-hidden"
+                    className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-[#3B2418] text-xs focus:border-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
                   >
                     <option value="low">Low</option>
                     <option value="medium">Medium</option>
@@ -282,34 +282,34 @@ export const QuickAddModal: React.FC = () => {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-medium text-[#A8A8A2] mb-1">Due Date</label>
+                  <label className="block text-xs font-medium text-[#6E5648] mb-1">Due Date</label>
                   <input
                     type="date"
                     value={taskDueDate}
                     onChange={e => setTaskDueDate(e.target.value)}
-                    className="w-full px-3 py-2 rounded-lg bg-[#242B31] border border-[#434D56] text-[#F4F0E9] text-xs focus:border-[#D2925B] focus:outline-hidden"
+                    className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-[#3B2418] text-xs focus:border-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-[#A8A8A2] mb-1">Due Time (opt)</label>
+                  <label className="block text-xs font-medium text-[#6E5648] mb-1">Due Time (opt)</label>
                   <input
                     type="time"
                     value={taskDueTime}
                     onChange={e => setTaskDueTime(e.target.value)}
-                    className="w-full px-3 py-2 rounded-lg bg-[#242B31] border border-[#434D56] text-[#F4F0E9] text-xs focus:border-[#D2925B] focus:outline-hidden"
+                    className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-[#3B2418] text-xs focus:border-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
                   />
                 </div>
               </div>
 
               {state.projects.length > 0 && (
                 <div>
-                  <label className="block text-xs font-medium text-[#A8A8A2] mb-1">
+                  <label className="block text-xs font-medium text-[#6E5648] mb-1">
                     Related Project (Optional)
                   </label>
                   <select
                     value={taskProjectId}
                     onChange={e => setTaskProjectId(e.target.value)}
-                    className="w-full px-3 py-2 rounded-lg bg-[#242B31] border border-[#434D56] text-[#F4F0E9] text-xs focus:border-[#D2925B] focus:outline-hidden"
+                    className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-[#3B2418] text-xs focus:border-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
                   >
                     <option value="">No Project</option>
                     {state.projects.map(p => (
@@ -325,24 +325,24 @@ export const QuickAddModal: React.FC = () => {
                   id="quick-daily-prio"
                   checked={taskIsDailyPriority}
                   onChange={e => setTaskIsDailyPriority(e.target.checked)}
-                  className="rounded bg-[#242B31] border-[#434D56] text-[#D2925B] focus:ring-0"
+                  className="rounded bg-[#F2E8DA] border-[#D6C6B2] accent-[#3B2418] focus:ring-0"
                 />
-                <label htmlFor="quick-daily-prio" className="text-xs text-[#F4F0E9] font-medium cursor-pointer">
+                <label htmlFor="quick-daily-prio" className="text-xs text-[#3B2418] font-medium cursor-pointer">
                   Mark as one of Today&apos;s Core Priorities
                 </label>
               </div>
 
-              <div className="flex justify-end gap-2 pt-2 border-t border-[#434D56]">
+              <div className="flex justify-end gap-2 pt-2 border-t border-[#D6C6B2]">
                 <button
                   type="button"
                   onClick={() => setIsQuickAddOpen(false)}
-                  className="px-3 py-1.5 rounded-lg text-xs font-medium text-[#868A7A] hover:text-[#F4F0E9]"
+                  className="px-3 py-1.5 rounded-lg text-xs font-medium text-[#6E5648] hover:text-[#3B2418]"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-1.5 rounded-lg text-xs font-semibold bg-[#D2925B] text-[#242B31] hover:bg-[#C2824B]"
+                  className="px-4 py-1.5 rounded-lg text-xs font-semibold bg-[#8EC5FF] text-[#3B2418] hover:bg-[#73B6FC] border border-[#3B2418]/15"
                 >
                   Create Task
                 </button>
@@ -353,8 +353,8 @@ export const QuickAddModal: React.FC = () => {
           {activeTab === 'goal' && (
             <form onSubmit={handleCreateGoal} className="space-y-4">
               <div>
-                <label className="block text-xs font-medium text-[#A8A8A2] mb-1">
-                  Goal Objective <span className="text-[#D2925B]">*</span>
+                <label className="block text-xs font-medium text-[#6E5648] mb-1">
+                  Goal Objective <span className="text-[#1E5A99]">*</span>
                 </label>
                 <input
                   type="text"
@@ -362,18 +362,18 @@ export const QuickAddModal: React.FC = () => {
                   value={goalTitle}
                   onChange={e => setGoalTitle(e.target.value)}
                   placeholder="e.g. Master Distributed Systems Architecture"
-                  className="w-full px-3 py-2 rounded-lg bg-[#242B31] border border-[#434D56] text-[#F4F0E9] text-sm focus:border-[#D2925B] focus:outline-hidden"
+                  className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-[#3B2418] text-sm focus:border-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
                   autoFocus
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-medium text-[#A8A8A2] mb-1">Category</label>
+                  <label className="block text-xs font-medium text-[#6E5648] mb-1">Category</label>
                   <select
                     value={goalCategory}
                     onChange={e => setGoalCategory(e.target.value as LifeArea)}
-                    className="w-full px-3 py-2 rounded-lg bg-[#242B31] border border-[#434D56] text-[#F4F0E9] text-xs focus:border-[#D2925B] focus:outline-hidden"
+                    className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-[#3B2418] text-xs focus:border-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
                   >
                     <option value="education">Education</option>
                     <option value="career">Career</option>
@@ -383,19 +383,19 @@ export const QuickAddModal: React.FC = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-[#A8A8A2] mb-1">Target Date</label>
+                  <label className="block text-xs font-medium text-[#6E5648] mb-1">Target Date</label>
                   <input
                     type="date"
                     required
                     value={goalTargetDate}
                     onChange={e => setGoalTargetDate(e.target.value)}
-                    className="w-full px-3 py-2 rounded-lg bg-[#242B31] border border-[#434D56] text-[#F4F0E9] text-xs focus:border-[#D2925B] focus:outline-hidden"
+                    className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-[#3B2418] text-xs focus:border-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-[#A8A8A2] mb-1">
+                <label className="block text-xs font-medium text-[#6E5648] mb-1">
                   Why does this matter? (Motivation)
                 </label>
                 <input
@@ -403,21 +403,21 @@ export const QuickAddModal: React.FC = () => {
                   value={goalMotivation}
                   onChange={e => setGoalMotivation(e.target.value)}
                   placeholder="To build resilient infrastructure and achieve professional mastery"
-                  className="w-full px-3 py-2 rounded-lg bg-[#242B31] border border-[#434D56] text-[#F4F0E9] text-xs focus:border-[#D2925B] focus:outline-hidden"
+                  className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-[#3B2418] text-xs focus:border-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
                 />
               </div>
 
-              <div className="flex justify-end gap-2 pt-2 border-t border-[#434D56]">
+              <div className="flex justify-end gap-2 pt-2 border-t border-[#D6C6B2]">
                 <button
                   type="button"
                   onClick={() => setIsQuickAddOpen(false)}
-                  className="px-3 py-1.5 rounded-lg text-xs font-medium text-[#868A7A] hover:text-[#F4F0E9]"
+                  className="px-3 py-1.5 rounded-lg text-xs font-medium text-[#6E5648] hover:text-[#3B2418]"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-1.5 rounded-lg text-xs font-semibold bg-[#D2925B] text-[#242B31] hover:bg-[#C2824B]"
+                  className="px-4 py-1.5 rounded-lg text-xs font-semibold bg-[#8EC5FF] text-[#3B2418] hover:bg-[#73B6FC] border border-[#3B2418]/15"
                 >
                   Create Goal
                 </button>
@@ -428,8 +428,8 @@ export const QuickAddModal: React.FC = () => {
           {activeTab === 'habit' && (
             <form onSubmit={handleCreateHabit} className="space-y-4">
               <div>
-                <label className="block text-xs font-medium text-[#A8A8A2] mb-1">
-                  Habit Name <span className="text-[#D2925B]">*</span>
+                <label className="block text-xs font-medium text-[#6E5648] mb-1">
+                  Habit Name <span className="text-[#1E5A99]">*</span>
                 </label>
                 <input
                   type="text"
@@ -437,18 +437,18 @@ export const QuickAddModal: React.FC = () => {
                   value={habitName}
                   onChange={e => setHabitName(e.target.value)}
                   placeholder="e.g. Read 20 pages of technical literature"
-                  className="w-full px-3 py-2 rounded-lg bg-[#242B31] border border-[#434D56] text-[#F4F0E9] text-sm focus:border-[#D2925B] focus:outline-hidden"
+                  className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-[#3B2418] text-sm focus:border-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
                   autoFocus
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-medium text-[#A8A8A2] mb-1">Life Area</label>
+                  <label className="block text-xs font-medium text-[#6E5648] mb-1">Life Area</label>
                   <select
                     value={habitCategory}
                     onChange={e => setHabitCategory(e.target.value as LifeArea)}
-                    className="w-full px-3 py-2 rounded-lg bg-[#242B31] border border-[#434D56] text-[#F4F0E9] text-xs focus:border-[#D2925B] focus:outline-hidden"
+                    className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-[#3B2418] text-xs focus:border-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
                   >
                     <option value="personal_development">Personal Development</option>
                     <option value="education">Education</option>
@@ -458,11 +458,11 @@ export const QuickAddModal: React.FC = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-[#A8A8A2] mb-1">Frequency</label>
+                  <label className="block text-xs font-medium text-[#6E5648] mb-1">Frequency</label>
                   <select
                     value={habitFrequency}
                     onChange={e => setHabitFrequency(e.target.value as 'daily' | 'weekdays')}
-                    className="w-full px-3 py-2 rounded-lg bg-[#242B31] border border-[#434D56] text-[#F4F0E9] text-xs focus:border-[#D2925B] focus:outline-hidden"
+                    className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-[#3B2418] text-xs focus:border-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
                   >
                     <option value="daily">Every Day</option>
                     <option value="weekdays">Weekdays Only (Mon-Fri)</option>
@@ -470,17 +470,17 @@ export const QuickAddModal: React.FC = () => {
                 </div>
               </div>
 
-              <div className="flex justify-end gap-2 pt-2 border-t border-[#434D56]">
+              <div className="flex justify-end gap-2 pt-2 border-t border-[#D6C6B2]">
                 <button
                   type="button"
                   onClick={() => setIsQuickAddOpen(false)}
-                  className="px-3 py-1.5 rounded-lg text-xs font-medium text-[#868A7A] hover:text-[#F4F0E9]"
+                  className="px-3 py-1.5 rounded-lg text-xs font-medium text-[#6E5648] hover:text-[#3B2418]"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-1.5 rounded-lg text-xs font-semibold bg-[#D2925B] text-[#242B31] hover:bg-[#C2824B]"
+                  className="px-4 py-1.5 rounded-lg text-xs font-semibold bg-[#8EC5FF] text-[#3B2418] hover:bg-[#73B6FC] border border-[#3B2418]/15"
                 >
                   Create Habit
                 </button>
@@ -491,8 +491,8 @@ export const QuickAddModal: React.FC = () => {
           {activeTab === 'project' && (
             <form onSubmit={handleCreateProject} className="space-y-4">
               <div>
-                <label className="block text-xs font-medium text-[#A8A8A2] mb-1">
-                  Project Title <span className="text-[#D2925B]">*</span>
+                <label className="block text-xs font-medium text-[#6E5648] mb-1">
+                  Project Title <span className="text-[#1E5A99]">*</span>
                 </label>
                 <input
                   type="text"
@@ -500,29 +500,29 @@ export const QuickAddModal: React.FC = () => {
                   value={projectName}
                   onChange={e => setProjectName(e.target.value)}
                   placeholder="e.g. Distributed Consensus Lab Engine"
-                  className="w-full px-3 py-2 rounded-lg bg-[#242B31] border border-[#434D56] text-[#F4F0E9] text-sm focus:border-[#D2925B] focus:outline-hidden"
+                  className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-[#3B2418] text-sm focus:border-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
                   autoFocus
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-[#A8A8A2] mb-1">Description</label>
+                <label className="block text-xs font-medium text-[#6E5648] mb-1">Description</label>
                 <textarea
                   rows={2}
                   value={projectDescription}
                   onChange={e => setProjectDescription(e.target.value)}
                   placeholder="Short summary of project scope and core deliverable..."
-                  className="w-full px-3 py-2 rounded-lg bg-[#242B31] border border-[#434D56] text-[#F4F0E9] text-xs focus:border-[#D2925B] focus:outline-hidden"
+                  className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-[#3B2418] text-xs focus:border-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-medium text-[#A8A8A2] mb-1">Category</label>
+                  <label className="block text-xs font-medium text-[#6E5648] mb-1">Category</label>
                   <select
                     value={projectCategory}
                     onChange={e => setProjectCategory(e.target.value as LifeArea)}
-                    className="w-full px-3 py-2 rounded-lg bg-[#242B31] border border-[#434D56] text-[#F4F0E9] text-xs focus:border-[#D2925B] focus:outline-hidden"
+                    className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-[#3B2418] text-xs focus:border-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
                   >
                     <option value="career">Career</option>
                     <option value="education">Education</option>
@@ -530,27 +530,27 @@ export const QuickAddModal: React.FC = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-[#A8A8A2] mb-1">Deadline</label>
+                  <label className="block text-xs font-medium text-[#6E5648] mb-1">Deadline</label>
                   <input
                     type="date"
                     value={projectDeadline}
                     onChange={e => setProjectDeadline(e.target.value)}
-                    className="w-full px-3 py-2 rounded-lg bg-[#242B31] border border-[#434D56] text-[#F4F0E9] text-xs focus:border-[#D2925B] focus:outline-hidden"
+                    className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-[#3B2418] text-xs focus:border-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
                   />
                 </div>
               </div>
 
-              <div className="flex justify-end gap-2 pt-2 border-t border-[#434D56]">
+              <div className="flex justify-end gap-2 pt-2 border-t border-[#D6C6B2]">
                 <button
                   type="button"
                   onClick={() => setIsQuickAddOpen(false)}
-                  className="px-3 py-1.5 rounded-lg text-xs font-medium text-[#868A7A] hover:text-[#F4F0E9]"
+                  className="px-3 py-1.5 rounded-lg text-xs font-medium text-[#6E5648] hover:text-[#3B2418]"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-1.5 rounded-lg text-xs font-semibold bg-[#D2925B] text-[#242B31] hover:bg-[#C2824B]"
+                  className="px-4 py-1.5 rounded-lg text-xs font-semibold bg-[#8EC5FF] text-[#3B2418] hover:bg-[#73B6FC] border border-[#3B2418]/15"
                 >
                   Create Project
                 </button>
@@ -561,8 +561,8 @@ export const QuickAddModal: React.FC = () => {
           {activeTab === 'journal' && (
             <form onSubmit={handleCreateJournal} className="space-y-4">
               <div>
-                <label className="block text-xs font-medium text-[#A8A8A2] mb-1">
-                  Reflection Title <span className="text-[#D2925B]">*</span>
+                <label className="block text-xs font-medium text-[#6E5648] mb-1">
+                  Reflection Title <span className="text-[#1E5A99]">*</span>
                 </label>
                 <input
                   type="text"
@@ -570,13 +570,13 @@ export const QuickAddModal: React.FC = () => {
                   value={journalTitle}
                   onChange={e => setJournalTitle(e.target.value)}
                   placeholder="e.g. Closing the week with intentional focus"
-                  className="w-full px-3 py-2 rounded-lg bg-[#242B31] border border-[#434D56] text-[#F4F0E9] text-sm focus:border-[#D2925B] focus:outline-hidden"
+                  className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-[#3B2418] text-sm focus:border-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
                   autoFocus
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-[#A8A8A2] mb-1">Mood</label>
+                <label className="block text-xs font-medium text-[#6E5648] mb-1">Mood</label>
                 <div className="flex gap-2">
                   {(['great', 'good', 'neutral', 'challenging'] as const).map(m => (
                     <button
@@ -585,8 +585,8 @@ export const QuickAddModal: React.FC = () => {
                       onClick={() => setJournalMood(m)}
                       className={`px-3 py-1 text-xs rounded-lg capitalize border ${
                         journalMood === m
-                          ? 'border-[#D2925B] bg-[#D2925B]/20 text-[#D2925B] font-medium'
-                          : 'border-[#434D56] text-[#868A7A] hover:text-[#F4F0E9]'
+                          ? 'border-[#3B2418] bg-[#8EC5FF] text-[#3B2418] font-semibold'
+                          : 'border-[#D6C6B2] text-[#6E5648] hover:text-[#3B2418] bg-[#F2E8DA]'
                       }`}
                     >
                       {m}
@@ -596,8 +596,8 @@ export const QuickAddModal: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-[#A8A8A2] mb-1">
-                  Content <span className="text-[#D2925B]">*</span>
+                <label className="block text-xs font-medium text-[#6E5648] mb-1">
+                  Content <span className="text-[#1E5A99]">*</span>
                 </label>
                 <textarea
                   rows={4}
@@ -605,21 +605,21 @@ export const QuickAddModal: React.FC = () => {
                   value={journalContent}
                   onChange={e => setJournalContent(e.target.value)}
                   placeholder="What went well today? What resisted progress? What is the main priority for tomorrow?"
-                  className="w-full px-3 py-2 rounded-lg bg-[#242B31] border border-[#434D56] text-[#F4F0E9] text-xs focus:border-[#D2925B] focus:outline-hidden leading-relaxed"
+                  className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-[#3B2418] text-xs focus:border-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden leading-relaxed"
                 />
               </div>
 
-              <div className="flex justify-end gap-2 pt-2 border-t border-[#434D56]">
+              <div className="flex justify-end gap-2 pt-2 border-t border-[#D6C6B2]">
                 <button
                   type="button"
                   onClick={() => setIsQuickAddOpen(false)}
-                  className="px-3 py-1.5 rounded-lg text-xs font-medium text-[#868A7A] hover:text-[#F4F0E9]"
+                  className="px-3 py-1.5 rounded-lg text-xs font-medium text-[#6E5648] hover:text-[#3B2418]"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-1.5 rounded-lg text-xs font-semibold bg-[#D2925B] text-[#242B31] hover:bg-[#C2824B]"
+                  className="px-4 py-1.5 rounded-lg text-xs font-semibold bg-[#8EC5FF] text-[#3B2418] hover:bg-[#73B6FC] border border-[#3B2418]/15"
                 >
                   Save Reflection
                 </button>

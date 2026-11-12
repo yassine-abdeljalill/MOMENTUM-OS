@@ -65,18 +65,18 @@ export const JournalView: React.FC = () => {
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-16">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 rounded-2xl bg-[#2E373F] border border-[#434D56]/60">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] shadow-xs">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <h1 className="text-xl md:text-2xl font-bold text-[#F4F0E9] tracking-tight">
+            <h1 className="text-xl md:text-2xl font-bold text-[#3B2418] tracking-tight">
               Personal Journal & Reflection
             </h1>
-            <span className="flex items-center gap-1 text-[10px] font-mono px-2 py-0.5 rounded bg-[#64432B] text-[#D2925B]">
+            <span className="flex items-center gap-1 text-[10px] font-mono px-2 py-0.5 rounded bg-[#3B2418] text-[#8EC5FF]">
               <Lock className="w-3 h-3" />
               <span>Private & Local</span>
             </span>
           </div>
-          <p className="text-xs text-[#A8A8A2]">
+          <p className="text-xs text-[#6E5648]">
             End-of-day reviews, gratitude, lessons learned, and honest personal reflections.
           </p>
         </div>
@@ -84,7 +84,7 @@ export const JournalView: React.FC = () => {
         <div className="flex items-center gap-3">
           <button
             onClick={() => setShowNewEntryModal(true)}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#D2925B] hover:bg-[#C2824B] text-[#242B31] font-bold text-xs shadow-sm transition-all"
+            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#8EC5FF] hover:bg-[#73B6FC] text-[#3B2418] border border-[#3B2418]/15 font-bold text-xs shadow-xs transition-all"
           >
             <Plus className="w-4 h-4 stroke-[2.5]" />
             <span>New Reflection</span>
@@ -98,19 +98,19 @@ export const JournalView: React.FC = () => {
         <div className="lg:col-span-5 space-y-4">
           <div className="flex gap-2">
             <div className="relative flex-1">
-              <Search className="w-3.5 h-3.5 text-[#868A7A] absolute left-3 top-2.5" />
+              <Search className="w-3.5 h-3.5 text-[#6E5648] absolute left-3 top-2.5" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
                 placeholder="Search journal entries..."
-                className="w-full pl-8 pr-3 py-1.5 rounded-lg bg-[#2E373F] border border-[#434D56] text-xs text-[#F4F0E9] focus:outline-hidden"
+                className="w-full pl-8 pr-3 py-1.5 rounded-lg bg-[#FAF5ED] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
               />
             </div>
             <select
               value={categoryFilter}
               onChange={e => setCategoryFilter(e.target.value)}
-              className="px-2.5 py-1.5 rounded-lg bg-[#2E373F] border border-[#434D56] text-xs text-[#F4F0E9] focus:outline-hidden"
+              className="px-2.5 py-1.5 rounded-lg bg-[#FAF5ED] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
             >
               <option value="all">All Types</option>
               <option value="daily_reflection">Daily</option>
@@ -131,29 +131,31 @@ export const JournalView: React.FC = () => {
                   onClick={() => setSelectedEntry(entry)}
                   className={`p-4 rounded-xl border transition-all cursor-pointer space-y-2 ${
                     isSelected
-                      ? 'bg-[#2E373F] border-[#D2925B] shadow-md'
-                      : 'bg-[#242B31] border-[#434D56] hover:border-[#868A7A]'
+                      ? 'bg-[#3B2418] border-[#5A3927] shadow-md'
+                      : 'bg-[#FAF5ED] border-[#D6C6B2] hover:border-[#8EC5FF]'
                   }`}
                 >
                   <div className="flex items-start justify-between gap-2">
-                    <h3 className={`text-sm font-semibold truncate ${isSelected ? 'text-[#D2925B]' : 'text-[#F4F0E9]'}`}>
+                    <h3 className={`text-sm font-semibold truncate ${isSelected ? 'text-[#F2E8DA]' : 'text-[#3B2418]'}`}>
                       {entry.title}
                     </h3>
-                    <span className="font-mono text-[10px] text-[#868A7A] shrink-0">
+                    <span className={`font-mono text-[10px] shrink-0 ${isSelected ? 'text-[#D8C7B4]' : 'text-[#6E5648]'}`}>
                       {entry.date}
                     </span>
                   </div>
 
-                  <p className="text-xs text-[#A8A8A2] line-clamp-2 leading-relaxed">
+                  <p className={`text-xs line-clamp-2 leading-relaxed ${isSelected ? 'text-[#D8C7B4]' : 'text-[#6E5648]'}`}>
                     {entry.content}
                   </p>
 
                   <div className="flex items-center gap-2 pt-1">
-                    <span className="text-[10px] font-mono uppercase px-1.5 py-0.2 rounded bg-[#2E373F] text-[#868A7A]">
+                    <span className={`text-[10px] font-mono uppercase px-1.5 py-0.5 rounded ${
+                      isSelected ? 'bg-[#4D3021] text-[#8EC5FF]' : 'bg-[#F2E8DA] text-[#6E5648] border border-[#D6C6B2]/60'
+                    }`}>
                       {entry.category.replace('_', ' ')}
                     </span>
                     {entry.mood && (
-                      <span className="text-[10px] text-[#D2925B] capitalize">
+                      <span className={`text-[10px] capitalize font-medium ${isSelected ? 'text-[#8EC5FF]' : 'text-[#1E5A99]'}`}>
                         • Mood: {entry.mood}
                       </span>
                     )}
@@ -167,18 +169,18 @@ export const JournalView: React.FC = () => {
         {/* Right Column (7 cols): Selected Entry Reader / Editor */}
         <div className="lg:col-span-7">
           {selectedEntry ? (
-            <div className="p-6 md:p-8 rounded-2xl bg-[#2E373F] border border-[#434D56]/60 space-y-6">
-              <div className="flex items-start justify-between gap-4 pb-4 border-b border-[#434D56]/60">
+            <div className="p-6 md:p-8 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] shadow-xs space-y-6">
+              <div className="flex items-start justify-between gap-4 pb-4 border-b border-[#D6C6B2]">
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-[#242B31] text-[#D2925B]">
+                    <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-[#3B2418] text-[#8EC5FF]">
                       {selectedEntry.category.replace('_', ' ')}
                     </span>
-                    <span className="text-xs font-mono text-[#868A7A]">
+                    <span className="text-xs font-mono text-[#6E5648]">
                       {selectedEntry.date}
                     </span>
                   </div>
-                  <h2 className="text-xl font-bold text-[#F4F0E9] pt-1">
+                  <h2 className="text-xl font-bold text-[#3B2418] pt-1">
                     {selectedEntry.title}
                   </h2>
                 </div>
@@ -188,7 +190,7 @@ export const JournalView: React.FC = () => {
                     deleteJournalEntry(selectedEntry.id);
                     setSelectedEntry(null);
                   }}
-                  className="text-xs text-[#E57373] hover:underline"
+                  className="text-xs font-semibold text-[#9E3530] hover:underline"
                 >
                   Delete
                 </button>
@@ -196,35 +198,35 @@ export const JournalView: React.FC = () => {
 
               {/* Reflection Questions Breakdown if available */}
               {selectedEntry.reflectionQuestions && (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-4 rounded-xl bg-[#242B31] border border-[#434D56]/60 text-xs">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-4 rounded-xl bg-[#F2E8DA] border border-[#D6C6B2] text-xs">
                   {selectedEntry.reflectionQuestions.wentWell && (
                     <div>
-                      <span className="font-semibold text-[#5B8C67] block">Went Well:</span>
-                      <p className="text-[#A8A8A2] mt-0.5">{selectedEntry.reflectionQuestions.wentWell}</p>
+                      <span className="font-semibold text-[#3E7B52] block">Went Well:</span>
+                      <p className="text-[#6E5648] mt-0.5">{selectedEntry.reflectionQuestions.wentWell}</p>
                     </div>
                   )}
                   {selectedEntry.reflectionQuestions.learned && (
                     <div>
-                      <span className="font-semibold text-[#D2925B] block">Learned:</span>
-                      <p className="text-[#A8A8A2] mt-0.5">{selectedEntry.reflectionQuestions.learned}</p>
+                      <span className="font-semibold text-[#1E5A99] block">Learned:</span>
+                      <p className="text-[#6E5648] mt-0.5">{selectedEntry.reflectionQuestions.learned}</p>
                     </div>
                   )}
                   {selectedEntry.reflectionQuestions.tomorrowPriority && (
-                    <div className="sm:col-span-2 pt-2 border-t border-[#434D56]/30">
-                      <span className="font-semibold text-[#F4F0E9] block">Tomorrow Priority:</span>
-                      <p className="text-[#D2925B] mt-0.5">{selectedEntry.reflectionQuestions.tomorrowPriority}</p>
+                    <div className="sm:col-span-2 pt-2 border-t border-[#D6C6B2]">
+                      <span className="font-semibold text-[#3B2418] block">Tomorrow Priority:</span>
+                      <p className="text-[#1E5A99] font-medium mt-0.5">{selectedEntry.reflectionQuestions.tomorrowPriority}</p>
                     </div>
                   )}
                 </div>
               )}
 
               {/* Full Content */}
-              <div className="text-sm text-[#F4F0E9] leading-relaxed whitespace-pre-line font-serif">
+              <div className="text-sm text-[#3B2418] leading-relaxed whitespace-pre-line font-serif">
                 {selectedEntry.content}
               </div>
             </div>
           ) : (
-            <div className="p-12 text-center text-[#868A7A] rounded-2xl bg-[#2E373F] border border-[#434D56]">
+            <div className="p-12 text-center text-[#6E5648] rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2]">
               No entry selected. Choose one from the left or create a new reflection.
             </div>
           )}
@@ -233,19 +235,19 @@ export const JournalView: React.FC = () => {
 
       {/* New Reflection Modal */}
       {showNewEntryModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#3B2418]/65 backdrop-blur-xs">
           <div
-            className="w-full max-w-xl bg-[#242B31] border border-[#434D56] rounded-2xl shadow-2xl overflow-hidden animate-fade-in"
+            className="w-full max-w-xl bg-[#FAF5ED] border border-[#D6C6B2] rounded-2xl shadow-2xl overflow-hidden animate-fade-in"
             onClick={e => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between px-6 py-4 border-b border-[#434D56] bg-[#22292F]">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-[#5A3927] bg-[#3B2418]">
               <div className="flex items-center gap-2">
-                <BookOpen className="w-4 h-4 text-[#D2925B]" />
-                <h3 className="text-sm font-bold text-[#F4F0E9]">New Journal Entry</h3>
+                <BookOpen className="w-4 h-4 text-[#8EC5FF]" />
+                <h3 className="text-sm font-bold text-[#F2E8DA]">New Journal Entry</h3>
               </div>
               <button
                 onClick={() => setShowNewEntryModal(false)}
-                className="text-[#868A7A] hover:text-[#F4F0E9]"
+                className="text-[#D8C7B4] hover:text-[#F2E8DA]"
               >
                 ✕
               </button>
@@ -253,25 +255,25 @@ export const JournalView: React.FC = () => {
 
             <form onSubmit={handleCreateEntry} className="p-6 space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-[#A8A8A2] mb-1">Title</label>
+                <label className="block text-xs font-semibold text-[#6E5648] mb-1">Title</label>
                 <input
                   type="text"
                   required
                   value={newTitle}
                   onChange={e => setNewTitle(e.target.value)}
                   placeholder="e.g. Overcoming resistance on distributed consensus"
-                  className="w-full px-3 py-2 rounded-lg bg-[#2E373F] border border-[#434D56] text-xs text-[#F4F0E9] focus:outline-hidden"
+                  className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
                   autoFocus
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-[#A8A8A2] mb-1">Entry Type</label>
+                  <label className="block text-xs font-semibold text-[#6E5648] mb-1">Entry Type</label>
                   <select
                     value={newCategory}
                     onChange={e => setNewCategory(e.target.value as JournalCategory)}
-                    className="w-full px-2.5 py-1.5 rounded-lg bg-[#2E373F] border border-[#434D56] text-xs text-[#F4F0E9] focus:outline-hidden"
+                    className="w-full px-2.5 py-1.5 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
                   >
                     <option value="daily_reflection">Daily Reflection</option>
                     <option value="weekly_review">Weekly Review</option>
@@ -282,11 +284,11 @@ export const JournalView: React.FC = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-[#A8A8A2] mb-1">Mood</label>
+                  <label className="block text-xs font-semibold text-[#6E5648] mb-1">Mood</label>
                   <select
                     value={newMood}
                     onChange={e => setNewMood(e.target.value as JournalMood)}
-                    className="w-full px-2.5 py-1.5 rounded-lg bg-[#2E373F] border border-[#434D56] text-xs text-[#F4F0E9] focus:outline-hidden"
+                    className="w-full px-2.5 py-1.5 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
                   >
                     <option value="great">Great</option>
                     <option value="good">Good</option>
@@ -297,28 +299,28 @@ export const JournalView: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-[#A8A8A2] mb-1">Content</label>
+                <label className="block text-xs font-semibold text-[#6E5648] mb-1">Content</label>
                 <textarea
                   rows={6}
                   required
                   value={newContent}
                   onChange={e => setNewContent(e.target.value)}
                   placeholder="Write freely and honestly..."
-                  className="w-full px-4 py-3 rounded-xl bg-[#2E373F] border border-[#434D56] text-xs text-[#F4F0E9] focus:outline-hidden leading-relaxed"
+                  className="w-full px-4 py-3 rounded-xl bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden leading-relaxed"
                 />
               </div>
 
-              <div className="flex justify-end gap-2 pt-2 border-t border-[#434D56]">
+              <div className="flex justify-end gap-2 pt-2 border-t border-[#D6C6B2]">
                 <button
                   type="button"
                   onClick={() => setShowNewEntryModal(false)}
-                  className="px-3 py-1.5 text-xs text-[#868A7A]"
+                  className="px-3 py-1.5 text-xs text-[#6E5648] hover:text-[#3B2418]"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-1.5 rounded-lg text-xs font-bold bg-[#D2925B] text-[#242B31] hover:bg-[#C2824B]"
+                  className="px-4 py-1.5 rounded-lg text-xs font-bold bg-[#8EC5FF] text-[#3B2418] hover:bg-[#73B6FC] border border-[#3B2418]/15 shadow-xs"
                 >
                   Save Entry
                 </button>

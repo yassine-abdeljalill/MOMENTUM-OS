@@ -110,22 +110,22 @@ export const LearningView: React.FC = () => {
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-16">
       {/* Header Card */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 rounded-2xl bg-[#2E373F] border border-[#434D56]/60">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] shadow-xs">
         <div className="space-y-1">
-          <h1 className="text-xl md:text-2xl font-bold text-[#F4F0E9] tracking-tight">
+          <h1 className="text-xl md:text-2xl font-bold text-[#3B2418] tracking-tight">
             Knowledge Center & Learning
           </h1>
-          <p className="text-xs text-[#A8A8A2]">
+          <p className="text-xs text-[#6E5648]">
             Curated coursework, lesson objectives, and deliberate study session logs.
           </p>
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="flex bg-[#242B31] p-1 rounded-xl border border-[#434D56] text-xs">
+          <div className="flex bg-[#F2E8DA] p-1 rounded-xl border border-[#D6C6B2] text-xs">
             <button
               onClick={() => setActiveTab('courses')}
               className={`px-3 py-1.5 rounded-lg font-medium transition-colors ${
-                activeTab === 'courses' ? 'bg-[#D2925B] text-[#242B31] font-bold' : 'text-[#868A7A]'
+                activeTab === 'courses' ? 'bg-[#8EC5FF] text-[#3B2418] font-bold shadow-xs' : 'text-[#6E5648] hover:text-[#3B2418]'
               }`}
             >
               Courses ({state.courses.length})
@@ -133,7 +133,7 @@ export const LearningView: React.FC = () => {
             <button
               onClick={() => setActiveTab('sessions')}
               className={`px-3 py-1.5 rounded-lg font-medium transition-colors ${
-                activeTab === 'sessions' ? 'bg-[#D2925B] text-[#242B31] font-bold' : 'text-[#868A7A]'
+                activeTab === 'sessions' ? 'bg-[#8EC5FF] text-[#3B2418] font-bold shadow-xs' : 'text-[#6E5648] hover:text-[#3B2418]'
               }`}
             >
               Study Logs ({state.studySessions.length})
@@ -142,7 +142,7 @@ export const LearningView: React.FC = () => {
 
           <button
             onClick={() => setShowNewCourseModal(true)}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#D2925B] hover:bg-[#C2824B] text-[#242B31] font-bold text-xs shadow-sm transition-all"
+            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#8EC5FF] hover:bg-[#73B6FC] text-[#3B2418] border border-[#3B2418]/15 font-bold text-xs shadow-xs transition-all"
           >
             <Plus className="w-4 h-4 stroke-[2.5]" />
             <span>New Course</span>
@@ -152,27 +152,27 @@ export const LearningView: React.FC = () => {
 
       {/* Learning Metrics Bar */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <div className="p-4 rounded-xl bg-[#2E373F] border border-[#434D56]/60">
-          <span className="text-[10px] font-mono uppercase text-[#868A7A]">Total Study Time</span>
-          <div className="font-mono text-2xl font-bold text-[#F4F0E9] mt-1">
+        <div className="p-4 rounded-xl bg-[#FAF5ED] border border-[#D6C6B2] shadow-xs">
+          <span className="text-[10px] font-mono uppercase text-[#6E5648]">Total Study Time</span>
+          <div className="font-mono text-2xl font-bold text-[#3B2418] mt-1">
             {formatMinutes(totalStudyMinutes)}
           </div>
         </div>
-        <div className="p-4 rounded-xl bg-[#2E373F] border border-[#434D56]/60">
-          <span className="text-[10px] font-mono uppercase text-[#868A7A]">Lessons Completed</span>
-          <div className="font-mono text-2xl font-bold text-[#D2925B] mt-1">
+        <div className="p-4 rounded-xl bg-[#FAF5ED] border border-[#D6C6B2] shadow-xs">
+          <span className="text-[10px] font-mono uppercase text-[#6E5648]">Lessons Completed</span>
+          <div className="font-mono text-2xl font-bold text-[#1E5A99] mt-1">
             {completedLessons} / {totalLessons}
           </div>
         </div>
-        <div className="p-4 rounded-xl bg-[#2E373F] border border-[#434D56]/60">
-          <span className="text-[10px] font-mono uppercase text-[#868A7A]">Active Courses</span>
-          <div className="font-mono text-2xl font-bold text-[#F4F0E9] mt-1">
+        <div className="p-4 rounded-xl bg-[#FAF5ED] border border-[#D6C6B2] shadow-xs">
+          <span className="text-[10px] font-mono uppercase text-[#6E5648]">Active Courses</span>
+          <div className="font-mono text-2xl font-bold text-[#3B2418] mt-1">
             {state.courses.filter(c => c.status === 'active').length}
           </div>
         </div>
-        <div className="p-4 rounded-xl bg-[#2E373F] border border-[#434D56]/60">
-          <span className="text-[10px] font-mono uppercase text-[#868A7A]">Logged Sessions</span>
-          <div className="font-mono text-2xl font-bold text-[#5B8C67] mt-1">
+        <div className="p-4 rounded-xl bg-[#FAF5ED] border border-[#D6C6B2] shadow-xs">
+          <span className="text-[10px] font-mono uppercase text-[#6E5648]">Logged Sessions</span>
+          <div className="font-mono text-2xl font-bold text-[#3E7B52] mt-1">
             {state.studySessions.length}
           </div>
         </div>
@@ -183,7 +183,7 @@ export const LearningView: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* Courses List (5 cols) */}
           <div className="lg:col-span-5 space-y-3">
-            <span className="text-xs font-bold uppercase tracking-wider text-[#A8A8A2] block px-1">
+            <span className="text-xs font-bold uppercase tracking-wider text-[#6E5648] block px-1">
               Curriculum Modules
             </span>
 
@@ -203,27 +203,27 @@ export const LearningView: React.FC = () => {
                   }}
                   className={`p-4 rounded-xl border transition-all cursor-pointer space-y-2.5 ${
                     isSelected
-                      ? 'bg-[#2E373F] border-[#D2925B] shadow-md'
-                      : 'bg-[#242B31] border-[#434D56] hover:border-[#868A7A]'
+                      ? 'bg-[#3B2418] border-[#5A3927] shadow-md'
+                      : 'bg-[#FAF5ED] border-[#D6C6B2] hover:border-[#8EC5FF]'
                   }`}
                 >
                   <div className="flex items-start justify-between gap-2">
-                    <h3 className={`text-sm font-semibold truncate ${isSelected ? 'text-[#D2925B]' : 'text-[#F4F0E9]'}`}>
+                    <h3 className={`text-sm font-semibold truncate ${isSelected ? 'text-[#F2E8DA]' : 'text-[#3B2418]'}`}>
                       {course.title}
                     </h3>
-                    <span className="font-mono text-xs font-bold text-[#D2925B] shrink-0">
+                    <span className={`font-mono text-xs font-bold shrink-0 ${isSelected ? 'text-[#8EC5FF]' : 'text-[#1E5A99]'}`}>
                       {pct}%
                     </span>
                   </div>
 
-                  <div className="w-full bg-[#242B31] h-1.5 rounded-full overflow-hidden">
+                  <div className={`w-full h-1.5 rounded-full overflow-hidden ${isSelected ? 'bg-[#4D3021]' : 'bg-[#EAE0D0]'}`}>
                     <div
-                      className="bg-[#D2925B] h-full rounded-full transition-all duration-300"
+                      className="bg-[#8EC5FF] h-full rounded-full transition-all duration-300"
                       style={{ width: `${pct}%` }}
                     />
                   </div>
 
-                  <div className="flex items-center justify-between text-[11px] text-[#868A7A]">
+                  <div className={`flex items-center justify-between text-[11px] ${isSelected ? 'text-[#D8C7B4]' : 'text-[#6E5648]'}`}>
                     <span>{course.category}</span>
                     <span>{completedCount}/{course.lessons.length} lessons</span>
                   </div>
@@ -235,21 +235,21 @@ export const LearningView: React.FC = () => {
           {/* Course Details & Lessons (7 cols) */}
           <div className="lg:col-span-7">
             {currentCourse ? (
-              <div className="p-6 rounded-2xl bg-[#2E373F] border border-[#434D56]/60 space-y-6">
-                <div className="flex items-start justify-between gap-4 pb-4 border-b border-[#434D56]/60">
+              <div className="p-6 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] shadow-xs space-y-6">
+                <div className="flex items-start justify-between gap-4 pb-4 border-b border-[#D6C6B2]">
                   <div className="space-y-1">
-                    <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-[#242B31] text-[#D2925B] border border-[#434D56]">
+                    <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-[#3B2418] text-[#8EC5FF] border border-[#5A3927]">
                       {currentCourse.category}
                     </span>
-                    <h2 className="text-lg font-bold text-[#F4F0E9] pt-1">
+                    <h2 className="text-lg font-bold text-[#3B2418] pt-1">
                       {currentCourse.title}
                     </h2>
                     {currentCourse.instructor && (
-                      <p className="text-xs text-[#868A7A]">
+                      <p className="text-xs text-[#6E5648]">
                         Instructor: {currentCourse.instructor}
                       </p>
                     )}
-                    <p className="text-xs text-[#A8A8A2] leading-relaxed">
+                    <p className="text-xs text-[#6E5648] leading-relaxed">
                       {currentCourse.description}
                     </p>
                   </div>
@@ -259,7 +259,7 @@ export const LearningView: React.FC = () => {
                       startFocusTimer(50, { id: currentCourse.id, title: `Study: ${currentCourse.title}` });
                       setIsFocusTimerOpen(true);
                     }}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#D2925B]/20 hover:bg-[#D2925B]/30 text-[#D2925B] border border-[#D2925B]/40 text-xs font-semibold shrink-0 transition-colors"
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#8EC5FF] hover:bg-[#73B6FC] text-[#3B2418] border border-[#3B2418]/15 text-xs font-bold shrink-0 transition-colors shadow-xs"
                   >
                     <Play className="w-3.5 h-3.5 fill-current" />
                     <span>Start Study Timer</span>
@@ -268,7 +268,7 @@ export const LearningView: React.FC = () => {
 
                 {/* Lessons List */}
                 <div className="space-y-3">
-                  <span className="text-xs font-bold uppercase tracking-wider text-[#F4F0E9] block">
+                  <span className="text-xs font-bold uppercase tracking-wider text-[#3B2418] block">
                     Lessons & Modules ({currentCourse.lessons.length})
                   </span>
 
@@ -279,8 +279,8 @@ export const LearningView: React.FC = () => {
                         onClick={() => setSelectedLesson(lesson)}
                         className={`p-3 rounded-xl border transition-colors cursor-pointer flex items-center justify-between ${
                           selectedLesson?.id === lesson.id
-                            ? 'bg-[#242B31] border-[#D2925B]'
-                            : 'bg-[#242B31]/70 border-[#434D56] hover:border-[#868A7A]'
+                            ? 'bg-[#8EC5FF]/25 border-[#8EC5FF]'
+                            : 'bg-[#F2E8DA] border-[#D6C6B2] hover:border-[#8EC5FF]'
                         }`}
                       >
                         <div className="flex items-center gap-2.5 min-w-0">
@@ -290,19 +290,19 @@ export const LearningView: React.FC = () => {
                               e.stopPropagation();
                               toggleLessonCompleted(currentCourse.id, lesson.id);
                             }}
-                            className="text-[#868A7A] hover:text-[#5B8C67] shrink-0"
+                            className="text-[#6E5648] hover:text-[#3E7B52] shrink-0"
                           >
                             {lesson.completed ? (
-                              <CheckCircle2 className="w-4 h-4 text-[#5B8C67]" />
+                              <CheckCircle2 className="w-4 h-4 text-[#3E7B52]" />
                             ) : (
                               <Circle className="w-4 h-4" />
                             )}
                           </button>
-                          <span className={`text-xs font-medium truncate ${lesson.completed ? 'line-through text-[#868A7A]' : 'text-[#F4F0E9]'}`}>
+                          <span className={`text-xs font-medium truncate ${lesson.completed ? 'line-through text-[#6E5648]' : 'text-[#3B2418]'}`}>
                             {lesson.title}
                           </span>
                         </div>
-                        <span className="font-mono text-[10px] text-[#868A7A] shrink-0">
+                        <span className="font-mono text-[10px] text-[#6E5648] shrink-0">
                           {lesson.studyDurationMinutes}m
                         </span>
                       </div>
@@ -312,17 +312,17 @@ export const LearningView: React.FC = () => {
 
                 {/* Selected Lesson Reader / Objectives */}
                 {selectedLesson && (
-                  <div className="p-4 rounded-xl bg-[#242B31] border border-[#434D56] space-y-3">
-                    <h3 className="text-xs font-bold text-[#D2925B] uppercase tracking-wider font-mono">
+                  <div className="p-4 rounded-xl bg-[#F2E8DA] border border-[#D6C6B2] space-y-3">
+                    <h3 className="text-xs font-bold text-[#1E5A99] uppercase tracking-wider font-mono">
                       Lesson Objectives & Notes
                     </h3>
-                    <p className="text-xs text-[#F4F0E9] leading-relaxed">
+                    <p className="text-xs text-[#3B2418] leading-relaxed">
                       {selectedLesson.content}
                     </p>
                     {selectedLesson.learningObjectives?.length > 0 && (
                       <div className="space-y-1 pt-1">
-                        <span className="text-[10px] text-[#868A7A] uppercase font-mono block">Learning Objectives:</span>
-                        <ul className="text-xs text-[#A8A8A2] list-disc list-inside space-y-0.5">
+                        <span className="text-[10px] text-[#6E5648] uppercase font-mono block">Learning Objectives:</span>
+                        <ul className="text-xs text-[#6E5648] list-disc list-inside space-y-0.5">
                           {selectedLesson.learningObjectives.map((obj, i) => (
                             <li key={i}>{obj}</li>
                           ))}
@@ -330,7 +330,7 @@ export const LearningView: React.FC = () => {
                       </div>
                     )}
                     {selectedLesson.notes && (
-                      <div className="p-2.5 rounded-lg bg-[#2E373F] text-xs text-[#A8A8A2] italic">
+                      <div className="p-2.5 rounded-lg bg-[#FAF5ED] border border-[#D6C6B2] text-xs text-[#6E5648] italic">
                         Note: {selectedLesson.notes}
                       </div>
                     )}
@@ -338,61 +338,61 @@ export const LearningView: React.FC = () => {
                 )}
               </div>
             ) : (
-              <div className="p-12 text-center text-[#868A7A]">No course selected</div>
+              <div className="p-12 text-center text-[#6E5648]">No course selected</div>
             )}
           </div>
         </div>
       ) : (
         /* Study Sessions Log Tab */
-        <div className="p-6 rounded-2xl bg-[#2E373F] border border-[#434D56]/60 space-y-4">
+        <div className="p-6 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] shadow-xs space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-xs font-bold uppercase tracking-wider text-[#F4F0E9]">
+            <h2 className="text-xs font-bold uppercase tracking-wider text-[#3B2418]">
               Deliberate Study Session Logs
             </h2>
             <button
               onClick={() => setShowLogSession(!showLogSession)}
-              className="px-3 py-1.5 rounded-lg bg-[#D2925B] text-[#242B31] font-semibold text-xs"
+              className="px-3 py-1.5 rounded-lg bg-[#8EC5FF] hover:bg-[#73B6FC] text-[#3B2418] border border-[#3B2418]/15 font-bold text-xs shadow-xs transition-colors"
             >
               + Log Study Session
             </button>
           </div>
 
           {showLogSession && (
-            <form onSubmit={handleLogStudySession} className="p-4 rounded-xl bg-[#242B31] border border-[#434D56] space-y-3">
+            <form onSubmit={handleLogStudySession} className="p-4 rounded-xl bg-[#F2E8DA] border border-[#D6C6B2] space-y-3">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs text-[#A8A8A2] mb-1">Subject / Topic</label>
+                  <label className="block text-xs font-semibold text-[#6E5648] mb-1">Subject / Topic</label>
                   <input
                     type="text"
                     required
                     value={sessionSubject}
                     onChange={e => setSessionSubject(e.target.value)}
                     placeholder="e.g. Asymmetric Cryptography & ECDHE"
-                    className="w-full px-3 py-1.5 rounded-lg bg-[#2E373F] border border-[#434D56] text-xs text-[#F4F0E9] focus:outline-hidden"
+                    className="w-full px-3 py-1.5 rounded-lg bg-[#FAF5ED] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs text-[#A8A8A2] mb-1">Duration (minutes)</label>
+                  <label className="block text-xs font-semibold text-[#6E5648] mb-1">Duration (minutes)</label>
                   <input
                     type="number"
                     min="5"
                     max="300"
                     value={sessionDuration}
                     onChange={e => setSessionDuration(parseInt(e.target.value))}
-                    className="w-full px-3 py-1.5 rounded-lg bg-[#2E373F] border border-[#434D56] text-xs text-[#F4F0E9] focus:outline-hidden"
+                    className="w-full px-3 py-1.5 rounded-lg bg-[#FAF5ED] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs text-[#A8A8A2] mb-1">What Was Learned / Key Realization</label>
+                <label className="block text-xs font-semibold text-[#6E5648] mb-1">What Was Learned / Key Realization</label>
                 <textarea
                   rows={2}
                   required
                   value={sessionLearned}
                   onChange={e => setSessionLearned(e.target.value)}
                   placeholder="Concrete insights, proof summaries, or mental models..."
-                  className="w-full px-3 py-1.5 rounded-lg bg-[#2E373F] border border-[#434D56] text-xs text-[#F4F0E9] focus:outline-hidden"
+                  className="w-full px-3 py-1.5 rounded-lg bg-[#FAF5ED] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
                 />
               </div>
 
@@ -400,13 +400,13 @@ export const LearningView: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setShowLogSession(false)}
-                  className="px-3 py-1 text-xs text-[#868A7A]"
+                  className="px-3 py-1 text-xs text-[#6E5648] hover:text-[#3B2418]"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-1.5 rounded-lg bg-[#D2925B] text-[#242B31] font-semibold text-xs"
+                  className="px-4 py-1.5 rounded-lg bg-[#8EC5FF] hover:bg-[#73B6FC] text-[#3B2418] border border-[#3B2418]/15 font-bold text-xs shadow-xs"
                 >
                   Save Log
                 </button>
@@ -418,19 +418,19 @@ export const LearningView: React.FC = () => {
             {state.studySessions.map(session => (
               <div
                 key={session.id}
-                className="p-4 rounded-xl bg-[#242B31] border border-[#434D56] space-y-2"
+                className="p-4 rounded-xl bg-[#F2E8DA] border border-[#D6C6B2] space-y-2"
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <BookOpen className="w-4 h-4 text-[#D2925B]" />
-                    <span className="text-sm font-semibold text-[#F4F0E9]">{session.subject}</span>
+                    <BookOpen className="w-4 h-4 text-[#1E5A99]" />
+                    <span className="text-sm font-semibold text-[#3B2418]">{session.subject}</span>
                   </div>
-                  <div className="flex items-center gap-2 text-xs font-mono text-[#868A7A]">
+                  <div className="flex items-center gap-2 text-xs font-mono text-[#6E5648]">
                     <span>{session.date}</span>
                     <span>• {session.durationMinutes} mins</span>
                   </div>
                 </div>
-                <p className="text-xs text-[#A8A8A2] leading-relaxed pl-6">
+                <p className="text-xs text-[#6E5648] leading-relaxed pl-6">
                   {session.whatWasLearned}
                 </p>
               </div>
@@ -441,19 +441,19 @@ export const LearningView: React.FC = () => {
 
       {/* New Course Modal */}
       {showNewCourseModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#3B2418]/65 backdrop-blur-xs">
           <div
-            className="w-full max-w-lg bg-[#242B31] border border-[#434D56] rounded-2xl shadow-2xl overflow-hidden animate-fade-in"
+            className="w-full max-w-lg bg-[#FAF5ED] border border-[#D6C6B2] rounded-2xl shadow-2xl overflow-hidden animate-fade-in"
             onClick={e => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between px-6 py-4 border-b border-[#434D56] bg-[#22292F]">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-[#5A3927] bg-[#3B2418]">
               <div className="flex items-center gap-2">
-                <GraduationCap className="w-4 h-4 text-[#D2925B]" />
-                <h3 className="text-sm font-bold text-[#F4F0E9]">Create Course</h3>
+                <GraduationCap className="w-4 h-4 text-[#8EC5FF]" />
+                <h3 className="text-sm font-bold text-[#F2E8DA]">Create Course</h3>
               </div>
               <button
                 onClick={() => setShowNewCourseModal(false)}
-                className="text-[#868A7A] hover:text-[#F4F0E9]"
+                className="text-[#D8C7B4] hover:text-[#F2E8DA]"
               >
                 ✕
               </button>
@@ -461,25 +461,25 @@ export const LearningView: React.FC = () => {
 
             <form onSubmit={handleCreateCourse} className="p-6 space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-[#A8A8A2] mb-1">Course Title</label>
+                <label className="block text-xs font-semibold text-[#6E5648] mb-1">Course Title</label>
                 <input
                   type="text"
                   required
                   value={courseTitle}
                   onChange={e => setCourseTitle(e.target.value)}
                   placeholder="e.g. Linux Kernel Security & Hardening"
-                  className="w-full px-3 py-2 rounded-lg bg-[#2E373F] border border-[#434D56] text-xs text-[#F4F0E9] focus:outline-hidden"
+                  className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
                   autoFocus
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-[#A8A8A2] mb-1">Category</label>
+                  <label className="block text-xs font-semibold text-[#6E5648] mb-1">Category</label>
                   <select
                     value={courseCategory}
                     onChange={e => setCourseCategory(e.target.value)}
-                    className="w-full px-2.5 py-1.5 rounded-lg bg-[#2E373F] border border-[#434D56] text-xs text-[#F4F0E9] focus:outline-hidden"
+                    className="w-full px-2.5 py-1.5 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
                   >
                     <option value="Cybersecurity">Cybersecurity</option>
                     <option value="Programming">Programming</option>
@@ -492,39 +492,39 @@ export const LearningView: React.FC = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-[#A8A8A2] mb-1">Instructor (opt)</label>
+                  <label className="block text-xs font-semibold text-[#6E5648] mb-1">Instructor (opt)</label>
                   <input
                     type="text"
                     value={courseInstructor}
                     onChange={e => setCourseInstructor(e.target.value)}
                     placeholder="e.g. Dr. Vance"
-                    className="w-full px-2.5 py-1.5 rounded-lg bg-[#2E373F] border border-[#434D56] text-xs text-[#F4F0E9] focus:outline-hidden"
+                    className="w-full px-2.5 py-1.5 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-[#A8A8A2] mb-1">Description</label>
+                <label className="block text-xs font-semibold text-[#6E5648] mb-1">Description</label>
                 <textarea
                   rows={2}
                   value={courseDescription}
                   onChange={e => setCourseDescription(e.target.value)}
                   placeholder="Core syllabus and target skills..."
-                  className="w-full px-3 py-2 rounded-lg bg-[#2E373F] border border-[#434D56] text-xs text-[#F4F0E9] focus:outline-hidden"
+                  className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
                 />
               </div>
 
-              <div className="flex justify-end gap-2 pt-2 border-t border-[#434D56]">
+              <div className="flex justify-end gap-2 pt-2 border-t border-[#D6C6B2]">
                 <button
                   type="button"
                   onClick={() => setShowNewCourseModal(false)}
-                  className="px-3 py-1.5 text-xs text-[#868A7A]"
+                  className="px-3 py-1.5 text-xs text-[#6E5648] hover:text-[#3B2418]"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-1.5 rounded-lg text-xs font-bold bg-[#D2925B] text-[#242B31] hover:bg-[#C2824B]"
+                  className="px-4 py-1.5 rounded-lg text-xs font-bold bg-[#8EC5FF] text-[#3B2418] hover:bg-[#73B6FC] border border-[#3B2418]/15 shadow-xs"
                 >
                   Create Course
                 </button>
