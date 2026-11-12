@@ -11,9 +11,12 @@ import {
   AlertCircle,
   KeyRound,
   LogOut,
-  Sparkles,
+  Loader2,
 } from 'lucide-react';
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { useApp } from '../../lib/context';
+import { authApi } from '../../lib/financeApi';
+import { ModalShell, MOMENTUM_EASE } from '../common/MotionPrimitives';
 
 type AuthMode = 'login' | 'signup' | 'forgot' | 'profile';
 
@@ -22,11 +25,13 @@ export const AuthModal: React.FC = () => {
     isAuthModalOpen,
     setIsAuthModalOpen,
     state,
-    updateProfile,
-    resetToDemoData,
-    clearAllData,
+    authUser,
+    setAuthUser,
+    logoutAuth,
+    showToast,
   } = useApp();
 
+  const prefersReduced = useReducedMotion();
   const [mode, setMode] = useState<AuthMode>('profile');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -35,8 +40,6 @@ export const AuthModal: React.FC = () => {
   const [error, setError] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
   const [loading, setLoading] = useState(false);
-
-  if (!isAuthModalOpen) return null;
 
   // Password strength check
   const getPasswordStrength = (pass: string) => {
@@ -50,7 +53,7 @@ export const AuthModal: React.FC = () => {
 
   const passwordScore = getPasswordStrength(password);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     if (!email || !password) {
@@ -58,18 +61,25 @@ export const AuthModal: React.FC = () => {
       return;
     }
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      updateProfile({ email, fullName: email.split('@')[0] });
+    try {
+      const { user } = await authApi.login({ email, password });
+      setAuthUser(user);
       setSuccessMsg('Successfully signed in.');
+      showToast(`Signed in as ${user.fullName}`, 'success');
+      setPassword('');
       setTimeout(() => {
         setIsAuthModalOpen(false);
         setSuccessMsg('');
-      }, 700);
-    }, 500);
+        setMode('profile');
+      }, 450);
+    } catch (err: any) {
+      setError(err?.message || 'Unable to sign in.');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleSignUp = (e: React.FormEvent) => {
+  const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     if (!email || !password || !name) {
@@ -81,15 +91,22 @@ export const AuthModal: React.FC = () => {
       return;
     }
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      updateProfile({ email, fullName: name, onboardingCompleted: true });
-      setSuccessMsg('Account created successfully!');
+    try {
+      const { user } = await authApi.signup({ email, password, fullName: name });
+      setAuthUser(user);
+      setSuccessMsg('Account created and authenticated!');
+      showToast(`Welcome, ${user.fullName}`, 'success');
+      setPassword('');
       setTimeout(() => {
         setIsAuthModalOpen(false);
         setSuccessMsg('');
-      }, 700);
-    }, 500);
+        setMode('profile');
+      }, 450);
+    } catch (err: any) {
+      setError(err?.message || 'Unable to create account.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleForgot = (e: React.FormEvent) => {
@@ -107,66 +124,101 @@ export const AuthModal: React.FC = () => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#3B2418]/70 backdrop-blur-sm">
-      <div
-        className="w-full max-w-md bg-[#FAF5ED] border border-[#D6C6B2] rounded-2xl shadow-2xl overflow-hidden flex flex-col animate-fade-in"
-        onClick={e => e.stopPropagation()}
-      >
-        {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-[#5A3927] bg-[#3B2418]">
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-md bg-[#8EC5FF] flex items-center justify-center text-[#3B2418]">
-              <Compass className="w-4 h-4 text-[#3B2418]" />
-            </div>
-            <h2 className="font-semibold text-sm text-[#F2E8DA] uppercase tracking-wider font-mono">
-              {mode === 'profile'
-                ? 'Account & Profile'
-                : mode === 'login'
-                ? 'Sign In to MOMENTUM'
-                : mode === 'signup'
-                ? 'Create MOMENTUM Account'
-                : 'Reset Password'}
-            </h2>
+    <ModalShell
+      isOpen={isAuthModalOpen}
+      onClose={() => setIsAuthModalOpen(false)}
+      maxWidthClass="max-w-md"
+      backdropClassName="bg-[#3B2418]/70 backdrop-blur-sm"
+      panelClassName="bg-[#FAF5ED] border border-[#D6C6B2] rounded-2xl shadow-2xl overflow-hidden flex flex-col"
+    >
+      {/* Header */}
+      <div className="flex items-center justify-between px-6 py-4 border-b border-[#5A3927] bg-[#3B2418]">
+        <div className="flex items-center gap-2">
+          <div className="w-6 h-6 rounded-md bg-[#8EC5FF] flex items-center justify-center text-[#3B2418]">
+            <Compass className="w-4 h-4 text-[#3B2418]" />
           </div>
-          <button
-            onClick={() => setIsAuthModalOpen(false)}
-            className="p-1 rounded-lg text-[#D8C7B4] hover:text-[#F2E8DA] hover:bg-[#4D3021]"
-            aria-label="Close dialog"
-          >
-            <X className="w-4 h-4" />
-          </button>
+          <h2 className="font-semibold text-sm text-[#F2E8DA] uppercase tracking-wider font-mono">
+            {mode === 'profile'
+              ? 'Account & Profile'
+              : mode === 'login'
+              ? 'Sign In to MOMENTUM'
+              : mode === 'signup'
+              ? 'Create MOMENTUM Account'
+              : 'Reset Password'}
+          </h2>
         </div>
+        <button
+          onClick={() => setIsAuthModalOpen(false)}
+          className="p-1 rounded-lg text-[#D8C7B4] hover:text-[#F2E8DA] hover:bg-[#4D3021] btn-press"
+          aria-label="Close dialog"
+        >
+          <X className="w-4 h-4" />
+        </button>
+      </div>
 
-        {/* Content Body */}
-        <div className="p-6">
+      {/* Content Body */}
+      <div className="p-6">
+        <AnimatePresence>
           {error && (
-            <div className="mb-4 p-3 rounded-lg bg-[#B84A44]/15 border border-[#B84A44]/40 flex items-center gap-2 text-xs text-[#9E3530]">
+            <motion.div
+              initial={prefersReduced ? { opacity: 1 } : { opacity: 0, y: -4 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -4 }}
+              transition={{ duration: prefersReduced ? 0.01 : 0.15 }}
+              className="mb-4 p-3 rounded-lg bg-[#B84A44]/15 border border-[#B84A44]/40 flex items-center gap-2 text-xs text-[#9E3530]"
+            >
               <AlertCircle className="w-4 h-4 shrink-0" />
               <span>{error}</span>
-            </div>
+            </motion.div>
           )}
+        </AnimatePresence>
 
+        <AnimatePresence>
           {successMsg && (
-            <div className="mb-4 p-3 rounded-lg bg-[#3E7B52]/15 border border-[#3E7B52]/40 flex items-center gap-2 text-xs text-[#2D6240]">
+            <motion.div
+              initial={prefersReduced ? { opacity: 1 } : { opacity: 0, y: -4 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -4 }}
+              transition={{ duration: prefersReduced ? 0.01 : 0.15 }}
+              className="mb-4 p-3 rounded-lg bg-[#3E7B52]/15 border border-[#3E7B52]/40 flex items-center gap-2 text-xs text-[#2D6240]"
+            >
               <Check className="w-4 h-4 shrink-0" />
               <span>{successMsg}</span>
-            </div>
+            </motion.div>
           )}
+        </AnimatePresence>
+
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key={mode}
+            initial={prefersReduced ? { opacity: 1 } : { opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={prefersReduced ? { opacity: 0 } : { opacity: 0, y: -4 }}
+            transition={{ duration: prefersReduced ? 0.01 : 0.15, ease: MOMENTUM_EASE }}
+          >
 
           {mode === 'profile' && (
             <div className="space-y-5">
               <div className="flex items-center gap-3 p-3 rounded-xl bg-[#F2E8DA] border border-[#D6C6B2]">
                 <div className="w-12 h-12 rounded-full bg-[#3B2418] border-2 border-[#8EC5FF] flex items-center justify-center text-lg font-bold text-[#F2E8DA]">
-                  {state.profile.fullName.charAt(0)}
+                  {(authUser?.fullName || state.profile.fullName).charAt(0)}
                 </div>
                 <div className="flex-1 min-w-0">
                   <h3 className="text-sm font-semibold text-[#3B2418] truncate">
-                    {state.profile.fullName}
+                    {authUser?.fullName || state.profile.fullName}
                   </h3>
-                  <p className="text-xs text-[#6E5648] truncate">{state.profile.email}</p>
+                  <p className="text-xs text-[#6E5648] truncate">
+                    {authUser?.email || state.profile.email}
+                  </p>
                   <div className="flex items-center gap-2 mt-1">
-                    <span className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded bg-[#8EC5FF]/50 text-[#3B2418] border border-[#8EC5FF]">
-                      {state.isDemoMode ? 'Active Session: Demo Mode' : 'Authenticated'}
+                    <span
+                      className={`text-[10px] font-mono font-semibold px-2 py-0.5 rounded border ${
+                        authUser
+                          ? 'bg-[#3E7B52]/15 text-[#2D6240] border-[#3E7B52]/40'
+                          : 'bg-[#8EC5FF]/50 text-[#3B2418] border-[#8EC5FF]'
+                      }`}
+                    >
+                      {authUser ? 'Authenticated Session' : 'Not Signed In (Local Preview)'}
                     </span>
                   </div>
                 </div>
@@ -191,22 +243,29 @@ export const AuthModal: React.FC = () => {
 
               <div className="pt-2 flex flex-col gap-2">
                 <button
-                  onClick={() => setMode('login')}
-                  className="w-full py-2 px-3 rounded-lg bg-[#F2E8DA] hover:bg-[#E3D5C1] text-xs font-semibold text-[#3B2418] border border-[#D6C6B2] transition-colors flex items-center justify-center gap-2"
-                >
-                  <KeyRound className="w-3.5 h-3.5 text-[#1E5A99]" />
-                  <span>Switch Account / Sign In</span>
-                </button>
-                <button
                   onClick={() => {
-                    clearAllData();
-                    setIsAuthModalOpen(false);
+                    setError('');
+                    setSuccessMsg('');
+                    setMode('login');
                   }}
-                  className="w-full py-2 px-3 rounded-lg bg-[#B84A44]/10 hover:bg-[#B84A44]/20 text-xs font-medium text-[#9E3530] border border-[#B84A44]/30 transition-colors flex items-center justify-center gap-2"
+                  className="w-full py-2 px-3 rounded-lg bg-[#8EC5FF] hover:bg-[#73B6FC] text-xs font-bold text-[#3B2418] border border-[#3B2418]/15 btn-press flex items-center justify-center gap-2"
                 >
-                  <LogOut className="w-3.5 h-3.5" />
-                  <span>Log Out (Clear Local Session)</span>
+                  <KeyRound className="w-3.5 h-3.5" />
+                  <span>{authUser ? 'Switch Account' : 'Sign In / Create Account'}</span>
                 </button>
+                {authUser && (
+                  <button
+                    onClick={async () => {
+                      await logoutAuth();
+                      showToast('Signed out securely.', 'info');
+                      setIsAuthModalOpen(false);
+                    }}
+                    className="w-full py-2 px-3 rounded-lg bg-[#B84A44]/10 hover:bg-[#B84A44]/20 text-xs font-medium text-[#9E3530] border border-[#B84A44]/30 btn-press flex items-center justify-center gap-2"
+                  >
+                    <LogOut className="w-3.5 h-3.5" />
+                    <span>Sign Out</span>
+                  </button>
+                )}
               </div>
             </div>
           )}
@@ -262,9 +321,10 @@ export const AuthModal: React.FC = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-2.5 rounded-lg bg-[#8EC5FF] hover:bg-[#73B6FC] text-[#3B2418] border border-[#3B2418]/15 font-bold text-xs shadow-md transition-all disabled:opacity-50"
+                className="w-full py-2.5 rounded-lg bg-[#8EC5FF] hover:bg-[#73B6FC] text-[#3B2418] border border-[#3B2418]/15 font-bold text-xs shadow-md btn-press disabled:opacity-60 flex items-center justify-center gap-2"
               >
-                {loading ? 'Authenticating...' : 'Sign In'}
+                {loading && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
+                <span>{loading ? 'Authenticating...' : 'Sign In'}</span>
               </button>
 
               <div className="flex items-center justify-between pt-3 text-xs text-[#6E5648] border-t border-[#D6C6B2]">
@@ -369,9 +429,10 @@ export const AuthModal: React.FC = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-2.5 rounded-lg bg-[#8EC5FF] hover:bg-[#73B6FC] text-[#3B2418] border border-[#3B2418]/15 font-bold text-xs shadow-md transition-all disabled:opacity-50"
+                className="w-full py-2.5 rounded-lg bg-[#8EC5FF] hover:bg-[#73B6FC] text-[#3B2418] border border-[#3B2418]/15 font-bold text-xs shadow-md btn-press disabled:opacity-60 flex items-center justify-center gap-2"
               >
-                {loading ? 'Creating...' : 'Register Account'}
+                {loading && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
+                <span>{loading ? 'Creating...' : 'Register Account'}</span>
               </button>
 
               <div className="flex items-center justify-between pt-3 text-xs text-[#6E5648] border-t border-[#D6C6B2]">
@@ -409,9 +470,10 @@ export const AuthModal: React.FC = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-2.5 rounded-lg bg-[#8EC5FF] hover:bg-[#73B6FC] text-[#3B2418] border border-[#3B2418]/15 font-bold text-xs shadow-md transition-all disabled:opacity-50"
+                className="w-full py-2.5 rounded-lg bg-[#8EC5FF] hover:bg-[#73B6FC] text-[#3B2418] border border-[#3B2418]/15 font-bold text-xs shadow-md btn-press disabled:opacity-60 flex items-center justify-center gap-2"
               >
-                {loading ? 'Sending...' : 'Send Reset Link'}
+                {loading && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
+                <span>{loading ? 'Sending...' : 'Send Reset Link'}</span>
               </button>
 
               <div className="pt-2 text-center">
@@ -425,8 +487,9 @@ export const AuthModal: React.FC = () => {
               </div>
             </form>
           )}
-        </div>
+          </motion.div>
+        </AnimatePresence>
       </div>
-    </div>
+    </ModalShell>
   );
 };

@@ -12,11 +12,14 @@ import {
   Heart,
   X,
 } from 'lucide-react';
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { useApp } from '../../lib/context';
 import { LifeArea } from '../../types';
+import { ModalShell, MOMENTUM_EASE } from './MotionPrimitives';
 
 export const OnboardingModal: React.FC = () => {
   const { isOnboardingOpen, setIsOnboardingOpen, completeOnboarding, addGoal } = useApp();
+  const prefersReduced = useReducedMotion();
 
   const [step, setStep] = useState(1);
 
@@ -45,35 +48,45 @@ export const OnboardingModal: React.FC = () => {
   // Daily availability
   const [dailyHours, setDailyHours] = useState(3.5);
 
-  if (!isOnboardingOpen) return null;
-
   const toggleArea = (area: LifeArea) => {
-    if (selectedAreas.includes(area)) {
-      if (selectedAreas.length > 1) {
-        setSelectedAreas(selectedAreas.filter(a => a !== area));
-      }
-    } else {
-      setSelectedAreas([...selectedAreas, area]);
-    }
+    setSelectedAreas(prev =>
+      prev.includes(area)
+        ? prev.length > 1
+          ? prev.filter(a => a !== area)
+          : prev
+        : [...prev, area]
+    );
+  };
+
+  const handleSkip = () => {
+    completeOnboarding({ onboardingCompleted: true });
+    setIsOnboardingOpen(false);
   };
 
   const handleFinish = () => {
     if (firstGoalTitle.trim()) {
+      const today = new Date();
+      const target = new Date(today.getTime() + 90 * 24 * 60 * 60 * 1000);
       addGoal({
         title: firstGoalTitle.trim(),
-        description: 'First key objective created during onboarding',
+        description: 'Initial 90-day priority established during MOMENTUM onboarding.',
         category: firstGoalCategory,
-        startDate: new Date().toISOString().split('T')[0],
-        targetDate: new Date(Date.now() + 90 * 86400000).toISOString().split('T')[0],
+        startDate: today.toISOString().split('T')[0],
+        targetDate: target.toISOString().split('T')[0],
         status: 'active',
         priority: 'high',
         progressCalculation: 'milestones',
         manualProgress: 0,
-        successCriteria: 'Achieve quarterly milestones and review outcomes weekly',
-        motivation: visionStatement || 'Continuous self-mastery',
+        successCriteria: 'Complete initial 90-day milestone deliverables.',
+        motivation: visionStatement,
         milestones: [
-          { id: `gm-onboard-1`, goalId: '', title: 'Phase 1 Foundations', completed: false, order: 1 },
-          { id: `gm-onboard-2`, goalId: '', title: 'Phase 2 Capstone Delivery', completed: false, order: 2 },
+          {
+            id: `ms-onboard-${Date.now()}`,
+            goalId: 'pending',
+            title: 'Complete foundational 30-day execution block',
+            completed: false,
+            order: 1,
+          },
         ],
         relatedProjectIds: [],
       });
@@ -81,58 +94,67 @@ export const OnboardingModal: React.FC = () => {
 
     completeOnboarding({
       fullName: fullName.trim() || 'Alex Vance',
-      timezone,
+      timezone: timezone.trim() || 'UTC',
       preferredLanguage,
       lifeAreas: selectedAreas,
-      visionStatement,
+      visionStatement: visionStatement.trim(),
       dailyAvailabilityHours: dailyHours,
+      onboardingCompleted: true,
     });
   };
 
-  const handleSkip = () => {
-    completeOnboarding({});
-  };
-
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#3B2418]/75 backdrop-blur-md">
-      <div
-        className="w-full max-w-xl bg-[#FAF5ED] border border-[#D6C6B2] rounded-2xl shadow-2xl overflow-hidden flex flex-col animate-fade-in"
-        onClick={e => e.stopPropagation()}
-      >
-        {/* Progress Bar & Header */}
-        <div className="bg-[#3B2418] px-6 pt-5 pb-4 border-b border-[#5A3927]">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2">
-              <div className="w-7 h-7 rounded-lg bg-[#8EC5FF] flex items-center justify-center text-[#3B2418] font-bold">
-                <Compass className="w-4 h-4 text-[#3B2418]" />
-              </div>
-              <span className="font-mono text-xs font-bold text-[#F2E8DA] tracking-wider uppercase">
-                MOMENTUM Setup
-              </span>
+    <ModalShell
+      isOpen={isOnboardingOpen}
+      onClose={handleSkip}
+      maxWidthClass="max-w-xl"
+      backdropClassName="bg-[#3B2418]/75 backdrop-blur-md"
+      panelClassName="bg-[#FAF5ED] border border-[#D6C6B2] rounded-2xl shadow-2xl overflow-hidden flex flex-col"
+    >
+      {/* Progress Bar & Header */}
+      <div className="bg-[#3B2418] px-6 pt-5 pb-4 border-b border-[#5A3927]">
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2">
+            <div className="w-7 h-7 rounded-lg bg-[#8EC5FF] flex items-center justify-center text-[#3B2418] font-bold">
+              <Compass className="w-4 h-4 text-[#3B2418]" />
             </div>
-            <div className="flex items-center gap-3">
-              <span className="text-xs font-mono text-[#8EC5FF] font-semibold">
-                Step {step} of 7
-              </span>
-              <button
-                onClick={handleSkip}
-                className="text-xs text-[#D8C7B4] hover:text-[#F2E8DA] transition-colors"
-              >
-                Skip for now
-              </button>
-            </div>
+            <span className="font-mono text-xs font-bold text-[#F2E8DA] tracking-wider uppercase">
+              MOMENTUM Setup
+            </span>
           </div>
-
-          <div className="w-full bg-[#4D3021] h-1.5 rounded-full overflow-hidden">
-            <div
-              className="bg-[#8EC5FF] h-full transition-all duration-300"
-              style={{ width: `${(step / 7) * 100}%` }}
-            />
+          <div className="flex items-center gap-3">
+            <span className="text-xs font-mono text-[#8EC5FF] font-semibold">
+              Step {step} of 7
+            </span>
+            <button
+              onClick={handleSkip}
+              className="text-xs text-[#D8C7B4] hover:text-[#F2E8DA] transition-colors btn-press"
+            >
+              Skip for now
+            </button>
           </div>
         </div>
 
-        {/* Content Body */}
-        <div className="p-6 md:p-8 min-h-[360px] flex flex-col justify-between">
+        <div className="w-full bg-[#4D3021] h-1.5 rounded-full overflow-hidden">
+          <motion.div
+            className="bg-[#8EC5FF] h-full rounded-full"
+            animate={{ width: `${(step / 7) * 100}%` }}
+            transition={{ duration: prefersReduced ? 0.01 : 0.25, ease: MOMENTUM_EASE }}
+          />
+        </div>
+      </div>
+
+      {/* Content Body */}
+      <div className="p-6 md:p-8 min-h-[360px] flex flex-col justify-between">
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key={step}
+            initial={prefersReduced ? { opacity: 1 } : { opacity: 0, x: 10 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={prefersReduced ? { opacity: 0 } : { opacity: 0, x: -10 }}
+            transition={{ duration: prefersReduced ? 0.01 : 0.16, ease: MOMENTUM_EASE }}
+            className="my-auto"
+          >
           {step === 1 && (
             <div className="space-y-4 my-auto text-center">
               <div className="w-16 h-16 rounded-2xl bg-[#3B2418] border-2 border-[#8EC5FF] flex items-center justify-center mx-auto text-[#8EC5FF] shadow-lg">
@@ -329,42 +351,43 @@ export const OnboardingModal: React.FC = () => {
               </p>
             </div>
           )}
+          </motion.div>
+        </AnimatePresence>
 
-          {/* Navigation Controls */}
-          <div className="flex items-center justify-between pt-6 border-t border-[#D6C6B2] mt-6">
-            {step > 1 ? (
-              <button
-                type="button"
-                onClick={() => setStep(step - 1)}
-                className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-[#6E5648] hover:text-[#3B2418] rounded-lg transition-colors"
-              >
-                <ArrowLeft className="w-3.5 h-3.5" />
-                <span>Back</span>
-              </button>
-            ) : <div />}
+        {/* Navigation Controls */}
+        <div className="flex items-center justify-between pt-6 border-t border-[#D6C6B2] mt-6">
+          {step > 1 ? (
+            <button
+              type="button"
+              onClick={() => setStep(step - 1)}
+              className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-[#6E5648] hover:text-[#3B2418] rounded-lg transition-colors btn-press"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" />
+              <span>Back</span>
+            </button>
+          ) : <div />}
 
-            {step < 7 ? (
-              <button
-                type="button"
-                onClick={() => setStep(step + 1)}
-                className="flex items-center gap-1.5 px-5 py-2 text-xs font-semibold rounded-lg bg-[#8EC5FF] text-[#3B2418] hover:bg-[#73B6FC] border border-[#3B2418]/15 shadow-sm transition-all"
-              >
-                <span>Continue</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </button>
-            ) : (
-              <button
-                type="button"
-                onClick={handleFinish}
-                className="flex items-center gap-1.5 px-6 py-2.5 text-xs font-bold rounded-lg bg-[#8EC5FF] text-[#3B2418] hover:bg-[#73B6FC] border border-[#3B2418]/15 shadow-md transition-all active:scale-95"
-              >
-                <span>Launch MOMENTUM</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
-            )}
-          </div>
+          {step < 7 ? (
+            <button
+              type="button"
+              onClick={() => setStep(step + 1)}
+              className="flex items-center gap-1.5 px-5 py-2 text-xs font-semibold rounded-lg bg-[#8EC5FF] text-[#3B2418] hover:bg-[#73B6FC] border border-[#3B2418]/15 shadow-sm btn-press"
+            >
+              <span>Continue</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={handleFinish}
+              className="flex items-center gap-1.5 px-6 py-2.5 text-xs font-bold rounded-lg bg-[#8EC5FF] text-[#3B2418] hover:bg-[#73B6FC] border border-[#3B2418]/15 shadow-md btn-press"
+            >
+              <span>Launch MOMENTUM</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          )}
         </div>
       </div>
-    </div>
+    </ModalShell>
   );
 };

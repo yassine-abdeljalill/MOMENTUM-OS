@@ -16,10 +16,13 @@ import {
   Play,
   Check,
 } from 'lucide-react';
+import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { useApp } from '../../lib/context';
 import { getPriorityColor, formatMinutes } from '../../lib/logic';
+import { ModalShell, AnimatedCheckButton, MOMENTUM_EASE } from '../common/MotionPrimitives';
 
 export const TodayView: React.FC = () => {
+  const prefersReduced = useReducedMotion();
   const {
     state,
     toggleTaskCompleted,
@@ -32,6 +35,7 @@ export const TodayView: React.FC = () => {
     startFocusTimer,
     setIsFocusTimerOpen,
     setIsQuickAddOpen,
+    showToast,
   } = useApp();
 
   const todayStr = new Date().toISOString().split('T')[0];
@@ -100,6 +104,7 @@ export const TodayView: React.FC = () => {
 
     setNewActivityTitle('');
     setShowAddActivityForm(false);
+    showToast('Time block added to schedule');
   };
 
   const handleSaveReflection = (e: React.FormEvent) => {
@@ -122,6 +127,7 @@ export const TodayView: React.FC = () => {
     });
 
     setReflectionSaved(true);
+    showToast('Daily reflection saved to Journal');
     setTimeout(() => {
       setShowReflectionModal(false);
       setReflectionSaved(false);
@@ -129,7 +135,7 @@ export const TodayView: React.FC = () => {
       setCouldBeBetter('');
       setLearned('');
       setTomorrowPriority('');
-    }, 800);
+    }, 600);
   };
 
   return (
@@ -159,7 +165,7 @@ export const TodayView: React.FC = () => {
         <div className="flex items-center gap-2">
           <button
             onClick={() => setShowReflectionModal(true)}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#3B2418] hover:bg-[#4D3021] text-[#F2E8DA] border border-[#5A3927] text-xs font-semibold shadow-xs transition-colors"
+            className="btn-press flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#3B2418] hover:bg-[#4D3021] text-[#F2E8DA] border border-[#5A3927] text-xs font-semibold shadow-xs transition-colors"
           >
             <BookOpen className="w-3.5 h-3.5 text-[#8EC5FF]" />
             <span>Daily Reflection</span>
@@ -229,24 +235,21 @@ export const TodayView: React.FC = () => {
                 const pColor = getPriorityColor(task.priority);
 
                 return (
-                  <div
+                  <motion.div
+                    layout={!prefersReduced}
+                    transition={{ duration: prefersReduced ? 0.01 : 0.22, ease: MOMENTUM_EASE }}
                     key={task.id}
-                    className={`p-4 rounded-xl border transition-all flex items-start gap-3 ${
+                    className={`p-4 rounded-xl border transition-all duration-200 flex items-start gap-3 ${
                       isDone
                         ? 'bg-[#EAE0D0]/60 border-[#D6C6B2] opacity-75'
-                        : 'bg-[#F2E8DA] border-[#D6C6B2] shadow-xs'
+                        : 'bg-[#F2E8DA] border-[#D6C6B2] hover:border-[#8EC5FF] shadow-xs card-hover'
                     }`}
                   >
-                    <button
+                    <AnimatedCheckButton
+                      checked={isDone}
                       onClick={() => toggleTaskCompleted(task.id)}
-                      className="mt-0.5 text-[#6E5648] hover:text-[#3E7B52] transition-colors shrink-0"
-                    >
-                      {isDone ? (
-                        <CheckCircle2 className="w-5 h-5 text-[#3E7B52] fill-[#3E7B52]/15" />
-                      ) : (
-                        <Circle className="w-5 h-5" />
-                      )}
-                    </button>
+                      className="mt-0.5"
+                    />
 
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between gap-2">
@@ -319,14 +322,14 @@ export const TodayView: React.FC = () => {
                             startFocusTimer(25, { id: task.id, title: task.title });
                             setIsFocusTimerOpen(true);
                           }}
-                          className="flex items-center gap-1 text-[11px] font-semibold text-[#3B2418] px-2.5 py-1 rounded-lg bg-[#8EC5FF] hover:bg-[#73B6FC] border border-[#3B2418]/15 transition-colors"
+                          className="btn-press flex items-center gap-1 text-[11px] font-semibold text-[#3B2418] px-2.5 py-1 rounded-lg bg-[#8EC5FF] hover:bg-[#73B6FC] border border-[#3B2418]/15 transition-colors"
                         >
                           <Play className="w-3 h-3 fill-current" />
                           <span>Focus On This</span>
                         </button>
                       </div>
                     </div>
-                  </div>
+                  </motion.div>
                 );
               })}
             </div>
@@ -347,47 +350,53 @@ export const TodayView: React.FC = () => {
             </div>
 
             <div className="space-y-2 max-h-64 overflow-y-auto pr-1">
-              {unscheduledTasks.slice(0, 6).map(task => {
-                const isDone = task.status === 'completed';
-                return (
-                  <div
-                    key={task.id}
-                    className="flex items-center justify-between p-3 rounded-xl bg-[#F2E8DA] border border-[#D6C6B2] hover:border-[#8EC5FF] transition-colors"
-                  >
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      <button
-                        onClick={() => toggleTaskCompleted(task.id)}
-                        className="text-[#6E5648] hover:text-[#3E7B52] shrink-0"
-                      >
-                        {isDone ? (
-                          <CheckCircle2 className="w-4 h-4 text-[#3E7B52]" />
-                        ) : (
-                          <Circle className="w-4 h-4" />
-                        )}
-                      </button>
-                      <span className={`text-xs truncate font-medium ${isDone ? 'line-through text-[#6E5648]' : 'text-[#3B2418]'}`}>
-                        {task.title}
-                      </span>
-                    </div>
+              <AnimatePresence initial={false}>
+                {unscheduledTasks.slice(0, 6).map(task => {
+                  const isDone = task.status === 'completed';
+                  return (
+                    <motion.div
+                      key={task.id}
+                      layout={!prefersReduced}
+                      initial={prefersReduced ? { opacity: 1 } : { opacity: 0, y: 6 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={prefersReduced ? { opacity: 0 } : { opacity: 0, x: -8 }}
+                      transition={{ duration: prefersReduced ? 0.01 : 0.18, ease: MOMENTUM_EASE }}
+                      className={`flex items-center justify-between p-3 rounded-xl border transition-all duration-200 ${
+                        isDone
+                          ? 'bg-[#EAE0D0]/60 border-[#D6C6B2] opacity-75'
+                          : 'bg-[#F2E8DA] border-[#D6C6B2] hover:border-[#8EC5FF]'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <AnimatedCheckButton
+                          checked={isDone}
+                          size="sm"
+                          onClick={() => toggleTaskCompleted(task.id)}
+                        />
+                        <span className={`text-xs truncate font-medium transition-colors ${isDone ? 'line-through text-[#6E5648]' : 'text-[#3B2418]'}`}>
+                          {task.title}
+                        </span>
+                      </div>
 
-                    <div className="flex items-center gap-2 shrink-0">
-                      <button
-                        onClick={() => {
-                          const nextRank = dailyPriorities.length + 1;
-                          if (nextRank <= 3) {
-                            setDailyPriorityRank(task.id, nextRank);
-                          }
-                        }}
-                        disabled={dailyPriorities.length >= 3}
-                        className="text-[10px] font-semibold px-2 py-0.5 rounded bg-[#8EC5FF]/60 text-[#3B2418] hover:bg-[#8EC5FF] disabled:opacity-35 border border-[#8EC5FF]"
-                        title="Promote to Top 3 Priorities"
-                      >
-                        + Top 3
-                      </button>
-                    </div>
-                  </div>
-                );
-              })}
+                      <div className="flex items-center gap-2 shrink-0">
+                        <button
+                          onClick={() => {
+                            const nextRank = dailyPriorities.length + 1;
+                            if (nextRank <= 3) {
+                              setDailyPriorityRank(task.id, nextRank);
+                            }
+                          }}
+                          disabled={dailyPriorities.length >= 3}
+                          className="btn-press text-[10px] font-semibold px-2 py-0.5 rounded bg-[#8EC5FF]/60 text-[#3B2418] hover:bg-[#8EC5FF] disabled:opacity-35 border border-[#8EC5FF] transition-colors"
+                          title="Promote to Top 3 Priorities"
+                        >
+                          + Top 3
+                        </button>
+                      </div>
+                    </motion.div>
+                  );
+                })}
+              </AnimatePresence>
             </div>
           </div>
         </div>
@@ -412,79 +421,92 @@ export const TodayView: React.FC = () => {
             </div>
 
             {/* Inline Add Activity Form */}
-            {showAddActivityForm && (
-              <form onSubmit={handleCreateActivity} className="p-3 rounded-xl bg-[#F2E8DA] border border-[#D6C6B2] space-y-2">
-                <input
-                  type="text"
-                  required
-                  value={newActivityTitle}
-                  onChange={e => setNewActivityTitle(e.target.value)}
-                  placeholder="Activity title..."
-                  className="w-full px-2.5 py-1.5 rounded-lg bg-[#FAF5ED] border border-[#D6C6B2] text-xs text-[#3B2418] focus:outline-hidden"
-                />
-                <div className="flex gap-2">
-                  <input
-                    type="time"
-                    value={newActivityStart}
-                    onChange={e => setNewActivityStart(e.target.value)}
-                    className="flex-1 px-2 py-1 rounded-lg bg-[#FAF5ED] border border-[#D6C6B2] text-xs text-[#3B2418]"
-                  />
-                  <input
-                    type="time"
-                    value={newActivityEnd}
-                    onChange={e => setNewActivityEnd(e.target.value)}
-                    className="flex-1 px-2 py-1 rounded-lg bg-[#FAF5ED] border border-[#D6C6B2] text-xs text-[#3B2418]"
-                  />
-                  <button
-                    type="submit"
-                    className="px-3 py-1 rounded-lg bg-[#8EC5FF] text-[#3B2418] font-semibold text-xs border border-[#3B2418]/15"
-                  >
-                    Save
-                  </button>
-                </div>
-              </form>
-            )}
+            <AnimatePresence initial={false}>
+              {showAddActivityForm && (
+                <motion.form
+                  initial={prefersReduced ? { opacity: 1 } : { opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={prefersReduced ? { opacity: 0 } : { opacity: 0, height: 0 }}
+                  transition={{ duration: prefersReduced ? 0.01 : 0.2, ease: MOMENTUM_EASE }}
+                  onSubmit={handleCreateActivity}
+                  className="overflow-hidden"
+                >
+                  <div className="p-3 rounded-xl bg-[#F2E8DA] border border-[#D6C6B2] space-y-2">
+                    <input
+                      type="text"
+                      required
+                      value={newActivityTitle}
+                      onChange={e => setNewActivityTitle(e.target.value)}
+                      placeholder="Activity title..."
+                      className="w-full px-2.5 py-1.5 rounded-lg bg-[#FAF5ED] border border-[#D6C6B2] text-xs text-[#3B2418] focus:outline-hidden focus:ring-2 focus:ring-[#8EC5FF]"
+                    />
+                    <div className="flex gap-2">
+                      <input
+                        type="time"
+                        value={newActivityStart}
+                        onChange={e => setNewActivityStart(e.target.value)}
+                        className="flex-1 px-2 py-1 rounded-lg bg-[#FAF5ED] border border-[#D6C6B2] text-xs text-[#3B2418]"
+                      />
+                      <input
+                        type="time"
+                        value={newActivityEnd}
+                        onChange={e => setNewActivityEnd(e.target.value)}
+                        className="flex-1 px-2 py-1 rounded-lg bg-[#FAF5ED] border border-[#D6C6B2] text-xs text-[#3B2418]"
+                      />
+                      <button
+                        type="submit"
+                        className="btn-press px-3 py-1 rounded-lg bg-[#8EC5FF] hover:bg-[#73B6FC] text-[#3B2418] font-semibold text-xs border border-[#3B2418]/15 transition-colors"
+                      >
+                        Save
+                      </button>
+                    </div>
+                  </div>
+                </motion.form>
+              )}
+            </AnimatePresence>
 
             {/* Schedule Timeline List */}
             <div className="space-y-2.5">
-              {scheduleActivities.map(act => (
-                <div
-                  key={act.id}
-                  className={`p-3 rounded-xl border flex items-center justify-between transition-colors ${
-                    act.completed
-                      ? 'bg-[#EAE0D0]/60 border-[#D6C6B2] opacity-75'
-                      : 'bg-[#F2E8DA] border-[#D6C6B2]'
-                  }`}
-                >
-                  <div className="flex items-center gap-3 min-w-0">
-                    <button
-                      onClick={() => toggleScheduleActivityCompleted(act.id)}
-                      className="text-[#6E5648] hover:text-[#3E7B52]"
-                    >
-                      {act.completed ? (
-                        <CheckCircle2 className="w-4 h-4 text-[#3E7B52]" />
-                      ) : (
-                        <Circle className="w-4 h-4" />
-                      )}
-                    </button>
-                    <div className="flex flex-col min-w-0">
-                      <span className={`text-xs font-semibold truncate ${act.completed ? 'line-through text-[#6E5648]' : 'text-[#3B2418]'}`}>
-                        {act.title}
-                      </span>
-                      <span className="font-mono text-[10px] text-[#1E5A99] font-semibold">
-                        {act.startTime} — {act.endTime}
-                      </span>
-                    </div>
-                  </div>
-
-                  <button
-                    onClick={() => deleteScheduleActivity(act.id)}
-                    className="text-[#6E5648] hover:text-[#B84A44] p-1"
+              <AnimatePresence initial={false}>
+                {scheduleActivities.map(act => (
+                  <motion.div
+                    key={act.id}
+                    layout={!prefersReduced}
+                    initial={prefersReduced ? { opacity: 1 } : { opacity: 0, y: 6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={prefersReduced ? { opacity: 0 } : { opacity: 0, x: -12 }}
+                    transition={{ duration: prefersReduced ? 0.01 : 0.18, ease: MOMENTUM_EASE }}
+                    className={`p-3 rounded-xl border flex items-center justify-between transition-all duration-200 ${
+                      act.completed
+                        ? 'bg-[#EAE0D0]/60 border-[#D6C6B2] opacity-75'
+                        : 'bg-[#F2E8DA] border-[#D6C6B2] hover:border-[#8EC5FF]'
+                    }`}
                   >
-                    <Trash2 className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-              ))}
+                    <div className="flex items-center gap-3 min-w-0">
+                      <AnimatedCheckButton
+                        checked={act.completed}
+                        size="sm"
+                        onClick={() => toggleScheduleActivityCompleted(act.id)}
+                      />
+                      <div className="flex flex-col min-w-0">
+                        <span className={`text-xs font-semibold truncate transition-colors ${act.completed ? 'line-through text-[#6E5648]' : 'text-[#3B2418]'}`}>
+                          {act.title}
+                        </span>
+                        <span className="font-mono text-[10px] text-[#1E5A99] font-semibold">
+                          {act.startTime} — {act.endTime}
+                        </span>
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={() => deleteScheduleActivity(act.id)}
+                      className="btn-press text-[#6E5648] hover:text-[#B84A44] p-1 transition-colors"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
             </div>
           </div>
 
@@ -504,20 +526,19 @@ export const TodayView: React.FC = () => {
                 return (
                   <div
                     key={habit.id}
-                    className="flex items-center justify-between p-3 rounded-xl bg-[#F2E8DA] border border-[#D6C6B2]"
+                    className={`flex items-center justify-between p-3 rounded-xl border transition-all duration-200 ${
+                      isDone
+                        ? 'bg-[#EAE0D0]/70 border-[#3E7B52]/35'
+                        : 'bg-[#F2E8DA] border-[#D6C6B2] hover:border-[#8EC5FF]'
+                    }`}
                   >
                     <div className="flex items-center gap-2.5 truncate">
-                      <button
+                      <AnimatedCheckButton
+                        checked={isDone}
+                        size="sm"
                         onClick={() => toggleHabitCompletion(habit.id, todayStr)}
-                        className="text-[#6E5648] hover:text-[#3E7B52] shrink-0"
-                      >
-                        {isDone ? (
-                          <CheckCircle2 className="w-4 h-4 text-[#3E7B52]" />
-                        ) : (
-                          <Circle className="w-4 h-4" />
-                        )}
-                      </button>
-                      <span className={`text-xs font-medium truncate ${isDone ? 'line-through text-[#6E5648]' : 'text-[#3B2418]'}`}>
+                      />
+                      <span className={`text-xs font-medium truncate transition-colors ${isDone ? 'line-through text-[#6E5648]' : 'text-[#3B2418]'}`}>
                         {habit.name}
                       </span>
                     </div>
@@ -530,106 +551,110 @@ export const TodayView: React.FC = () => {
       </div>
 
       {/* Daily Reflection Modal */}
-      {showReflectionModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#3B2418]/65 backdrop-blur-xs">
-          <div
-            className="w-full max-w-lg bg-[#FAF5ED] border border-[#D6C6B2] rounded-2xl shadow-2xl overflow-hidden animate-fade-in"
-            onClick={e => e.stopPropagation()}
-          >
-            <div className="flex items-center justify-between px-6 py-4 border-b border-[#5A3927] bg-[#3B2418]">
-              <div className="flex items-center gap-2">
-                <BookOpen className="w-4 h-4 text-[#8EC5FF]" />
-                <h3 className="text-sm font-bold text-[#F2E8DA]">End of Day Reflection</h3>
-              </div>
-              <button
-                onClick={() => setShowReflectionModal(false)}
-                className="text-[#D8C7B4] hover:text-[#F2E8DA]"
-              >
-                ✕
-              </button>
-            </div>
-
-            <form onSubmit={handleSaveReflection} className="p-6 space-y-4">
-              <div>
-                <label className="block text-xs font-semibold text-[#1E5A99] mb-1">
-                  1. What went well today?
-                </label>
-                <textarea
-                  rows={2}
-                  required
-                  value={wentWell}
-                  onChange={e => setWentWell(e.target.value)}
-                  placeholder="Completed uninterrupted deep work session, hit lifting numbers..."
-                  className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-[#3B2418] text-xs focus:border-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-[#6E5648] mb-1">
-                  2. What could have been better?
-                </label>
-                <textarea
-                  rows={2}
-                  value={couldBeBetter}
-                  onChange={e => setCouldBeBetter(e.target.value)}
-                  placeholder="Delayed afternoon study block, context switched too frequently..."
-                  className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-[#3B2418] text-xs focus:border-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-[#6E5648] mb-1">
-                  3. What did I learn?
-                </label>
-                <textarea
-                  rows={2}
-                  value={learned}
-                  onChange={e => setLearned(e.target.value)}
-                  placeholder="Starting small dissolves executive friction..."
-                  className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-[#3B2418] text-xs focus:border-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-[#1E5A99] mb-1">
-                  4. What should I prioritize tomorrow?
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={tomorrowPriority}
-                  onChange={e => setTomorrowPriority(e.target.value)}
-                  placeholder="e.g. Audit API authorization checks first thing in morning"
-                  className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-[#3B2418] text-xs focus:border-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
-                />
-              </div>
-
-              {reflectionSaved && (
-                <div className="p-2.5 rounded-lg bg-[#3E7B52]/15 border border-[#3E7B52]/40 text-xs text-[#2D6240] flex items-center gap-2">
-                  <Check className="w-4 h-4" />
-                  <span>Saved to private Journal!</span>
-                </div>
-              )}
-
-              <div className="flex justify-end gap-2 pt-2 border-t border-[#D6C6B2]">
-                <button
-                  type="button"
-                  onClick={() => setShowReflectionModal(false)}
-                  className="px-3 py-1.5 text-xs text-[#6E5648] hover:text-[#3B2418]"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-1.5 rounded-lg text-xs font-bold bg-[#8EC5FF] text-[#3B2418] hover:bg-[#73B6FC] border border-[#3B2418]/15"
-                >
-                  Save to Journal
-                </button>
-              </div>
-            </form>
+      <ModalShell
+        isOpen={showReflectionModal}
+        onClose={() => setShowReflectionModal(false)}
+        maxWidthClass="max-w-lg"
+      >
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[#5A3927] bg-[#3B2418]">
+          <div className="flex items-center gap-2">
+            <BookOpen className="w-4 h-4 text-[#8EC5FF]" />
+            <h3 className="text-sm font-bold text-[#F2E8DA]">End of Day Reflection</h3>
           </div>
+          <button
+            onClick={() => setShowReflectionModal(false)}
+            className="text-[#D8C7B4] hover:text-[#F2E8DA] transition-colors"
+          >
+            ✕
+          </button>
         </div>
-      )}
+
+        <form onSubmit={handleSaveReflection} className="p-6 space-y-4">
+          <div>
+            <label className="block text-xs font-semibold text-[#1E5A99] mb-1">
+              1. What went well today?
+            </label>
+            <textarea
+              rows={2}
+              required
+              value={wentWell}
+              onChange={e => setWentWell(e.target.value)}
+              placeholder="Completed uninterrupted deep work session, hit lifting numbers..."
+              className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-[#3B2418] text-xs focus:border-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold text-[#6E5648] mb-1">
+              2. What could have been better?
+            </label>
+            <textarea
+              rows={2}
+              value={couldBeBetter}
+              onChange={e => setCouldBeBetter(e.target.value)}
+              placeholder="Delayed afternoon study block, context switched too frequently..."
+              className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-[#3B2418] text-xs focus:border-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold text-[#6E5648] mb-1">
+              3. What did I learn?
+            </label>
+            <textarea
+              rows={2}
+              value={learned}
+              onChange={e => setLearned(e.target.value)}
+              placeholder="Starting small dissolves executive friction..."
+              className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-[#3B2418] text-xs focus:border-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold text-[#1E5A99] mb-1">
+              4. What should I prioritize tomorrow?
+            </label>
+            <input
+              type="text"
+              required
+              value={tomorrowPriority}
+              onChange={e => setTomorrowPriority(e.target.value)}
+              placeholder="e.g. Audit API authorization checks first thing in morning"
+              className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-[#3B2418] text-xs focus:border-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
+            />
+          </div>
+
+          <AnimatePresence>
+            {reflectionSaved && (
+              <motion.div
+                initial={{ opacity: 0, y: -4 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                className="p-2.5 rounded-lg bg-[#3E7B52]/15 border border-[#3E7B52]/40 text-xs text-[#2D6240] flex items-center gap-2"
+              >
+                <Check className="w-4 h-4" />
+                <span>Saved to private Journal!</span>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          <div className="flex justify-end gap-2 pt-2 border-t border-[#D6C6B2]">
+            <button
+              type="button"
+              onClick={() => setShowReflectionModal(false)}
+              className="btn-press px-3 py-1.5 text-xs text-[#6E5648] hover:text-[#3B2418]"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="btn-press px-4 py-1.5 rounded-lg text-xs font-bold bg-[#8EC5FF] hover:bg-[#73B6FC] text-[#3B2418] border border-[#3B2418]/15 transition-colors"
+            >
+              Save to Journal
+            </button>
+          </div>
+        </form>
+      </ModalShell>
     </div>
   );
 };

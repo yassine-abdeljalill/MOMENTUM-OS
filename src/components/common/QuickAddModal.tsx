@@ -9,8 +9,10 @@ import {
   Dumbbell,
   Plus,
 } from 'lucide-react';
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { useApp } from '../../lib/context';
 import { LifeArea, Priority } from '../../types';
+import { ModalShell, MOMENTUM_EASE } from './MotionPrimitives';
 
 type CreationTab = 'task' | 'goal' | 'habit' | 'project' | 'journal' | 'workout';
 
@@ -23,10 +25,11 @@ export const QuickAddModal: React.FC = () => {
     addHabit,
     addProject,
     addJournalEntry,
-    logWorkoutSession,
+    showToast,
     state,
   } = useApp();
 
+  const prefersReduced = useReducedMotion();
   const [activeTab, setActiveTab] = useState<CreationTab>('task');
 
   // Task form state
@@ -65,8 +68,6 @@ export const QuickAddModal: React.FC = () => {
   const [journalTitle, setJournalTitle] = useState('');
   const [journalContent, setJournalContent] = useState('');
   const [journalMood, setJournalMood] = useState<'great' | 'good' | 'neutral' | 'challenging'>('good');
-
-  if (!isQuickAddOpen) return null;
 
   const handleCreateTask = (e: React.FormEvent) => {
     e.preventDefault();
@@ -114,6 +115,7 @@ export const QuickAddModal: React.FC = () => {
       relatedProjectIds: [],
     });
 
+    showToast('Goal created.');
     setGoalTitle('');
     setGoalDescription('');
     setIsQuickAddOpen(false);
@@ -133,6 +135,7 @@ export const QuickAddModal: React.FC = () => {
       active: true,
     });
 
+    showToast('Habit added.');
     setHabitName('');
     setIsQuickAddOpen(false);
   };
@@ -156,6 +159,7 @@ export const QuickAddModal: React.FC = () => {
       ],
     });
 
+    showToast('Project created.');
     setProjectName('');
     setProjectDescription('');
     setIsQuickAddOpen(false);
@@ -174,62 +178,78 @@ export const QuickAddModal: React.FC = () => {
       tags: ['reflection'],
     });
 
+    showToast('Journal reflection saved.');
     setJournalTitle('');
     setJournalContent('');
     setIsQuickAddOpen(false);
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#3B2418]/60 backdrop-blur-xs">
-      <div
-        className="w-full max-w-lg bg-[#FAF5ED] border border-[#D6C6B2] rounded-xl shadow-2xl overflow-hidden flex flex-col animate-fade-in"
-        onClick={e => e.stopPropagation()}
-      >
-        {/* Header */}
-        <div className="flex items-center justify-between px-5 py-3.5 border-b border-[#5A3927] bg-[#3B2418]">
-          <div className="flex items-center gap-2">
-            <Plus className="w-4 h-4 text-[#8EC5FF]" />
-            <h2 className="font-semibold text-sm text-[#F2E8DA]">Quick Create</h2>
-          </div>
-          <button
-            onClick={() => setIsQuickAddOpen(false)}
-            className="p-1 rounded text-[#D8C7B4] hover:text-[#F2E8DA] hover:bg-[#4D3021]"
-            aria-label="Close dialog"
+    <ModalShell
+      isOpen={isQuickAddOpen}
+      onClose={() => setIsQuickAddOpen(false)}
+      maxWidthClass="max-w-lg"
+      backdropClassName="bg-[#3B2418]/60 backdrop-blur-xs"
+      panelClassName="bg-[#FAF5ED] border border-[#D6C6B2] rounded-xl shadow-2xl overflow-hidden flex flex-col"
+    >
+      {/* Header */}
+      <div className="flex items-center justify-between px-5 py-3.5 border-b border-[#5A3927] bg-[#3B2418]">
+        <div className="flex items-center gap-2">
+          <Plus className="w-4 h-4 text-[#8EC5FF]" />
+          <h2 className="font-semibold text-sm text-[#F2E8DA]">Quick Create</h2>
+        </div>
+        <button
+          onClick={() => setIsQuickAddOpen(false)}
+          className="p-1 rounded text-[#D8C7B4] hover:text-[#F2E8DA] hover:bg-[#4D3021] btn-press"
+          aria-label="Close dialog"
+        >
+          <X className="w-4 h-4" />
+        </button>
+      </div>
+
+      {/* Tabs */}
+      <div className="flex border-b border-[#D6C6B2] bg-[#EAE0D0] px-3 pt-2 gap-1 overflow-x-auto">
+        {[
+          { id: 'task', label: 'Task', icon: CheckSquare },
+          { id: 'goal', label: 'Goal', icon: Target },
+          { id: 'habit', label: 'Habit', icon: Sparkles },
+          { id: 'project', label: 'Project', icon: FolderGit2 },
+          { id: 'journal', label: 'Journal', icon: BookOpen },
+        ].map(tab => {
+          const Icon = tab.icon;
+          const isActive = activeTab === tab.id;
+          return (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id as CreationTab)}
+              className={`relative flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-t-lg transition-colors btn-press ${
+                isActive ? 'text-[#3B2418]' : 'text-[#6E5648] hover:text-[#3B2418]'
+              }`}
+            >
+              {isActive && (
+                <motion.div
+                  layoutId="quickadd-tab-bg"
+                  transition={{ duration: prefersReduced ? 0.01 : 0.18, ease: MOMENTUM_EASE }}
+                  className="absolute inset-0 bg-[#FAF5ED] rounded-t-lg border-b-2 border-[#3B2418] z-0"
+                />
+              )}
+              <Icon className="w-3.5 h-3.5 relative z-10" />
+              <span className="relative z-10">{tab.label}</span>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Tab Content Form */}
+      <div className="p-5">
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key={activeTab}
+            initial={prefersReduced ? { opacity: 1 } : { opacity: 0, y: 5 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={prefersReduced ? { opacity: 0 } : { opacity: 0, y: -4 }}
+            transition={{ duration: prefersReduced ? 0.01 : 0.14, ease: MOMENTUM_EASE }}
           >
-            <X className="w-4 h-4" />
-          </button>
-        </div>
-
-        {/* Tabs */}
-        <div className="flex border-b border-[#D6C6B2] bg-[#EAE0D0] px-3 pt-2 gap-1 overflow-x-auto">
-          {[
-            { id: 'task', label: 'Task', icon: CheckSquare },
-            { id: 'goal', label: 'Goal', icon: Target },
-            { id: 'habit', label: 'Habit', icon: Sparkles },
-            { id: 'project', label: 'Project', icon: FolderGit2 },
-            { id: 'journal', label: 'Journal', icon: BookOpen },
-          ].map(tab => {
-            const Icon = tab.icon;
-            const isActive = activeTab === tab.id;
-            return (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id as CreationTab)}
-                className={`flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-t-lg transition-colors border-b-2 ${
-                  isActive
-                    ? 'border-[#3B2418] text-[#3B2418] bg-[#FAF5ED]'
-                    : 'border-transparent text-[#6E5648] hover:text-[#3B2418]'
-                }`}
-              >
-                <Icon className="w-3.5 h-3.5" />
-                <span>{tab.label}</span>
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Tab Content Form */}
-        <div className="p-5">
           {activeTab === 'task' && (
             <form onSubmit={handleCreateTask} className="space-y-4">
               <div>
@@ -613,21 +633,22 @@ export const QuickAddModal: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setIsQuickAddOpen(false)}
-                  className="px-3 py-1.5 rounded-lg text-xs font-medium text-[#6E5648] hover:text-[#3B2418]"
+                  className="px-3 py-1.5 rounded-lg text-xs font-medium text-[#6E5648] hover:text-[#3B2418] btn-press"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-1.5 rounded-lg text-xs font-semibold bg-[#8EC5FF] text-[#3B2418] hover:bg-[#73B6FC] border border-[#3B2418]/15"
+                  className="px-4 py-1.5 rounded-lg text-xs font-semibold bg-[#8EC5FF] text-[#3B2418] hover:bg-[#73B6FC] border border-[#3B2418]/15 btn-press"
                 >
                   Save Reflection
                 </button>
               </div>
             </form>
           )}
-        </div>
+          </motion.div>
+        </AnimatePresence>
       </div>
-    </div>
+    </ModalShell>
   );
 };

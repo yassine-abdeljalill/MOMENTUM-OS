@@ -349,3 +349,6 @@ export interface AppNotification {
   createdAt: string;
   linkTo?: string;
 }
+
+export * from './finance';
+

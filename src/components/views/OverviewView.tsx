@@ -18,10 +18,20 @@ import {
   BookOpen,
   FolderGit2,
 } from 'lucide-react';
+import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { useApp } from '../../lib/context';
 import { calculateDailyScore, calculateGoalProgress, calculateHabitStreak, formatMinutes, getPriorityColor } from '../../lib/logic';
+import {
+  AnimatedNumber,
+  AnimatedProgressBar,
+  AnimatedCheckButton,
+  StaggerContainer,
+  StaggerItem,
+  MOMENTUM_EASE,
+} from '../common/MotionPrimitives';
 
 export const OverviewView: React.FC = () => {
+  const prefersReduced = useReducedMotion();
   const {
     state,
     setCurrentView,
@@ -143,14 +153,14 @@ export const OverviewView: React.FC = () => {
           <div className="flex flex-wrap items-center gap-2">
             <button
               onClick={() => setIsQuickAddOpen(true)}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#8EC5FF] hover:bg-[#73B6FC] text-[#3B2418] text-xs font-bold shadow-md transition-all active:scale-95"
+              className="btn-press group flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#8EC5FF] hover:bg-[#73B6FC] text-[#3B2418] text-xs font-bold shadow-md transition-all"
             >
-              <Plus className="w-4 h-4 stroke-[2.5]" />
+              <Plus className="w-4 h-4 stroke-[2.5] transition-transform duration-200 group-hover:rotate-90" />
               <span>Add Task</span>
             </button>
             <button
               onClick={() => setIsFocusTimerOpen(true)}
-              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#4D3021] hover:bg-[#5A3927] text-[#F2E8DA] border border-[#8EC5FF]/40 text-xs font-semibold transition-colors"
+              className="btn-press flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#4D3021] hover:bg-[#5A3927] text-[#F2E8DA] border border-[#8EC5FF]/40 text-xs font-semibold transition-colors"
             >
               <Timer className="w-4 h-4 text-[#8EC5FF]" />
               <span>Focus Timer</span>
@@ -158,55 +168,63 @@ export const OverviewView: React.FC = () => {
             <div className="relative">
               <button
                 onClick={() => setShowSettingsPopover(!showSettingsPopover)}
-                className="p-2 rounded-xl bg-[#4D3021] hover:bg-[#5A3927] text-[#F2E8DA] border border-[#5A3927] transition-colors"
+                className="btn-press p-2 rounded-xl bg-[#4D3021] hover:bg-[#5A3927] text-[#F2E8DA] border border-[#5A3927] transition-colors"
                 title="Configure Dashboard Widgets"
                 aria-label="Configure widgets"
               >
                 <Settings2 className="w-4 h-4 text-[#8EC5FF]" />
               </button>
-              {showSettingsPopover && (
-                <div className="absolute right-0 mt-2 w-48 bg-[#FAF5ED] border border-[#D6C6B2] rounded-xl shadow-xl p-3 z-30 space-y-2 text-xs">
-                  <span className="font-semibold text-[#3B2418] block border-b border-[#D6C6B2] pb-1">
-                    Toggle Widgets
-                  </span>
-                  <label className="flex items-center gap-2 text-[#6E5648] cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={showWeeklyChart}
-                      onChange={e => setShowWeeklyChart(e.target.checked)}
-                      className="rounded accent-[#3B2418]"
-                    />
-                    Weekly Activity
-                  </label>
-                  <label className="flex items-center gap-2 text-[#6E5648] cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={showGoalsWidget}
-                      onChange={e => setShowGoalsWidget(e.target.checked)}
-                      className="rounded accent-[#3B2418]"
-                    />
-                    Active Goals
-                  </label>
-                  <label className="flex items-center gap-2 text-[#6E5648] cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={showHabitsWidget}
-                      onChange={e => setShowHabitsWidget(e.target.checked)}
-                      className="rounded accent-[#3B2418]"
-                    />
-                    Daily Habits
-                  </label>
-                </div>
-              )}
+              <AnimatePresence>
+                {showSettingsPopover && (
+                  <motion.div
+                    initial={prefersReduced ? { opacity: 1 } : { opacity: 0, scale: 0.95, y: -4 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={prefersReduced ? { opacity: 0 } : { opacity: 0, scale: 0.96, y: -4 }}
+                    transition={{ duration: prefersReduced ? 0.01 : 0.15, ease: MOMENTUM_EASE }}
+                    className="absolute right-0 mt-2 w-48 bg-[#FAF5ED] border border-[#D6C6B2] rounded-xl shadow-xl p-3 z-30 space-y-2 text-xs origin-top-right"
+                  >
+                    <span className="font-semibold text-[#3B2418] block border-b border-[#D6C6B2] pb-1">
+                      Toggle Widgets
+                    </span>
+                    <label className="flex items-center gap-2 text-[#6E5648] hover:text-[#3B2418] transition-colors cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={showWeeklyChart}
+                        onChange={e => setShowWeeklyChart(e.target.checked)}
+                        className="rounded accent-[#3B2418]"
+                      />
+                      Weekly Activity
+                    </label>
+                    <label className="flex items-center gap-2 text-[#6E5648] hover:text-[#3B2418] transition-colors cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={showGoalsWidget}
+                        onChange={e => setShowGoalsWidget(e.target.checked)}
+                        className="rounded accent-[#3B2418]"
+                      />
+                      Active Goals
+                    </label>
+                    <label className="flex items-center gap-2 text-[#6E5648] hover:text-[#3B2418] transition-colors cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={showHabitsWidget}
+                        onChange={e => setShowHabitsWidget(e.target.checked)}
+                        className="rounded accent-[#3B2418]"
+                      />
+                      Daily Habits
+                    </label>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           </div>
         </div>
       </div>
 
       {/* Progress Cards Row */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <StaggerContainer className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Daily Completion Overall */}
-        <div className="p-5 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] flex flex-col justify-between shadow-xs">
+        <StaggerItem className="p-5 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] flex flex-col justify-between shadow-xs card-hover">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold uppercase tracking-wider text-[#6E5648]">
               Daily Progress
@@ -216,21 +234,22 @@ export const OverviewView: React.FC = () => {
             </div>
           </div>
           <div className="my-3 flex items-baseline gap-2">
-            <span className="font-mono text-3xl font-extrabold text-[#3B2418]">
-              {dailyScore.overallPercentage}%
-            </span>
+            <AnimatedNumber
+              value={dailyScore.overallPercentage}
+              formatter={v => `${v}%`}
+              className="font-mono text-3xl font-extrabold text-[#3B2418]"
+            />
             <span className="text-xs text-[#6E5648]">score</span>
           </div>
-          <div className="w-full bg-[#EAE0D0] h-2 rounded-full overflow-hidden">
-            <div
-              className="bg-[#8EC5FF] h-full rounded-full transition-all duration-500 border-r border-[#3B2418]/20"
-              style={{ width: `${dailyScore.overallPercentage}%` }}
-            />
-          </div>
-        </div>
+          <AnimatedProgressBar
+            percentage={dailyScore.overallPercentage}
+            trackClassName="w-full bg-[#EAE0D0] h-2 rounded-full overflow-hidden"
+            fillClassName="bg-[#8EC5FF] h-full rounded-full border-r border-[#3B2418]/20"
+          />
+        </StaggerItem>
 
         {/* Tasks Today */}
-        <div className="p-5 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] flex flex-col justify-between shadow-xs">
+        <StaggerItem className="p-5 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] flex flex-col justify-between shadow-xs card-hover">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold uppercase tracking-wider text-[#6E5648]">
               Tasks Completed
@@ -240,18 +259,19 @@ export const OverviewView: React.FC = () => {
             </div>
           </div>
           <div className="my-3 flex items-baseline gap-2">
-            <span className="font-mono text-3xl font-extrabold text-[#3B2418]">
-              {tasksCompleted}
-            </span>
+            <AnimatedNumber
+              value={tasksCompleted}
+              className="font-mono text-3xl font-extrabold text-[#3B2418]"
+            />
             <span className="text-xs text-[#6E5648]">/ {todayTasks.length} planned</span>
           </div>
           <div className="text-[11px] text-[#6E5648]">
             {tasksRemaining === 0 ? 'All scheduled tasks done!' : `${tasksRemaining} remaining for today`}
           </div>
-        </div>
+        </StaggerItem>
 
         {/* Habits Today */}
-        <div className="p-5 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] flex flex-col justify-between shadow-xs">
+        <StaggerItem className="p-5 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] flex flex-col justify-between shadow-xs card-hover">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold uppercase tracking-wider text-[#6E5648]">
               Habits Checked
@@ -261,18 +281,19 @@ export const OverviewView: React.FC = () => {
             </div>
           </div>
           <div className="my-3 flex items-baseline gap-2">
-            <span className="font-mono text-3xl font-extrabold text-[#3B2418]">
-              {habitsCompletedToday}
-            </span>
+            <AnimatedNumber
+              value={habitsCompletedToday}
+              className="font-mono text-3xl font-extrabold text-[#3B2418]"
+            />
             <span className="text-xs text-[#6E5648]">/ {activeHabits.length} habits</span>
           </div>
           <div className="text-[11px] text-[#6E5648]">
             {Math.round((habitsCompletedToday / (activeHabits.length || 1)) * 100)}% consistency today
           </div>
-        </div>
+        </StaggerItem>
 
         {/* Focus Time */}
-        <div className="p-5 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] flex flex-col justify-between shadow-xs">
+        <StaggerItem className="p-5 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] flex flex-col justify-between shadow-xs card-hover">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold uppercase tracking-wider text-[#6E5648]">
               Focus Time
@@ -282,15 +303,17 @@ export const OverviewView: React.FC = () => {
             </div>
           </div>
           <div className="my-3 flex items-baseline gap-2">
-            <span className="font-mono text-3xl font-extrabold text-[#3B2418]">
-              {formatMinutes(todayFocusMinutes)}
-            </span>
+            <AnimatedNumber
+              value={todayFocusMinutes}
+              formatter={formatMinutes}
+              className="font-mono text-3xl font-extrabold text-[#3B2418]"
+            />
           </div>
           <div className="text-[11px] text-[#6E5648]">
             {state.focusSessions.filter(s => s.startTime.startsWith(todayStr)).length} deep work sessions
           </div>
-        </div>
-      </div>
+        </StaggerItem>
+      </StaggerContainer>
 
       {/* Main Grid: Priorities & Upcoming Tasks */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -340,23 +363,18 @@ export const OverviewView: React.FC = () => {
                   return (
                     <div
                       key={task.id}
-                      className={`p-4 rounded-xl border transition-all flex items-start gap-3 group ${
+                      className={`p-4 rounded-xl border transition-all duration-200 flex items-start gap-3 group ${
                         isDone
                           ? 'bg-[#EAE0D0]/60 border-[#D6C6B2] opacity-75'
-                          : 'bg-[#F2E8DA] border-[#D6C6B2] hover:border-[#8EC5FF] hover:shadow-xs'
+                          : 'bg-[#F2E8DA] border-[#D6C6B2] hover:border-[#8EC5FF] card-hover'
                       }`}
                     >
-                      <button
+                      <AnimatedCheckButton
+                        checked={isDone}
                         onClick={() => toggleTaskCompleted(task.id)}
-                        className="mt-0.5 text-[#6E5648] hover:text-[#3E7B52] transition-colors"
-                        aria-label={isDone ? 'Mark incomplete' : 'Mark completed'}
-                      >
-                        {isDone ? (
-                          <CheckCircle2 className="w-5 h-5 text-[#3E7B52] fill-[#3E7B52]/15" />
-                        ) : (
-                          <Circle className="w-5 h-5" />
-                        )}
-                      </button>
+                        className="mt-0.5"
+                        ariaLabel={isDone ? 'Mark incomplete' : 'Mark completed'}
+                      />
 
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 flex-wrap">
@@ -413,159 +431,194 @@ export const OverviewView: React.FC = () => {
           </div>
 
           {/* Weekly Activity Summary Chart */}
-          {showWeeklyChart && (
-            <div className="p-6 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] space-y-4 shadow-xs">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-bold uppercase tracking-wider text-[#3B2418]">
-                  Weekly Productivity Rhythm
-                </span>
-                <span className="text-xs text-[#6E5648]">Past 7 Days</span>
-              </div>
+          <AnimatePresence>
+            {showWeeklyChart && (
+              <motion.div
+                initial={prefersReduced ? { opacity: 1 } : { opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={prefersReduced ? { opacity: 0 } : { opacity: 0, y: -4 }}
+                transition={{ duration: prefersReduced ? 0.01 : 0.2, ease: MOMENTUM_EASE }}
+                className="p-6 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] space-y-4 shadow-xs"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold uppercase tracking-wider text-[#3B2418]">
+                    Weekly Productivity Rhythm
+                  </span>
+                  <span className="text-xs text-[#6E5648]">Past 7 Days</span>
+                </div>
 
-              <div className="h-36 flex items-end justify-between gap-2 pt-4 px-2">
-                {past7Days.map((day, i) => (
-                  <div key={i} className="flex-1 flex flex-col items-center gap-2 h-full justify-end group">
-                    <span className="text-[10px] font-mono text-[#1E5A99] font-bold opacity-0 group-hover:opacity-100 transition-opacity">
-                      {day.heightPct}%
-                    </span>
-                    <div className="w-full max-w-[36px] bg-[#EAE0D0] rounded-t-md h-full flex items-end p-0.5 border border-[#D6C6B2]/50">
-                      <div
-                        className={`w-full rounded-t-sm transition-all duration-500 ${
-                          day.isToday ? 'bg-[#8EC5FF] border-t-2 border-[#3B2418]' : 'bg-[#3B2418]/65 group-hover:bg-[#3B2418]'
+                <div className="h-36 flex items-end justify-between gap-2 pt-4 px-2">
+                  {past7Days.map((day, i) => (
+                    <div key={day.dayStr} className="flex-1 flex flex-col items-center gap-2 h-full justify-end group">
+                      <span className="text-[10px] font-mono text-[#1E5A99] font-bold opacity-0 group-hover:opacity-100 transition-opacity">
+                        {day.heightPct}%
+                      </span>
+                      <div className="w-full max-w-[36px] bg-[#EAE0D0] rounded-t-md h-full flex items-end p-0.5 border border-[#D6C6B2]/50 overflow-hidden">
+                        <motion.div
+                          className={`w-full rounded-t-sm transition-colors duration-200 ${
+                            day.isToday ? 'bg-[#8EC5FF] border-t-2 border-[#3B2418]' : 'bg-[#3B2418]/65 group-hover:bg-[#3B2418]'
+                          }`}
+                          initial={prefersReduced ? { height: `${day.heightPct}%` } : { height: '0%' }}
+                          whileInView={{ height: `${day.heightPct}%` }}
+                          viewport={{ once: true, amount: 0.1 }}
+                          transition={{
+                            duration: prefersReduced ? 0.01 : 0.45,
+                            delay: prefersReduced ? 0 : i * 0.04,
+                            ease: MOMENTUM_EASE,
+                          }}
+                        />
+                      </div>
+                      <span
+                        className={`text-[11px] font-medium ${
+                          day.isToday ? 'text-[#3B2418] font-bold px-1.5 rounded bg-[#8EC5FF]/50' : 'text-[#6E5648]'
                         }`}
-                        style={{ height: `${day.heightPct}%` }}
-                      />
+                      >
+                        {day.dayName}
+                      </span>
                     </div>
-                    <span
-                      className={`text-[11px] font-medium ${
-                        day.isToday ? 'text-[#3B2418] font-bold px-1.5 rounded bg-[#8EC5FF]/50' : 'text-[#6E5648]'
-                      }`}
-                    >
-                      {day.dayName}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
+                  ))}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
         {/* Right Column: Active Goals & Quick Habits */}
         <div className="space-y-6">
           {/* Active Goals */}
-          {showGoalsWidget && (
-            <div className="p-6 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] space-y-4 shadow-xs">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Target className="w-4 h-4 text-[#1E5A99]" />
-                  <h2 className="text-xs font-bold uppercase tracking-wider text-[#3B2418]">
-                    Active Goals
-                  </h2>
+          <AnimatePresence>
+            {showGoalsWidget && (
+              <motion.div
+                initial={prefersReduced ? { opacity: 1 } : { opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={prefersReduced ? { opacity: 0 } : { opacity: 0, y: -4 }}
+                transition={{ duration: prefersReduced ? 0.01 : 0.2, ease: MOMENTUM_EASE }}
+                className="p-6 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] space-y-4 shadow-xs"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Target className="w-4 h-4 text-[#1E5A99]" />
+                    <h2 className="text-xs font-bold uppercase tracking-wider text-[#3B2418]">
+                      Active Goals
+                    </h2>
+                  </div>
+                  <button
+                    onClick={() => setCurrentView('goals')}
+                    className="text-xs text-[#1E5A99] font-semibold hover:underline"
+                  >
+                    View All
+                  </button>
                 </div>
-                <button
-                  onClick={() => setCurrentView('goals')}
-                  className="text-xs text-[#1E5A99] font-semibold hover:underline"
-                >
-                  View All
-                </button>
-              </div>
 
-              <div className="space-y-3">
-                {activeGoals.map(goal => {
-                  const progress = calculateGoalProgress(goal, state.tasks);
-                  return (
-                    <div
-                      key={goal.id}
-                      onClick={() => {
-                        setSelectedGoalId(goal.id);
-                        setCurrentView('goals');
-                      }}
-                      className="p-3.5 rounded-xl bg-[#F2E8DA] border border-[#D6C6B2] hover:border-[#8EC5FF] cursor-pointer transition-all space-y-2 group"
-                    >
-                      <div className="flex items-start justify-between gap-2">
-                        <h3 className="text-xs font-semibold text-[#3B2418] group-hover:text-[#1E5A99] truncate">
-                          {goal.title}
-                        </h3>
-                        <span className="text-[10px] font-mono font-bold text-[#3B2418] px-1.5 py-0.5 rounded bg-[#8EC5FF]/60 shrink-0">
-                          {progress}%
-                        </span>
-                      </div>
-                      <div className="w-full bg-[#EAE0D0] h-1.5 rounded-full overflow-hidden">
-                        <div
-                          className="bg-[#8EC5FF] h-full rounded-full transition-all duration-300"
-                          style={{ width: `${progress}%` }}
+                <div className="space-y-3">
+                  {activeGoals.map(goal => {
+                    const progress = calculateGoalProgress(goal, state.tasks);
+                    return (
+                      <div
+                        key={goal.id}
+                        onClick={() => {
+                          setSelectedGoalId(goal.id);
+                          setCurrentView('goals');
+                        }}
+                        className="p-3.5 rounded-xl bg-[#F2E8DA] border border-[#D6C6B2] hover:border-[#8EC5FF] cursor-pointer transition-all space-y-2 group card-hover"
+                      >
+                        <div className="flex items-start justify-between gap-2">
+                          <h3 className="text-xs font-semibold text-[#3B2418] group-hover:text-[#1E5A99] truncate transition-colors">
+                            {goal.title}
+                          </h3>
+                          <span className="text-[10px] font-mono font-bold text-[#3B2418] px-1.5 py-0.5 rounded bg-[#8EC5FF]/60 shrink-0">
+                            {progress}%
+                          </span>
+                        </div>
+                        <AnimatedProgressBar
+                          percentage={progress}
+                          trackClassName="w-full bg-[#EAE0D0] h-1.5 rounded-full overflow-hidden"
+                          fillClassName="bg-[#8EC5FF] h-full rounded-full"
                         />
+                        <div className="flex items-center justify-between text-[10px] text-[#6E5648]">
+                          <span className="capitalize">{goal.category.replace('_', ' ')}</span>
+                          <span>Due {goal.targetDate}</span>
+                        </div>
                       </div>
-                      <div className="flex items-center justify-between text-[10px] text-[#6E5648]">
-                        <span className="capitalize">{goal.category.replace('_', ' ')}</span>
-                        <span>Due {goal.targetDate}</span>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
+                    );
+                  })}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           {/* Today's Habits Checkoff */}
-          {showHabitsWidget && (
-            <div className="p-6 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] space-y-4 shadow-xs">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Sparkles className="w-4 h-4 text-[#1E5A99]" />
-                  <h2 className="text-xs font-bold uppercase tracking-wider text-[#3B2418]">
-                    Daily Habits
-                  </h2>
+          <AnimatePresence>
+            {showHabitsWidget && (
+              <motion.div
+                initial={prefersReduced ? { opacity: 1 } : { opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={prefersReduced ? { opacity: 0 } : { opacity: 0, y: -4 }}
+                transition={{ duration: prefersReduced ? 0.01 : 0.2, ease: MOMENTUM_EASE }}
+                className="p-6 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] space-y-4 shadow-xs"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Sparkles className="w-4 h-4 text-[#1E5A99]" />
+                    <h2 className="text-xs font-bold uppercase tracking-wider text-[#3B2418]">
+                      Daily Habits
+                    </h2>
+                  </div>
+                  <button
+                    onClick={() => setCurrentView('habits')}
+                    className="text-xs text-[#1E5A99] font-semibold hover:underline"
+                  >
+                    Habit Hub
+                  </button>
                 </div>
-                <button
-                  onClick={() => setCurrentView('habits')}
-                  className="text-xs text-[#1E5A99] font-semibold hover:underline"
-                >
-                  Habit Hub
-                </button>
-              </div>
 
-              <div className="space-y-2.5">
-                {activeHabits.slice(0, 4).map(habit => {
-                  const isDone = state.habitCompletions.some(
-                    c => c.habitId === habit.id && c.date === todayStr && c.completed
-                  );
-                  const streak = calculateHabitStreak(habit, state.habitCompletions, todayStr);
+                <div className="space-y-2.5">
+                  {activeHabits.slice(0, 4).map(habit => {
+                    const isDone = state.habitCompletions.some(
+                      c => c.habitId === habit.id && c.date === todayStr && c.completed
+                    );
+                    const streak = calculateHabitStreak(habit, state.habitCompletions, todayStr);
 
-                  return (
-                    <div
-                      key={habit.id}
-                      className="flex items-center justify-between p-3 rounded-xl bg-[#F2E8DA] border border-[#D6C6B2] transition-colors"
-                    >
-                      <div className="flex items-center gap-2.5 min-w-0">
-                        <button
-                          onClick={() => toggleHabitCompletion(habit.id, todayStr)}
-                          className="text-[#6E5648] hover:text-[#3E7B52] transition-colors shrink-0"
-                          aria-label={isDone ? 'Mark habit incomplete' : 'Mark habit complete'}
+                    return (
+                      <div
+                        key={habit.id}
+                        className={`flex items-center justify-between p-3 rounded-xl border transition-all duration-200 ${
+                          isDone
+                            ? 'bg-[#EAE0D0]/70 border-[#3E7B52]/35'
+                            : 'bg-[#F2E8DA] border-[#D6C6B2] hover:border-[#8EC5FF]'
+                        }`}
+                      >
+                        <div className="flex items-center gap-2.5 min-w-0">
+                          <AnimatedCheckButton
+                            checked={isDone}
+                            size="sm"
+                            onClick={() => toggleHabitCompletion(habit.id, todayStr)}
+                            ariaLabel={isDone ? 'Mark habit incomplete' : 'Mark habit complete'}
+                          />
+                          <span
+                            className={`text-xs font-medium truncate transition-colors ${
+                              isDone ? 'line-through text-[#6E5648]' : 'text-[#3B2418]'
+                            }`}
+                          >
+                            {habit.name}
+                          </span>
+                        </div>
+                        <motion.span
+                          key={streak.currentStreak}
+                          initial={prefersReduced ? false : { scale: 0.9 }}
+                          animate={{ scale: 1 }}
+                          transition={{ duration: 0.18, ease: MOMENTUM_EASE }}
+                          className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[#3B2418] text-[#8EC5FF] shrink-0 font-bold"
                         >
-                          {isDone ? (
-                            <CheckCircle2 className="w-4 h-4 text-[#3E7B52] fill-[#3E7B52]/15" />
-                          ) : (
-                            <Circle className="w-4 h-4" />
-                          )}
-                        </button>
-                        <span
-                          className={`text-xs font-medium truncate ${
-                            isDone ? 'line-through text-[#6E5648]' : 'text-[#3B2418]'
-                          }`}
-                        >
-                          {habit.name}
-                        </span>
+                          🔥 {streak.currentStreak}d
+                        </motion.span>
                       </div>
-                      <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[#3B2418] text-[#8EC5FF] shrink-0 font-bold">
-                        🔥 {streak.currentStreak}d
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
+                    );
+                  })}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
     </div>

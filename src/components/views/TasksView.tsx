@@ -19,14 +19,17 @@ import {
   ChevronDown,
   Sparkles,
 } from 'lucide-react';
+import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { useApp } from '../../lib/context';
 import { Task, TaskStatus, Priority, LifeArea } from '../../types';
 import { getPriorityColor, formatMinutes } from '../../lib/logic';
+import { ModalShell, AnimatedCheckButton, MOMENTUM_EASE } from '../common/MotionPrimitives';
 
 type TaskViewMode = 'board' | 'list';
 type QuickFilterTab = 'all' | 'today' | 'upcoming' | 'completed';
 
 export const TasksView: React.FC = () => {
+  const prefersReduced = useReducedMotion();
   const {
     state,
     addTask,
@@ -55,6 +58,11 @@ export const TasksView: React.FC = () => {
   // Edit Task Modal state
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [newSubtaskTitle, setNewSubtaskTitle] = useState('');
+
+  // Keep modal subtask/status state synced with context state
+  const activeEditingTask = editingTask
+    ? state.tasks.find(t => t.id === editingTask.id) ?? editingTask
+    : null;
 
   const todayStr = new Date().toISOString().split('T')[0];
 
@@ -146,31 +154,34 @@ export const TasksView: React.FC = () => {
 
           {/* View mode toggle & quick count */}
           <div className="flex items-center gap-2">
-            <div className="flex bg-[#F2E8DA] p-1 rounded-xl border border-[#D6C6B2]">
-              <button
-                onClick={() => setViewMode('board')}
-                className={`p-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors ${
-                  viewMode === 'board'
-                    ? 'bg-[#8EC5FF] text-[#3B2418]'
-                    : 'text-[#6E5648] hover:text-[#3B2418]'
-                }`}
-                title="Board / Kanban View"
-              >
-                <LayoutGrid className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">Board</span>
-              </button>
-              <button
-                onClick={() => setViewMode('list')}
-                className={`p-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors ${
-                  viewMode === 'list'
-                    ? 'bg-[#8EC5FF] text-[#3B2418]'
-                    : 'text-[#6E5648] hover:text-[#3B2418]'
-                }`}
-                title="List View"
-              >
-                <List className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">List</span>
-              </button>
+            <div className="flex bg-[#F2E8DA] p-1 rounded-xl border border-[#D6C6B2] relative">
+              {(['board', 'list'] as const).map(mode => {
+                const isActive = viewMode === mode;
+                return (
+                  <button
+                    key={mode}
+                    onClick={() => setViewMode(mode)}
+                    className={`relative z-10 p-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors ${
+                      isActive ? 'text-[#3B2418]' : 'text-[#6E5648] hover:text-[#3B2418]'
+                    }`}
+                    title={mode === 'board' ? 'Board / Kanban View' : 'List View'}
+                  >
+                    {isActive && (
+                      <motion.span
+                        layoutId="tasks-view-mode-pill"
+                        transition={{ duration: prefersReduced ? 0.01 : 0.2, ease: MOMENTUM_EASE }}
+                        className="absolute inset-0 bg-[#8EC5FF] rounded-lg -z-10"
+                      />
+                    )}
+                    {mode === 'board' ? (
+                      <LayoutGrid className="w-3.5 h-3.5" />
+                    ) : (
+                      <List className="w-3.5 h-3.5" />
+                    )}
+                    <span className="hidden sm:inline capitalize">{mode}</span>
+                  </button>
+                );
+              })}
             </div>
           </div>
         </div>
@@ -178,20 +189,28 @@ export const TasksView: React.FC = () => {
         {/* Filter Bar */}
         <div className="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-[#D6C6B2]">
           {/* Filter Tabs */}
-          <div className="flex bg-[#F2E8DA] p-1 rounded-lg border border-[#D6C6B2] text-xs">
-            {(['all', 'today', 'upcoming', 'completed'] as const).map(tab => (
-              <button
-                key={tab}
-                onClick={() => setFilterTab(tab)}
-                className={`px-3 py-1 rounded-md font-semibold capitalize transition-colors ${
-                  filterTab === tab
-                    ? 'bg-[#3B2418] text-[#8EC5FF]'
-                    : 'text-[#6E5648] hover:text-[#3B2418]'
-                }`}
-              >
-                {tab}
-              </button>
-            ))}
+          <div className="flex bg-[#F2E8DA] p-1 rounded-lg border border-[#D6C6B2] text-xs relative">
+            {(['all', 'today', 'upcoming', 'completed'] as const).map(tab => {
+              const isActive = filterTab === tab;
+              return (
+                <button
+                  key={tab}
+                  onClick={() => setFilterTab(tab)}
+                  className={`relative z-10 px-3 py-1 rounded-md font-semibold capitalize transition-colors ${
+                    isActive ? 'text-[#8EC5FF]' : 'text-[#6E5648] hover:text-[#3B2418]'
+                  }`}
+                >
+                  {isActive && (
+                    <motion.span
+                      layoutId="tasks-filter-tab-pill"
+                      transition={{ duration: prefersReduced ? 0.01 : 0.2, ease: MOMENTUM_EASE }}
+                      className="absolute inset-0 bg-[#3B2418] rounded-md -z-10"
+                    />
+                  )}
+                  {tab}
+                </button>
+              );
+            })}
           </div>
 
           {/* Search & Dropdowns */}
@@ -277,183 +296,210 @@ export const TasksView: React.FC = () => {
         />
         <button
           type="submit"
-          className="px-3 py-1 rounded-lg bg-[#8EC5FF] hover:bg-[#73B6FC] text-[#3B2418] border border-[#3B2418]/15 font-semibold text-xs transition-colors shrink-0"
+          className="btn-press px-3 py-1 rounded-lg bg-[#8EC5FF] hover:bg-[#73B6FC] text-[#3B2418] border border-[#3B2418]/15 font-semibold text-xs transition-colors shrink-0"
         >
           Add
         </button>
       </form>
 
       {/* Main View Display */}
-      {viewMode === 'board' ? (
-        /* Kanban Board */
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {columns.map(col => {
-            const colTasks = filteredTasks.filter(t => t.status === col.status);
-            return (
-              <div
-                key={col.status}
-                className="p-4 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] flex flex-col min-h-[500px] shadow-xs"
-              >
-                {/* Column Header */}
-                <div className="flex items-center justify-between pb-3 mb-3 border-b border-[#D6C6B2]">
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-bold uppercase tracking-wider text-[#3B2418]">
-                      {col.label}
-                    </span>
-                    <span className="font-mono text-[10px] px-1.5 py-0.5 rounded bg-[#8EC5FF]/60 text-[#3B2418] font-bold">
-                      {colTasks.length}
-                    </span>
+      <AnimatePresence mode="wait" initial={false}>
+        {viewMode === 'board' ? (
+          /* Kanban Board */
+          <motion.div
+            key="board"
+            initial={prefersReduced ? { opacity: 1 } : { opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={prefersReduced ? { opacity: 0 } : { opacity: 0, y: -4 }}
+            transition={{ duration: prefersReduced ? 0.01 : 0.16, ease: MOMENTUM_EASE }}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"
+          >
+            {columns.map(col => {
+              const colTasks = filteredTasks.filter(t => t.status === col.status);
+              return (
+                <div
+                  key={col.status}
+                  className="p-4 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] flex flex-col min-h-[500px] shadow-xs"
+                >
+                  {/* Column Header */}
+                  <div className="flex items-center justify-between pb-3 mb-3 border-b border-[#D6C6B2]">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-bold uppercase tracking-wider text-[#3B2418]">
+                        {col.label}
+                      </span>
+                      <span className="font-mono text-[10px] px-1.5 py-0.5 rounded bg-[#8EC5FF]/60 text-[#3B2418] font-bold">
+                        {colTasks.length}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Column Cards */}
+                  <div className="flex-1 space-y-3 overflow-y-auto pr-1">
+                    {colTasks.length === 0 ? (
+                      <div className="py-12 text-center text-xs text-[#6E5648]">
+                        No tasks in {col.label}
+                      </div>
+                    ) : (
+                      <AnimatePresence initial={false}>
+                        {colTasks.map(task => {
+                          const isDone = task.status === 'completed';
+                          const pColor = getPriorityColor(task.priority);
+
+                          return (
+                            <motion.div
+                              key={task.id}
+                              layout={!prefersReduced}
+                              initial={prefersReduced ? { opacity: 1 } : { opacity: 0, y: 6 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              exit={prefersReduced ? { opacity: 0 } : { opacity: 0, scale: 0.96 }}
+                              transition={{ duration: prefersReduced ? 0.01 : 0.18, ease: MOMENTUM_EASE }}
+                              className="p-3.5 rounded-xl bg-[#F2E8DA] border border-[#D6C6B2] hover:border-[#8EC5FF] transition-all space-y-2 group shadow-xs cursor-pointer card-hover"
+                              onClick={() => setEditingTask(task)}
+                            >
+                              <div className="flex items-start justify-between gap-2">
+                                <span
+                                  className={`text-xs font-semibold transition-colors ${
+                                    isDone ? 'line-through text-[#6E5648]' : 'text-[#3B2418]'
+                                  }`}
+                                >
+                                  {task.title}
+                                </span>
+                              </div>
+
+                              {task.description && (
+                                <p className="text-[11px] text-[#6E5648] line-clamp-2">
+                                  {task.description}
+                                </p>
+                              )}
+
+                              {/* Subtasks Progress if any */}
+                              {task.subtasks.length > 0 && (
+                                <div className="text-[10px] text-[#6E5648] flex items-center gap-1 font-mono">
+                                  <CheckSquare className="w-3 h-3 text-[#1E5A99]" />
+                                  <span>
+                                    {task.subtasks.filter(s => s.completed).length}/{task.subtasks.length} subtasks
+                                  </span>
+                                </div>
+                              )}
+
+                              <div className="flex items-center justify-between pt-2 border-t border-[#D6C6B2]">
+                                <span
+                                  className={`text-[9px] font-mono px-1.5 py-0.2 rounded border uppercase font-semibold ${pColor.bg} ${pColor.text} ${pColor.border}`}
+                                >
+                                  {task.priority}
+                                </span>
+
+                                {task.dueDate && (
+                                  <span className="text-[10px] font-mono text-[#6E5648]">
+                                    {task.dueDate}
+                                  </span>
+                                )}
+                              </div>
+                            </motion.div>
+                          );
+                        })}
+                      </AnimatePresence>
+                    )}
                   </div>
                 </div>
+              );
+            })}
+          </motion.div>
+        ) : (
+          /* List View */
+          <motion.div
+            key="list"
+            initial={prefersReduced ? { opacity: 1 } : { opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={prefersReduced ? { opacity: 0 } : { opacity: 0, y: -4 }}
+            transition={{ duration: prefersReduced ? 0.01 : 0.16, ease: MOMENTUM_EASE }}
+            className="p-6 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] space-y-3 shadow-xs"
+          >
+            {filteredTasks.length === 0 ? (
+              <div className="py-12 text-center text-[#6E5648] space-y-2">
+                <CheckSquare className="w-8 h-8 mx-auto opacity-40 text-[#1E5A99]" />
+                <p className="text-sm font-medium text-[#3B2418]">No matching tasks</p>
+                <p className="text-xs text-[#6E5648]">Create your first task or change filter options above.</p>
+              </div>
+            ) : (
+              <AnimatePresence initial={false}>
+                {filteredTasks.map(task => {
+                  const isDone = task.status === 'completed';
+                  const pColor = getPriorityColor(task.priority);
 
-                {/* Column Cards */}
-                <div className="flex-1 space-y-3 overflow-y-auto pr-1">
-                  {colTasks.length === 0 ? (
-                    <div className="py-12 text-center text-xs text-[#6E5648]">
-                      No tasks in {col.label}
-                    </div>
-                  ) : (
-                    colTasks.map(task => {
-                      const isDone = task.status === 'completed';
-                      const pColor = getPriorityColor(task.priority);
-
-                      return (
-                        <div
-                          key={task.id}
-                          className="p-3.5 rounded-xl bg-[#F2E8DA] border border-[#D6C6B2] hover:border-[#8EC5FF] transition-all space-y-2 group shadow-xs cursor-pointer"
-                          onClick={() => setEditingTask(task)}
-                        >
-                          <div className="flex items-start justify-between gap-2">
-                            <span
-                              className={`text-xs font-semibold ${
-                                isDone ? 'line-through text-[#6E5648]' : 'text-[#3B2418]'
-                              }`}
-                            >
-                              {task.title}
-                            </span>
-                          </div>
-
-                          {task.description && (
-                            <p className="text-[11px] text-[#6E5648] line-clamp-2">
-                              {task.description}
-                            </p>
-                          )}
-
-                          {/* Subtasks Progress if any */}
-                          {task.subtasks.length > 0 && (
-                            <div className="text-[10px] text-[#6E5648] flex items-center gap-1 font-mono">
-                              <CheckSquare className="w-3 h-3 text-[#1E5A99]" />
+                  return (
+                    <motion.div
+                      key={task.id}
+                      layout={!prefersReduced}
+                      initial={prefersReduced ? { opacity: 1 } : { opacity: 0, y: 6 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={prefersReduced ? { opacity: 0 } : { opacity: 0, x: -12 }}
+                      transition={{ duration: prefersReduced ? 0.01 : 0.18, ease: MOMENTUM_EASE }}
+                      className={`p-3.5 rounded-xl border flex items-center justify-between gap-3 transition-all duration-200 ${
+                        isDone
+                          ? 'bg-[#EAE0D0]/60 border-[#D6C6B2] opacity-75'
+                          : 'bg-[#F2E8DA] border-[#D6C6B2] hover:border-[#8EC5FF]'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3 min-w-0">
+                        <AnimatedCheckButton
+                          checked={isDone}
+                          size="sm"
+                          onClick={() => toggleTaskCompleted(task.id)}
+                        />
+                        <div className="flex flex-col min-w-0">
+                          <span className={`text-xs font-semibold truncate transition-colors ${isDone ? 'line-through text-[#6E5648]' : 'text-[#3B2418]'}`}>
+                            {task.title}
+                          </span>
+                          <div className="flex items-center gap-2 text-[10px] text-[#6E5648] mt-0.5">
+                            <span className="capitalize">{task.category}</span>
+                            {task.dueDate && <span>• Due {task.dueDate}</span>}
+                            {task.subtasks.length > 0 && (
                               <span>
-                                {task.subtasks.filter(s => s.completed).length}/{task.subtasks.length} subtasks
-                              </span>
-                            </div>
-                          )}
-
-                          <div className="flex items-center justify-between pt-2 border-t border-[#D6C6B2]">
-                            <span
-                              className={`text-[9px] font-mono px-1.5 py-0.2 rounded border uppercase font-semibold ${pColor.bg} ${pColor.text} ${pColor.border}`}
-                            >
-                              {task.priority}
-                            </span>
-
-                            {task.dueDate && (
-                              <span className="text-[10px] font-mono text-[#6E5648]">
-                                {task.dueDate}
+                                • {task.subtasks.filter(s => s.completed).length}/{task.subtasks.length} subtasks
                               </span>
                             )}
                           </div>
                         </div>
-                      );
-                    })
-                  )}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      ) : (
-        /* List View */
-        <div className="p-6 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] space-y-3 shadow-xs">
-          {filteredTasks.length === 0 ? (
-            <div className="py-12 text-center text-[#6E5648] space-y-2">
-              <CheckSquare className="w-8 h-8 mx-auto opacity-40 text-[#1E5A99]" />
-              <p className="text-sm font-medium text-[#3B2418]">No matching tasks</p>
-              <p className="text-xs text-[#6E5648]">Create your first task or change filter options above.</p>
-            </div>
-          ) : (
-            filteredTasks.map(task => {
-              const isDone = task.status === 'completed';
-              const pColor = getPriorityColor(task.priority);
-
-              return (
-                <div
-                  key={task.id}
-                  className={`p-3.5 rounded-xl border flex items-center justify-between gap-3 transition-colors ${
-                    isDone
-                      ? 'bg-[#EAE0D0]/60 border-[#D6C6B2] opacity-75'
-                      : 'bg-[#F2E8DA] border-[#D6C6B2] hover:border-[#8EC5FF]'
-                  }`}
-                >
-                  <div className="flex items-center gap-3 min-w-0">
-                    <button
-                      onClick={() => toggleTaskCompleted(task.id)}
-                      className="text-[#6E5648] hover:text-[#3E7B52] shrink-0"
-                    >
-                      {isDone ? (
-                        <CheckCircle2 className="w-4 h-4 text-[#3E7B52]" />
-                      ) : (
-                        <Circle className="w-4 h-4" />
-                      )}
-                    </button>
-                    <div className="flex flex-col min-w-0">
-                      <span className={`text-xs font-semibold truncate ${isDone ? 'line-through text-[#6E5648]' : 'text-[#3B2418]'}`}>
-                        {task.title}
-                      </span>
-                      <div className="flex items-center gap-2 text-[10px] text-[#6E5648] mt-0.5">
-                        <span className="capitalize">{task.category}</span>
-                        {task.dueDate && <span>• Due {task.dueDate}</span>}
-                        {task.subtasks.length > 0 && (
-                          <span>
-                            • {task.subtasks.filter(s => s.completed).length}/{task.subtasks.length} subtasks
-                          </span>
-                        )}
                       </div>
-                    </div>
-                  </div>
 
-                  <div className="flex items-center gap-2 shrink-0">
-                    <span
-                      className={`text-[9px] font-mono px-1.5 py-0.2 rounded border uppercase font-semibold ${pColor.bg} ${pColor.text} ${pColor.border}`}
-                    >
-                      {task.priority}
-                    </span>
-                    <button
-                      onClick={() => setEditingTask(task)}
-                      className="p-1 rounded text-[#6E5648] hover:text-[#3B2418] hover:bg-[#EAE0D0]"
-                    >
-                      <Edit3 className="w-3.5 h-3.5" />
-                    </button>
-                    <button
-                      onClick={() => deleteTask(task.id)}
-                      className="p-1 rounded text-[#6E5648] hover:text-[#B84A44] hover:bg-[#EAE0D0]"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-                </div>
-              );
-            })
-          )}
-        </div>
-      )}
+                      <div className="flex items-center gap-2 shrink-0">
+                        <span
+                          className={`text-[9px] font-mono px-1.5 py-0.2 rounded border uppercase font-semibold ${pColor.bg} ${pColor.text} ${pColor.border}`}
+                        >
+                          {task.priority}
+                        </span>
+                        <button
+                          onClick={() => setEditingTask(task)}
+                          className="btn-press p-1 rounded text-[#6E5648] hover:text-[#3B2418] hover:bg-[#EAE0D0] transition-colors"
+                        >
+                          <Edit3 className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          onClick={() => deleteTask(task.id)}
+                          className="btn-press p-1 rounded text-[#6E5648] hover:text-[#B84A44] hover:bg-[#EAE0D0] transition-colors"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </motion.div>
+                  );
+                })}
+              </AnimatePresence>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Task Edit / Detail Modal */}
-      {editingTask && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#3B2418]/65 backdrop-blur-xs">
-          <div
-            className="w-full max-w-xl bg-[#FAF5ED] border border-[#D6C6B2] rounded-2xl shadow-2xl overflow-hidden animate-fade-in flex flex-col max-h-[85vh]"
-            onClick={e => e.stopPropagation()}
-          >
+      <ModalShell
+        isOpen={Boolean(activeEditingTask)}
+        onClose={() => setEditingTask(null)}
+        maxWidthClass="max-w-xl"
+        panelClassName="bg-[#FAF5ED] border border-[#D6C6B2] rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[85vh]"
+      >
+        {activeEditingTask && (
+          <>
             <div className="flex items-center justify-between px-6 py-4 border-b border-[#5A3927] bg-[#3B2418]">
               <div className="flex items-center gap-2">
                 <Edit3 className="w-4 h-4 text-[#8EC5FF]" />
@@ -461,7 +507,7 @@ export const TasksView: React.FC = () => {
               </div>
               <button
                 onClick={() => setEditingTask(null)}
-                className="text-[#D8C7B4] hover:text-[#F2E8DA]"
+                className="text-[#D8C7B4] hover:text-[#F2E8DA] transition-colors"
               >
                 ✕
               </button>
@@ -473,11 +519,11 @@ export const TasksView: React.FC = () => {
                 <label className="block text-xs font-semibold text-[#6E5648] mb-1">Title</label>
                 <input
                   type="text"
-                  value={editingTask.title}
+                  value={activeEditingTask.title}
                   onChange={e => {
-                    const updated = { ...editingTask, title: e.target.value };
+                    const updated = { ...activeEditingTask, title: e.target.value };
                     setEditingTask(updated);
-                    updateTask(editingTask.id, { title: e.target.value });
+                    updateTask(activeEditingTask.id, { title: e.target.value });
                   }}
                   className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-[#3B2418] text-xs font-medium focus:outline-hidden focus:ring-2 focus:ring-[#8EC5FF]"
                 />
@@ -488,11 +534,11 @@ export const TasksView: React.FC = () => {
                 <div>
                   <label className="block text-xs font-semibold text-[#6E5648] mb-1">Status</label>
                   <select
-                    value={editingTask.status}
+                    value={activeEditingTask.status}
                     onChange={e => {
                       const newStatus = e.target.value as TaskStatus;
-                      setEditingTask({ ...editingTask, status: newStatus });
-                      updateTask(editingTask.id, { status: newStatus });
+                      setEditingTask({ ...activeEditingTask, status: newStatus });
+                      updateTask(activeEditingTask.id, { status: newStatus });
                     }}
                     className="w-full px-2.5 py-1.5 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:outline-hidden"
                   >
@@ -507,11 +553,11 @@ export const TasksView: React.FC = () => {
                 <div>
                   <label className="block text-xs font-semibold text-[#6E5648] mb-1">Priority</label>
                   <select
-                    value={editingTask.priority}
+                    value={activeEditingTask.priority}
                     onChange={e => {
                       const newPriority = e.target.value as Priority;
-                      setEditingTask({ ...editingTask, priority: newPriority });
-                      updateTask(editingTask.id, { priority: newPriority });
+                      setEditingTask({ ...activeEditingTask, priority: newPriority });
+                      updateTask(activeEditingTask.id, { priority: newPriority });
                     }}
                     className="w-full px-2.5 py-1.5 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:outline-hidden"
                   >
@@ -526,10 +572,10 @@ export const TasksView: React.FC = () => {
                   <label className="block text-xs font-semibold text-[#6E5648] mb-1">Due Date</label>
                   <input
                     type="date"
-                    value={editingTask.dueDate || ''}
+                    value={activeEditingTask.dueDate || ''}
                     onChange={e => {
-                      setEditingTask({ ...editingTask, dueDate: e.target.value });
-                      updateTask(editingTask.id, { dueDate: e.target.value || undefined });
+                      setEditingTask({ ...activeEditingTask, dueDate: e.target.value });
+                      updateTask(activeEditingTask.id, { dueDate: e.target.value || undefined });
                     }}
                     className="w-full px-2.5 py-1.5 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:outline-hidden"
                   />
@@ -541,10 +587,10 @@ export const TasksView: React.FC = () => {
                 <label className="block text-xs font-semibold text-[#6E5648] mb-1">Description</label>
                 <textarea
                   rows={3}
-                  value={editingTask.description || ''}
+                  value={activeEditingTask.description || ''}
                   onChange={e => {
-                    setEditingTask({ ...editingTask, description: e.target.value });
-                    updateTask(editingTask.id, { description: e.target.value });
+                    setEditingTask({ ...activeEditingTask, description: e.target.value });
+                    updateTask(activeEditingTask.id, { description: e.target.value });
                   }}
                   className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:outline-hidden"
                 />
@@ -554,27 +600,27 @@ export const TasksView: React.FC = () => {
               <div className="space-y-2 pt-2 border-t border-[#D6C6B2]">
                 <span className="text-xs font-semibold text-[#3B2418] block">Subtasks</span>
                 <div className="space-y-1.5">
-                  {editingTask.subtasks.map(st => (
-                    <div
-                      key={st.id}
-                      className="flex items-center gap-2 p-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2]"
-                    >
-                      <button
-                        type="button"
-                        onClick={() => toggleSubtaskCompleted(editingTask.id, st.id)}
-                        className="text-[#6E5648] hover:text-[#3E7B52]"
+                  <AnimatePresence initial={false}>
+                    {activeEditingTask.subtasks.map(st => (
+                      <motion.div
+                        key={st.id}
+                        initial={prefersReduced ? { opacity: 1 } : { opacity: 0, y: 4 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={prefersReduced ? { opacity: 0 } : { opacity: 0 }}
+                        transition={{ duration: prefersReduced ? 0.01 : 0.16, ease: MOMENTUM_EASE }}
+                        className="flex items-center gap-2 p-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2]"
                       >
-                        {st.completed ? (
-                          <CheckCircle2 className="w-4 h-4 text-[#3E7B52]" />
-                        ) : (
-                          <Circle className="w-4 h-4" />
-                        )}
-                      </button>
-                      <span className={`text-xs flex-1 ${st.completed ? 'line-through text-[#6E5648]' : 'text-[#3B2418]'}`}>
-                        {st.title}
-                      </span>
-                    </div>
-                  ))}
+                        <AnimatedCheckButton
+                          checked={st.completed}
+                          size="sm"
+                          onClick={() => toggleSubtaskCompleted(activeEditingTask.id, st.id)}
+                        />
+                        <span className={`text-xs flex-1 transition-colors ${st.completed ? 'line-through text-[#6E5648]' : 'text-[#3B2418]'}`}>
+                          {st.title}
+                        </span>
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
                 </div>
 
                 <form onSubmit={handleAddSubtask} className="flex gap-2 pt-1">
@@ -587,7 +633,7 @@ export const TasksView: React.FC = () => {
                   />
                   <button
                     type="submit"
-                    className="px-3 py-1.5 rounded-lg bg-[#8EC5FF] text-[#3B2418] font-semibold text-xs border border-[#3B2418]/15"
+                    className="btn-press px-3 py-1.5 rounded-lg bg-[#8EC5FF] hover:bg-[#73B6FC] text-[#3B2418] font-semibold text-xs border border-[#3B2418]/15 transition-colors"
                   >
                     Add
                   </button>
@@ -599,24 +645,24 @@ export const TasksView: React.FC = () => {
             <div className="p-4 border-t border-[#D6C6B2] bg-[#EAE0D0] flex items-center justify-between">
               <button
                 onClick={() => {
-                  deleteTask(editingTask.id);
+                  deleteTask(activeEditingTask.id);
                   setEditingTask(null);
                 }}
-                className="text-xs text-[#9E3530] hover:underline flex items-center gap-1 font-medium"
+                className="btn-press text-xs text-[#9E3530] hover:underline flex items-center gap-1 font-medium"
               >
                 <Trash2 className="w-3.5 h-3.5" />
                 <span>Delete Task</span>
               </button>
               <button
                 onClick={() => setEditingTask(null)}
-                className="px-4 py-1.5 rounded-lg bg-[#8EC5FF] text-[#3B2418] font-semibold text-xs border border-[#3B2418]/15"
+                className="btn-press px-4 py-1.5 rounded-lg bg-[#8EC5FF] hover:bg-[#73B6FC] text-[#3B2418] font-semibold text-xs border border-[#3B2418]/15 transition-colors"
               >
                 Done
               </button>
             </div>
-          </div>
-        </div>
-      )}
+          </>
+        )}
+      </ModalShell>
     </div>
   );
 };

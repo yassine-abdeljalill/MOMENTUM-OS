@@ -11,11 +11,13 @@ import {
   ChevronRight,
   Sparkles,
 } from 'lucide-react';
+import { AnimatePresence, motion } from 'motion/react';
 import { useApp } from '../../lib/context';
 import { JournalCategory, JournalEntry, JournalMood } from '../../types';
+import { MOMENTUM_EASE, ModalShell } from '../common/MotionPrimitives';
 
 export const JournalView: React.FC = () => {
-  const { state, addJournalEntry, updateJournalEntry, deleteJournalEntry } = useApp();
+  const { state, addJournalEntry, updateJournalEntry, deleteJournalEntry, showToast } = useApp();
 
   const [searchQuery, setSearchQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
@@ -60,6 +62,7 @@ export const JournalView: React.FC = () => {
     setNewContent('');
     setShowNewEntryModal(false);
     setSelectedEntry(created);
+    showToast('Reflection saved to journal.', 'success');
   };
 
   return (
@@ -84,7 +87,7 @@ export const JournalView: React.FC = () => {
         <div className="flex items-center gap-3">
           <button
             onClick={() => setShowNewEntryModal(true)}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#8EC5FF] hover:bg-[#73B6FC] text-[#3B2418] border border-[#3B2418]/15 font-bold text-xs shadow-xs transition-all"
+            className="btn-press flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#8EC5FF] hover:bg-[#73B6FC] text-[#3B2418] border border-[#3B2418]/15 font-bold text-xs shadow-xs transition-all"
           >
             <Plus className="w-4 h-4 stroke-[2.5]" />
             <span>New Reflection</span>
@@ -122,213 +125,233 @@ export const JournalView: React.FC = () => {
           </div>
 
           <div className="space-y-3">
-            {filteredEntries.map(entry => {
-              const isSelected = selectedEntry && selectedEntry.id === entry.id;
+            <AnimatePresence initial={false}>
+              {filteredEntries.map(entry => {
+                const isSelected = selectedEntry && selectedEntry.id === entry.id;
 
-              return (
-                <div
-                  key={entry.id}
-                  onClick={() => setSelectedEntry(entry)}
-                  className={`p-4 rounded-xl border transition-all cursor-pointer space-y-2 ${
-                    isSelected
-                      ? 'bg-[#3B2418] border-[#5A3927] shadow-md'
-                      : 'bg-[#FAF5ED] border-[#D6C6B2] hover:border-[#8EC5FF]'
-                  }`}
-                >
-                  <div className="flex items-start justify-between gap-2">
-                    <h3 className={`text-sm font-semibold truncate ${isSelected ? 'text-[#F2E8DA]' : 'text-[#3B2418]'}`}>
-                      {entry.title}
-                    </h3>
-                    <span className={`font-mono text-[10px] shrink-0 ${isSelected ? 'text-[#D8C7B4]' : 'text-[#6E5648]'}`}>
-                      {entry.date}
-                    </span>
-                  </div>
-
-                  <p className={`text-xs line-clamp-2 leading-relaxed ${isSelected ? 'text-[#D8C7B4]' : 'text-[#6E5648]'}`}>
-                    {entry.content}
-                  </p>
-
-                  <div className="flex items-center gap-2 pt-1">
-                    <span className={`text-[10px] font-mono uppercase px-1.5 py-0.5 rounded ${
-                      isSelected ? 'bg-[#4D3021] text-[#8EC5FF]' : 'bg-[#F2E8DA] text-[#6E5648] border border-[#D6C6B2]/60'
-                    }`}>
-                      {entry.category.replace('_', ' ')}
-                    </span>
-                    {entry.mood && (
-                      <span className={`text-[10px] capitalize font-medium ${isSelected ? 'text-[#8EC5FF]' : 'text-[#1E5A99]'}`}>
-                        • Mood: {entry.mood}
+                return (
+                  <motion.div
+                    layout
+                    key={entry.id}
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.96 }}
+                    transition={{ duration: 0.2, ease: MOMENTUM_EASE }}
+                    onClick={() => setSelectedEntry(entry)}
+                    className={`card-hover p-4 rounded-xl border transition-colors cursor-pointer space-y-2 ${
+                      isSelected
+                        ? 'bg-[#3B2418] border-[#5A3927] shadow-md'
+                        : 'bg-[#FAF5ED] border-[#D6C6B2] hover:border-[#8EC5FF]'
+                    }`}
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <h3 className={`text-sm font-semibold truncate ${isSelected ? 'text-[#F2E8DA]' : 'text-[#3B2418]'}`}>
+                        {entry.title}
+                      </h3>
+                      <span className={`font-mono text-[10px] shrink-0 ${isSelected ? 'text-[#D8C7B4]' : 'text-[#6E5648]'}`}>
+                        {entry.date}
                       </span>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
+                    </div>
+
+                    <p className={`text-xs line-clamp-2 leading-relaxed ${isSelected ? 'text-[#D8C7B4]' : 'text-[#6E5648]'}`}>
+                      {entry.content}
+                    </p>
+
+                    <div className="flex items-center gap-2 pt-1">
+                      <span className={`text-[10px] font-mono uppercase px-1.5 py-0.5 rounded ${
+                        isSelected ? 'bg-[#4D3021] text-[#8EC5FF]' : 'bg-[#F2E8DA] text-[#6E5648] border border-[#D6C6B2]/60'
+                      }`}>
+                        {entry.category.replace('_', ' ')}
+                      </span>
+                      {entry.mood && (
+                        <span className={`text-[10px] capitalize font-medium ${isSelected ? 'text-[#8EC5FF]' : 'text-[#1E5A99]'}`}>
+                          • Mood: {entry.mood}
+                        </span>
+                      )}
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </AnimatePresence>
           </div>
         </div>
 
         {/* Right Column (7 cols): Selected Entry Reader / Editor */}
         <div className="lg:col-span-7">
-          {selectedEntry ? (
-            <div className="p-6 md:p-8 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] shadow-xs space-y-6">
-              <div className="flex items-start justify-between gap-4 pb-4 border-b border-[#D6C6B2]">
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2">
-                    <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-[#3B2418] text-[#8EC5FF]">
-                      {selectedEntry.category.replace('_', ' ')}
-                    </span>
-                    <span className="text-xs font-mono text-[#6E5648]">
-                      {selectedEntry.date}
-                    </span>
+          <AnimatePresence mode="wait">
+            {selectedEntry ? (
+              <motion.div
+                key={selectedEntry.id}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                transition={{ duration: 0.2, ease: MOMENTUM_EASE }}
+                className="p-6 md:p-8 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] shadow-xs space-y-6"
+              >
+                <div className="flex items-start justify-between gap-4 pb-4 border-b border-[#D6C6B2]">
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-[#3B2418] text-[#8EC5FF]">
+                        {selectedEntry.category.replace('_', ' ')}
+                      </span>
+                      <span className="text-xs font-mono text-[#6E5648]">
+                        {selectedEntry.date}
+                      </span>
+                    </div>
+                    <h2 className="text-xl font-bold text-[#3B2418] pt-1">
+                      {selectedEntry.title}
+                    </h2>
                   </div>
-                  <h2 className="text-xl font-bold text-[#3B2418] pt-1">
-                    {selectedEntry.title}
-                  </h2>
+
+                  <button
+                    onClick={() => {
+                      deleteJournalEntry(selectedEntry.id);
+                      setSelectedEntry(null);
+                      showToast('Journal entry deleted.', 'info');
+                    }}
+                    className="btn-press text-xs font-semibold text-[#9E3530] hover:underline"
+                  >
+                    Delete
+                  </button>
                 </div>
 
-                <button
-                  onClick={() => {
-                    deleteJournalEntry(selectedEntry.id);
-                    setSelectedEntry(null);
-                  }}
-                  className="text-xs font-semibold text-[#9E3530] hover:underline"
-                >
-                  Delete
-                </button>
-              </div>
+                {/* Reflection Questions Breakdown if available */}
+                {selectedEntry.reflectionQuestions && (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-4 rounded-xl bg-[#F2E8DA] border border-[#D6C6B2] text-xs">
+                    {selectedEntry.reflectionQuestions.wentWell && (
+                      <div>
+                        <span className="font-semibold text-[#3E7B52] block">Went Well:</span>
+                        <p className="text-[#6E5648] mt-0.5">{selectedEntry.reflectionQuestions.wentWell}</p>
+                      </div>
+                    )}
+                    {selectedEntry.reflectionQuestions.learned && (
+                      <div>
+                        <span className="font-semibold text-[#1E5A99] block">Learned:</span>
+                        <p className="text-[#6E5648] mt-0.5">{selectedEntry.reflectionQuestions.learned}</p>
+                      </div>
+                    )}
+                    {selectedEntry.reflectionQuestions.tomorrowPriority && (
+                      <div className="sm:col-span-2 pt-2 border-t border-[#D6C6B2]">
+                        <span className="font-semibold text-[#3B2418] block">Tomorrow Priority:</span>
+                        <p className="text-[#1E5A99] font-medium mt-0.5">{selectedEntry.reflectionQuestions.tomorrowPriority}</p>
+                      </div>
+                    )}
+                  </div>
+                )}
 
-              {/* Reflection Questions Breakdown if available */}
-              {selectedEntry.reflectionQuestions && (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-4 rounded-xl bg-[#F2E8DA] border border-[#D6C6B2] text-xs">
-                  {selectedEntry.reflectionQuestions.wentWell && (
-                    <div>
-                      <span className="font-semibold text-[#3E7B52] block">Went Well:</span>
-                      <p className="text-[#6E5648] mt-0.5">{selectedEntry.reflectionQuestions.wentWell}</p>
-                    </div>
-                  )}
-                  {selectedEntry.reflectionQuestions.learned && (
-                    <div>
-                      <span className="font-semibold text-[#1E5A99] block">Learned:</span>
-                      <p className="text-[#6E5648] mt-0.5">{selectedEntry.reflectionQuestions.learned}</p>
-                    </div>
-                  )}
-                  {selectedEntry.reflectionQuestions.tomorrowPriority && (
-                    <div className="sm:col-span-2 pt-2 border-t border-[#D6C6B2]">
-                      <span className="font-semibold text-[#3B2418] block">Tomorrow Priority:</span>
-                      <p className="text-[#1E5A99] font-medium mt-0.5">{selectedEntry.reflectionQuestions.tomorrowPriority}</p>
-                    </div>
-                  )}
+                {/* Full Content */}
+                <div className="text-sm text-[#3B2418] leading-relaxed whitespace-pre-line font-serif">
+                  {selectedEntry.content}
                 </div>
-              )}
-
-              {/* Full Content */}
-              <div className="text-sm text-[#3B2418] leading-relaxed whitespace-pre-line font-serif">
-                {selectedEntry.content}
-              </div>
-            </div>
-          ) : (
-            <div className="p-12 text-center text-[#6E5648] rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2]">
-              No entry selected. Choose one from the left or create a new reflection.
-            </div>
-          )}
+              </motion.div>
+            ) : (
+              <motion.div
+                key="empty-journal"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="p-12 text-center text-[#6E5648] rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2]"
+              >
+                No entry selected. Choose one from the left or create a new reflection.
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
 
       {/* New Reflection Modal */}
-      {showNewEntryModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#3B2418]/65 backdrop-blur-xs">
-          <div
-            className="w-full max-w-xl bg-[#FAF5ED] border border-[#D6C6B2] rounded-2xl shadow-2xl overflow-hidden animate-fade-in"
-            onClick={e => e.stopPropagation()}
-          >
-            <div className="flex items-center justify-between px-6 py-4 border-b border-[#5A3927] bg-[#3B2418]">
-              <div className="flex items-center gap-2">
-                <BookOpen className="w-4 h-4 text-[#8EC5FF]" />
-                <h3 className="text-sm font-bold text-[#F2E8DA]">New Journal Entry</h3>
-              </div>
-              <button
-                onClick={() => setShowNewEntryModal(false)}
-                className="text-[#D8C7B4] hover:text-[#F2E8DA]"
-              >
-                ✕
-              </button>
-            </div>
-
-            <form onSubmit={handleCreateEntry} className="p-6 space-y-4">
-              <div>
-                <label className="block text-xs font-semibold text-[#6E5648] mb-1">Title</label>
-                <input
-                  type="text"
-                  required
-                  value={newTitle}
-                  onChange={e => setNewTitle(e.target.value)}
-                  placeholder="e.g. Overcoming resistance on distributed consensus"
-                  className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
-                  autoFocus
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-semibold text-[#6E5648] mb-1">Entry Type</label>
-                  <select
-                    value={newCategory}
-                    onChange={e => setNewCategory(e.target.value as JournalCategory)}
-                    className="w-full px-2.5 py-1.5 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
-                  >
-                    <option value="daily_reflection">Daily Reflection</option>
-                    <option value="weekly_review">Weekly Review</option>
-                    <option value="monthly_review">Monthly Review</option>
-                    <option value="gratitude">Gratitude</option>
-                    <option value="lessons_learned">Lessons Learned</option>
-                    <option value="free_writing">Free Writing</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-[#6E5648] mb-1">Mood</label>
-                  <select
-                    value={newMood}
-                    onChange={e => setNewMood(e.target.value as JournalMood)}
-                    className="w-full px-2.5 py-1.5 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
-                  >
-                    <option value="great">Great</option>
-                    <option value="good">Good</option>
-                    <option value="neutral">Neutral</option>
-                    <option value="challenging">Challenging</option>
-                  </select>
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-[#6E5648] mb-1">Content</label>
-                <textarea
-                  rows={6}
-                  required
-                  value={newContent}
-                  onChange={e => setNewContent(e.target.value)}
-                  placeholder="Write freely and honestly..."
-                  className="w-full px-4 py-3 rounded-xl bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden leading-relaxed"
-                />
-              </div>
-
-              <div className="flex justify-end gap-2 pt-2 border-t border-[#D6C6B2]">
-                <button
-                  type="button"
-                  onClick={() => setShowNewEntryModal(false)}
-                  className="px-3 py-1.5 text-xs text-[#6E5648] hover:text-[#3B2418]"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-1.5 rounded-lg text-xs font-bold bg-[#8EC5FF] text-[#3B2418] hover:bg-[#73B6FC] border border-[#3B2418]/15 shadow-xs"
-                >
-                  Save Entry
-                </button>
-              </div>
-            </form>
+      <ModalShell
+        isOpen={showNewEntryModal}
+        onClose={() => setShowNewEntryModal(false)}
+        maxWidthClass="max-w-xl"
+      >
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[#5A3927] bg-[#3B2418]">
+          <div className="flex items-center gap-2">
+            <BookOpen className="w-4 h-4 text-[#8EC5FF]" />
+            <h3 className="text-sm font-bold text-[#F2E8DA]">New Journal Entry</h3>
           </div>
+          <button
+            onClick={() => setShowNewEntryModal(false)}
+            className="text-[#D8C7B4] hover:text-[#F2E8DA] transition-colors"
+          >
+            ✕
+          </button>
         </div>
-      )}
+
+        <form onSubmit={handleCreateEntry} className="p-6 space-y-4">
+          <div>
+            <label className="block text-xs font-semibold text-[#6E5648] mb-1">Title</label>
+            <input
+              type="text"
+              required
+              value={newTitle}
+              onChange={e => setNewTitle(e.target.value)}
+              placeholder="e.g. Overcoming resistance on distributed consensus"
+              className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
+              autoFocus
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-xs font-semibold text-[#6E5648] mb-1">Entry Type</label>
+              <select
+                value={newCategory}
+                onChange={e => setNewCategory(e.target.value as JournalCategory)}
+                className="w-full px-2.5 py-1.5 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
+              >
+                <option value="daily_reflection">Daily Reflection</option>
+                <option value="weekly_review">Weekly Review</option>
+                <option value="monthly_review">Monthly Review</option>
+                <option value="gratitude">Gratitude</option>
+                <option value="lessons_learned">Lessons Learned</option>
+                <option value="free_writing">Free Writing</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-[#6E5648] mb-1">Mood</label>
+              <select
+                value={newMood}
+                onChange={e => setNewMood(e.target.value as JournalMood)}
+                className="w-full px-2.5 py-1.5 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
+              >
+                <option value="great">Great</option>
+                <option value="good">Good</option>
+                <option value="neutral">Neutral</option>
+                <option value="challenging">Challenging</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold text-[#6E5648] mb-1">Content</label>
+            <textarea
+              rows={6}
+              required
+              value={newContent}
+              onChange={e => setNewContent(e.target.value)}
+              placeholder="Write freely and honestly..."
+              className="w-full px-4 py-3 rounded-xl bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden leading-relaxed"
+            />
+          </div>
+
+          <div className="flex justify-end gap-2 pt-2 border-t border-[#D6C6B2]">
+            <button
+              type="button"
+              onClick={() => setShowNewEntryModal(false)}
+              className="btn-press px-3 py-1.5 text-xs text-[#6E5648] hover:text-[#3B2418]"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="btn-press px-4 py-1.5 rounded-lg text-xs font-bold bg-[#8EC5FF] text-[#3B2418] hover:bg-[#73B6FC] border border-[#3B2418]/15 shadow-xs"
+            >
+              Save Entry
+            </button>
+          </div>
+        </form>
+      </ModalShell>
     </div>
   );
 };

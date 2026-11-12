@@ -22,7 +22,9 @@ import {
   UserProfile,
   UserPreferences,
   NinetyDayPlan,
+  AuthUser,
 } from '../types';
+import { authApi } from './financeApi';
 
 export type NavigationTab =
   | 'overview'
@@ -34,6 +36,7 @@ export type NavigationTab =
   | 'learning'
   | 'fitness'
   | 'habits'
+  | 'finance'
   | 'analytics'
   | 'journal'
   | 'resources'
@@ -45,9 +48,16 @@ interface FocusTimerState {
   totalDurationSeconds: number;
   startTimestampMs: number;
   pausedAccumulatedMs: number;
+  pausedAtMs?: number;
   linkedTaskId?: string;
   linkedTaskTitle?: string;
   sessionType: 'focus' | 'break';
+}
+
+export interface ToastMessage {
+  id: string;
+  message: string;
+  type: 'success' | 'error' | 'info';
 }
 
 interface AppContextType {
@@ -74,6 +84,17 @@ interface AppContextType {
   setIsAuthModalOpen: (open: boolean) => void;
   isOnboardingOpen: boolean;
   setIsOnboardingOpen: (open: boolean) => void;
+
+  // Server Authentication Session
+  authUser: AuthUser | null;
+  authChecked: boolean;
+  setAuthUser: (user: AuthUser | null) => void;
+  logoutAuth: () => Promise<void>;
+
+  // Action Feedback Toasts
+  toasts: ToastMessage[];
+  showToast: (message: string, type?: 'success' | 'error' | 'info') => void;
+  dismissToast: (id: string) => void;
 
   // Global Focus Timer
   focusTimer: FocusTimerState;
@@ -173,6 +194,74 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isOnboardingOpen, setIsOnboardingOpen] = useState(false);
 
+  // Server Authentication Session
+  const [authUser, setAuthUserState] = useState<AuthUser | null>(null);
+  const [authChecked, setAuthChecked] = useState(false);
+
+  const setAuthUser = useCallback((user: AuthUser | null) => {
+    setAuthUserState(user);
+    if (user) {
+      setState(prev => ({
+        ...prev,
+        isDemoMode: false,
+        profile: {
+          ...prev.profile,
+          id: user.id,
+          email: user.email,
+          fullName: user.fullName,
+        },
+      }));
+    }
+  }, []);
+
+  const logoutAuth = useCallback(async () => {
+    try {
+      await authApi.logout();
+    } catch {
+      // Ignore network errors on logout
+    }
+    setAuthUserState(null);
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    authApi
+      .me()
+      .then(({ user }) => {
+        if (cancelled) return;
+        if (user) {
+          setAuthUser(user);
+        }
+      })
+      .catch(() => {
+        // Unauthenticated or offline
+      })
+      .finally(() => {
+        if (!cancelled) setAuthChecked(true);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [setAuthUser]);
+
+  // Action Feedback Toasts
+  const [toasts, setToasts] = useState<ToastMessage[]>([]);
+
+  const dismissToast = useCallback((id: string) => {
+    setToasts(prev => prev.filter(t => t.id !== id));
+  }, []);
+
+  const showToast = useCallback(
+    (message: string, type: 'success' | 'error' | 'info' = 'success') => {
+      const id = `toast-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+      setToasts(prev => [...prev.slice(-2), { id, message, type }]);
+      setTimeout(() => {
+        setToasts(prev => prev.filter(t => t.id !== id));
+      }, 2600);
+    },
+    []
+  );
+
   // Focus Timer
   const [focusTimer, setFocusTimer] = useState<FocusTimerState>({
     isActive: false,
@@ -241,6 +330,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         totalDurationSeconds: durationMinutes * 60,
         startTimestampMs: Date.now(),
         pausedAccumulatedMs: 0,
+        pausedAtMs: undefined,
         linkedTaskId: linkedTask?.id,
         linkedTaskTitle: linkedTask?.title,
         sessionType,
@@ -255,6 +345,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       return {
         ...prev,
         isPaused: true,
+        pausedAtMs: Date.now(),
       };
     });
   }, []);
@@ -262,9 +353,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const resumeFocusTimer = useCallback(() => {
     setFocusTimer(prev => {
       if (!prev.isActive || !prev.isPaused) return prev;
+      const pauseDelta = prev.pausedAtMs ? Math.max(0, Date.now() - prev.pausedAtMs) : 0;
       return {
         ...prev,
         isPaused: false,
+        pausedAccumulatedMs: prev.pausedAccumulatedMs + pauseDelta,
+        pausedAtMs: undefined,
       };
     });
   }, []);
@@ -276,6 +370,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       totalDurationSeconds: 25 * 60,
       startTimestampMs: 0,
       pausedAccumulatedMs: 0,
+      pausedAtMs: undefined,
       sessionType: 'focus',
     });
   }, []);
@@ -307,8 +402,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
         : prev.tasks,
     }));
 
+    showToast(`Logged ${minutes}m ${focusTimer.sessionType === 'focus' ? 'focus session' : 'break'}.`, 'success');
     resetFocusTimer();
-  }, [focusTimer, state.profile.id, resetFocusTimer]);
+  }, [focusTimer, state.profile.id, resetFocusTimer, showToast]);
 
   // Tasks Actions
   const addTask = useCallback(
@@ -323,9 +419,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
         ...prev,
         tasks: [newTask, ...prev.tasks],
       }));
+      showToast('Task added.');
       return newTask;
     },
-    [state.profile.id]
+    [state.profile.id, showToast]
   );
 
   const updateTask = useCallback((id: string, updates: Partial<Task>) => {
@@ -341,7 +438,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
       tasks: prev.tasks.filter(t => t.id !== id),
       dailySchedule: prev.dailySchedule.filter(a => a.taskId !== id),
     }));
-  }, []);
+    showToast('Task removed.', 'info');
+  }, [showToast]);
 
   const toggleTaskCompleted = useCallback((id: string) => {
     setState(prev => ({
@@ -948,6 +1046,15 @@ export function AppProvider({ children }: { children: ReactNode }) {
         setIsAuthModalOpen,
         isOnboardingOpen,
         setIsOnboardingOpen,
+
+        authUser,
+        authChecked,
+        setAuthUser,
+        logoutAuth,
+
+        toasts,
+        showToast,
+        dismissToast,
 
         focusTimer,
         startFocusTimer,

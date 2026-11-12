@@ -11,12 +11,20 @@ import {
   Dumbbell,
   BookOpen,
 } from 'lucide-react';
+import { motion } from 'motion/react';
 import { useApp } from '../../lib/context';
 import { formatMinutes } from '../../lib/logic';
 import { exportGoalsToCsv, exportTasksToCsv } from '../../lib/storage';
+import {
+  AnimatedNumber,
+  AnimatedProgressBar,
+  MOMENTUM_EASE,
+  StaggerContainer,
+  StaggerItem,
+} from '../common/MotionPrimitives';
 
 export const AnalyticsView: React.FC = () => {
-  const { state } = useApp();
+  const { state, showToast } = useApp();
   const [dateRange, setDateRange] = useState<'7d' | '30d' | '90d'>('30d');
 
   // Compute metrics
@@ -50,6 +58,8 @@ export const AnalyticsView: React.FC = () => {
     a.href = url;
     a.download = `momentum_tasks_${new Date().toISOString().split('T')[0]}.csv`;
     a.click();
+    URL.revokeObjectURL(url);
+    showToast('Tasks CSV exported.', 'success');
   };
 
   const handleExportGoals = () => {
@@ -60,6 +70,8 @@ export const AnalyticsView: React.FC = () => {
     a.href = url;
     a.download = `momentum_goals_${new Date().toISOString().split('T')[0]}.csv`;
     a.click();
+    URL.revokeObjectURL(url);
+    showToast('Goals CSV exported.', 'success');
   };
 
   return (
@@ -77,25 +89,35 @@ export const AnalyticsView: React.FC = () => {
 
         <div className="flex items-center gap-3">
           <div className="flex bg-[#F2E8DA] p-1 rounded-xl border border-[#D6C6B2] text-xs">
-            {(['7d', '30d', '90d'] as const).map(range => (
-              <button
-                key={range}
-                onClick={() => setDateRange(range)}
-                className={`px-3 py-1 rounded-lg font-medium uppercase transition-colors ${
-                  dateRange === range
-                    ? 'bg-[#8EC5FF] text-[#3B2418] font-bold shadow-xs'
-                    : 'text-[#6E5648] hover:text-[#3B2418]'
-                }`}
-              >
-                {range}
-              </button>
-            ))}
+            {(['7d', '30d', '90d'] as const).map(range => {
+              const isActive = dateRange === range;
+              return (
+                <button
+                  key={range}
+                  onClick={() => setDateRange(range)}
+                  className={`relative px-3 py-1 rounded-lg font-medium uppercase transition-colors ${
+                    isActive
+                      ? 'text-[#3B2418] font-bold'
+                      : 'text-[#6E5648] hover:text-[#3B2418]'
+                  }`}
+                >
+                  {isActive && (
+                    <motion.span
+                      layoutId="analytics-range-pill"
+                      transition={{ type: 'spring', stiffness: 420, damping: 32 }}
+                      className="absolute inset-0 rounded-lg bg-[#8EC5FF] shadow-xs"
+                    />
+                  )}
+                  <span className="relative z-10">{range}</span>
+                </button>
+              );
+            })}
           </div>
 
           <div className="flex items-center gap-2">
             <button
               onClick={handleExportTasks}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#F2E8DA] hover:bg-[#EAE0D0] text-xs font-medium text-[#3B2418] border border-[#D6C6B2] transition-colors"
+              className="btn-press flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#F2E8DA] hover:bg-[#EAE0D0] text-xs font-medium text-[#3B2418] border border-[#D6C6B2] transition-colors"
               title="Export tasks to CSV"
             >
               <Download className="w-3.5 h-3.5 text-[#1E5A99]" />
@@ -103,7 +125,7 @@ export const AnalyticsView: React.FC = () => {
             </button>
             <button
               onClick={handleExportGoals}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#F2E8DA] hover:bg-[#EAE0D0] text-xs font-medium text-[#3B2418] border border-[#D6C6B2] transition-colors"
+              className="btn-press flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#F2E8DA] hover:bg-[#EAE0D0] text-xs font-medium text-[#3B2418] border border-[#D6C6B2] transition-colors"
               title="Export goals to CSV"
             >
               <Download className="w-3.5 h-3.5 text-[#1E5A99]" />
@@ -114,58 +136,71 @@ export const AnalyticsView: React.FC = () => {
       </div>
 
       {/* KPI 4-Card Overview */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="p-5 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] shadow-xs">
+      <StaggerContainer className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <StaggerItem className="card-hover p-5 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] shadow-xs">
           <span className="text-[10px] font-mono uppercase text-[#6E5648]">Task Execution Rate</span>
           <div className="my-2 flex items-baseline gap-2">
-            <span className="font-mono text-3xl font-extrabold text-[#3B2418]">{taskCompletionRate}%</span>
+            <span className="font-mono text-3xl font-extrabold text-[#3B2418]">
+              <AnimatedNumber value={taskCompletionRate} formatter={v => `${Math.round(v)}%`} />
+            </span>
             <span className="text-xs text-[#6E5648]">({completedTasks}/{totalTasks})</span>
           </div>
-          <div className="w-full bg-[#EAE0D0] h-1.5 rounded-full overflow-hidden">
-            <div className="bg-[#3E7B52] h-full rounded-full" style={{ width: `${taskCompletionRate}%` }} />
-          </div>
-        </div>
+          <AnimatedProgressBar
+            percentage={taskCompletionRate}
+            trackClassName="w-full bg-[#EAE0D0] h-1.5 rounded-full overflow-hidden"
+            fillClassName="bg-[#3E7B52] h-full rounded-full"
+          />
+        </StaggerItem>
 
-        <div className="p-5 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] shadow-xs">
+        <StaggerItem className="card-hover p-5 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] shadow-xs">
           <span className="text-[10px] font-mono uppercase text-[#6E5648]">Recorded Deep Work</span>
           <div className="my-2 flex items-baseline gap-2">
-            <span className="font-mono text-3xl font-extrabold text-[#1E5A99]">{formatMinutes(totalFocusMinutes)}</span>
+            <span className="font-mono text-3xl font-extrabold text-[#1E5A99]">
+              <AnimatedNumber value={totalFocusMinutes} formatter={v => formatMinutes(Math.round(v))} />
+            </span>
           </div>
           <span className="text-xs text-[#6E5648]">{state.focusSessions.length} total sessions</span>
-        </div>
+        </StaggerItem>
 
-        <div className="p-5 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] shadow-xs">
+        <StaggerItem className="card-hover p-5 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] shadow-xs">
           <span className="text-[10px] font-mono uppercase text-[#6E5648]">Milestone Completion</span>
           <div className="my-2 flex items-baseline gap-2">
             <span className="font-mono text-3xl font-extrabold text-[#3B2418]">
-              {totalMilestones > 0 ? Math.round((completedMilestones / totalMilestones) * 100) : 0}%
+              <AnimatedNumber
+                value={totalMilestones > 0 ? Math.round((completedMilestones / totalMilestones) * 100) : 0}
+                formatter={v => `${Math.round(v)}%`}
+              />
             </span>
             <span className="text-xs text-[#6E5648]">({completedMilestones}/{totalMilestones})</span>
           </div>
-          <div className="w-full bg-[#EAE0D0] h-1.5 rounded-full overflow-hidden">
-            <div
-              className="bg-[#8EC5FF] h-full rounded-full"
-              style={{ width: `${totalMilestones > 0 ? (completedMilestones / totalMilestones) * 100 : 0}%` }}
-            />
-          </div>
-        </div>
+          <AnimatedProgressBar
+            percentage={totalMilestones > 0 ? (completedMilestones / totalMilestones) * 100 : 0}
+            trackClassName="w-full bg-[#EAE0D0] h-1.5 rounded-full overflow-hidden"
+            fillClassName="bg-[#8EC5FF] h-full rounded-full"
+          />
+        </StaggerItem>
 
-        <div className="p-5 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] shadow-xs">
+        <StaggerItem className="card-hover p-5 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] shadow-xs">
           <span className="text-[10px] font-mono uppercase text-[#6E5648]">Training Volume</span>
           <div className="my-2 flex items-baseline gap-2">
             <span className="font-mono text-3xl font-extrabold text-[#3B2418]">
-              {totalVolumeKg.toLocaleString()}
+              <AnimatedNumber value={totalVolumeKg} formatter={v => Math.round(v).toLocaleString()} />
             </span>
             <span className="text-xs text-[#6E5648]">kg</span>
           </div>
           <span className="text-xs text-[#6E5648]">{totalWorkouts} sessions logged</span>
-        </div>
-      </div>
+        </StaggerItem>
+      </StaggerContainer>
 
       {/* Domain Breakdown Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Productivity & Focus Analytics */}
-        <div className="p-6 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] shadow-xs space-y-4">
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.25, delay: 0.1, ease: MOMENTUM_EASE }}
+          className="card-hover p-6 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] shadow-xs space-y-4"
+        >
           <div className="flex items-center gap-2 pb-3 border-b border-[#D6C6B2]">
             <Clock className="w-4 h-4 text-[#1E5A99]" />
             <h3 className="text-sm font-bold uppercase tracking-wider text-[#3B2418]">
@@ -189,10 +224,15 @@ export const AnalyticsView: React.FC = () => {
               <span className="font-mono font-bold text-[#1E5A99]">18%</span>
             </div>
           </div>
-        </div>
+        </motion.div>
 
         {/* Academic & Intellectual Analytics */}
-        <div className="p-6 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] shadow-xs space-y-4">
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.25, delay: 0.16, ease: MOMENTUM_EASE }}
+          className="card-hover p-6 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] shadow-xs space-y-4"
+        >
           <div className="flex items-center gap-2 pb-3 border-b border-[#D6C6B2]">
             <BookOpen className="w-4 h-4 text-[#1E5A99]" />
             <h3 className="text-sm font-bold uppercase tracking-wider text-[#3B2418]">
@@ -214,7 +254,7 @@ export const AnalyticsView: React.FC = () => {
               <span className="font-mono font-bold text-[#3E7B52]">{state.studySessions.length} sessions</span>
             </div>
           </div>
-        </div>
+        </motion.div>
       </div>
     </div>
   );
