@@ -13,39 +13,130 @@ import type {
   RecurringKind,
 } from '../types/finance';
 
+const SESSION_TOKEN_KEY = 'momentum_session_token';
+
+export class ApiError extends Error {
+  status: number;
+  constructor(message: string, status: number) {
+    super(message);
+    this.name = 'ApiError';
+    this.status = status;
+  }
+}
+
+export function getStoredSessionToken(): string | null {
+  if (typeof window === 'undefined') return null;
+  try {
+    return localStorage.getItem(SESSION_TOKEN_KEY) || sessionStorage.getItem(SESSION_TOKEN_KEY);
+  } catch {
+    return null;
+  }
+}
+
+export function setStoredSessionToken(token: string | null | undefined): void {
+  if (typeof window === 'undefined') return;
+  try {
+    if (token) {
+      localStorage.setItem(SESSION_TOKEN_KEY, token);
+      sessionStorage.setItem(SESSION_TOKEN_KEY, token);
+    } else {
+      localStorage.removeItem(SESSION_TOKEN_KEY);
+      sessionStorage.removeItem(SESSION_TOKEN_KEY);
+    }
+  } catch {
+    // Storage restricted
+  }
+}
+
+function buildAuthHeaders(extra?: HeadersInit): Record<string, string> {
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+  };
+  const token = getStoredSessionToken();
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+  if (extra && typeof extra === 'object' && !Array.isArray(extra)) {
+    Object.assign(headers, extra);
+  }
+  return headers;
+}
+
 async function apiRequest<T>(path: string, options: RequestInit = {}): Promise<T> {
   const res = await fetch(path, {
     ...options,
     credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json',
-      ...(options.headers || {}),
-    },
+    headers: buildAuthHeaders(options.headers),
   });
 
   const data = await res.json().catch(() => ({}));
   if (!res.ok) {
-    throw new Error(data.error || `Request failed (${res.status})`);
+    throw new ApiError(data.error || `Request failed (${res.status})`, res.status);
   }
   return data as T;
 }
 
+let inFlightWorkspacePromise: Promise<{ user: AuthUser }> | null = null;
+
 export const authApi = {
-  me: () => apiRequest<{ user: AuthUser | null }>('/api/auth/me'),
-  login: (payload: { email: string; password: string }) =>
-    apiRequest<{ user: AuthUser }>('/api/auth/login', {
+  me: async () => {
+    const res = await apiRequest<{ user: AuthUser | null }>('/api/auth/me');
+    if (!res.user) {
+      setStoredSessionToken(null);
+    }
+    return res;
+  },
+  ensureWorkspaceSession: (fullName?: string) => {
+    if (!inFlightWorkspacePromise) {
+      inFlightWorkspacePromise = apiRequest<{ user: AuthUser; sessionToken?: string }>(
+        '/api/auth/workspace-session',
+        {
+          method: 'POST',
+          body: JSON.stringify({ fullName }),
+        }
+      )
+        .then(res => {
+          if (res.sessionToken) {
+            setStoredSessionToken(res.sessionToken);
+          }
+          return { user: res.user };
+        })
+        .finally(() => {
+          inFlightWorkspacePromise = null;
+        });
+    }
+    return inFlightWorkspacePromise;
+  },
+  login: async (payload: { email: string; password: string }) => {
+    const res = await apiRequest<{ user: AuthUser; sessionToken?: string }>('/api/auth/login', {
       method: 'POST',
       body: JSON.stringify(payload),
-    }),
-  signup: (payload: { email: string; password: string; fullName: string }) =>
-    apiRequest<{ user: AuthUser }>('/api/auth/signup', {
+    });
+    if (res.sessionToken) {
+      setStoredSessionToken(res.sessionToken);
+    }
+    return { user: res.user };
+  },
+  signup: async (payload: { email: string; password: string; fullName: string }) => {
+    const res = await apiRequest<{ user: AuthUser; sessionToken?: string }>('/api/auth/signup', {
       method: 'POST',
       body: JSON.stringify(payload),
-    }),
-  logout: () =>
-    apiRequest<{ success: boolean }>('/api/auth/logout', {
-      method: 'POST',
-    }),
+    });
+    if (res.sessionToken) {
+      setStoredSessionToken(res.sessionToken);
+    }
+    return { user: res.user };
+  },
+  logout: async () => {
+    try {
+      return await apiRequest<{ success: boolean }>('/api/auth/logout', {
+        method: 'POST',
+      });
+    } finally {
+      setStoredSessionToken(null);
+    }
+  },
+  clearToken: () => setStoredSessionToken(null),
 };
 
 export const financeApi = {
@@ -235,10 +326,14 @@ export const financeApi = {
     ),
 
   downloadCsv: async () => {
-    const res = await fetch('/api/finance/export.csv', { credentials: 'include' });
+    const token = getStoredSessionToken();
+    const res = await fetch('/api/finance/export.csv', {
+      credentials: 'include',
+      headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+    });
     if (!res.ok) {
       const data = await res.json().catch(() => ({}));
-      throw new Error(data.error || 'Failed to export CSV.');
+      throw new ApiError(data.error || 'Failed to export CSV.', res.status);
     }
     const blob = await res.blob();
     const url = URL.createObjectURL(blob);

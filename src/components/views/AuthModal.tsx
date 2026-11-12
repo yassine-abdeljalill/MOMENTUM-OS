@@ -7,7 +7,6 @@ import {
   Eye,
   EyeOff,
   Check,
-  Compass,
   AlertCircle,
   KeyRound,
   LogOut,
@@ -133,10 +132,12 @@ export const AuthModal: React.FC = () => {
     >
       {/* Header */}
       <div className="flex items-center justify-between px-6 py-4 border-b border-[#5A3927] bg-[#3B2418]">
-        <div className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded-md bg-[#8EC5FF] flex items-center justify-center text-[#3B2418]">
-            <Compass className="w-4 h-4 text-[#3B2418]" />
-          </div>
+        <div className="flex items-center gap-2.5">
+          <img
+            src="/brand-logo.png"
+            alt="MOMENTUM logo"
+            className="w-6 h-6 rounded-md object-contain shrink-0"
+          />
           <h2 className="font-semibold text-sm text-[#F2E8DA] uppercase tracking-wider font-mono">
             {mode === 'profile'
               ? 'Account & Profile'
@@ -197,28 +198,33 @@ export const AuthModal: React.FC = () => {
             transition={{ duration: prefersReduced ? 0.01 : 0.15, ease: MOMENTUM_EASE }}
           >
 
-          {mode === 'profile' && (
+          {mode === 'profile' && (() => {
+            const isRegistered = Boolean(authUser && !authUser.isWorkspace);
+            const displayName = isRegistered ? authUser!.fullName : state.profile.fullName;
+            const displayEmail = isRegistered ? authUser!.email : state.profile.email;
+
+            return (
             <div className="space-y-5">
               <div className="flex items-center gap-3 p-3 rounded-xl bg-[#F2E8DA] border border-[#D6C6B2]">
                 <div className="w-12 h-12 rounded-full bg-[#3B2418] border-2 border-[#8EC5FF] flex items-center justify-center text-lg font-bold text-[#F2E8DA]">
-                  {(authUser?.fullName || state.profile.fullName).charAt(0)}
+                  {displayName.charAt(0)}
                 </div>
                 <div className="flex-1 min-w-0">
                   <h3 className="text-sm font-semibold text-[#3B2418] truncate">
-                    {authUser?.fullName || state.profile.fullName}
+                    {displayName}
                   </h3>
                   <p className="text-xs text-[#6E5648] truncate">
-                    {authUser?.email || state.profile.email}
+                    {displayEmail}
                   </p>
                   <div className="flex items-center gap-2 mt-1">
                     <span
                       className={`text-[10px] font-mono font-semibold px-2 py-0.5 rounded border ${
-                        authUser
+                        isRegistered
                           ? 'bg-[#3E7B52]/15 text-[#2D6240] border-[#3E7B52]/40'
                           : 'bg-[#8EC5FF]/50 text-[#3B2418] border-[#8EC5FF]'
                       }`}
                     >
-                      {authUser ? 'Authenticated Session' : 'Not Signed In (Local Preview)'}
+                      {isRegistered ? 'Authenticated Account' : authUser ? 'Active Workspace Session' : 'Signed Out'}
                     </span>
                   </div>
                 </div>
@@ -251,7 +257,7 @@ export const AuthModal: React.FC = () => {
                   className="w-full py-2 px-3 rounded-lg bg-[#8EC5FF] hover:bg-[#73B6FC] text-xs font-bold text-[#3B2418] border border-[#3B2418]/15 btn-press flex items-center justify-center gap-2"
                 >
                   <KeyRound className="w-3.5 h-3.5" />
-                  <span>{authUser ? 'Switch Account' : 'Sign In / Create Account'}</span>
+                  <span>{isRegistered ? 'Switch Account' : 'Sign In / Create Account'}</span>
                 </button>
                 {authUser && (
                   <button
@@ -268,7 +274,8 @@ export const AuthModal: React.FC = () => {
                 )}
               </div>
             </div>
-          )}
+            );
+          })()}
 
           {mode === 'login' && (
             <form onSubmit={handleLogin} className="space-y-4">

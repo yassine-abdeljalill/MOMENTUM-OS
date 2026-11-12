@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback, useRef } from 'react';
 import {
   AppState,
   getInitialState,
@@ -25,6 +25,8 @@ import {
   AuthUser,
 } from '../types';
 import { authApi } from './financeApi';
+
+const EXPLICIT_SIGNOUT_KEY = 'momentum_explicit_signed_out';
 
 export type NavigationTab =
   | 'overview'
@@ -197,24 +199,34 @@ export function AppProvider({ children }: { children: ReactNode }) {
   // Server Authentication Session
   const [authUser, setAuthUserState] = useState<AuthUser | null>(null);
   const [authChecked, setAuthChecked] = useState(false);
+  const profileNameRef = useRef(state.profile.fullName);
+  profileNameRef.current = state.profile.fullName;
 
   const setAuthUser = useCallback((user: AuthUser | null) => {
     setAuthUserState(user);
     if (user) {
-      setState(prev => ({
-        ...prev,
-        isDemoMode: false,
-        profile: {
-          ...prev.profile,
-          id: user.id,
-          email: user.email,
-          fullName: user.fullName,
-        },
-      }));
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem(EXPLICIT_SIGNOUT_KEY);
+      }
+      if (!user.isWorkspace) {
+        setState(prev => ({
+          ...prev,
+          isDemoMode: false,
+          profile: {
+            ...prev.profile,
+            id: user.id,
+            email: user.email,
+            fullName: user.fullName,
+          },
+        }));
+      }
     }
   }, []);
 
   const logoutAuth = useCallback(async () => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(EXPLICIT_SIGNOUT_KEY, '1');
+    }
     try {
       await authApi.logout();
     } catch {
@@ -227,10 +239,19 @@ export function AppProvider({ children }: { children: ReactNode }) {
     let cancelled = false;
     authApi
       .me()
-      .then(({ user }) => {
+      .then(async ({ user }) => {
         if (cancelled) return;
         if (user) {
           setAuthUser(user);
+          return;
+        }
+        const explicitlySignedOut =
+          typeof window !== 'undefined' && localStorage.getItem(EXPLICIT_SIGNOUT_KEY) === '1';
+        if (!explicitlySignedOut) {
+          const { user: wsUser } = await authApi.ensureWorkspaceSession(profileNameRef.current);
+          if (!cancelled && wsUser) {
+            setAuthUser(wsUser);
+          }
         }
       })
       .catch(() => {

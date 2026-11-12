@@ -18,12 +18,12 @@ import {
   ChevronRight,
   Menu,
   X,
-  Compass,
   Wallet,
 } from 'lucide-react';
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { useApp, NavigationTab } from '../../lib/context';
 import { DrawerShell, MOMENTUM_EASE } from '../common/MotionPrimitives';
+import { PWAInstallButton } from '../common/PWAInstallButton';
 
 interface NavItemConfig {
   id: NavigationTab;
@@ -84,9 +84,11 @@ export const Sidebar: React.FC = () => {
       {/* Brand Header */}
       <div className="h-16 flex items-center justify-between px-4 border-b border-[#5A3927] shrink-0">
         <div className={`flex items-center gap-3 min-w-0 ${collapsed ? 'mx-auto' : ''}`}>
-          <div className="w-8 h-8 rounded-lg bg-[#8EC5FF] flex items-center justify-center text-[#3B2418] font-bold shadow-md shrink-0">
-            <Compass className="w-5 h-5 text-[#3B2418]" />
-          </div>
+          <img
+            src="/brand-logo.png"
+            alt="MOMENTUM logo"
+            className="w-8 h-8 rounded-lg object-contain shadow-md shrink-0"
+          />
           <AnimatePresence initial={false}>
             {!collapsed && (
               <motion.div
@@ -221,6 +223,7 @@ export const Sidebar: React.FC = () => {
 
       {/* Bottom Navigation */}
       <div className="p-2 border-t border-[#5A3927] space-y-1 shrink-0">
+        <PWAInstallButton compact={collapsed} />
         <button
           onClick={() => handleNavClick('settings')}
           className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium transition-colors duration-150 group relative btn-press ${
@@ -259,15 +262,15 @@ export const Sidebar: React.FC = () => {
           title={state.profile.fullName}
         >
           <div className="w-7 h-7 rounded-full bg-[#8EC5FF]/20 border border-[#8EC5FF]/60 flex items-center justify-center text-xs font-semibold text-[#8EC5FF] shrink-0">
-            {(authUser?.fullName || state.profile.fullName).charAt(0)}
+            {(authUser && !authUser.isWorkspace ? authUser.fullName : state.profile.fullName).charAt(0)}
           </div>
           {!collapsed && (
             <div className="flex flex-col min-w-0 flex-1">
               <span className="text-xs font-medium text-[#F2E8DA] truncate">
-                {authUser?.fullName || state.profile.fullName}
+                {authUser && !authUser.isWorkspace ? authUser.fullName : state.profile.fullName}
               </span>
               <span className="text-[10px] text-[#D8C7B4] truncate">
-                {authUser ? authUser.email : state.isDemoMode ? 'Sign in for Finance' : state.profile.email}
+                {authUser && !authUser.isWorkspace ? authUser.email : state.profile.email}
               </span>
             </div>
           )}
@@ -289,9 +292,11 @@ export const Sidebar: React.FC = () => {
             <Menu className="w-5 h-5" />
           </button>
           <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded bg-[#8EC5FF] flex items-center justify-center">
-              <Compass className="w-4 h-4 text-[#3B2418]" />
-            </div>
+            <img
+              src="/brand-logo.png"
+              alt="MOMENTUM logo"
+              className="w-7 h-7 rounded-md object-contain shrink-0"
+            />
             <span className="font-bold text-sm tracking-wider text-[#F2E8DA] uppercase font-mono">
               MOMENTUM
             </span>

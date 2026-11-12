@@ -25,6 +25,7 @@ export function getDb(): DatabaseSync {
       full_name TEXT NOT NULL,
       password_hash TEXT NOT NULL,
       password_salt TEXT NOT NULL,
+      is_workspace INTEGER NOT NULL DEFAULT 0,
       created_at TEXT NOT NULL
     );
 
@@ -136,6 +137,11 @@ export function getDb(): DatabaseSync {
     CREATE INDEX IF NOT EXISTS idx_fin_goals_user ON finance_savings_goals(user_id);
     CREATE INDEX IF NOT EXISTS idx_fin_recurring_user_due ON finance_recurring_payments(user_id, next_due_date);
   `);
+
+  const userCols = db.prepare(`PRAGMA table_info(users)`).all() as { name: string }[];
+  if (!userCols.some(c => c.name === 'is_workspace')) {
+    db.exec(`ALTER TABLE users ADD COLUMN is_workspace INTEGER NOT NULL DEFAULT 0;`);
+  }
 
   dbInstance = db;
   return db;

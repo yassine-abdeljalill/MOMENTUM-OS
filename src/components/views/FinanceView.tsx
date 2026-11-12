@@ -23,7 +23,7 @@ import {
   getMonthKey,
   type DateRangePreset,
 } from '../../lib/finance';
-import { financeApi } from '../../lib/financeApi';
+import { ApiError, financeApi, authApi } from '../../lib/financeApi';
 import type {
   CurrencyCode,
   FinanceBootstrapData,
@@ -33,7 +33,6 @@ import type {
   FinanceTransaction,
 } from '../../types/finance';
 import { MOMENTUM_EASE } from '../common/MotionPrimitives';
-import { FinanceAuthGate } from '../finance/FinanceAuthGate';
 import { FinanceOverviewTab } from '../finance/FinanceOverviewTab';
 import { FinanceTransactionsTab } from '../finance/FinanceTransactionsTab';
 import { FinanceBudgetsTab } from '../finance/FinanceBudgetsTab';
@@ -60,7 +59,7 @@ type DeleteTarget =
   | null;
 
 export const FinanceView: React.FC = () => {
-  const { authUser, authChecked, showToast } = useApp();
+  const { authUser, authChecked, setAuthUser, setIsAuthModalOpen, state, showToast } = useApp();
 
   const [activeTab, setActiveTab] = useState<FinanceSubTab>('overview');
   const [data, setData] = useState<FinanceBootstrapData | null>(null);
@@ -102,11 +101,36 @@ export const FinanceView: React.FC = () => {
       const boot = await financeApi.bootstrap();
       setData(boot);
     } catch (err: any) {
+      const status = err instanceof ApiError ? err.status : err?.status;
+      console.error('[Finance] Workspace load failed:', status || 'network', err?.message);
+
+      if (status === 401) {
+        authApi.clearToken();
+        if (authUser.isWorkspace) {
+          try {
+            const { user: refreshedUser } = await authApi.ensureWorkspaceSession(
+              state.profile.fullName
+            );
+            setAuthUser(refreshedUser);
+            const bootRetry = await financeApi.bootstrap();
+            setData(bootRetry);
+            return;
+          } catch (retryErr: any) {
+            console.error('[Finance] Session recovery failed:', retryErr?.message);
+          }
+        } else {
+          setAuthUser(null);
+          showToast('Your MOMENTUM session expired. Please sign in again.', 'info');
+          setIsAuthModalOpen(true);
+          return;
+        }
+      }
+
       setLoadError(err?.message || 'Failed to load financial data.');
     } finally {
       setLoading(false);
     }
-  }, [authUser]);
+  }, [authUser, setAuthUser, setIsAuthModalOpen, showToast, state.profile.fullName]);
 
   useEffect(() => {
     if (authChecked && authUser) {
@@ -114,7 +138,7 @@ export const FinanceView: React.FC = () => {
     } else if (authChecked && !authUser) {
       setData(null);
     }
-  }, [authChecked, authUser, loadFinanceData]);
+  }, [authChecked, authUser?.id, loadFinanceData]);
 
   const currency: CurrencyCode = data?.settings.currency || 'MAD';
   const rangeBounds = useMemo(
@@ -412,24 +436,55 @@ export const FinanceView: React.FC = () => {
     }
   };
 
-  if (!authChecked) {
+  if (!authChecked || (loading && !data)) {
     return (
       <div className="max-w-7xl mx-auto py-20 flex flex-col items-center justify-center text-[#6E5648] gap-3">
-        <Loader2 className="w-6 h-6 animate-spin text-[#1E5A99]" />
-        <span className="text-xs font-mono">Verifying secure session...</span>
+        <img
+          src="/brand-logo.png"
+          alt="MOMENTUM"
+          className="w-12 h-12 rounded-xl object-contain shadow-md"
+        />
+        <div className="flex items-center gap-2">
+          <Loader2 className="w-4 h-4 animate-spin text-[#1E5A99]" />
+          <span className="text-xs font-mono">Loading Finance workspace...</span>
+        </div>
       </div>
     );
   }
 
   if (!authUser) {
-    return <FinanceAuthGate />;
-  }
-
-  if (loading && !data) {
     return (
-      <div className="max-w-7xl mx-auto py-20 flex flex-col items-center justify-center text-[#6E5648] gap-3">
-        <Loader2 className="w-6 h-6 animate-spin text-[#1E5A99]" />
-        <span className="text-xs font-mono">Loading private financial center...</span>
+      <div className="max-w-lg mx-auto my-12 p-8 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] shadow-xs text-center space-y-4">
+        <div className="w-12 h-12 rounded-xl bg-[#3B2418] text-[#8EC5FF] flex items-center justify-center mx-auto">
+          <Wallet className="w-6 h-6" />
+        </div>
+        <div className="space-y-1.5">
+          <h2 className="text-lg font-bold text-[#3B2418]">MOMENTUM Session Signed Out</h2>
+          <p className="text-xs text-[#6E5648] leading-relaxed">
+            Sign in to your MOMENTUM account to restore your financial records, or continue in a fresh personal workspace.
+          </p>
+        </div>
+        <div className="flex flex-wrap items-center justify-center gap-2 pt-2">
+          <button
+            onClick={() => setIsAuthModalOpen(true)}
+            className="btn-press px-5 py-2 rounded-xl bg-[#8EC5FF] hover:bg-[#73B6FC] text-[#3B2418] border border-[#3B2418]/15 font-bold text-xs shadow-xs"
+          >
+            Sign In to MOMENTUM
+          </button>
+          <button
+            onClick={async () => {
+              try {
+                const { user } = await authApi.ensureWorkspaceSession(state.profile.fullName);
+                setAuthUser(user);
+              } catch (err: any) {
+                showToast(err?.message || 'Unable to start workspace session.', 'error');
+              }
+            }}
+            className="btn-press px-4 py-2 rounded-xl bg-[#F2E8DA] hover:bg-[#EAE0D0] border border-[#D6C6B2] text-xs font-semibold text-[#3B2418]"
+          >
+            Use Personal Workspace
+          </button>
+        </div>
       </div>
     );
   }

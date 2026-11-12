@@ -11,6 +11,7 @@ export interface AuthenticatedUser {
   id: string;
   email: string;
   fullName: string;
+  isWorkspace: boolean;
   createdAt: string;
 }
 
@@ -94,20 +95,24 @@ export function createSessionForUser(userId: string): { rawToken: string; expire
   return { rawToken, expiresAt };
 }
 
-export function setSessionCookie(res: Response, rawToken: string, expiresAt: string): void {
-  const isProd = process.env.NODE_ENV === 'production';
+export function setSessionCookie(res: Response, rawToken: string, expiresAt: string, isHttps: boolean = false): void {
   const expiresDate = new Date(expiresAt);
   res.cookie(SESSION_COOKIE_NAME, rawToken, {
     httpOnly: true,
-    sameSite: 'lax',
-    secure: isProd && process.env.ALLOW_INSECURE_COOKIES !== 'true',
+    sameSite: isHttps ? 'none' : 'lax',
+    secure: isHttps,
     path: '/',
     expires: expiresDate,
   });
 }
 
-export function clearSessionCookie(res: Response): void {
-  res.clearCookie(SESSION_COOKIE_NAME, { path: '/' });
+export function clearSessionCookie(res: Response, isHttps: boolean = false): void {
+  res.clearCookie(SESSION_COOKIE_NAME, {
+    path: '/',
+    httpOnly: true,
+    sameSite: isHttps ? 'none' : 'lax',
+    secure: isHttps,
+  });
 }
 
 export function revokeSessionToken(rawToken: string): void {
@@ -119,13 +124,20 @@ export function getUserFromSessionToken(rawToken: string): AuthenticatedUser | n
   const db = getDb();
   const row = db
     .prepare(
-      `SELECT u.id, u.email, u.full_name, u.created_at, s.expires_at
+      `SELECT u.id, u.email, u.full_name, u.is_workspace, u.created_at, s.expires_at
        FROM sessions s
        JOIN users u ON u.id = s.user_id
        WHERE s.token_hash = ?`
     )
     .get(hashToken(rawToken)) as
-    | { id: string; email: string; full_name: string; created_at: string; expires_at: string }
+    | {
+        id: string;
+        email: string;
+        full_name: string;
+        is_workspace: number;
+        created_at: string;
+        expires_at: string;
+      }
     | undefined;
 
   if (!row) return null;
@@ -139,6 +151,7 @@ export function getUserFromSessionToken(rawToken: string): AuthenticatedUser | n
     id: row.id,
     email: row.email,
     fullName: row.full_name,
+    isWorkspace: Boolean(row.is_workspace),
     createdAt: row.created_at,
   };
 }

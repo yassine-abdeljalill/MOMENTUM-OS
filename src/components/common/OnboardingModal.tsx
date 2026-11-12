@@ -1,16 +1,9 @@
 import React, { useState } from 'react';
 import {
-  Compass,
   ArrowRight,
   ArrowLeft,
   Check,
   CheckCircle2,
-  Sparkles,
-  Target,
-  Clock,
-  User,
-  Heart,
-  X,
 } from 'lucide-react';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { useApp } from '../../lib/context';
@@ -115,9 +108,11 @@ export const OnboardingModal: React.FC = () => {
       <div className="bg-[#3B2418] px-6 pt-5 pb-4 border-b border-[#5A3927]">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-[#8EC5FF] flex items-center justify-center text-[#3B2418] font-bold">
-              <Compass className="w-4 h-4 text-[#3B2418]" />
-            </div>
+            <img
+              src="/brand-logo.png"
+              alt="MOMENTUM logo"
+              className="w-7 h-7 rounded-lg object-contain shrink-0"
+            />
             <span className="font-mono text-xs font-bold text-[#F2E8DA] tracking-wider uppercase">
               MOMENTUM Setup
             </span>
@@ -157,9 +152,11 @@ export const OnboardingModal: React.FC = () => {
           >
           {step === 1 && (
             <div className="space-y-4 my-auto text-center">
-              <div className="w-16 h-16 rounded-2xl bg-[#3B2418] border-2 border-[#8EC5FF] flex items-center justify-center mx-auto text-[#8EC5FF] shadow-lg">
-                <Compass className="w-8 h-8" />
-              </div>
+              <img
+                src="/brand-logo.png"
+                alt="MOMENTUM logo"
+                className="w-16 h-16 rounded-2xl object-contain mx-auto shadow-lg"
+              />
               <h2 className="text-2xl font-bold text-[#3B2418] tracking-tight">
                 Welcome to MOMENTUM
               </h2>
