@@ -211,7 +211,7 @@ export const LessonInfoTab: React.FC<{
             <button
               type="button"
               onClick={handleAddObjective}
-              className="btn-press flex items-center gap-1 px-3 py-2 rounded-xl bg-surface-warm hover:bg-surface-hover text-ink border border-line text-xs font-semibold"
+              className="btn-press glass-control flex items-center gap-1 px-3 py-2 rounded-xl text-ink text-xs font-semibold"
             >
               <Plus className="w-3.5 h-3.5" />
               <span>Add</span>
@@ -226,7 +226,7 @@ export const LessonInfoTab: React.FC<{
           <button
             type="submit"
             disabled={saving}
-            className="btn-press flex items-center gap-1.5 px-4 py-2 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs disabled:opacity-60"
+            className="btn-press flex items-center gap-1.5 px-4 py-2 rounded-xl glass-accent-pill text-xs disabled:opacity-60"
           >
             <Save className="w-3.5 h-3.5" />
             <span>{saving ? 'Saving...' : 'Save Lesson Information'}</span>

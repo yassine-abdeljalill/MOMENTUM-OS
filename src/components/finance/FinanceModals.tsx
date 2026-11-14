@@ -36,7 +36,7 @@ export const ConfirmDeleteModal: React.FC<{
   onClose: () => void;
 }> = ({ isOpen, title, description, loading, onConfirm, onClose }) => (
   <ModalShell isOpen={isOpen} onClose={onClose} maxWidthClass="max-w-sm">
-    <div className="px-5 py-3.5 border-b border-line bg-surface-warm flex items-center justify-between">
+    <div className="px-5 py-3.5 border-b border-white/10 bg-white/[0.03] flex items-center justify-between">
       <div className="flex items-center gap-2 text-ink">
         <AlertTriangle className="w-4 h-4 text-accent" />
         <h3 className="text-xs font-bold uppercase tracking-wider">{title}</h3>
@@ -45,7 +45,7 @@ export const ConfirmDeleteModal: React.FC<{
         type="button"
         onClick={onClose}
         aria-label="Close modal"
-        className="text-ink-muted hover:text-ink btn-press"
+        className="btn-press glass-control p-1.5 rounded-xl text-ink-muted hover:text-ink"
       >
         <X className="w-4 h-4" />
       </button>
@@ -180,7 +180,7 @@ export const TransactionModal: React.FC<{
 
   return (
     <ModalShell isOpen={isOpen} onClose={onClose} maxWidthClass="max-w-md">
-      <div className="px-5 py-3.5 border-b border-line bg-surface-warm flex items-center justify-between">
+      <div className="px-5 py-3.5 border-b border-white/10 bg-white/[0.03] flex items-center justify-between">
         <span className="text-xs font-bold uppercase tracking-wider text-ink">
           {editing ? 'Edit Transaction' : 'Record Transaction'}
         </span>
@@ -188,7 +188,7 @@ export const TransactionModal: React.FC<{
           type="button"
           onClick={onClose}
           aria-label="Close modal"
-          className="text-ink-muted hover:text-ink btn-press"
+          className="btn-press glass-control p-1.5 rounded-xl text-ink-muted hover:text-ink"
         >
           <X className="w-4 h-4" />
         </button>
@@ -201,7 +201,7 @@ export const TransactionModal: React.FC<{
           </div>
         )}
 
-        <div className="grid grid-cols-2 gap-2 p-1 rounded-xl bg-canvas border border-line text-xs">
+        <div className="grid grid-cols-2 gap-2 p-1 rounded-2xl glass-segmented text-xs">
           <button
             type="button"
             onClick={() => setType('expense')}
@@ -357,7 +357,7 @@ export const TransactionModal: React.FC<{
           <button
             type="submit"
             disabled={saving}
-            className="btn-press px-4 py-1.5 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs flex items-center gap-1.5 disabled:opacity-60"
+            className="btn-press glass-accent-pill px-4 py-1.5 rounded-xl text-accent-ink font-semibold text-xs flex items-center gap-1.5 disabled:opacity-60"
           >
             {saving && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
             <span>{editing ? 'Update Transaction' : 'Save Transaction'}</span>
@@ -411,7 +411,7 @@ export const CategoryManagerModal: React.FC<{
 
   return (
     <ModalShell isOpen={isOpen} onClose={onClose} maxWidthClass="max-w-md">
-      <div className="px-5 py-3.5 border-b border-line bg-surface-warm flex items-center justify-between">
+      <div className="px-5 py-3.5 border-b border-white/10 bg-white/[0.03] flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Tag className="w-4 h-4 text-brand-blue" />
           <span className="text-xs font-bold uppercase tracking-wider text-ink">
@@ -422,7 +422,7 @@ export const CategoryManagerModal: React.FC<{
           type="button"
           onClick={onClose}
           aria-label="Close modal"
-          className="text-ink-muted hover:text-ink btn-press"
+          className="btn-press glass-control p-1.5 rounded-xl text-ink-muted hover:text-ink"
         >
           <X className="w-4 h-4" />
         </button>
@@ -591,7 +591,7 @@ export const BudgetModal: React.FC<{
 
   return (
     <ModalShell isOpen={isOpen} onClose={onClose} maxWidthClass="max-w-md">
-      <div className="px-5 py-3.5 border-b border-line bg-surface-warm flex items-center justify-between">
+      <div className="px-5 py-3.5 border-b border-white/10 bg-white/[0.03] flex items-center justify-between">
         <span className="text-xs font-bold uppercase tracking-wider text-ink">
           {editing ? 'Edit Monthly Budget' : 'Create Monthly Budget'}
         </span>
@@ -599,7 +599,7 @@ export const BudgetModal: React.FC<{
           type="button"
           onClick={onClose}
           aria-label="Close modal"
-          className="text-ink-muted hover:text-ink btn-press"
+          className="btn-press glass-control p-1.5 rounded-xl text-ink-muted hover:text-ink"
         >
           <X className="w-4 h-4" />
         </button>
@@ -702,7 +702,7 @@ export const BudgetModal: React.FC<{
           <button
             type="submit"
             disabled={saving}
-            className="btn-press px-4 py-1.5 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs flex items-center gap-1.5 disabled:opacity-60"
+            className="btn-press glass-accent-pill px-4 py-1.5 rounded-xl text-accent-ink font-semibold text-xs flex items-center gap-1.5 disabled:opacity-60"
           >
             {saving && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
             <span>{editing ? 'Update Budget' : 'Save Budget'}</span>
@@ -792,7 +792,7 @@ export const SavingsGoalModal: React.FC<{
 
   return (
     <ModalShell isOpen={isOpen} onClose={onClose} maxWidthClass="max-w-md">
-      <div className="px-5 py-3.5 border-b border-line bg-surface-warm flex items-center justify-between">
+      <div className="px-5 py-3.5 border-b border-white/10 bg-white/[0.03] flex items-center justify-between">
         <div className="flex items-center gap-2">
           <PiggyBank className="w-4 h-4 text-brand-blue" />
           <span className="text-xs font-bold uppercase tracking-wider text-ink">
@@ -803,7 +803,7 @@ export const SavingsGoalModal: React.FC<{
           type="button"
           onClick={onClose}
           aria-label="Close modal"
-          className="text-ink-muted hover:text-ink btn-press"
+          className="btn-press glass-control p-1.5 rounded-xl text-ink-muted hover:text-ink"
         >
           <X className="w-4 h-4" />
         </button>
@@ -934,7 +934,7 @@ export const SavingsGoalModal: React.FC<{
           <button
             type="submit"
             disabled={saving}
-            className="btn-press px-4 py-1.5 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs flex items-center gap-1.5 disabled:opacity-60"
+            className="btn-press glass-accent-pill px-4 py-1.5 rounded-xl text-accent-ink font-semibold text-xs flex items-center gap-1.5 disabled:opacity-60"
           >
             {saving && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
             <span>{editing ? 'Update Goal' : 'Create Goal'}</span>
@@ -1001,7 +1001,7 @@ export const ContributionModal: React.FC<{
 
   return (
     <ModalShell isOpen={Boolean(goal)} onClose={onClose} maxWidthClass="max-w-sm">
-      <div className="px-5 py-3.5 border-b border-line bg-surface-warm flex items-center justify-between">
+      <div className="px-5 py-3.5 border-b border-white/10 bg-white/[0.03] flex items-center justify-between">
         <div className="flex items-center gap-2">
           <TrendingUp className="w-4 h-4 text-brand-blue" />
           <span className="text-xs font-bold uppercase tracking-wider text-ink">
@@ -1012,7 +1012,7 @@ export const ContributionModal: React.FC<{
           type="button"
           onClick={onClose}
           aria-label="Close modal"
-          className="text-ink-muted hover:text-ink btn-press"
+          className="btn-press glass-control p-1.5 rounded-xl text-ink-muted hover:text-ink"
         >
           <X className="w-4 h-4" />
         </button>
@@ -1113,7 +1113,7 @@ export const ContributionModal: React.FC<{
             <button
               type="submit"
               disabled={saving}
-              className="btn-press px-4 py-1.5 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs flex items-center gap-1.5 disabled:opacity-60"
+              className="btn-press glass-accent-pill px-4 py-1.5 rounded-xl text-accent-ink font-semibold text-xs flex items-center gap-1.5 disabled:opacity-60"
             >
               {saving && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
               <span>Add Funds</span>
@@ -1227,7 +1227,7 @@ export const RecurringModal: React.FC<{
 
   return (
     <ModalShell isOpen={isOpen} onClose={onClose} maxWidthClass="max-w-md">
-      <div className="px-5 py-3.5 border-b border-line bg-surface-warm flex items-center justify-between">
+      <div className="px-5 py-3.5 border-b border-white/10 bg-white/[0.03] flex items-center justify-between">
         <div className="flex items-center gap-2">
           <CalendarClock className="w-4 h-4 text-brand-blue" />
           <span className="text-xs font-bold uppercase tracking-wider text-ink">
@@ -1238,7 +1238,7 @@ export const RecurringModal: React.FC<{
           type="button"
           onClick={onClose}
           aria-label="Close modal"
-          className="text-ink-muted hover:text-ink btn-press"
+          className="btn-press glass-control p-1.5 rounded-xl text-ink-muted hover:text-ink"
         >
           <X className="w-4 h-4" />
         </button>
@@ -1415,7 +1415,7 @@ export const RecurringModal: React.FC<{
           <button
             type="submit"
             disabled={saving}
-            className="btn-press px-4 py-1.5 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs flex items-center gap-1.5 disabled:opacity-60"
+            className="btn-press glass-accent-pill px-4 py-1.5 rounded-xl text-accent-ink font-semibold text-xs flex items-center gap-1.5 disabled:opacity-60"
           >
             {saving && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
             <span>{editing ? 'Update Schedule' : 'Save Schedule'}</span>

@@ -32,19 +32,21 @@ export const Sidebar: React.FC = () => {
   return (
     <motion.aside
       initial={false}
-      animate={{ width: isCollapsed ? 68 : 252 }}
+      animate={{ width: isCollapsed ? 72 : 254 }}
       transition={{ duration: prefersReduced ? 0.01 : 0.22, ease: MOMENTUM_EASE }}
-      className="hidden md:flex flex-col shrink-0 bg-sidebar text-sidebar-ink h-dvh sticky top-0 z-30 border-r border-sidebar-border overflow-hidden select-none"
+      className="hidden md:flex flex-col shrink-0 glass-sidebar text-sidebar-ink h-dvh sticky top-0 z-30 overflow-hidden select-none"
       aria-label="Primary sidebar"
     >
       {/* Brand Header */}
-      <div className="h-15 flex items-center justify-between px-4 border-b border-sidebar-border shrink-0">
+      <div className="h-[68px] flex items-center justify-between px-4 border-b border-white/[0.08] shrink-0">
         <div className={`flex items-center gap-3 min-w-0 ${isCollapsed ? 'mx-auto' : ''}`}>
-          <img
-            src="/brand-logo.png"
-            alt="MOMENTUM logo"
-            className="w-8 h-8 rounded-lg object-contain shadow-md shrink-0"
-          />
+          <div className="w-9 h-9 rounded-xl p-0.5 glass-control flex items-center justify-center shrink-0">
+            <img
+              src="/brand-logo.png"
+              alt="MOMENTUM logo"
+              className="w-full h-full rounded-[9px] object-contain"
+            />
+          </div>
           <AnimatePresence initial={false}>
             {!isCollapsed && (
               <motion.div
@@ -69,7 +71,7 @@ export const Sidebar: React.FC = () => {
           <button
             type="button"
             onClick={() => setIsCollapsed(true)}
-            className="p-1.5 rounded-lg text-sidebar-muted hover:text-sidebar-ink hover:bg-sidebar-surface transition-colors btn-press shrink-0"
+            className="p-1.5 rounded-lg text-sidebar-muted hover:text-sidebar-ink hover:bg-white/[0.06] transition-colors btn-press shrink-0"
             aria-label="Collapse sidebar"
             title="Collapse sidebar"
           >
@@ -80,11 +82,11 @@ export const Sidebar: React.FC = () => {
 
       {/* Expand button when collapsed */}
       {isCollapsed && (
-        <div className="px-2 pt-2 flex justify-center shrink-0">
+        <div className="px-2.5 pt-2.5 flex justify-center shrink-0">
           <button
             type="button"
             onClick={() => setIsCollapsed(false)}
-            className="w-full py-1.5 rounded-lg text-sidebar-muted hover:text-sidebar-ink hover:bg-sidebar-surface transition-colors btn-press flex items-center justify-center"
+            className="w-full py-1.5 rounded-xl glass-control text-sidebar-muted hover:text-sidebar-ink transition-colors btn-press flex items-center justify-center"
             aria-label="Expand sidebar"
             title="Expand sidebar"
           >
@@ -93,7 +95,7 @@ export const Sidebar: React.FC = () => {
         </div>
       )}
 
-      {/* Philosophy Quote Banner */}
+      {/* Philosophy Quote Glass Banner */}
       <AnimatePresence initial={false}>
         {!isCollapsed && (
           <motion.div
@@ -103,7 +105,7 @@ export const Sidebar: React.FC = () => {
             transition={{ duration: prefersReduced ? 0.01 : 0.18, ease: MOMENTUM_EASE }}
             className="mx-3 overflow-hidden shrink-0"
           >
-            <div className="px-3 py-2 rounded-xl bg-sidebar-surface border border-sidebar-border text-[11px] text-sidebar-muted font-serif italic leading-snug">
+            <div className="px-3 py-2 rounded-2xl glass-ultra-thin text-[11px] text-ink-muted font-serif italic leading-snug">
               &ldquo;Don&apos;t just track what you do. Track who you&apos;re becoming.&rdquo;
             </div>
           </motion.div>
@@ -120,7 +122,7 @@ export const Sidebar: React.FC = () => {
                 <span className="tabular-nums opacity-75">{group.items.length}</span>
               </div>
             ) : (
-              <div className="mx-3 border-t border-sidebar-border/80 my-1" />
+              <div className="mx-3 border-t border-white/[0.08] my-1" />
             )}
 
             <div className="space-y-0.5">
@@ -137,7 +139,7 @@ export const Sidebar: React.FC = () => {
                     className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs transition-colors duration-150 group relative btn-press ${
                       isActive
                         ? 'text-accent-ink font-semibold'
-                        : 'text-sidebar-ink/85 hover:text-sidebar-ink hover:bg-sidebar-surface font-medium'
+                        : 'text-sidebar-ink/85 hover:text-sidebar-ink hover:bg-white/[0.06] font-medium'
                     }`}
                     title={isCollapsed ? item.label : undefined}
                   >
@@ -150,7 +152,7 @@ export const Sidebar: React.FC = () => {
                           damping: 34,
                           mass: 0.8,
                         }}
-                        className="absolute inset-0 rounded-xl bg-accent shadow-sm z-0"
+                        className="absolute inset-0 rounded-xl glass-accent-pill z-0"
                       />
                     )}
 
@@ -172,8 +174,8 @@ export const Sidebar: React.FC = () => {
                       <span
                         className={`px-1.5 py-0.5 text-[10px] rounded-md font-mono font-bold tabular-nums relative z-10 transition-colors ${
                           isActive
-                            ? 'bg-[#1A1A1D] text-accent'
-                            : 'bg-[#1A1A1D] text-brand-blue border border-brand-blue/30'
+                            ? 'bg-[#1A1A1D]/90 text-accent'
+                            : 'bg-black/35 text-brand-blue border border-brand-blue/30'
                         }`}
                       >
                         {badgeCount}
@@ -181,7 +183,7 @@ export const Sidebar: React.FC = () => {
                     )}
 
                     {isCollapsed && (
-                      <div className="absolute left-full ml-2 px-2.5 py-1 rounded-lg bg-[#1A1A1D] text-ink text-xs shadow-lg whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-150 z-50 border border-brand-blue/40">
+                      <div className="absolute left-full ml-2.5 px-2.5 py-1 rounded-xl glass-elevated text-ink text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-150 z-50 border border-brand-blue/40">
                         {item.label}
                         {badgeCount !== null && ` (${badgeCount})`}
                       </div>
@@ -194,8 +196,8 @@ export const Sidebar: React.FC = () => {
         ))}
       </nav>
 
-      {/* Bottom Dock */}
-      <div className="p-2.5 border-t border-sidebar-border space-y-1 shrink-0 bg-sidebar">
+      {/* Translucent Bottom Dock */}
+      <div className="p-2.5 border-t border-white/[0.08] space-y-1.5 shrink-0 bg-black/15">
         <PWAInstallButton compact={isCollapsed} />
 
         {/* Settings */}
@@ -205,7 +207,7 @@ export const Sidebar: React.FC = () => {
           className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium transition-colors duration-150 group relative btn-press ${
             currentView === 'settings'
               ? 'text-accent-ink font-semibold'
-              : 'text-sidebar-ink/85 hover:text-sidebar-ink hover:bg-sidebar-surface'
+              : 'text-sidebar-ink/85 hover:text-sidebar-ink hover:bg-white/[0.06]'
           } ${isCollapsed ? 'justify-center px-2' : ''}`}
           title={isCollapsed ? 'Settings' : undefined}
         >
@@ -218,7 +220,7 @@ export const Sidebar: React.FC = () => {
                 damping: 34,
                 mass: 0.8,
               }}
-              className="absolute inset-0 rounded-xl bg-accent shadow-sm z-0"
+              className="absolute inset-0 rounded-xl glass-accent-pill z-0"
             />
           )}
           <Settings
@@ -235,12 +237,12 @@ export const Sidebar: React.FC = () => {
         <button
           type="button"
           onClick={() => setIsAuthModalOpen(true)}
-          className={`w-full mt-1 pt-2 border-t border-sidebar-border flex items-center gap-2.5 px-2 py-1.5 rounded-xl hover:bg-sidebar-surface transition-colors btn-press text-left ${
+          className={`w-full mt-1 pt-2 border-t border-white/[0.08] flex items-center gap-2.5 px-2 py-1.5 rounded-xl hover:bg-white/[0.06] transition-colors btn-press text-left ${
             isCollapsed ? 'justify-center' : ''
           }`}
           title={displayName}
         >
-          <div className="w-7 h-7 rounded-full bg-brand-blue/15 border border-brand-blue/50 flex items-center justify-center text-xs font-bold text-brand-blue shrink-0">
+          <div className="w-7 h-7 rounded-full glass-blue-chip flex items-center justify-center text-xs font-bold text-brand-blue shrink-0">
             {displayName.charAt(0).toUpperCase()}
           </div>
           {!isCollapsed && (

@@ -15,6 +15,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import { useApp } from '../../lib/context';
 import { exportStateToJson } from '../../lib/storage';
 import { MOMENTUM_EASE } from '../common/MotionPrimitives';
+import { GlassSegmentedControl } from '../common/LiquidGlass';
 
 export const SettingsView: React.FC = () => {
   const {
@@ -126,39 +127,17 @@ export const SettingsView: React.FC = () => {
       </div>
 
       {/* Settings Navigation Tabs */}
-      <div className="flex flex-wrap gap-1 bg-surface p-1.5 rounded-xl border border-line text-xs">
-        {(
-          [
-            { id: 'profile', label: 'Profile & Vision', icon: User },
-            { id: 'appearance', label: 'Appearance & Preferences', icon: Palette },
-            { id: 'integrations', label: 'Supabase & Notion', icon: Database },
-            { id: 'data', label: 'Data & Backups', icon: Sliders },
-          ] as const
-        ).map(tab => {
-          const isActive = activeTab === tab.id;
-          const Icon = tab.icon;
-          return (
-            <button
-              key={tab.id}
-              type="button"
-              onClick={() => setActiveTab(tab.id)}
-              className={`relative flex items-center gap-1.5 px-4 py-2 rounded-lg font-semibold transition-colors whitespace-nowrap ${
-                isActive ? 'text-accent-ink' : 'text-ink-muted hover:text-ink'
-              }`}
-            >
-              {isActive && (
-                <motion.span
-                  layoutId="settings-tab-pill"
-                  transition={{ type: 'spring', stiffness: 420, damping: 32 }}
-                  className="absolute inset-0 rounded-lg bg-accent"
-                />
-              )}
-              <Icon className="w-3.5 h-3.5 relative z-10" />
-              <span className="relative z-10">{tab.label}</span>
-            </button>
-          );
-        })}
-      </div>
+      <GlassSegmentedControl
+        value={activeTab}
+        onChange={setActiveTab}
+        layoutId="settings-tab-pill"
+        options={[
+          { id: 'profile', label: 'Profile & Vision', icon: User },
+          { id: 'appearance', label: 'Appearance & Preferences', icon: Palette },
+          { id: 'integrations', label: 'Supabase & Notion', icon: Database },
+          { id: 'data', label: 'Data & Backups', icon: Sliders },
+        ]}
+      />
 
       {/* Tab Content */}
       <AnimatePresence mode="wait">
@@ -246,7 +225,7 @@ export const SettingsView: React.FC = () => {
               </button>
               <button
                 type="submit"
-                className="btn-press px-5 py-2 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs transition-all"
+                className="btn-press glass-accent-pill px-5 py-2 rounded-xl text-accent-ink font-semibold text-xs transition-all"
               >
                 Save Profile
               </button>
@@ -267,14 +246,14 @@ export const SettingsView: React.FC = () => {
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
                 <h2 className="text-sm font-bold uppercase tracking-wider text-ink">
-                  Official Dark Color System
+                  Official Dark Color System & Liquid Glass
                 </h2>
                 <p className="text-xs text-ink-muted mt-0.5">
-                  Deep obsidian canvas (`#1A1A1D`) paired with warm beige (`#D2925B`) and MOMENTUM blue (`#9ECCFD`) accents.
+                  Deep obsidian canvas (#1A1A1D) paired with warm beige (#D2925B) and MOMENTUM blue (#9ECCFD) accents, framed by translucent Liquid Glass controls.
                 </p>
               </div>
 
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-brand-blue/14 border border-brand-blue/35 text-xs font-mono font-semibold text-brand-blue">
+              <span className="glass-blue-chip inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-mono font-semibold text-brand-blue">
                 <Sparkles className="w-3.5 h-3.5" />
                 Official Palette Active
               </span>
@@ -410,7 +389,7 @@ export const SettingsView: React.FC = () => {
                 <button
                   type="button"
                   onClick={handleExportJson}
-                  className="btn-press w-full py-2 rounded-xl bg-accent text-accent-ink font-semibold text-xs hover:bg-accent-hover transition-colors"
+                  className="btn-press glass-accent-pill w-full py-2 rounded-xl text-accent-ink font-semibold text-xs transition-colors"
                 >
                   Download Full JSON Backup
                 </button>
@@ -424,7 +403,7 @@ export const SettingsView: React.FC = () => {
                 <p className="text-xs text-ink-muted">
                   Import a previous MOMENTUM JSON state file to restore all your data.
                 </p>
-                <label className="btn-press w-full py-2 rounded-xl bg-surface border border-line text-ink font-semibold text-xs hover:bg-surface-warm cursor-pointer flex items-center justify-center transition-colors">
+                <label className="btn-press glass-control w-full py-2 rounded-xl text-ink font-semibold text-xs cursor-pointer flex items-center justify-center transition-colors">
                   <span>Select JSON File</span>
                   <input
                     type="file"
@@ -449,7 +428,7 @@ export const SettingsView: React.FC = () => {
                     resetToDemoData();
                     notify('Reset to realistic demonstration data.', 'info');
                   }}
-                  className="btn-press px-4 py-2 rounded-xl bg-surface-warm hover:bg-surface-hover border border-line text-xs font-semibold text-ink transition-colors"
+                  className="btn-press glass-control px-4 py-2 rounded-xl text-xs font-semibold text-ink transition-colors"
                 >
                   Reload Realistic Sample/Demo Data
                 </button>

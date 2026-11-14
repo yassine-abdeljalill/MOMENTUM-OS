@@ -99,7 +99,7 @@ export const HabitsView: React.FC = () => {
         <button
           type="button"
           onClick={() => setShowNewHabitModal(true)}
-          className="btn-press group flex items-center gap-1.5 px-4 py-2 min-h-[44px] sm:min-h-0 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs shrink-0 whitespace-nowrap"
+          className="btn-press group flex items-center gap-1.5 px-4 py-2 min-h-[44px] sm:min-h-0 rounded-xl glass-accent-pill text-xs shrink-0 whitespace-nowrap"
         >
           <Plus className="w-4 h-4 stroke-[2.5] transition-transform duration-200 group-hover:rotate-90" />
           <span>New Habit</span>
@@ -240,7 +240,7 @@ export const HabitsView: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => setShowSkipModal({ habitId: habit.id, dateStr: todayStr })}
-                        className="btn-press ml-2 text-[11px] text-ink-muted hover:text-ink flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-surface border border-line transition-colors whitespace-nowrap shrink-0"
+                        className="btn-press glass-control ml-2 text-[11px] text-ink-muted hover:text-ink flex items-center gap-1 px-2.5 py-1.5 rounded-lg transition-colors whitespace-nowrap shrink-0"
                         title="Skip today with intentional reason"
                       >
                         <SkipForward className="w-3 h-3" />
@@ -274,7 +274,7 @@ export const HabitsView: React.FC = () => {
         onClose={() => setShowNewHabitModal(false)}
         maxWidthClass="max-w-lg"
       >
-        <div className="flex items-center justify-between px-6 py-4 border-b border-line bg-surface-warm">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-white/10 bg-white/[0.03]">
           <div className="flex items-center gap-2">
             <Sparkles className="w-4 h-4 text-brand-blue" />
             <h3 className="text-sm font-bold text-ink">Establish New Habit</h3>
@@ -282,7 +282,7 @@ export const HabitsView: React.FC = () => {
           <button
             type="button"
             onClick={() => setShowNewHabitModal(false)}
-            className="text-ink-muted hover:text-ink transition-colors"
+            className="btn-press glass-control p-1.5 rounded-xl text-ink-muted hover:text-ink transition-colors"
             aria-label="Close modal"
           >
             <X className="w-4 h-4" />
@@ -342,17 +342,17 @@ export const HabitsView: React.FC = () => {
             </div>
           </div>
 
-          <div className="flex justify-end gap-2 pt-2 border-t border-line">
+          <div className="flex justify-end gap-2 pt-3 border-t border-white/10">
             <button
               type="button"
               onClick={() => setShowNewHabitModal(false)}
-              className="btn-press px-3 py-1.5 text-xs text-ink-muted hover:text-ink"
+              className="btn-press px-3 py-1.5 rounded-xl text-xs text-ink-muted hover:text-ink"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="btn-press px-4 py-1.5 rounded-xl text-xs font-semibold bg-accent text-accent-ink hover:bg-accent-hover transition-colors"
+              className="btn-press px-4 py-1.5 rounded-xl text-xs glass-accent-pill transition-colors"
             >
               Start Habit
             </button>
@@ -366,12 +366,12 @@ export const HabitsView: React.FC = () => {
         onClose={() => setShowSkipModal(null)}
         maxWidthClass="max-w-sm"
       >
-        <div className="px-5 py-3.5 border-b border-line bg-surface-warm flex items-center justify-between">
+        <div className="px-5 py-3.5 border-b border-white/10 bg-white/[0.03] flex items-center justify-between">
           <span className="text-xs font-bold text-ink">Skip Day with Reason</span>
           <button
             type="button"
             onClick={() => setShowSkipModal(null)}
-            className="text-ink-muted hover:text-ink transition-colors"
+            className="btn-press glass-control p-1.5 rounded-xl text-ink-muted hover:text-ink transition-colors"
             aria-label="Close modal"
           >
             <X className="w-4 h-4" />
@@ -393,17 +393,17 @@ export const HabitsView: React.FC = () => {
               autoFocus
             />
           </div>
-          <div className="flex justify-end gap-2 pt-2">
+          <div className="flex justify-end gap-2 pt-3 border-t border-white/10">
             <button
               type="button"
               onClick={() => setShowSkipModal(null)}
-              className="btn-press px-3 py-1.5 text-xs text-ink-muted hover:text-ink"
+              className="btn-press px-3 py-1.5 rounded-xl text-xs text-ink-muted hover:text-ink"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="btn-press px-3.5 py-1.5 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs transition-colors"
+              className="btn-press px-3.5 py-1.5 rounded-xl glass-accent-pill text-xs transition-colors"
             >
               Confirm Skip
             </button>

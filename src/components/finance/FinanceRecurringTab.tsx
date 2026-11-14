@@ -132,7 +132,7 @@ export const FinanceRecurringTab: React.FC<Props> = ({
           <button
             type="button"
             onClick={onAdd}
-            className="btn-press w-full h-full min-h-[44px] flex items-center justify-center gap-2 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs"
+            className="btn-press glass-accent-pill w-full h-full min-h-[44px] flex items-center justify-center gap-2 rounded-xl font-semibold text-xs"
           >
             <Plus className="w-4 h-4" />
             <span>Add Recurring Item</span>
@@ -153,7 +153,7 @@ export const FinanceRecurringTab: React.FC<Props> = ({
           <button
             type="button"
             onClick={onAdd}
-            className="btn-press min-h-[44px] px-4 py-2 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs"
+            className="btn-press glass-accent-pill min-h-[44px] px-4 py-2 rounded-xl font-semibold text-xs"
           >
             + Schedule First Recurring Item
           </button>
@@ -281,7 +281,7 @@ export const FinanceRecurringTab: React.FC<Props> = ({
                       type="button"
                       onClick={() => handlePay(rec.id)}
                       disabled={payingId === rec.id}
-                      className="btn-press min-h-[36px] flex items-center gap-1 px-3 py-1.5 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink text-xs font-semibold disabled:opacity-60 whitespace-nowrap shrink-0"
+                      className="btn-press glass-accent-pill min-h-[36px] flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-semibold disabled:opacity-60 whitespace-nowrap shrink-0"
                     >
                       <Check className="w-3.5 h-3.5" />
                       <span>{rec.type === 'income' ? 'Log Received' : 'Record Paid'}</span>

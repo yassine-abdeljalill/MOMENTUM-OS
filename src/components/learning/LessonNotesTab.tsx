@@ -450,7 +450,7 @@ export const LessonNotesTab: React.FC<{
             type="button"
             disabled={creatingNote}
             onClick={handleCreateNote}
-            className="btn-press flex items-center gap-1.5 px-3 py-2 min-h-[38px] sm:min-h-0 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs shrink-0 whitespace-nowrap"
+            className="btn-press flex items-center gap-1.5 px-3 py-2 min-h-[38px] sm:min-h-0 rounded-xl glass-accent-pill text-xs shrink-0 whitespace-nowrap"
           >
             <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
             <span>New Note</span>
@@ -552,7 +552,7 @@ export const LessonNotesTab: React.FC<{
         {activeNote ? (
           <div className="rounded-2xl bg-surface border border-line overflow-hidden flex flex-col">
             {/* Title & Auto-Save Status Bar */}
-            <div className="px-5 py-3.5 border-b border-line bg-surface-warm flex flex-wrap items-center justify-between gap-3">
+            <div className="px-5 py-3.5 border-b border-white/10 bg-white/[0.03] flex flex-wrap items-center justify-between gap-3">
               <input
                 type="text"
                 value={draftTitle}
@@ -595,7 +595,7 @@ export const LessonNotesTab: React.FC<{
             </div>
 
             {/* Formatting Toolbar */}
-            <div className="px-4 py-2 border-b border-line bg-canvas flex flex-wrap items-center gap-1">
+            <div className="px-4 py-2 border-b border-white/10 bg-white/[0.02] flex flex-wrap items-center gap-1">
               {[
                 { label: 'H1', title: 'Heading 1', Icon: Heading1, action: () => runFormat('formatBlock', 'H1') },
                 { label: 'H2', title: 'Heading 2', Icon: Heading2, action: () => runFormat('formatBlock', 'H2') },
@@ -708,7 +708,7 @@ export const LessonNotesTab: React.FC<{
               aria-label="Lesson note rich text editor"
             />
 
-            <div className="px-4 py-2 border-t border-line bg-surface-warm text-[11px] text-ink-muted flex flex-wrap items-center justify-between gap-2">
+            <div className="px-4 py-2 border-t border-white/10 bg-white/[0.02] text-[11px] text-ink-muted flex flex-wrap items-center justify-between gap-2">
               <span>Auto-save enabled · Inside code blocks press Tab to indent and Shift+Enter to exit.</span>
               <span className="font-mono">Ctrl/Cmd + S to save now</span>
             </div>
@@ -725,7 +725,7 @@ export const LessonNotesTab: React.FC<{
             <button
               type="button"
               onClick={handleCreateNote}
-              className="btn-press inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs"
+              className="btn-press inline-flex items-center gap-1.5 px-4 py-2 rounded-xl glass-accent-pill text-xs"
             >
               <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
               <span>Create First Note</span>

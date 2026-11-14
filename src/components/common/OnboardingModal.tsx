@@ -90,7 +90,7 @@ export const OnboardingModal: React.FC = () => {
   };
 
   const inputCls =
-    'w-full px-3 py-2 rounded-xl bg-surface-warm/70 border border-line text-ink text-xs focus:border-accent focus:ring-2 focus:ring-accent/30 focus:outline-hidden';
+    'w-full px-3 py-2 rounded-xl bg-[#1A1A1D]/75 border border-white/12 text-ink text-xs focus:border-accent focus:ring-2 focus:ring-accent/30 focus:outline-hidden';
 
   return (
     <ModalShell
@@ -99,7 +99,7 @@ export const OnboardingModal: React.FC = () => {
       maxWidthClass="max-w-xl"
     >
       {/* Progress Bar & Header */}
-      <div className="bg-surface-warm text-ink px-6 pt-5 pb-4 border-b border-line">
+      <div className="bg-white/[0.03] text-ink px-6 pt-5 pb-4 border-b border-white/10">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
             <img
@@ -125,7 +125,7 @@ export const OnboardingModal: React.FC = () => {
           </div>
         </div>
 
-        <div className="w-full bg-surface-inset h-1.5 rounded-full overflow-hidden">
+        <div className="w-full bg-white/[0.08] h-1.5 rounded-full overflow-hidden">
           <motion.div
             className="bg-accent h-full rounded-full"
             animate={{ width: `${(step / 7) * 100}%` }}

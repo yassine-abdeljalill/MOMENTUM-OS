@@ -230,10 +230,10 @@ export const GlobalSearchModal: React.FC = () => {
       onClose={() => setIsSearchOpen(false)}
       alignTop
       maxWidthClass="max-w-2xl"
-      panelClassName="bg-surface border border-line rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[75dvh]"
+      panelClassName="glass-elevated glass-specular-rim rounded-3xl overflow-hidden flex flex-col max-h-[75dvh]"
     >
       {/* Search Input Bar */}
-      <div className="flex items-center px-4 py-3.5 border-b border-line gap-3 bg-surface-warm text-ink">
+      <div className="flex items-center px-4 py-3.5 border-b border-white/10 gap-3 bg-white/[0.03] text-ink">
         <Search className="w-5 h-5 text-brand-blue shrink-0" />
         <input
           ref={inputRef}
@@ -256,18 +256,18 @@ export const GlobalSearchModal: React.FC = () => {
         <button
           type="button"
           onClick={() => setIsSearchOpen(false)}
-          className="px-2 py-1 text-xs text-ink-muted hover:text-accent bg-surface rounded-lg border border-line btn-press"
+          className="px-2.5 py-1 text-[11px] font-mono text-ink-muted hover:text-accent glass-control rounded-lg btn-press"
         >
           ESC
         </button>
       </div>
 
       {/* Results List */}
-      <div className="flex-1 overflow-y-auto p-2 divide-y divide-line/60">
+      <div className="flex-1 overflow-y-auto p-2.5 divide-y divide-white/[0.06]">
         {query.trim() === '' ? (
-          <div className="py-12 text-center text-ink-muted space-y-2">
-            <div className="w-12 h-12 rounded-2xl bg-accent/18 border border-accent/40 flex items-center justify-center mx-auto">
-              <Search className="w-6 h-6 text-accent" />
+          <div className="py-12 text-center text-ink-muted space-y-2.5">
+            <div className="w-12 h-12 rounded-2xl glass-control flex items-center justify-center mx-auto">
+              <Search className="w-5 h-5 text-accent" />
             </div>
             <p className="text-sm font-semibold text-ink font-heading">Type to search across MOMENTUM</p>
             <p className="text-xs text-ink-muted">
@@ -298,10 +298,10 @@ export const GlobalSearchModal: React.FC = () => {
                   setCurrentView(item.view);
                   setIsSearchOpen(false);
                 }}
-                className="w-full flex items-center justify-between p-3 rounded-xl hover:bg-surface-warm/70 transition-colors group text-left btn-press"
+                className="w-full flex items-center justify-between p-3 rounded-2xl hover:bg-white/[0.06] transition-colors group text-left btn-press"
               >
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className="p-2 rounded-xl bg-surface-warm border border-line text-brand-blue shrink-0 transition-transform duration-150 group-hover:scale-105">
+                  <div className="p-2 rounded-xl glass-control text-brand-blue shrink-0 transition-transform duration-150 group-hover:scale-105">
                     <Icon className="w-4 h-4" />
                   </div>
                   <div className="flex flex-col min-w-0">
@@ -314,7 +314,7 @@ export const GlobalSearchModal: React.FC = () => {
                   </div>
                 </div>
                 <div className="flex items-center gap-2 shrink-0 ml-3">
-                  <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded-md bg-accent/18 text-accent border border-accent/40 font-semibold">
+                  <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded-lg bg-accent/18 text-accent border border-accent/40 font-semibold">
                     {item.category}
                   </span>
                   <ArrowRight className="w-3.5 h-3.5 text-ink opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />

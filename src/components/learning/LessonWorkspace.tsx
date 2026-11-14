@@ -32,6 +32,7 @@ import { LessonNotesTab } from './LessonNotesTab';
 import { LessonResourcesTab } from './LessonResourcesTab';
 import { LessonTasksTab } from './LessonTasksTab';
 import { LessonInfoTab } from './LessonInfoTab';
+import { GlassSegmentedControl } from '../common/LiquidGlass';
 
 export type LessonWorkspaceTab = 'notes' | 'resources' | 'tasks' | 'info';
 
@@ -158,7 +159,7 @@ export const LessonWorkspace: React.FC<{
           <button
             type="button"
             onClick={onBackToModule}
-            className="btn-press inline-flex items-center gap-1.5 px-3 py-1.5 min-h-[38px] sm:min-h-0 rounded-xl bg-surface hover:bg-surface-warm border border-line text-xs font-semibold text-ink whitespace-nowrap"
+            className="btn-press glass-control inline-flex items-center gap-1.5 px-3 py-1.5 min-h-[38px] sm:min-h-0 rounded-xl text-xs font-semibold text-ink whitespace-nowrap"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             <span>Back to Module</span>
@@ -168,7 +169,7 @@ export const LessonWorkspace: React.FC<{
               type="button"
               onClick={() => onSelectLesson(prevLesson.id)}
               title={`Previous: ${prevLesson.title}`}
-              className="btn-press p-2 rounded-xl bg-surface hover:bg-surface-warm border border-line text-ink"
+              className="btn-press glass-control p-2 rounded-xl text-ink"
               aria-label="Previous lesson"
             >
               <ChevronLeft className="w-4 h-4" />
@@ -179,7 +180,7 @@ export const LessonWorkspace: React.FC<{
               type="button"
               onClick={() => onSelectLesson(nextLesson.id)}
               title={`Next: ${nextLesson.title}`}
-              className="btn-press p-2 rounded-xl bg-surface hover:bg-surface-warm border border-line text-ink"
+              className="btn-press glass-control p-2 rounded-xl text-ink"
               aria-label="Next lesson"
             >
               <ChevronRight className="w-4 h-4" />
@@ -250,7 +251,7 @@ export const LessonWorkspace: React.FC<{
               value={lesson.status}
               disabled={updatingStatus}
               onChange={e => void handleStatusChange(e.target.value as LearningStatus)}
-              className="px-3 py-2 min-h-[40px] sm:min-h-0 rounded-xl bg-canvas border border-line text-xs font-semibold text-ink focus:ring-2 focus:ring-accent focus:outline-hidden"
+              className="glass-control px-3 py-2 min-h-[40px] sm:min-h-0 rounded-xl text-xs font-semibold text-ink focus:ring-2 focus:ring-accent focus:outline-hidden"
               aria-label="Lesson completion status"
             >
               <option value="not_started">Not Started</option>
@@ -267,7 +268,7 @@ export const LessonWorkspace: React.FC<{
                 });
                 setIsFocusTimerOpen(true);
               }}
-              className="btn-press inline-flex items-center gap-1.5 px-3.5 py-2 min-h-[40px] sm:min-h-0 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink text-xs font-semibold whitespace-nowrap"
+              className="btn-press inline-flex items-center gap-1.5 px-3.5 py-2 min-h-[40px] sm:min-h-0 rounded-xl glass-accent-pill text-xs whitespace-nowrap"
             >
               <Play className="w-3.5 h-3.5 fill-current" />
               <span>Study Timer</span>
@@ -276,7 +277,7 @@ export const LessonWorkspace: React.FC<{
             <button
               type="button"
               onClick={() => onEditLesson(lesson)}
-              className="btn-press p-2 rounded-xl bg-canvas hover:bg-surface-warm border border-line text-ink"
+              className="btn-press glass-control p-2 rounded-xl text-ink"
               title="Edit lesson details"
               aria-label="Edit lesson details"
             >
@@ -286,7 +287,7 @@ export const LessonWorkspace: React.FC<{
             <button
               type="button"
               onClick={() => onDeleteLesson(lesson)}
-              className="btn-press p-2 rounded-xl bg-canvas hover:bg-danger/10 border border-line text-ink-muted hover:text-danger"
+              className="btn-press glass-control p-2 rounded-xl text-ink-muted hover:text-danger"
               title="Delete lesson"
               aria-label="Delete lesson"
             >
@@ -296,42 +297,19 @@ export const LessonWorkspace: React.FC<{
         </div>
 
         {/* Workspace 4-Tab Bar */}
-        <div className="flex flex-wrap items-center gap-1.5 pt-4 border-t border-line">
-          {tabs.map(tab => {
-            const isActive = activeTab === tab.id;
-            const Icon = tab.Icon;
-            return (
-              <button
-                key={tab.id}
-                type="button"
-                onClick={() => setActiveTab(tab.id)}
-                className={`relative z-10 inline-flex items-center gap-2 px-3.5 py-2 min-h-[40px] sm:min-h-0 rounded-xl text-xs transition-colors whitespace-nowrap shrink-0 ${
-                  isActive
-                    ? 'text-accent-ink font-semibold'
-                    : 'text-ink-muted hover:text-ink font-medium hover:bg-surface-warm'
-                }`}
-              >
-                {isActive && (
-                  <motion.span
-                    layoutId="lesson-workspace-tab-pill"
-                    transition={{ duration: prefersReduced ? 0.01 : 0.2, ease: MOMENTUM_EASE }}
-                    className="absolute inset-0 bg-accent rounded-xl -z-10"
-                  />
-                )}
-                <Icon className="w-3.5 h-3.5" />
-                <span>{tab.label}</span>
-                {typeof tab.count === 'number' && (
-                  <span
-                    className={`font-mono text-[10px] px-1.5 py-0.5 rounded-md tabular-nums ${
-                      isActive ? 'bg-black/20 text-accent-ink' : 'bg-surface-inset text-ink'
-                    }`}
-                  >
-                    {tab.count}
-                  </span>
-                )}
-              </button>
-            );
-          })}
+        <div className="pt-4 border-t border-line">
+          <GlassSegmentedControl
+            layoutId="lesson-workspace-tab-pill"
+            size="sm"
+            value={activeTab}
+            onChange={setActiveTab}
+            options={tabs.map(t => ({
+              id: t.id,
+              label: t.label,
+              icon: t.Icon,
+              count: t.count,
+            }))}
+          />
         </div>
       </div>
 

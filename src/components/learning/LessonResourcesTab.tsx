@@ -351,7 +351,7 @@ export const LessonResourcesTab: React.FC<{
               type="button"
               disabled={uploading}
               onClick={() => fileInputRef.current?.click()}
-              className="btn-press flex items-center gap-1.5 px-3.5 py-2 min-h-[40px] sm:min-h-0 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs disabled:opacity-60 whitespace-nowrap"
+              className="btn-press flex items-center gap-1.5 px-3.5 py-2 min-h-[40px] sm:min-h-0 rounded-xl glass-accent-pill text-xs disabled:opacity-60 whitespace-nowrap"
             >
               {uploading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Upload className="w-3.5 h-3.5" />}
               <span>{uploading ? `Uploading ${uploadProgress}%` : 'Upload Files'}</span>
@@ -363,7 +363,7 @@ export const LessonResourcesTab: React.FC<{
                 setLinkFolder(uploadFolder || 'General');
                 setLinkModalOpen(true);
               }}
-              className="btn-press flex items-center gap-1.5 px-3.5 py-2 min-h-[40px] sm:min-h-0 rounded-xl bg-canvas hover:bg-surface-warm text-ink border border-line font-semibold text-xs whitespace-nowrap"
+              className="btn-press glass-control flex items-center gap-1.5 px-3.5 py-2 min-h-[40px] sm:min-h-0 rounded-xl text-ink font-semibold text-xs whitespace-nowrap"
             >
               <Link2 className="w-3.5 h-3.5 text-accent" />
               <span>Add Link</span>
@@ -402,10 +402,10 @@ export const LessonResourcesTab: React.FC<{
           <button
             type="button"
             onClick={() => setSelectedFolder('all')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-medium border transition-colors whitespace-nowrap ${
+            className={`btn-press px-3 py-1.5 rounded-xl text-xs font-medium transition-colors whitespace-nowrap ${
               selectedFolder === 'all'
-                ? 'bg-accent text-accent-ink border-accent font-semibold'
-                : 'bg-surface text-ink-muted border-line hover:text-ink'
+                ? 'glass-accent-pill'
+                : 'glass-control text-ink-muted hover:text-ink'
             }`}
           >
             All Folders ({resources.length})
@@ -418,10 +418,10 @@ export const LessonResourcesTab: React.FC<{
                 key={f}
                 type="button"
                 onClick={() => setSelectedFolder(f)}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium border transition-colors whitespace-nowrap ${
+                className={`btn-press flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium transition-colors whitespace-nowrap ${
                   selectedFolder === f
-                    ? 'bg-accent text-accent-ink border-accent font-semibold'
-                    : 'bg-surface text-ink-muted border-line hover:text-ink'
+                    ? 'glass-accent-pill'
+                    : 'glass-control text-ink-muted hover:text-ink'
                 }`}
               >
                 <Folder className="w-3 h-3" />
@@ -504,7 +504,7 @@ export const LessonResourcesTab: React.FC<{
                       <button
                         type="button"
                         onClick={() => void handleOpenPreview(res)}
-                        className="btn-press flex items-center gap-1 px-2.5 py-1 rounded-lg bg-surface-warm hover:bg-surface-hover text-ink text-[11px] font-semibold border border-line"
+                        className="btn-press glass-control flex items-center gap-1 px-2.5 py-1 rounded-lg text-ink text-[11px] font-semibold"
                       >
                         <Eye className="w-3 h-3 text-accent" />
                         <span>Preview</span>
@@ -515,7 +515,7 @@ export const LessonResourcesTab: React.FC<{
                       <button
                         type="button"
                         onClick={() => void handleDownload(res)}
-                        className="btn-press flex items-center gap-1 px-2.5 py-1 rounded-lg bg-canvas hover:bg-surface-warm border border-line text-ink text-[11px] font-semibold"
+                        className="btn-press glass-control flex items-center gap-1 px-2.5 py-1 rounded-lg text-ink text-[11px] font-semibold"
                       >
                         <Download className="w-3 h-3" />
                         <span>Download</span>
@@ -525,7 +525,7 @@ export const LessonResourcesTab: React.FC<{
                         href={res.externalUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="btn-press flex items-center gap-1 px-2.5 py-1 rounded-lg bg-accent hover:bg-accent-hover text-accent-ink text-[11px] font-semibold"
+                        className="btn-press flex items-center gap-1 px-2.5 py-1 rounded-lg glass-accent-pill text-[11px]"
                       >
                         <span>Open Link</span>
                         <ExternalLink className="w-3 h-3" />
@@ -560,12 +560,12 @@ export const LessonResourcesTab: React.FC<{
 
       {/* Add External Link Modal */}
       <ModalShell isOpen={linkModalOpen} onClose={() => setLinkModalOpen(false)} maxWidthClass="max-w-md">
-        <div className="px-5 py-4 border-b border-line bg-surface-warm flex items-center justify-between">
+        <div className="px-5 py-4 border-b border-white/10 bg-white/[0.03] flex items-center justify-between">
           <span className="text-xs font-bold text-ink">Add External Resource Link</span>
           <button
             type="button"
             onClick={() => setLinkModalOpen(false)}
-            className="text-ink-muted hover:text-ink"
+            className="btn-press glass-control p-1.5 rounded-xl text-ink-muted hover:text-ink"
             aria-label="Close modal"
           >
             <X className="w-4 h-4" />
@@ -615,18 +615,18 @@ export const LessonResourcesTab: React.FC<{
               className="w-full px-3 py-2 rounded-xl bg-canvas border border-line text-xs text-ink placeholder:text-ink-muted focus:ring-2 focus:ring-accent focus:outline-hidden"
             />
           </div>
-          <div className="flex justify-end gap-2 pt-2 border-t border-line">
+          <div className="flex justify-end gap-2 pt-2 border-t border-white/10">
             <button
               type="button"
               onClick={() => setLinkModalOpen(false)}
-              className="px-3 py-1.5 text-xs text-ink-muted hover:text-ink"
+              className="btn-press px-3 py-1.5 rounded-xl text-xs text-ink-muted hover:text-ink"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={savingLink}
-              className="btn-press px-4 py-1.5 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs"
+              className="btn-press px-4 py-1.5 rounded-xl glass-accent-pill text-xs"
             >
               {savingLink ? 'Saving...' : 'Save Link'}
             </button>
@@ -636,12 +636,12 @@ export const LessonResourcesTab: React.FC<{
 
       {/* Edit / Rename Resource Modal */}
       <ModalShell isOpen={Boolean(editingResource)} onClose={() => setEditingResource(null)} maxWidthClass="max-w-md">
-        <div className="px-5 py-4 border-b border-line bg-surface-warm flex items-center justify-between">
+        <div className="px-5 py-4 border-b border-white/10 bg-white/[0.03] flex items-center justify-between">
           <span className="text-xs font-bold text-ink">Edit Resource</span>
           <button
             type="button"
             onClick={() => setEditingResource(null)}
-            className="text-ink-muted hover:text-ink"
+            className="btn-press glass-control p-1.5 rounded-xl text-ink-muted hover:text-ink"
             aria-label="Close modal"
           >
             <X className="w-4 h-4" />
@@ -689,18 +689,18 @@ export const LessonResourcesTab: React.FC<{
               className="w-full px-3 py-2 rounded-xl bg-canvas border border-line text-xs text-ink focus:ring-2 focus:ring-accent focus:outline-hidden"
             />
           </div>
-          <div className="flex justify-end gap-2 pt-2 border-t border-line">
+          <div className="flex justify-end gap-2 pt-2 border-t border-white/10">
             <button
               type="button"
               onClick={() => setEditingResource(null)}
-              className="px-3 py-1.5 text-xs text-ink-muted hover:text-ink"
+              className="btn-press px-3 py-1.5 rounded-xl text-xs text-ink-muted hover:text-ink"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={savingEdit}
-              className="btn-press px-4 py-1.5 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs"
+              className="btn-press px-4 py-1.5 rounded-xl glass-accent-pill text-xs"
             >
               {savingEdit ? 'Saving...' : 'Save Changes'}
             </button>
@@ -713,11 +713,11 @@ export const LessonResourcesTab: React.FC<{
         isOpen={Boolean(previewResource)}
         onClose={handleClosePreview}
         maxWidthClass="max-w-4xl"
-        panelClassName="bg-surface border border-line rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
+        panelClassName="glass-modal glass-specular-rim rounded-3xl overflow-hidden flex flex-col max-h-[90vh]"
       >
         {previewResource && (
           <>
-            <div className="px-5 py-3.5 border-b border-line bg-surface-warm flex items-center justify-between gap-3 shrink-0">
+            <div className="px-5 py-3.5 border-b border-white/10 bg-white/[0.03] flex items-center justify-between gap-3 shrink-0">
               <div className="min-w-0">
                 <h3 className="text-sm font-bold text-ink truncate">
                   {previewResource.title}
@@ -730,7 +730,7 @@ export const LessonResourcesTab: React.FC<{
                 <button
                   type="button"
                   onClick={() => void handleDownload(previewResource)}
-                  className="btn-press flex items-center gap-1 px-3 py-1.5 rounded-xl bg-accent text-accent-ink text-xs font-semibold"
+                  className="btn-press flex items-center gap-1 px-3 py-1.5 rounded-xl glass-accent-pill text-xs"
                 >
                   <Download className="w-3.5 h-3.5" />
                   <span>Download</span>
@@ -738,7 +738,7 @@ export const LessonResourcesTab: React.FC<{
                 <button
                   type="button"
                   onClick={handleClosePreview}
-                  className="p-1.5 rounded-lg text-ink-muted hover:text-ink"
+                  className="btn-press glass-control p-1.5 rounded-xl text-ink-muted hover:text-ink"
                   aria-label="Close preview"
                 >
                   <X className="w-4 h-4" />

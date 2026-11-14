@@ -128,7 +128,15 @@ export const OverviewView: React.FC = () => {
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-8">
       {/* Welcome Hero Banner */}
-      <section className="relative overflow-hidden rounded-2xl bg-surface border border-line p-5 sm:p-7 shadow-sm">
+      <section className="relative overflow-hidden rounded-3xl bg-surface border border-white/[0.09] p-5 sm:p-7 shadow-[0_14px_38px_-18px_rgba(0,0,0,0.65)]">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0"
+          style={{
+            background:
+              'radial-gradient(620px circle at 92% -10%, rgba(158, 204, 253, 0.08), transparent 60%), radial-gradient(460px circle at 6% 110%, rgba(210, 146, 91, 0.06), transparent 60%)',
+          }}
+        />
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-5">
           <div className="space-y-1.5 min-w-0">
             <p className="text-xs font-mono tracking-wide text-brand-blue tabular-nums">
@@ -152,7 +160,7 @@ export const OverviewView: React.FC = () => {
             <button
               type="button"
               onClick={() => setIsQuickAddOpen(true)}
-              className="btn-press group flex items-center gap-1.5 px-4 py-2.5 min-h-[44px] sm:min-h-0 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink text-xs font-semibold shadow-sm whitespace-nowrap shrink-0"
+              className="btn-press glass-accent-pill group flex items-center gap-1.5 px-4 py-2.5 min-h-[44px] sm:min-h-0 rounded-xl text-accent-ink text-xs font-semibold whitespace-nowrap shrink-0"
             >
               <Plus className="w-4 h-4 stroke-[2.25] transition-transform duration-200 group-hover:rotate-90" />
               <span>Add Task</span>
@@ -160,7 +168,7 @@ export const OverviewView: React.FC = () => {
             <button
               type="button"
               onClick={() => setIsFocusTimerOpen(true)}
-              className="btn-press flex items-center gap-1.5 px-3.5 py-2.5 min-h-[44px] sm:min-h-0 rounded-xl bg-surface-warm hover:bg-surface-hover text-ink border border-line text-xs font-medium whitespace-nowrap shrink-0"
+              className="btn-press glass-control flex items-center gap-1.5 px-3.5 py-2.5 min-h-[44px] sm:min-h-0 rounded-xl text-ink text-xs font-medium whitespace-nowrap shrink-0"
             >
               <Timer className="w-4 h-4 text-brand-blue" />
               <span>Focus Timer</span>
@@ -169,7 +177,7 @@ export const OverviewView: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setShowSettingsPopover(!showSettingsPopover)}
-                className="btn-press flex items-center justify-center w-10 h-10 min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0 sm:w-9 sm:h-9 rounded-xl bg-surface-warm hover:bg-surface-hover text-ink border border-line transition-colors"
+                className="btn-press glass-control flex items-center justify-center w-10 h-10 min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0 sm:w-9 sm:h-9 rounded-xl text-ink transition-colors"
                 title="Configure Dashboard Widgets"
                 aria-label="Configure dashboard widgets"
                 aria-expanded={showSettingsPopover}
@@ -183,9 +191,9 @@ export const OverviewView: React.FC = () => {
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     exit={prefersReduced ? { opacity: 0 } : { opacity: 0, scale: 0.96, y: -4 }}
                     transition={{ duration: prefersReduced ? 0.01 : 0.15, ease: MOMENTUM_EASE }}
-                    className="absolute right-0 mt-2 w-52 bg-surface border border-line rounded-xl shadow-xl p-3 z-30 space-y-2 text-xs origin-top-right"
+                    className="absolute right-0 mt-2 w-52 glass-popover glass-specular-rim rounded-2xl p-3.5 z-30 space-y-2 text-xs origin-top-right"
                   >
-                    <span className="font-semibold text-ink block border-b border-line pb-1.5">
+                    <span className="font-semibold text-ink block border-b border-white/10 pb-1.5">
                       Toggle Widgets
                     </span>
                     <label className="flex items-center gap-2 text-ink-muted hover:text-ink transition-colors cursor-pointer py-1">
@@ -342,7 +350,7 @@ export const OverviewView: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setCurrentView('today')}
-                  className="btn-press mt-1 px-4 py-2 rounded-lg bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs whitespace-nowrap"
+                  className="btn-press glass-accent-pill mt-1 px-4 py-2 rounded-xl text-accent-ink font-semibold text-xs whitespace-nowrap"
                 >
                   Set Priorities
                 </button>

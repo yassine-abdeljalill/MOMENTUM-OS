@@ -122,7 +122,7 @@ export const AuthModal: React.FC = () => {
   };
 
   const inputCls =
-    'w-full pl-9 pr-3 py-2 rounded-xl bg-surface-warm/70 border border-line text-ink text-xs focus:border-accent focus:ring-2 focus:ring-accent/30 focus:outline-hidden';
+    'w-full pl-9 pr-3 py-2 rounded-xl bg-[#1A1A1D]/75 border border-white/12 text-ink text-xs focus:border-accent focus:ring-2 focus:ring-accent/30 focus:outline-hidden';
 
   return (
     <ModalShell
@@ -131,7 +131,7 @@ export const AuthModal: React.FC = () => {
       maxWidthClass="max-w-md"
     >
       {/* Header */}
-      <div className="flex items-center justify-between px-6 py-4 border-b border-line bg-surface-warm text-ink">
+      <div className="flex items-center justify-between px-6 py-4 border-b border-white/10 bg-white/[0.03] text-ink">
         <div className="flex items-center gap-2.5">
           <img
             src="/brand-logo.png"
@@ -151,7 +151,7 @@ export const AuthModal: React.FC = () => {
         <button
           type="button"
           onClick={() => setIsAuthModalOpen(false)}
-          className="p-1.5 rounded-lg text-ink-muted hover:text-ink hover:bg-surface-hover btn-press"
+          className="p-1.5 rounded-xl glass-control text-ink-muted hover:text-ink btn-press"
           aria-label="Close dialog"
         >
           <X className="w-4 h-4" />

@@ -177,7 +177,7 @@ export const QuickAddModal: React.FC = () => {
   };
 
   const inputCls =
-    'w-full px-3 py-2 rounded-xl bg-surface-warm/70 border border-line text-ink text-xs focus:border-accent focus:ring-2 focus:ring-accent/30 focus:outline-hidden';
+    'w-full px-3 py-2 rounded-xl bg-[#1A1A1D]/75 border border-white/12 text-ink text-xs focus:border-accent focus:ring-2 focus:ring-accent/30 focus:outline-hidden';
 
   return (
     <ModalShell
@@ -186,7 +186,7 @@ export const QuickAddModal: React.FC = () => {
       maxWidthClass="max-w-lg"
     >
       {/* Header */}
-      <div className="flex items-center justify-between px-5 py-3.5 border-b border-line bg-surface-warm text-ink">
+      <div className="flex items-center justify-between px-5 py-3.5 border-b border-white/10 bg-white/[0.03] text-ink">
         <div className="flex items-center gap-2">
           <Plus className="w-4 h-4 text-accent" />
           <h2 className="font-semibold text-sm font-heading">Quick Create</h2>
@@ -194,45 +194,52 @@ export const QuickAddModal: React.FC = () => {
         <button
           type="button"
           onClick={() => setIsQuickAddOpen(false)}
-          className="p-1.5 rounded-lg text-ink-muted hover:text-ink hover:bg-surface-hover btn-press"
+          className="p-1.5 rounded-xl glass-control text-ink-muted hover:text-ink btn-press"
           aria-label="Close dialog"
         >
           <X className="w-4 h-4" />
         </button>
       </div>
 
-      {/* Tabs */}
-      <div className="flex border-b border-line bg-surface-warm px-3 pt-2 gap-1 overflow-x-auto">
-        {[
-          { id: 'task', label: 'Task', icon: CheckSquare },
-          { id: 'goal', label: 'Goal', icon: Target },
-          { id: 'habit', label: 'Habit', icon: Sparkles },
-          { id: 'project', label: 'Project', icon: FolderGit2 },
-          { id: 'journal', label: 'Journal', icon: BookOpen },
-        ].map(tab => {
-          const Icon = tab.icon;
-          const isActive = activeTab === tab.id;
-          return (
-            <button
-              key={tab.id}
-              type="button"
-              onClick={() => setActiveTab(tab.id as CreationTab)}
-              className={`relative flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-t-xl transition-colors btn-press whitespace-nowrap ${
-                isActive ? 'text-ink' : 'text-ink-muted hover:text-ink'
-              }`}
-            >
-              {isActive && (
-                <motion.div
-                  layoutId="quickadd-tab-bg"
-                  transition={{ duration: prefersReduced ? 0.01 : 0.18, ease: MOMENTUM_EASE }}
-                  className="absolute inset-0 bg-surface rounded-t-xl border-b-2 border-accent z-0"
-                />
-              )}
-              <Icon className="w-3.5 h-3.5 relative z-10" />
-              <span className="relative z-10">{tab.label}</span>
-            </button>
-          );
-        })}
+      {/* Liquid Glass Segmented Tabs */}
+      <div className="px-4 pt-3 pb-1">
+        <div className="flex glass-segmented p-1 rounded-2xl gap-1 overflow-x-auto no-scrollbar">
+          {[
+            { id: 'task', label: 'Task', icon: CheckSquare },
+            { id: 'goal', label: 'Goal', icon: Target },
+            { id: 'habit', label: 'Habit', icon: Sparkles },
+            { id: 'project', label: 'Project', icon: FolderGit2 },
+            { id: 'journal', label: 'Journal', icon: BookOpen },
+          ].map(tab => {
+            const Icon = tab.icon;
+            const isActive = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => setActiveTab(tab.id as CreationTab)}
+                className={`relative flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-xl transition-colors btn-press whitespace-nowrap ${
+                  isActive ? 'text-accent-ink' : 'text-ink-muted hover:text-ink'
+                }`}
+              >
+                {isActive && (
+                  <motion.div
+                    layoutId="quickadd-tab-bg"
+                    transition={{
+                      type: 'spring',
+                      stiffness: 440,
+                      damping: 34,
+                      mass: 0.8,
+                    }}
+                    className="absolute inset-0 glass-accent-pill rounded-xl z-0"
+                  />
+                )}
+                <Icon className="w-3.5 h-3.5 relative z-10" />
+                <span className="relative z-10">{tab.label}</span>
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {/* Tab Content Form */}

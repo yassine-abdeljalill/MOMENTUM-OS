@@ -49,6 +49,7 @@ import {
 } from './LearningShared';
 import { LessonTasksTab } from './LessonTasksTab';
 import { LessonResourcesTab } from './LessonResourcesTab';
+import { GlassSegmentedControl } from '../common/LiquidGlass';
 
 type ModuleSubTab = 'lessons' | 'tasks' | 'resources';
 
@@ -231,7 +232,7 @@ export const ModuleDetailPage: React.FC<{
         <button
           type="button"
           onClick={onBackToDashboard}
-          className="btn-press inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-surface hover:bg-surface-warm border border-line text-xs font-medium text-ink"
+          className="btn-press glass-control inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium text-ink"
         >
           <ArrowLeft className="w-3.5 h-3.5" />
           <span>All Modules</span>
@@ -274,7 +275,7 @@ export const ModuleDetailPage: React.FC<{
             <select
               value={module.status}
               onChange={e => void handleModuleStatusChange(e.target.value as LearningStatus)}
-              className="px-3 py-2 rounded-xl bg-canvas border border-line text-xs font-medium text-ink focus:ring-2 focus:ring-accent focus:outline-hidden"
+              className="glass-control px-3 py-2 rounded-xl text-xs font-medium text-ink focus:ring-2 focus:ring-accent focus:outline-hidden"
               aria-label="Module status"
             >
               <option value="not_started">Not Started</option>
@@ -285,7 +286,7 @@ export const ModuleDetailPage: React.FC<{
             <button
               type="button"
               onClick={() => onEditModule(module)}
-              className="btn-press p-2 rounded-xl bg-canvas hover:bg-surface-warm border border-line text-ink"
+              className="btn-press glass-control p-2 rounded-xl text-ink"
               title="Edit module"
               aria-label="Edit module"
             >
@@ -295,7 +296,7 @@ export const ModuleDetailPage: React.FC<{
             <button
               type="button"
               onClick={() => onDeleteModule(module)}
-              className="btn-press p-2 rounded-xl bg-canvas hover:bg-danger/10 border border-line text-ink-muted hover:text-danger"
+              className="btn-press glass-control p-2 rounded-xl text-ink-muted hover:text-danger"
               title="Delete module"
               aria-label="Delete module"
             >
@@ -308,7 +309,7 @@ export const ModuleDetailPage: React.FC<{
                 setEditingLesson(null);
                 setLessonModalOpen(true);
               }}
-              className="btn-press group inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs whitespace-nowrap"
+              className="btn-press group inline-flex items-center gap-1.5 px-4 py-2 rounded-xl glass-accent-pill text-xs whitespace-nowrap"
             >
               <Plus className="w-4 h-4 stroke-[2.25] transition-transform duration-200 group-hover:rotate-90" />
               <span>Add Lesson</span>
@@ -354,38 +355,18 @@ export const ModuleDetailPage: React.FC<{
         </StaggerContainer>
 
         {/* Sub-Tabs */}
-        <div className="flex flex-wrap items-center gap-1.5 pt-3 border-t border-line">
-          {([
-            { id: 'lessons', label: 'Lessons', count: orderedLessons.length, Icon: BookOpen },
-            { id: 'tasks', label: 'Tasks & Assignments', count: tasks.length, Icon: CheckSquare },
-            { id: 'resources', label: 'Module Resources', count: moduleLevelResources.length, Icon: FolderOpen },
-          ] as const).map(tab => {
-            const isActive = subTab === tab.id;
-            const Icon = tab.Icon;
-            return (
-              <button
-                key={tab.id}
-                type="button"
-                onClick={() => setSubTab(tab.id)}
-                className={`relative z-10 inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs transition-colors whitespace-nowrap ${
-                  isActive
-                    ? 'text-accent-ink font-semibold'
-                    : 'text-ink-muted hover:text-ink font-medium hover:bg-surface-warm'
-                }`}
-              >
-                {isActive && (
-                  <motion.span
-                    layoutId="module-detail-tab-pill"
-                    transition={{ duration: prefersReduced ? 0.01 : 0.2, ease: MOMENTUM_EASE }}
-                    className="absolute inset-0 bg-accent rounded-xl -z-10"
-                  />
-                )}
-                <Icon className="w-3.5 h-3.5" />
-                <span>{tab.label}</span>
-                <span className="font-mono text-[11px] opacity-80 tabular-nums">{tab.count}</span>
-              </button>
-            );
-          })}
+        <div className="pt-3 border-t border-line">
+          <GlassSegmentedControl
+            layoutId="module-detail-tab-pill"
+            size="sm"
+            value={subTab}
+            onChange={setSubTab}
+            options={[
+              { id: 'lessons', label: 'Lessons', count: orderedLessons.length, icon: BookOpen },
+              { id: 'tasks', label: 'Tasks & Assignments', count: tasks.length, icon: CheckSquare },
+              { id: 'resources', label: 'Module Resources', count: moduleLevelResources.length, icon: FolderOpen },
+            ]}
+          />
         </div>
       </div>
 
@@ -415,7 +396,7 @@ export const ModuleDetailPage: React.FC<{
                       setEditingLesson(null);
                       setLessonModalOpen(true);
                     }}
-                    className="btn-press inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs"
+                    className="btn-press inline-flex items-center gap-1.5 px-4 py-2 rounded-xl glass-accent-pill text-xs"
                   >
                     <Plus className="w-4 h-4 stroke-[2.25]" />
                     <span>Add First Lesson</span>
@@ -587,7 +568,7 @@ export const ModuleDetailPage: React.FC<{
                               <button
                                 type="button"
                                 onClick={() => onOpenLesson(lesson.id)}
-                                className="btn-press ml-1 inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-surface-warm hover:bg-accent hover:text-accent-ink border border-line text-xs font-semibold text-ink transition-colors"
+                                className="btn-press glass-control ml-1 inline-flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-semibold text-ink hover:text-accent transition-colors"
                               >
                                 <span>Open</span>
                                 <ChevronRight className="w-3.5 h-3.5" />

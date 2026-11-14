@@ -16,6 +16,7 @@ import {
   StaggerContainer,
   StaggerItem,
 } from '../common/MotionPrimitives';
+import { GlassSegmentedControl } from '../common/LiquidGlass';
 
 export const AnalyticsView: React.FC = () => {
   const { state, learningData, showToast } = useApp();
@@ -118,36 +119,23 @@ export const AnalyticsView: React.FC = () => {
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
-          <div className="flex bg-canvas p-1 rounded-xl border border-line text-xs">
-            {(['7d', '30d', '90d'] as const).map(range => {
-              const isActive = dateRange === range;
-              return (
-                <button
-                  key={range}
-                  type="button"
-                  onClick={() => setDateRange(range)}
-                  className={`relative px-3 py-1.5 rounded-lg font-medium uppercase transition-colors ${
-                    isActive ? 'text-accent-ink font-semibold' : 'text-ink-muted hover:text-ink'
-                  }`}
-                >
-                  {isActive && (
-                    <motion.span
-                      layoutId="analytics-range-pill"
-                      transition={{ type: 'spring', stiffness: 420, damping: 32 }}
-                      className="absolute inset-0 rounded-lg bg-accent"
-                    />
-                  )}
-                  <span className="relative z-10">{range}</span>
-                </button>
-              );
-            })}
-          </div>
+          <GlassSegmentedControl
+            layoutId="analytics-range-pill"
+            size="sm"
+            value={dateRange}
+            onChange={setDateRange}
+            options={[
+              { id: '7d', label: '7D' },
+              { id: '30d', label: '30D' },
+              { id: '90d', label: '90D' },
+            ]}
+          />
 
           <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={handleExportTasks}
-              className="btn-press flex items-center gap-1.5 px-3 py-2 rounded-xl bg-canvas hover:bg-surface-warm text-xs font-medium text-ink border border-line transition-colors whitespace-nowrap"
+              className="btn-press glass-control flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium text-ink transition-colors whitespace-nowrap"
               title="Export tasks to CSV"
             >
               <Download className="w-3.5 h-3.5 text-accent" />
@@ -156,7 +144,7 @@ export const AnalyticsView: React.FC = () => {
             <button
               type="button"
               onClick={handleExportGoals}
-              className="btn-press flex items-center gap-1.5 px-3 py-2 rounded-xl bg-canvas hover:bg-surface-warm text-xs font-medium text-ink border border-line transition-colors whitespace-nowrap"
+              className="btn-press glass-control flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium text-ink transition-colors whitespace-nowrap"
               title="Export goals to CSV"
             >
               <Download className="w-3.5 h-3.5 text-accent" />

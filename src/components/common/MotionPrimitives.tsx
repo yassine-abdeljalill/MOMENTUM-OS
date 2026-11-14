@@ -43,10 +43,10 @@ export const ModalShell: React.FC<{
   onClose,
   children,
   maxWidthClass = 'max-w-lg',
-  panelClassName = 'bg-surface border border-line text-ink rounded-t-2xl sm:rounded-2xl shadow-2xl overflow-hidden',
+  panelClassName = 'glass-modal glass-specular-rim text-ink rounded-t-3xl sm:rounded-3xl overflow-hidden',
   alignTop = false,
   fullscreen = false,
-  backdropClassName = 'bg-black/70 backdrop-blur-xs',
+  backdropClassName = 'bg-black/65 backdrop-blur-md',
 }) => {
   const prefersReduced = useReducedMotion();
 
@@ -57,7 +57,7 @@ export const ModalShell: React.FC<{
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: prefersReduced ? 0.01 : 0.16, ease: 'easeOut' }}
+          transition={{ duration: prefersReduced ? 0.01 : 0.18, ease: 'easeOut' }}
           onClick={onClose}
           className={`fixed inset-0 z-50 flex justify-center ${
             fullscreen
@@ -71,15 +71,15 @@ export const ModalShell: React.FC<{
             initial={
               prefersReduced
                 ? { opacity: 1 }
-                : { opacity: 0, scale: alignTop ? 0.97 : 0.98, y: alignTop ? -8 : 20 }
+                : { opacity: 0, scale: alignTop ? 0.96 : 0.97, y: alignTop ? -10 : 24 }
             }
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={
               prefersReduced
                 ? { opacity: 0 }
-                : { opacity: 0, scale: 0.98, y: alignTop ? -6 : 16 }
+                : { opacity: 0, scale: 0.97, y: alignTop ? -8 : 18 }
             }
-            transition={{ duration: prefersReduced ? 0.01 : 0.2, ease: MOMENTUM_EASE }}
+            transition={{ duration: prefersReduced ? 0.01 : 0.22, ease: MOMENTUM_EASE }}
             onClick={e => e.stopPropagation()}
             className={`w-full ${
               fullscreen
@@ -109,7 +109,7 @@ export const DrawerShell: React.FC<{
   onClose,
   side = 'right',
   children,
-  panelClassName = 'w-full max-w-sm h-full bg-surface border-l border-line text-ink shadow-2xl flex flex-col',
+  panelClassName = 'w-full max-w-sm h-full glass-sheet text-ink flex flex-col border-y-0 border-r-0',
 }) => {
   const prefersReduced = useReducedMotion();
   const initialX = side === 'right' ? '100%' : '-100%';
@@ -125,13 +125,13 @@ export const DrawerShell: React.FC<{
           onClick={onClose}
           className={`fixed inset-0 z-50 flex ${
             side === 'right' ? 'justify-end' : 'justify-start'
-          } bg-black/65 backdrop-blur-xs`}
+          } bg-black/60 backdrop-blur-md`}
         >
           <motion.div
             initial={prefersReduced ? { opacity: 0 } : { x: initialX }}
             animate={prefersReduced ? { opacity: 1 } : { x: 0 }}
             exit={prefersReduced ? { opacity: 0 } : { x: initialX }}
-            transition={{ duration: prefersReduced ? 0.01 : 0.22, ease: MOMENTUM_EASE }}
+            transition={{ duration: prefersReduced ? 0.01 : 0.24, ease: MOMENTUM_EASE }}
             onClick={e => e.stopPropagation()}
             className={panelClassName}
           >

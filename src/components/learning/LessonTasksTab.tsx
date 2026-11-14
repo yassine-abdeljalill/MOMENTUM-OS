@@ -218,7 +218,7 @@ export const LessonTasksTab: React.FC<{
         <button
           type="button"
           onClick={openCreateModal}
-          className="btn-press flex items-center gap-1.5 px-3.5 py-2 min-h-[40px] sm:min-h-0 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs shrink-0 whitespace-nowrap"
+          className="btn-press flex items-center gap-1.5 px-3.5 py-2 min-h-[40px] sm:min-h-0 rounded-xl glass-accent-pill text-xs shrink-0 whitespace-nowrap"
         >
           <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
           <span>New Task / Lab</span>
@@ -258,7 +258,7 @@ export const LessonTasksTab: React.FC<{
         />
         <button
           type="submit"
-          className="btn-press px-3.5 py-1.5 rounded-xl bg-accent text-accent-ink text-xs font-semibold hover:bg-accent-hover"
+          className="btn-press px-3.5 py-1.5 rounded-xl glass-accent-pill text-xs"
         >
           Add
         </button>
@@ -272,10 +272,10 @@ export const LessonTasksTab: React.FC<{
               key={st}
               type="button"
               onClick={() => setStatusFilter(st)}
-              className={`px-3 py-1.5 rounded-xl text-xs font-medium border transition-colors whitespace-nowrap ${
+              className={`btn-press px-3 py-1.5 rounded-xl text-xs font-medium transition-colors whitespace-nowrap ${
                 statusFilter === st
-                  ? 'bg-accent text-accent-ink border-accent font-semibold'
-                  : 'bg-surface text-ink-muted border-line hover:text-ink'
+                  ? 'glass-accent-pill'
+                  : 'glass-control text-ink-muted hover:text-ink'
               }`}
             >
               {st === 'all' ? 'All' : LEARNING_TASK_STATUS_META[st].label}
@@ -402,14 +402,14 @@ export const LessonTasksTab: React.FC<{
 
       {/* Create / Edit Task Modal */}
       <ModalShell isOpen={showCreateModal} onClose={() => setShowCreateModal(false)} maxWidthClass="max-w-lg">
-        <div className="px-6 py-4 border-b border-line bg-surface-warm flex items-center justify-between">
+        <div className="px-6 py-4 border-b border-white/10 bg-white/[0.03] flex items-center justify-between">
           <h3 className="text-sm font-bold text-ink">
             {editingTask ? 'Edit Learning Task' : 'New Task / Exercise'}
           </h3>
           <button
             type="button"
             onClick={() => setShowCreateModal(false)}
-            className="text-ink-muted hover:text-ink"
+            className="btn-press glass-control p-1.5 rounded-xl text-ink-muted hover:text-ink"
             aria-label="Close modal"
           >
             <X className="w-4 h-4" />
@@ -493,18 +493,18 @@ export const LessonTasksTab: React.FC<{
             />
           </div>
 
-          <div className="flex justify-end gap-2 pt-3 border-t border-line">
+          <div className="flex justify-end gap-2 pt-3 border-t border-white/10">
             <button
               type="button"
               onClick={() => setShowCreateModal(false)}
-              className="px-3 py-1.5 text-xs text-ink-muted hover:text-ink"
+              className="btn-press px-3 py-1.5 rounded-xl text-xs text-ink-muted hover:text-ink"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={saving}
-              className="btn-press px-4 py-1.5 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs"
+              className="btn-press px-4 py-1.5 rounded-xl glass-accent-pill text-xs"
             >
               {saving ? 'Saving...' : editingTask ? 'Save Changes' : 'Create Task'}
             </button>

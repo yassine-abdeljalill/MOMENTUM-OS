@@ -29,7 +29,7 @@ export const IntroSplash: React.FC = () => {
       dismiss();
       return;
     }
-    const timer = window.setTimeout(dismiss, 1300);
+    const timer = window.setTimeout(dismiss, 1400);
     return () => window.clearTimeout(timer);
   }, [visible, prefersReduced]);
 
@@ -38,64 +38,79 @@ export const IntroSplash: React.FC = () => {
       {visible && (
         <motion.div
           initial={{ opacity: 1 }}
-          exit={{ opacity: 0, transition: { duration: 0.35, ease: MOMENTUM_EASE } }}
-          className="fixed inset-0 z-[100] bg-canvas flex flex-col items-center justify-center px-6 pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] select-none"
+          exit={
+            prefersReduced
+              ? { opacity: 0 }
+              : { opacity: 0, scale: 1.015, transition: { duration: 0.38, ease: MOMENTUM_EASE } }
+          }
+          className="fixed inset-0 z-[100] bg-[#1A1A1D] flex flex-col items-center justify-center px-6 pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] select-none overflow-hidden"
           role="dialog"
           aria-label="Welcome to MOMENTUM"
         >
+          {/* Subtle atmospheric radial depth strictly using official blue & beige */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0"
+            style={{
+              background:
+                'radial-gradient(circle at 50% 42%, rgba(158, 204, 253, 0.08) 0%, rgba(210, 146, 91, 0.05) 28%, rgba(26, 26, 29, 0.96) 66%, #1A1A1D 100%)',
+            }}
+          />
+
           <motion.div
-            initial={{ opacity: 0, scale: 0.92, y: 12 }}
+            initial={prefersReduced ? { opacity: 1 } : { opacity: 0, scale: 0.94, y: 12 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             transition={{ duration: 0.45, ease: MOMENTUM_EASE }}
-            className="flex flex-col items-center text-center max-w-sm"
+            className="relative z-10 glass-elevated glass-specular-rim rounded-[32px] px-8 py-9 sm:px-10 sm:py-10 flex flex-col items-center text-center max-w-sm w-full"
           >
+            {/* Liquid Glass Icon Lens */}
             <motion.div
-              initial={{ scale: 0.88, opacity: 0 }}
+              initial={prefersReduced ? { opacity: 1 } : { scale: 0.86, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 0.4, delay: 0.05, ease: MOMENTUM_EASE }}
-              className="w-20 h-20 rounded-2xl p-1.5 bg-surface border border-line shadow-xl flex items-center justify-center mb-5"
+              transition={{ duration: 0.42, delay: 0.06, ease: MOMENTUM_EASE }}
+              className="w-20 h-20 rounded-[22px] p-1.5 glass-control glass-specular-rim flex items-center justify-center mb-5"
             >
               <img
                 src="/brand-logo.png"
                 alt="MOMENTUM"
-                className="w-full h-full rounded-xl object-contain"
+                className="w-full h-full rounded-[16px] object-contain"
               />
             </motion.div>
 
             <motion.h1
-              initial={{ opacity: 0, y: 6 }}
+              initial={prefersReduced ? { opacity: 1 } : { opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.35, delay: 0.14, ease: MOMENTUM_EASE }}
-              className="text-2xl sm:text-3xl font-extrabold tracking-[0.18em] text-ink uppercase font-heading"
+              className="text-2xl sm:text-[28px] font-extrabold tracking-[0.2em] pl-[0.2em] text-ink uppercase font-heading"
             >
               MOMENTUM
             </motion.h1>
 
             <motion.p
-              initial={{ opacity: 0, y: 6 }}
+              initial={prefersReduced ? { opacity: 1 } : { opacity: 0, y: 5 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.35, delay: 0.22, ease: MOMENTUM_EASE }}
-              className="mt-1.5 text-xs font-medium tracking-wide text-brand-blue uppercase"
+              className="mt-1.5 font-mono text-[11px] font-semibold tracking-[0.22em] text-brand-blue uppercase"
             >
-              Personal Life Operating System
+              Life Operating System
             </motion.p>
 
-            {/* Progress Reveal Bar */}
-            <div className="mt-6 w-44 h-1 rounded-full bg-surface-inset overflow-hidden">
+            {/* Liquid Glass Progress Rail */}
+            <div className="mt-7 w-48 h-1.5 rounded-full bg-white/[0.06] border border-white/10 overflow-hidden p-[1px]">
               <motion.div
                 initial={{ width: '0%' }}
                 animate={{ width: '100%' }}
-                transition={{ duration: 1.05, delay: 0.12, ease: MOMENTUM_EASE }}
-                className="h-full bg-gradient-to-r from-brand-blue via-accent to-accent rounded-full"
+                transition={{ duration: 1.1, delay: 0.12, ease: MOMENTUM_EASE }}
+                className="h-full rounded-full bg-gradient-to-r from-[#9ECCFD] via-[#D2925B] to-[#D2925B]"
               />
             </div>
 
             <button
               type="button"
               onClick={dismiss}
-              className="mt-6 text-[11px] font-medium text-ink-muted hover:text-ink transition-colors px-3 py-1 rounded-lg hover:bg-surface-warm"
+              className="mt-6 text-[11px] font-medium text-ink-muted hover:text-ink transition-colors px-3.5 py-1.5 rounded-full glass-control btn-press"
             >
-              Skip intro
+              Enter Workspace
             </button>
           </motion.div>
         </motion.div>

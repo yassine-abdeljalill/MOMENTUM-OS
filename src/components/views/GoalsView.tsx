@@ -18,6 +18,7 @@ import {
   AnimatedNumber,
   MOMENTUM_EASE,
 } from '../common/MotionPrimitives';
+import { GlassSegmentedControl } from '../common/LiquidGlass';
 
 export const GoalsView: React.FC = () => {
   const prefersReduced = useReducedMotion();
@@ -127,39 +128,22 @@ export const GoalsView: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-3 flex-wrap">
-          <div className="flex bg-surface-warm p-1 rounded-xl border border-line text-xs relative overflow-x-auto max-w-full">
-            {([
+          <GlassSegmentedControl
+            layoutId="goals-tab-pill"
+            size="sm"
+            value={activeTab}
+            onChange={setActiveTab}
+            options={[
               { id: 'all', label: 'Active Goals' },
               { id: '90day', label: '90-Day Plans' },
               { id: 'hierarchy', label: 'Hierarchy' },
-            ] as const).map(tab => {
-              const isActive = activeTab === tab.id;
-              return (
-                <button
-                  key={tab.id}
-                  type="button"
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`relative z-10 px-3 py-1.5 rounded-lg transition-colors whitespace-nowrap shrink-0 ${
-                    isActive ? 'text-accent-ink font-semibold' : 'text-ink-muted hover:text-ink font-medium'
-                  }`}
-                >
-                  {isActive && (
-                    <motion.span
-                      layoutId="goals-tab-pill"
-                      transition={{ duration: prefersReduced ? 0.01 : 0.2, ease: MOMENTUM_EASE }}
-                      className="absolute inset-0 bg-accent rounded-lg -z-10"
-                    />
-                  )}
-                  {tab.label}
-                </button>
-              );
-            })}
-          </div>
+            ]}
+          />
 
           <button
             type="button"
             onClick={() => setShowNewGoalModal(true)}
-            className="btn-press group flex items-center gap-1.5 px-4 py-2 min-h-[40px] rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs transition-colors whitespace-nowrap shrink-0"
+            className="btn-press group flex items-center gap-1.5 px-4 py-2 min-h-[40px] rounded-xl glass-accent-pill text-xs whitespace-nowrap shrink-0"
           >
             <Plus className="w-4 h-4 stroke-[2.25] transition-transform duration-200 group-hover:rotate-90" />
             <span>New Goal</span>
@@ -356,7 +340,7 @@ export const GoalsView: React.FC = () => {
                         />
                         <button
                           type="submit"
-                          className="btn-press px-4 py-2 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs transition-colors"
+                          className="btn-press px-4 py-2 rounded-xl glass-accent-pill text-xs transition-colors"
                         >
                           Add
                         </button>
@@ -531,7 +515,7 @@ export const GoalsView: React.FC = () => {
         onClose={() => setShowNewGoalModal(false)}
         maxWidthClass="max-w-lg"
       >
-        <div className="flex items-center justify-between px-5 sm:px-6 py-4 border-b border-line bg-surface-warm">
+        <div className="flex items-center justify-between px-5 sm:px-6 py-4 border-b border-white/10 bg-white/[0.03]">
           <div className="flex items-center gap-2">
             <Target className="w-4 h-4 text-accent" />
             <h3 className="text-sm font-semibold text-ink">Create New Goal</h3>
@@ -539,7 +523,7 @@ export const GoalsView: React.FC = () => {
           <button
             type="button"
             onClick={() => setShowNewGoalModal(false)}
-            className="p-1.5 rounded-lg text-ink-muted hover:text-ink transition-colors"
+            className="btn-press glass-control p-1.5 rounded-xl text-ink-muted hover:text-ink transition-colors"
             aria-label="Close goal modal"
           >
             <X className="w-4 h-4" />
@@ -610,17 +594,17 @@ export const GoalsView: React.FC = () => {
             />
           </div>
 
-          <div className="flex justify-end gap-2 pt-3 border-t border-line">
+          <div className="flex justify-end gap-2 pt-3 border-t border-white/10">
             <button
               type="button"
               onClick={() => setShowNewGoalModal(false)}
-              className="btn-press px-4 py-2 text-xs font-medium text-ink-muted hover:text-ink"
+              className="btn-press px-4 py-2 rounded-xl text-xs font-medium text-ink-muted hover:text-ink"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="btn-press px-4 py-2 rounded-xl text-xs font-semibold bg-accent text-accent-ink hover:bg-accent-hover transition-colors"
+              className="btn-press px-4 py-2 rounded-xl text-xs glass-accent-pill transition-colors"
             >
               Create Goal
             </button>

@@ -82,7 +82,7 @@ export const JournalView: React.FC = () => {
           <button
             type="button"
             onClick={() => setShowNewEntryModal(true)}
-            className="btn-press flex items-center gap-1.5 px-4 py-2 min-h-[44px] sm:min-h-0 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs transition-all whitespace-nowrap shrink-0"
+            className="btn-press flex items-center gap-1.5 px-4 py-2 min-h-[44px] sm:min-h-0 rounded-xl glass-accent-pill text-xs transition-all whitespace-nowrap shrink-0"
           >
             <Plus className="w-4 h-4 stroke-[2.5]" />
             <span>New Reflection</span>
@@ -258,7 +258,7 @@ export const JournalView: React.FC = () => {
         onClose={() => setShowNewEntryModal(false)}
         maxWidthClass="max-w-xl"
       >
-        <div className="flex items-center justify-between px-6 py-4 border-b border-line bg-surface-warm">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-white/10 bg-white/[0.03]">
           <div className="flex items-center gap-2">
             <BookOpen className="w-4 h-4 text-brand-blue" />
             <h3 className="text-sm font-bold text-ink">New Journal Entry</h3>
@@ -266,7 +266,7 @@ export const JournalView: React.FC = () => {
           <button
             type="button"
             onClick={() => setShowNewEntryModal(false)}
-            className="text-ink-muted hover:text-ink transition-colors"
+            className="btn-press glass-control p-1.5 rounded-xl text-ink-muted hover:text-ink transition-colors"
             aria-label="Close modal"
           >
             <X className="w-4 h-4" />
@@ -330,17 +330,17 @@ export const JournalView: React.FC = () => {
             />
           </div>
 
-          <div className="flex justify-end gap-2 pt-2 border-t border-line">
+          <div className="flex justify-end gap-2 pt-3 border-t border-white/10">
             <button
               type="button"
               onClick={() => setShowNewEntryModal(false)}
-              className="btn-press px-3 py-1.5 text-xs text-ink-muted hover:text-ink"
+              className="btn-press px-3 py-1.5 rounded-xl text-xs text-ink-muted hover:text-ink"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="btn-press px-4 py-1.5 rounded-xl text-xs font-semibold bg-accent text-accent-ink hover:bg-accent-hover"
+              className="btn-press px-4 py-1.5 rounded-xl text-xs glass-accent-pill"
             >
               Save Entry
             </button>

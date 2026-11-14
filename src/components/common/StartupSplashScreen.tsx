@@ -27,11 +27,11 @@ export const StartupSplashScreen: React.FC<StartupSplashScreenProps> = ({
               ? { opacity: 0, transition: { duration: 0.14, ease: 'easeOut' } }
               : {
                   opacity: 0,
-                  scale: 1.012,
+                  scale: 1.015,
                   transition: { duration: 0.36, ease: MOMENTUM_EASE },
                 }
           }
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-[#1A1A1D] text-[#F5F1E9] select-none overflow-hidden"
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-[#1A1A1D] text-[#F5F1E9] select-none overflow-hidden px-6"
           style={{
             paddingTop: 'env(safe-area-inset-top)',
             paddingBottom: 'env(safe-area-inset-bottom)',
@@ -39,7 +39,7 @@ export const StartupSplashScreen: React.FC<StartupSplashScreenProps> = ({
             paddingRight: 'env(safe-area-inset-right)',
           }}
         >
-          {/* Subtle charcoal radial depth — calm, grounded, no neon */}
+          {/* Subtle atmospheric radial depth strictly using official blue & beige */}
           <motion.div
             aria-hidden="true"
             initial={{ opacity: 0 }}
@@ -48,32 +48,32 @@ export const StartupSplashScreen: React.FC<StartupSplashScreenProps> = ({
             className="pointer-events-none absolute inset-0"
             style={{
               background:
-                'radial-gradient(circle at 50% 45%, rgba(42, 42, 47, 0.45) 0%, rgba(26, 26, 29, 0.92) 55%, rgba(26, 26, 29, 1) 100%)',
+                'radial-gradient(circle at 50% 42%, rgba(158, 204, 253, 0.08) 0%, rgba(210, 146, 91, 0.05) 30%, rgba(26, 26, 29, 0.96) 66%, #1A1A1D 100%)',
             }}
           />
 
-          <div className="relative z-10 flex flex-col items-center px-6 text-center max-w-sm w-full">
-            {/* Step 2: Official uploaded MOMENTUM logo fading in & gently scaling 90% -> 100% */}
+          <div className="relative z-10 glass-elevated glass-specular-rim rounded-[32px] flex flex-col items-center px-8 py-9 sm:px-10 sm:py-10 text-center max-w-sm w-full">
+            {/* Official MOMENTUM icon inside Liquid Glass bezel */}
             <motion.div
-              initial={prefersReduced ? { opacity: 0 } : { opacity: 0, scale: 0.9 }}
+              initial={prefersReduced ? { opacity: 0 } : { opacity: 0, scale: 0.88 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{
                 duration: prefersReduced ? 0.12 : 0.44,
                 ease: MOMENTUM_EASE,
               }}
-              className="mb-6 rounded-[22px] p-1 bg-[#242428] border border-[#393940] shadow-[0_18px_40px_-14px_rgba(0,0,0,0.6)]"
+              className="mb-5 rounded-[22px] p-1.5 glass-control glass-specular-rim"
             >
               <img
                 src="/brand-logo.png"
                 alt="MOMENTUM official logo"
-                width={96}
-                height={96}
+                width={88}
+                height={88}
                 referrerPolicy="no-referrer"
-                className="w-20 h-20 sm:w-24 sm:h-24 rounded-[20px] object-contain block"
+                className="w-20 h-20 rounded-[16px] object-contain block"
               />
             </motion.div>
 
-            {/* Step 3: Brand Name */}
+            {/* Brand Name */}
             <motion.h1
               initial={prefersReduced ? { opacity: 0 } : { opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
@@ -82,12 +82,12 @@ export const StartupSplashScreen: React.FC<StartupSplashScreenProps> = ({
                 delay: prefersReduced ? 0 : 0.14,
                 ease: MOMENTUM_EASE,
               }}
-              className="text-2xl sm:text-[28px] font-bold tracking-[0.16em] text-[#F5F1E9] pl-[0.16em]"
+              className="text-2xl sm:text-[28px] font-extrabold tracking-[0.2em] text-[#F5F1E9] pl-[0.2em] font-heading"
             >
               MOMENTUM
             </motion.h1>
 
-            {/* Step 4: Subtitle */}
+            {/* Subtitle */}
             <motion.p
               initial={prefersReduced ? { opacity: 0 } : { opacity: 0, y: 5 }}
               animate={{ opacity: 1, y: 0 }}
@@ -96,12 +96,12 @@ export const StartupSplashScreen: React.FC<StartupSplashScreenProps> = ({
                 delay: prefersReduced ? 0 : 0.23,
                 ease: MOMENTUM_EASE,
               }}
-              className="mt-1.5 font-mono text-[11px] sm:text-xs font-semibold uppercase tracking-[0.26em] text-[#9ECCFD] pl-[0.26em]"
+              className="mt-1.5 font-mono text-[11px] font-semibold uppercase tracking-[0.24em] text-[#9ECCFD] pl-[0.24em]"
             >
               LIFE OPERATING SYSTEM
             </motion.p>
 
-            {/* Step 5: Calm, compositor-only MOMENTUM blue loading indicator */}
+            {/* Luminous glass progress rail */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -110,14 +110,14 @@ export const StartupSplashScreen: React.FC<StartupSplashScreenProps> = ({
                 delay: prefersReduced ? 0 : 0.31,
                 ease: 'easeOut',
               }}
-              className="mt-8 w-44 sm:w-52"
+              className="mt-7 w-48"
             >
-              <div className="relative h-[3px] w-full overflow-hidden rounded-full bg-[#313137]">
+              <div className="relative h-1.5 w-full overflow-hidden rounded-full bg-white/[0.06] border border-white/10 p-[1px]">
                 {prefersReduced ? (
                   <div className="h-full w-full rounded-full bg-[#9ECCFD]" />
                 ) : (
                   <motion.div
-                    className="h-full w-1/2 rounded-full bg-[#9ECCFD]"
+                    className="h-full w-1/2 rounded-full bg-gradient-to-r from-[#9ECCFD] to-[#D2925B]"
                     style={{ willChange: 'transform' }}
                     initial={{ x: '-100%', scaleX: 0.75 }}
                     animate={{
@@ -134,7 +134,7 @@ export const StartupSplashScreen: React.FC<StartupSplashScreenProps> = ({
               </div>
             </motion.div>
 
-            {/* Step 6: Subtle workspace preparation status */}
+            {/* Workspace preparation status */}
             <motion.p
               role="status"
               aria-live="polite"
@@ -145,7 +145,7 @@ export const StartupSplashScreen: React.FC<StartupSplashScreenProps> = ({
                 delay: prefersReduced ? 0 : 0.36,
                 ease: 'easeOut',
               }}
-              className="mt-3.5 text-xs font-medium tracking-wide text-[#868A7A]"
+              className="mt-4 text-xs font-medium tracking-wide text-[#868A7A]"
             >
               {statusMessage}
             </motion.p>

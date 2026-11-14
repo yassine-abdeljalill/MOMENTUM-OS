@@ -56,6 +56,7 @@ import {
 } from '../learning/LearningShared';
 import { ModuleDetailPage } from '../learning/ModuleDetailPage';
 import { LessonWorkspace } from '../learning/LessonWorkspace';
+import { GlassSegmentedControl } from '../common/LiquidGlass';
 
 type DashboardTab = 'overview' | 'sessions';
 
@@ -379,8 +380,8 @@ export const LearningView: React.FC = () => {
   if (authChecked && !authUser) {
     return (
       <div className="max-w-2xl mx-auto py-16">
-        <div className="p-8 rounded-2xl bg-surface border border-line text-center space-y-4">
-          <div className="w-12 h-12 rounded-2xl bg-surface-warm border border-line text-brand-blue flex items-center justify-center mx-auto">
+        <div className="p-8 rounded-3xl glass-elevated glass-specular-rim text-center space-y-4">
+          <div className="w-12 h-12 rounded-2xl glass-blue-chip flex items-center justify-center mx-auto">
             <GraduationCap className="w-6 h-6" />
           </div>
           <div className="space-y-1">
@@ -392,7 +393,7 @@ export const LearningView: React.FC = () => {
           <button
             type="button"
             onClick={() => setIsAuthModalOpen(true)}
-            className="btn-press inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs"
+            className="btn-press inline-flex items-center gap-2 px-5 py-2.5 rounded-xl glass-accent-pill text-xs"
           >
             <LogIn className="w-4 h-4" />
             <span>Sign In or Restore Workspace</span>
@@ -414,13 +415,13 @@ export const LearningView: React.FC = () => {
   if (learningError && !learningData) {
     return (
       <div className="max-w-xl mx-auto py-16">
-        <div className="p-6 rounded-2xl bg-surface border border-danger/40 text-center space-y-3">
+        <div className="p-6 rounded-2xl glass-elevated glass-specular-rim border-danger/40 text-center space-y-3">
           <p className="text-sm font-bold text-ink">Unable to load Learning Center</p>
           <p className="text-xs text-danger">{learningError}</p>
           <button
             type="button"
             onClick={() => void refreshLearningData()}
-            className="btn-press inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-accent text-accent-ink text-xs font-semibold"
+            className="btn-press inline-flex items-center gap-1.5 px-4 py-2 rounded-xl glass-accent-pill text-xs"
           >
             <RefreshCw className="w-3.5 h-3.5" />
             <span>Retry</span>
@@ -539,35 +540,16 @@ export const LearningView: React.FC = () => {
           </div>
 
           <div className="flex flex-wrap items-center gap-2.5 shrink-0">
-            <div className="flex bg-surface-warm p-1 rounded-xl border border-line text-xs relative">
-              {([
-                { id: 'overview', label: `Modules (${modules.length})` },
-                { id: 'sessions', label: `Study Logs (${studySessions.length})` },
-              ] as const).map(tab => {
-                const isActive = dashboardTab === tab.id;
-                return (
-                  <button
-                    key={tab.id}
-                    type="button"
-                    onClick={() => setDashboardTab(tab.id)}
-                    className={`relative z-10 px-3 py-1.5 rounded-lg transition-colors whitespace-nowrap ${
-                      isActive
-                        ? 'text-accent-ink font-semibold'
-                        : 'text-ink-muted hover:text-ink font-medium'
-                    }`}
-                  >
-                    {isActive && (
-                      <motion.span
-                        layoutId="learning-dashboard-tab-pill"
-                        transition={{ duration: prefersReduced ? 0.01 : 0.2, ease: MOMENTUM_EASE }}
-                        className="absolute inset-0 bg-accent rounded-lg -z-10"
-                      />
-                    )}
-                    {tab.label}
-                  </button>
-                );
-              })}
-            </div>
+            <GlassSegmentedControl
+              layoutId="learning-dashboard-tab-pill"
+              size="sm"
+              value={dashboardTab}
+              onChange={setDashboardTab}
+              options={[
+                { id: 'overview', label: 'Modules', count: modules.length },
+                { id: 'sessions', label: 'Study Logs', count: studySessions.length },
+              ]}
+            />
 
             <button
               type="button"
@@ -575,7 +557,7 @@ export const LearningView: React.FC = () => {
                 setEditingModule(null);
                 setModuleModalOpen(true);
               }}
-              className="btn-press group inline-flex items-center gap-1.5 px-4 py-2 min-h-[40px] rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs whitespace-nowrap"
+              className="btn-press group inline-flex items-center gap-1.5 px-4 py-2 min-h-[40px] rounded-xl glass-accent-pill text-xs whitespace-nowrap"
             >
               <Plus className="w-4 h-4 stroke-[2.25] transition-transform duration-200 group-hover:rotate-90" />
               <span>New Module</span>
@@ -591,10 +573,10 @@ export const LearningView: React.FC = () => {
                   key={st}
                   type="button"
                   onClick={() => setStatusFilter(st)}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-medium border transition-colors whitespace-nowrap ${
+                  className={`btn-press px-3 py-1.5 rounded-xl text-xs font-medium transition-colors whitespace-nowrap ${
                     statusFilter === st
-                      ? 'bg-accent text-accent-ink border-accent font-semibold'
-                      : 'bg-canvas text-ink-muted border-line hover:text-ink'
+                      ? 'glass-accent-pill'
+                      : 'glass-control text-ink-muted hover:text-ink'
                   }`}
                 >
                   {st === 'all' ? 'All Statuses' : LEARNING_STATUS_META[st].label}
@@ -710,7 +692,7 @@ export const LearningView: React.FC = () => {
                       setEditingModule(null);
                       setModuleModalOpen(true);
                     }}
-                    className="btn-press inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs"
+                    className="btn-press inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl glass-accent-pill text-xs"
                   >
                     <Plus className="w-4 h-4 stroke-[2.25]" />
                     <span>Create First Module</span>
@@ -1079,7 +1061,9 @@ export const LearningView: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setShowLogForm(!showLogForm)}
-                className="btn-press px-4 py-2 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs"
+                className={`btn-press px-4 py-2 rounded-xl text-xs ${
+                  showLogForm ? 'glass-control text-ink font-semibold' : 'glass-accent-pill'
+                }`}
               >
                 {showLogForm ? 'Close Form' : '+ Log Study Session'}
               </button>
@@ -1169,14 +1153,14 @@ export const LearningView: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => setShowLogForm(false)}
-                        className="px-3 py-1.5 text-xs text-ink-muted hover:text-ink"
+                        className="btn-press px-3 py-1.5 rounded-xl text-xs text-ink-muted hover:text-ink"
                       >
                         Cancel
                       </button>
                       <button
                         type="submit"
                         disabled={savingLog}
-                        className="btn-press px-4 py-1.5 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs"
+                        className="btn-press px-4 py-1.5 rounded-xl glass-accent-pill text-xs"
                       >
                         {savingLog ? 'Saving...' : 'Save Session'}
                       </button>

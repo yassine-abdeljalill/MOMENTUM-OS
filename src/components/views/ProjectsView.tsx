@@ -17,6 +17,7 @@ import {
   AnimatedNumber,
   MOMENTUM_EASE,
 } from '../common/MotionPrimitives';
+import { GlassSegmentedControl } from '../common/LiquidGlass';
 
 export const ProjectsView: React.FC = () => {
   const prefersReduced = useReducedMotion();
@@ -130,40 +131,21 @@ export const ProjectsView: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="flex bg-surface-warm p-1 rounded-xl border border-line relative">
-            {(['grid', 'list'] as const).map(mode => {
-              const isActive = viewMode === mode;
-              return (
-                <button
-                  key={mode}
-                  type="button"
-                  onClick={() => setViewMode(mode)}
-                  aria-label={`${mode} view`}
-                  className={`relative z-10 p-2 rounded-lg text-xs font-semibold transition-colors ${
-                    isActive ? 'text-accent-ink' : 'text-ink-muted hover:text-ink'
-                  }`}
-                >
-                  {isActive && (
-                    <motion.span
-                      layoutId="projects-view-mode-pill"
-                      transition={{ duration: prefersReduced ? 0.01 : 0.2, ease: MOMENTUM_EASE }}
-                      className="absolute inset-0 bg-accent rounded-lg -z-10"
-                    />
-                  )}
-                  {mode === 'grid' ? (
-                    <LayoutGrid className="w-3.5 h-3.5" />
-                  ) : (
-                    <List className="w-3.5 h-3.5" />
-                  )}
-                </button>
-              );
-            })}
-          </div>
+          <GlassSegmentedControl
+            layoutId="projects-view-mode-pill"
+            size="sm"
+            value={viewMode}
+            onChange={setViewMode}
+            options={[
+              { id: 'grid', label: 'Grid', icon: LayoutGrid },
+              { id: 'list', label: 'List', icon: List },
+            ]}
+          />
 
           <button
             type="button"
             onClick={() => setShowNewProjectModal(true)}
-            className="btn-press group flex items-center gap-1.5 px-4 py-2 min-h-[40px] rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs transition-colors whitespace-nowrap shrink-0"
+            className="btn-press group flex items-center gap-1.5 px-4 py-2 min-h-[40px] rounded-xl glass-accent-pill text-xs whitespace-nowrap shrink-0"
           >
             <Plus className="w-4 h-4 stroke-[2.25] transition-transform duration-200 group-hover:rotate-90" />
             <span>New Project</span>
@@ -348,7 +330,7 @@ export const ProjectsView: React.FC = () => {
                     />
                     <button
                       type="submit"
-                      className="btn-press px-4 py-2 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs transition-colors"
+                      className="btn-press px-4 py-2 rounded-xl glass-accent-pill text-xs transition-colors"
                     >
                       Add
                     </button>
@@ -397,7 +379,7 @@ export const ProjectsView: React.FC = () => {
                     />
                     <button
                       type="submit"
-                      className="btn-press px-4 py-2 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs transition-colors whitespace-nowrap"
+                      className="btn-press px-4 py-2 rounded-xl glass-accent-pill text-xs transition-colors whitespace-nowrap"
                     >
                       Add Task
                     </button>
@@ -417,7 +399,7 @@ export const ProjectsView: React.FC = () => {
         onClose={() => setShowNewProjectModal(false)}
         maxWidthClass="max-w-lg"
       >
-        <div className="flex items-center justify-between px-5 sm:px-6 py-4 border-b border-line bg-surface-warm">
+        <div className="flex items-center justify-between px-5 sm:px-6 py-4 border-b border-white/10 bg-white/[0.03]">
           <div className="flex items-center gap-2">
             <FolderGit2 className="w-4 h-4 text-brand-blue" />
             <h3 className="text-sm font-semibold text-ink">Create Project</h3>
@@ -425,7 +407,7 @@ export const ProjectsView: React.FC = () => {
           <button
             type="button"
             onClick={() => setShowNewProjectModal(false)}
-            className="p-1.5 rounded-lg text-ink-muted hover:text-ink transition-colors"
+            className="btn-press glass-control p-1.5 rounded-xl text-ink-muted hover:text-ink transition-colors"
             aria-label="Close project modal"
           >
             <X className="w-4 h-4" />
@@ -502,17 +484,17 @@ export const ProjectsView: React.FC = () => {
             </div>
           )}
 
-          <div className="flex justify-end gap-2 pt-3 border-t border-line">
+          <div className="flex justify-end gap-2 pt-3 border-t border-white/10">
             <button
               type="button"
               onClick={() => setShowNewProjectModal(false)}
-              className="btn-press px-4 py-2 text-xs font-medium text-ink-muted hover:text-ink"
+              className="btn-press px-4 py-2 rounded-xl text-xs font-medium text-ink-muted hover:text-ink"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="btn-press px-4 py-2 rounded-xl text-xs font-semibold bg-accent text-accent-ink hover:bg-accent-hover transition-colors"
+              className="btn-press px-4 py-2 rounded-xl text-xs glass-accent-pill transition-colors"
             >
               Create Project
             </button>

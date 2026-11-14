@@ -162,7 +162,7 @@ export const TodayView: React.FC = () => {
         <button
           type="button"
           onClick={() => setShowReflectionModal(true)}
-          className="btn-press self-start sm:self-auto flex items-center gap-1.5 px-4 py-2.5 min-h-[44px] sm:min-h-0 rounded-xl bg-surface-warm hover:bg-surface-hover border border-line text-ink text-xs font-semibold transition-colors whitespace-nowrap shrink-0"
+          className="btn-press glass-control self-start sm:self-auto flex items-center gap-1.5 px-4 py-2.5 min-h-[44px] sm:min-h-0 rounded-xl text-ink text-xs font-semibold transition-colors whitespace-nowrap shrink-0"
         >
           <BookOpen className="w-3.5 h-3.5 text-brand-blue" />
           <span>Daily Reflection</span>
@@ -329,7 +329,7 @@ export const TodayView: React.FC = () => {
                             startFocusTimer(25, { id: task.id, title: task.title });
                             setIsFocusTimerOpen(true);
                           }}
-                          className="btn-press flex items-center gap-1.5 text-xs font-semibold text-accent-ink px-3 py-1.5 rounded-lg bg-accent hover:bg-accent-hover transition-colors whitespace-nowrap shrink-0"
+                          className="btn-press glass-accent-pill flex items-center gap-1.5 text-xs font-semibold text-accent-ink px-3 py-1.5 rounded-lg transition-colors whitespace-nowrap shrink-0"
                         >
                           <Play className="w-3 h-3 fill-current" />
                           <span>Focus</span>
@@ -398,7 +398,7 @@ export const TodayView: React.FC = () => {
                           }
                         }}
                         disabled={dailyPriorities.length >= 3}
-                        className="btn-press text-xs font-medium px-2.5 py-1 rounded-lg bg-surface-warm hover:bg-accent/20 text-ink disabled:opacity-35 border border-line transition-colors whitespace-nowrap shrink-0"
+                        className="btn-press glass-control text-xs font-medium px-2.5 py-1 rounded-lg text-ink disabled:opacity-35 transition-colors whitespace-nowrap shrink-0"
                       >
                         + Top 3
                       </button>
@@ -463,7 +463,7 @@ export const TodayView: React.FC = () => {
                       />
                       <button
                         type="submit"
-                        className="btn-press px-3.5 py-1.5 rounded-lg bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs transition-colors whitespace-nowrap"
+                        className="btn-press glass-accent-pill px-3.5 py-1.5 rounded-lg text-accent-ink font-semibold text-xs transition-colors whitespace-nowrap"
                       >
                         Save
                       </button>
@@ -572,7 +572,7 @@ export const TodayView: React.FC = () => {
         onClose={() => setShowReflectionModal(false)}
         maxWidthClass="max-w-lg"
       >
-        <div className="flex items-center justify-between px-5 sm:px-6 py-4 border-b border-line bg-surface-warm">
+        <div className="flex items-center justify-between px-5 sm:px-6 py-4 border-b border-white/10 bg-white/[0.03]">
           <div className="flex items-center gap-2">
             <BookOpen className="w-4 h-4 text-brand-blue" />
             <h3 className="text-sm font-semibold text-ink">
@@ -582,7 +582,7 @@ export const TodayView: React.FC = () => {
           <button
             type="button"
             onClick={() => setShowReflectionModal(false)}
-            className="p-1.5 rounded-lg text-ink-muted hover:text-ink transition-colors"
+            className="btn-press glass-control p-1.5 rounded-xl text-ink-muted hover:text-ink transition-colors"
             aria-label="Close reflection modal"
           >
             <X className="w-4 h-4" />
@@ -658,7 +658,7 @@ export const TodayView: React.FC = () => {
             )}
           </AnimatePresence>
 
-          <div className="flex justify-end gap-2 pt-3 border-t border-line">
+          <div className="flex justify-end gap-2 pt-3 border-t border-white/10">
             <button
               type="button"
               onClick={() => setShowReflectionModal(false)}
@@ -668,7 +668,7 @@ export const TodayView: React.FC = () => {
             </button>
             <button
               type="submit"
-              className="btn-press px-4 py-2 rounded-xl text-xs font-semibold bg-accent hover:bg-accent-hover text-accent-ink transition-colors"
+              className="btn-press glass-accent-pill px-4 py-2 rounded-xl text-xs font-semibold text-accent-ink transition-colors"
             >
               Save to Journal
             </button>

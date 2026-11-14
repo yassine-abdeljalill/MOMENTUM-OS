@@ -16,6 +16,7 @@ import {
   StaggerItem,
   MOMENTUM_EASE,
 } from '../common/MotionPrimitives';
+import { GlassSegmentedControl } from '../common/LiquidGlass';
 
 export const FitnessView: React.FC = () => {
   const prefersReduced = useReducedMotion();
@@ -97,38 +98,21 @@ export const FitnessView: React.FC = () => {
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
-          <div className="flex bg-canvas p-1 rounded-xl border border-line text-xs relative">
-            {([
-              { id: 'sessions', label: `Logged Workouts (${state.workoutSessions.length})` },
-              { id: 'routines', label: `Routines (${state.workoutRoutines.length})` },
-            ] as const).map(tab => {
-              const isActive = activeTab === tab.id;
-              return (
-                <button
-                  key={tab.id}
-                  type="button"
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`relative z-10 px-3 py-1.5 rounded-lg transition-colors whitespace-nowrap ${
-                    isActive ? 'text-accent-ink font-semibold' : 'text-ink-muted hover:text-ink font-medium'
-                  }`}
-                >
-                  {isActive && (
-                    <motion.span
-                      layoutId="fitness-tab-pill"
-                      transition={{ duration: prefersReduced ? 0.01 : 0.2, ease: MOMENTUM_EASE }}
-                      className="absolute inset-0 bg-accent rounded-lg -z-10"
-                    />
-                  )}
-                  {tab.label}
-                </button>
-              );
-            })}
-          </div>
+          <GlassSegmentedControl
+            layoutId="fitness-tab-pill"
+            size="sm"
+            value={activeTab}
+            onChange={setActiveTab}
+            options={[
+              { id: 'sessions', label: 'Logged Workouts', count: state.workoutSessions.length },
+              { id: 'routines', label: 'Routines', count: state.workoutRoutines.length },
+            ]}
+          />
 
           <button
             type="button"
             onClick={() => setShowLogModal(true)}
-            className="btn-press group flex items-center gap-1.5 px-4 py-2 min-h-[44px] sm:min-h-0 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs transition-all whitespace-nowrap shrink-0"
+            className="btn-press group flex items-center gap-1.5 px-4 py-2 min-h-[44px] sm:min-h-0 rounded-xl glass-accent-pill text-xs transition-all whitespace-nowrap shrink-0"
           >
             <Plus className="w-4 h-4 stroke-[2.5] transition-transform duration-200 group-hover:rotate-90" />
             <span>Log Workout</span>
@@ -318,9 +302,8 @@ export const FitnessView: React.FC = () => {
         isOpen={showLogModal}
         onClose={() => setShowLogModal(false)}
         maxWidthClass="max-w-xl"
-        panelClassName="bg-surface border border-line rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[85vh]"
       >
-        <div className="flex items-center justify-between px-6 py-4 border-b border-line bg-surface-warm">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-white/10 bg-white/[0.03] shrink-0">
           <div className="flex items-center gap-2">
             <Dumbbell className="w-4 h-4 text-brand-blue" />
             <h3 className="text-sm font-bold text-ink">Log Training Session</h3>
@@ -328,7 +311,7 @@ export const FitnessView: React.FC = () => {
           <button
             type="button"
             onClick={() => setShowLogModal(false)}
-            className="text-ink-muted hover:text-ink transition-colors"
+            className="btn-press glass-control p-1.5 rounded-xl text-ink-muted hover:text-ink transition-colors"
             aria-label="Close modal"
           >
             <X className="w-4 h-4" />
@@ -450,17 +433,17 @@ export const FitnessView: React.FC = () => {
             />
           </div>
 
-          <div className="flex justify-end gap-2 pt-3 border-t border-line">
+          <div className="flex justify-end gap-2 pt-3 border-t border-white/10">
             <button
               type="button"
               onClick={() => setShowLogModal(false)}
-              className="btn-press px-3 py-1.5 text-xs text-ink-muted hover:text-ink"
+              className="btn-press px-3 py-1.5 rounded-xl text-xs text-ink-muted hover:text-ink"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="btn-press px-4 py-1.5 rounded-xl text-xs font-semibold bg-accent text-accent-ink hover:bg-accent-hover transition-colors"
+              className="btn-press px-4 py-1.5 rounded-xl text-xs glass-accent-pill transition-colors"
             >
               Save Workout
             </button>

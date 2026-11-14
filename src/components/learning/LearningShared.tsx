@@ -137,7 +137,7 @@ export const ModuleModal: React.FC<{
 
   return (
     <ModalShell isOpen={isOpen} onClose={onClose} maxWidthClass="max-w-lg">
-      <div className="flex items-center justify-between px-5 sm:px-6 py-4 border-b border-line bg-surface-warm">
+      <div className="flex items-center justify-between px-5 sm:px-6 py-4 border-b border-white/10 bg-white/[0.03]">
         <div className="flex items-center gap-2.5">
           <div
             className="w-7 h-7 rounded-lg flex items-center justify-center border border-white/20"
@@ -155,7 +155,7 @@ export const ModuleModal: React.FC<{
         <button
           type="button"
           onClick={onClose}
-          className="p-1.5 rounded-lg text-ink-muted hover:text-ink transition-colors"
+          className="btn-press glass-control p-1.5 rounded-xl text-ink-muted hover:text-ink transition-colors"
           aria-label="Close modal"
         >
           <X className="w-4 h-4" />
@@ -254,18 +254,18 @@ export const ModuleModal: React.FC<{
           </div>
         </div>
 
-        <div className="flex justify-end gap-2 pt-3 border-t border-line">
+        <div className="flex justify-end gap-2 pt-3 border-t border-white/10">
           <button
             type="button"
             onClick={onClose}
-            className="btn-press px-4 py-2 text-xs font-medium text-ink-muted hover:text-ink"
+            className="btn-press px-4 py-2 rounded-xl text-xs font-medium text-ink-muted hover:text-ink"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={saving}
-            className="btn-press px-4 py-2 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs disabled:opacity-60"
+            className="btn-press px-4 py-2 rounded-xl glass-accent-pill text-xs disabled:opacity-60"
           >
             {saving ? 'Saving...' : editingModule ? 'Save Module' : 'Create Module'}
           </button>
@@ -349,14 +349,14 @@ export const LessonModal: React.FC<{
 
   return (
     <ModalShell isOpen={isOpen} onClose={onClose} maxWidthClass="max-w-xl">
-      <div className="flex items-center justify-between px-5 sm:px-6 py-4 border-b border-line bg-surface-warm shrink-0">
+      <div className="flex items-center justify-between px-5 sm:px-6 py-4 border-b border-white/10 bg-white/[0.03] shrink-0">
         <h3 className="text-sm font-semibold text-ink">
           {editingLesson ? 'Edit Lesson' : 'Add Lesson'}
         </h3>
         <button
           type="button"
           onClick={onClose}
-          className="p-1.5 rounded-lg text-ink-muted hover:text-ink"
+          className="btn-press glass-control p-1.5 rounded-xl text-ink-muted hover:text-ink transition-colors"
           aria-label="Close modal"
         >
           <X className="w-4 h-4" />
@@ -488,25 +488,25 @@ export const LessonModal: React.FC<{
               type="button"
               onClick={handleAddObjective}
               aria-label="Add learning objective"
-              className="btn-press px-3 py-2 rounded-xl bg-surface-warm hover:bg-surface-hover text-ink text-xs font-semibold border border-line"
+              className="btn-press glass-control px-3 py-2 rounded-xl text-ink text-xs font-semibold"
             >
               <Plus className="w-3.5 h-3.5" />
             </button>
           </div>
         </div>
 
-        <div className="flex justify-end gap-2 pt-3 border-t border-line">
+        <div className="flex justify-end gap-2 pt-3 border-t border-white/10">
           <button
             type="button"
             onClick={onClose}
-            className="btn-press px-4 py-2 text-xs font-medium text-ink-muted hover:text-ink"
+            className="btn-press px-4 py-2 rounded-xl text-xs font-medium text-ink-muted hover:text-ink"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={saving}
-            className="btn-press px-4 py-2 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs disabled:opacity-60"
+            className="btn-press px-4 py-2 rounded-xl glass-accent-pill text-xs disabled:opacity-60"
           >
             {saving ? 'Saving...' : editingLesson ? 'Save Lesson' : 'Create Lesson'}
           </button>
@@ -535,7 +535,7 @@ export const ConfirmDeleteDialog: React.FC<{
 }) => {
   return (
     <ModalShell isOpen={isOpen} onClose={onCancel} maxWidthClass="max-w-md">
-      <div className="px-5 py-4 border-b border-line bg-surface-warm flex items-center justify-between">
+      <div className="px-5 py-4 border-b border-white/10 bg-white/[0.03] flex items-center justify-between">
         <div className="flex items-center gap-2">
           <AlertTriangle className="w-4 h-4 text-accent" />
           <h3 className="text-sm font-semibold text-ink">{title}</h3>
@@ -543,7 +543,7 @@ export const ConfirmDeleteDialog: React.FC<{
         <button
           type="button"
           onClick={onCancel}
-          className="p-1.5 rounded-lg text-ink-muted hover:text-ink"
+          className="btn-press glass-control p-1.5 rounded-xl text-ink-muted hover:text-ink"
           aria-label="Close confirmation"
         >
           <X className="w-4 h-4" />
@@ -551,7 +551,7 @@ export const ConfirmDeleteDialog: React.FC<{
       </div>
       <div className="p-5 space-y-4">
         <p className="text-xs text-ink-muted leading-relaxed">{description}</p>
-        <div className="flex justify-end gap-2 pt-2 border-t border-line">
+        <div className="flex justify-end gap-2 pt-2 border-t border-white/10">
           <button
             type="button"
             onClick={onCancel}

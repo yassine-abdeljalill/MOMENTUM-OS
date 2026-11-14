@@ -55,7 +55,7 @@ export const NotificationsDrawer: React.FC = () => {
       side="right"
     >
       {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b border-line bg-surface-warm text-ink">
+      <div className="flex items-center justify-between p-4 border-b border-white/10 bg-white/[0.03] text-ink">
         <div className="flex items-center gap-2">
           <Bell className="w-4 h-4 text-brand-blue" />
           <h2 className="font-semibold text-sm font-heading">Notifications</h2>
@@ -81,7 +81,7 @@ export const NotificationsDrawer: React.FC = () => {
           <button
             type="button"
             onClick={() => setIsNotificationsOpen(false)}
-            className="p-1.5 rounded-lg text-ink-muted hover:text-ink hover:bg-surface-hover btn-press"
+            className="p-1.5 rounded-xl glass-control text-ink-muted hover:text-ink btn-press"
             aria-label="Close notifications"
           >
             <X className="w-4 h-4" />
@@ -90,7 +90,7 @@ export const NotificationsDrawer: React.FC = () => {
       </div>
 
       {/* Notifications List */}
-      <div className="flex-1 overflow-y-auto divide-y divide-line/60 p-2">
+      <div className="flex-1 overflow-y-auto space-y-1.5 p-2.5">
         {notifications.length === 0 ? (
           <div className="py-16 text-center text-ink-muted space-y-2">
             <CheckCircle2 className="w-8 h-8 mx-auto opacity-40 text-ink" />
@@ -110,13 +110,13 @@ export const NotificationsDrawer: React.FC = () => {
                 ease: MOMENTUM_EASE,
               }}
               onClick={() => handleNotificationClick(item)}
-              className={`w-full text-left p-3 rounded-xl transition-all group flex items-start gap-3 ${
+              className={`w-full text-left p-3 rounded-2xl transition-all group flex items-start gap-3 ${
                 item.read
-                  ? 'hover:bg-surface-warm/70 opacity-80'
-                  : 'bg-accent/12 hover:bg-accent/20 border border-accent/35'
+                  ? 'hover:bg-white/[0.05] opacity-80'
+                  : 'bg-accent/14 hover:bg-accent/20 border border-accent/35'
               }`}
             >
-              <div className="p-2 rounded-xl bg-surface-warm border border-line shrink-0 mt-0.5 transition-transform duration-150 group-hover:scale-105">
+              <div className="p-2 rounded-xl glass-control shrink-0 mt-0.5 transition-transform duration-150 group-hover:scale-105">
                 {getIcon(item.type)}
               </div>
               <div className="flex-1 min-w-0">

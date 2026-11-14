@@ -62,7 +62,7 @@ export const FinanceBudgetsTab: React.FC<Props> = ({
           <button
             type="button"
             onClick={onAdd}
-            className="btn-press flex items-center gap-1.5 px-4 py-2 min-h-[44px] sm:min-h-0 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs whitespace-nowrap"
+            className="btn-press glass-accent-pill flex items-center gap-1.5 px-4 py-2 min-h-[44px] sm:min-h-0 rounded-xl font-semibold text-xs whitespace-nowrap"
           >
             <Plus className="w-4 h-4" />
             <span>Create Budget</span>
@@ -119,7 +119,7 @@ export const FinanceBudgetsTab: React.FC<Props> = ({
           <button
             type="button"
             onClick={onAdd}
-            className="btn-press px-4 py-2 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs"
+            className="btn-press glass-accent-pill px-4 py-2 rounded-xl font-semibold text-xs"
           >
             + Create Monthly Budget
           </button>

@@ -21,8 +21,8 @@ export const PWAInstallButton: React.FC<PWAInstallButtonProps> = ({
 
   const buttonClasses =
     variant === 'sheet'
-      ? 'w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-xs font-semibold bg-accent/15 hover:bg-accent/25 text-ink border border-accent/40 transition-colors btn-press min-h-[44px]'
-      : `w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold bg-accent/15 hover:bg-accent/25 text-accent border border-accent/35 transition-colors btn-press ${
+      ? 'w-full flex items-center gap-3 px-3.5 py-3 rounded-2xl text-xs font-semibold glass-control hover:border-accent/50 text-ink transition-colors btn-press min-h-[44px]'
+      : `w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold glass-control hover:border-accent/50 text-accent transition-colors btn-press ${
           compact ? 'justify-center px-2' : ''
         }`;
 
@@ -58,7 +58,7 @@ export const PWAInstallButton: React.FC<PWAInstallButtonProps> = ({
           onClose={() => setShowIOSGuide(false)}
           maxWidthClass="max-w-sm"
         >
-          <div className="flex items-center justify-between px-5 py-4 bg-surface-warm text-ink border-b border-line">
+          <div className="flex items-center justify-between px-5 py-4 bg-white/[0.03] text-ink border-b border-white/10">
             <div className="flex items-center gap-2.5">
               <img
                 src="/brand-logo.png"

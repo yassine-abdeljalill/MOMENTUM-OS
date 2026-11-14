@@ -33,6 +33,7 @@ import type {
   FinanceTransaction,
 } from '../../types/finance';
 import { MOMENTUM_EASE } from '../common/MotionPrimitives';
+import { GlassSegmentedControl } from '../common/LiquidGlass';
 import { FinanceOverviewTab } from '../finance/FinanceOverviewTab';
 import { FinanceTransactionsTab } from '../finance/FinanceTransactionsTab';
 import { FinanceBudgetsTab } from '../finance/FinanceBudgetsTab';
@@ -451,8 +452,8 @@ export const FinanceView: React.FC = () => {
 
   if (!authUser) {
     return (
-      <div className="max-w-lg mx-auto my-12 p-8 rounded-2xl bg-surface border border-line text-center space-y-4">
-        <div className="w-12 h-12 rounded-xl bg-surface-warm border border-line text-brand-blue flex items-center justify-center mx-auto">
+      <div className="max-w-lg mx-auto my-12 p-8 rounded-3xl glass-elevated glass-specular-rim text-center space-y-4">
+        <div className="w-12 h-12 rounded-xl glass-control text-brand-blue flex items-center justify-center mx-auto">
           <Wallet className="w-6 h-6" />
         </div>
         <div className="space-y-1.5">
@@ -465,7 +466,7 @@ export const FinanceView: React.FC = () => {
           <button
             type="button"
             onClick={() => setIsAuthModalOpen(true)}
-            className="btn-press px-5 py-2 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs"
+            className="btn-press glass-accent-pill px-5 py-2 rounded-xl text-accent-ink font-semibold text-xs"
           >
             Sign In to MOMENTUM
           </button>
@@ -479,7 +480,7 @@ export const FinanceView: React.FC = () => {
                 showToast(err?.message || 'Unable to start workspace session.', 'error');
               }
             }}
-            className="btn-press px-4 py-2 rounded-xl bg-canvas hover:bg-surface-warm border border-line text-xs font-semibold text-ink"
+            className="btn-press glass-control px-4 py-2 rounded-xl text-xs font-semibold text-ink"
           >
             Use Personal Workspace
           </button>
@@ -496,7 +497,7 @@ export const FinanceView: React.FC = () => {
         <button
           type="button"
           onClick={loadFinanceData}
-          className="btn-press px-4 py-2 rounded-xl bg-accent text-accent-ink text-xs font-semibold"
+          className="btn-press glass-accent-pill px-4 py-2 rounded-xl text-accent-ink text-xs font-semibold"
         >
           Retry
         </button>
@@ -536,7 +537,7 @@ export const FinanceView: React.FC = () => {
 
           <div className="flex flex-wrap items-center gap-2 w-full lg:w-auto">
             {/* Currency Selector */}
-            <div className="flex items-center gap-1.5 bg-canvas px-2.5 py-2 rounded-xl border border-line text-xs shrink-0">
+            <div className="glass-control flex items-center gap-1.5 px-2.5 py-2 rounded-xl text-xs shrink-0">
               <SlidersHorizontal className="w-3.5 h-3.5 text-accent" />
               <select
                 value={currency}
@@ -557,7 +558,7 @@ export const FinanceView: React.FC = () => {
               value={rangePreset}
               onChange={e => setRangePreset(e.target.value as DateRangePreset)}
               aria-label="Date range filter"
-              className="flex-1 sm:flex-initial min-w-[120px] px-3 py-2 rounded-xl bg-canvas border border-line text-xs font-semibold text-ink focus:ring-2 focus:ring-accent focus:outline-hidden"
+              className="glass-control flex-1 sm:flex-initial min-w-[120px] px-3 py-2 rounded-xl text-xs font-semibold text-ink focus:ring-2 focus:ring-accent focus:outline-hidden"
             >
               <option value="this_month">This Month</option>
               <option value="last_month">Last Month</option>
@@ -571,7 +572,7 @@ export const FinanceView: React.FC = () => {
               type="button"
               onClick={handleExportCsv}
               aria-label="Export transactions to CSV"
-              className="btn-press flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-canvas hover:bg-surface-warm border border-line text-xs font-semibold text-ink whitespace-nowrap shrink-0"
+              className="btn-press glass-control flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold text-ink whitespace-nowrap shrink-0"
             >
               <Download className="w-3.5 h-3.5 text-accent" />
               <span className="hidden sm:inline">Export CSV</span>
@@ -583,7 +584,7 @@ export const FinanceView: React.FC = () => {
                 setEditingTx(null);
                 setTxModalOpen(true);
               }}
-              className="btn-press w-full sm:w-auto flex items-center justify-center gap-1.5 px-4 py-2 min-h-[44px] sm:min-h-0 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs whitespace-nowrap shrink-0"
+              className="btn-press glass-accent-pill w-full sm:w-auto flex items-center justify-center gap-1.5 px-4 py-2 min-h-[44px] sm:min-h-0 rounded-xl text-accent-ink font-semibold text-xs whitespace-nowrap shrink-0"
             >
               <Plus className="w-4 h-4 stroke-[2.5]" />
               <span>Add Transaction</span>
@@ -621,41 +622,19 @@ export const FinanceView: React.FC = () => {
         </AnimatePresence>
 
         {/* Sub-Navigation Tabs */}
-        <div className="flex overflow-x-auto sm:flex-wrap gap-1 bg-canvas p-1 rounded-xl border border-line text-xs">
-          {(
-            [
-              { id: 'overview', label: 'Dashboard', icon: LayoutGrid },
-              { id: 'transactions', label: 'Transactions', icon: ReceiptText },
-              { id: 'budgets', label: 'Budgets', icon: Wallet },
-              { id: 'savings', label: 'Savings Goals', icon: PiggyBank },
-              { id: 'recurring', label: 'Recurring', icon: CalendarClock },
-              { id: 'analytics', label: 'Analytics', icon: BarChart3 },
-            ] as const
-          ).map(tab => {
-            const Icon = tab.icon;
-            const isActive = activeTab === tab.id;
-            return (
-              <button
-                key={tab.id}
-                type="button"
-                onClick={() => setActiveTab(tab.id)}
-                className={`relative flex items-center gap-1.5 px-3.5 py-2 sm:py-1.5 rounded-lg font-semibold transition-colors btn-press whitespace-nowrap shrink-0 ${
-                  isActive ? 'text-accent-ink' : 'text-ink-muted hover:text-ink'
-                }`}
-              >
-                {isActive && (
-                  <motion.span
-                    layoutId="finance-subtab-pill"
-                    transition={{ type: 'spring', stiffness: 420, damping: 32 }}
-                    className="absolute inset-0 rounded-lg bg-accent"
-                  />
-                )}
-                <Icon className="w-3.5 h-3.5 relative z-10" />
-                <span className="relative z-10">{tab.label}</span>
-              </button>
-            );
-          })}
-        </div>
+        <GlassSegmentedControl
+          value={activeTab}
+          onChange={setActiveTab}
+          layoutId="finance-subtab-pill"
+          options={[
+            { id: 'overview', label: 'Dashboard', icon: LayoutGrid },
+            { id: 'transactions', label: 'Transactions', icon: ReceiptText },
+            { id: 'budgets', label: 'Budgets', icon: Wallet },
+            { id: 'savings', label: 'Savings Goals', icon: PiggyBank },
+            { id: 'recurring', label: 'Recurring', icon: CalendarClock },
+            { id: 'analytics', label: 'Analytics', icon: BarChart3 },
+          ]}
+        />
       </div>
 
       {/* Tab Body */}
