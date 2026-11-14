@@ -24,6 +24,18 @@ import type { LearningLesson, LearningModule, LearningModuleIcon, LearningStatus
 import { LEARNING_STATUS_META, MODULE_COLOR_PALETTE } from '../../lib/learning';
 import { ModalShell } from '../common/MotionPrimitives';
 
+export const DARK_SWATCH_HEXES = new Set([
+  '#64432B',
+  '#333C44',
+  '#3E7B52',
+  '#B84A44',
+  '#4F6652',
+  '#7D5A44',
+  '#3B2418',
+  '#4D3021',
+  '#1E5A99',
+]);
+
 export const MODULE_ICON_OPTIONS: { id: LearningModuleIcon; label: string; Icon: React.ElementType }[] = [
   { id: 'book', label: 'Course', Icon: BookOpen },
   { id: 'shield', label: 'Security', Icon: Shield },
@@ -58,11 +70,11 @@ export const StatusLabel: React.FC<{
     status === 'completed' ? CheckCircle2 : status === 'in_progress' ? Clock : Circle;
   return (
     <span
-      className={`inline-flex items-center gap-1 font-medium border rounded-md whitespace-nowrap shrink-0 ${
-        compact ? 'text-[10px] px-1.5 py-0.5' : 'text-[11px] px-2 py-0.5'
+      className={`inline-flex items-center gap-1 font-medium whitespace-nowrap shrink-0 ${
+        compact ? 'text-[11px]' : 'text-xs'
       } ${meta.badgeClass}`}
     >
-      <Icon className={compact ? 'w-2.5 h-2.5' : 'w-3 h-3'} />
+      <Icon className={compact ? 'w-3 h-3' : 'w-3.5 h-3.5'} />
       <span>{meta.label}</span>
     </span>
   );
@@ -82,7 +94,7 @@ export const ModuleModal: React.FC<{
 }> = ({ isOpen, onClose, editingModule, onSubmit }) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [color, setColor] = useState<string>('#8EC5FF');
+  const [color, setColor] = useState<string>('#D2925B');
   const [icon, setIcon] = useState<LearningModuleIcon>('book');
   const [status, setStatus] = useState<LearningStatus>('not_started');
   const [saving, setSaving] = useState(false);
@@ -92,7 +104,7 @@ export const ModuleModal: React.FC<{
     if (isOpen) {
       setTitle(editingModule?.title || '');
       setDescription(editingModule?.description || '');
-      setColor(editingModule?.color || '#8EC5FF');
+      setColor(editingModule?.color || '#D2925B');
       setIcon(editingModule?.icon || 'book');
       setStatus(editingModule?.status || 'not_started');
       setError('');
@@ -123,43 +135,45 @@ export const ModuleModal: React.FC<{
     }
   };
 
+  const isDarkSwatch = DARK_SWATCH_HEXES.has(color.toUpperCase());
+
   return (
     <ModalShell isOpen={isOpen} onClose={onClose} maxWidthClass="max-w-lg">
-      <div className="flex items-center justify-between px-6 py-4 border-b border-[#5A3927] bg-[#3B2418]">
+      <div className="flex items-center justify-between px-5 sm:px-6 py-4 border-b border-line bg-brand dark:bg-surface-warm">
         <div className="flex items-center gap-2.5">
           <div
-            className="w-7 h-7 rounded-lg flex items-center justify-center border border-[#F2E8DA]/20"
+            className="w-7 h-7 rounded-lg flex items-center justify-center border border-white/20"
             style={{ backgroundColor: color }}
           >
             <ModuleIconView
               icon={icon}
-              className={`w-4 h-4 ${color === '#3B2418' || color === '#4D3021' || color === '#1E5A99' ? 'text-[#F2E8DA]' : 'text-[#3B2418]'}`}
+              className={`w-4 h-4 ${isDarkSwatch ? 'text-[#F7F1E8]' : 'text-[#2B1F18]'}`}
             />
           </div>
-          <h3 className="text-sm font-bold text-[#F2E8DA]">
+          <h3 className="text-sm font-semibold text-brand-ink dark:text-ink">
             {editingModule ? 'Edit Module' : 'Create Learning Module'}
           </h3>
         </div>
         <button
           type="button"
           onClick={onClose}
-          className="p-1 rounded text-[#D8C7B4] hover:text-[#F2E8DA] hover:bg-[#4D3021] transition-colors"
+          className="p-1.5 rounded-lg text-brand-ink/80 dark:text-ink-muted hover:text-brand-ink dark:hover:text-ink transition-colors"
           aria-label="Close modal"
         >
           <X className="w-4 h-4" />
         </button>
       </div>
 
-      <form onSubmit={handleSubmit} className="p-6 space-y-4">
+      <form onSubmit={handleSubmit} className="p-5 sm:p-6 space-y-4">
         {error && (
-          <div className="p-2.5 rounded-lg bg-[#B84A44]/10 border border-[#B84A44]/40 text-xs text-[#9E3530]">
+          <div className="p-2.5 rounded-xl bg-danger/10 border border-danger/30 text-xs text-danger">
             {error}
           </div>
         )}
 
         <div>
-          <label className="block text-xs font-semibold text-[#6E5648] mb-1">
-            Module Title <span className="text-[#1E5A99]">*</span>
+          <label className="block text-xs font-semibold text-ink-muted mb-1.5">
+            Module Title <span className="text-accent">*</span>
           </label>
           <input
             type="text"
@@ -167,25 +181,25 @@ export const ModuleModal: React.FC<{
             value={title}
             onChange={e => setTitle(e.target.value)}
             placeholder="e.g. Network Security & Cryptography"
-            className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
+            className="w-full px-3 py-2 rounded-xl bg-canvas border border-line text-xs text-ink placeholder:text-ink-muted focus:ring-2 focus:ring-accent focus:outline-hidden"
             autoFocus
           />
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-[#6E5648] mb-1">Description</label>
+          <label className="block text-xs font-semibold text-ink-muted mb-1.5">Description</label>
           <textarea
             rows={3}
             value={description}
             onChange={e => setDescription(e.target.value)}
             placeholder="Course syllabus overview, focus areas, and key competencies..."
-            className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
+            className="w-full px-3 py-2 rounded-xl bg-canvas border border-line text-xs text-ink placeholder:text-ink-muted focus:ring-2 focus:ring-accent focus:outline-hidden"
           />
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-xs font-semibold text-[#6E5648] mb-1.5">Module Color</label>
+            <label className="block text-xs font-semibold text-ink-muted mb-1.5">Module Color</label>
             <div className="flex flex-wrap gap-2">
               {MODULE_COLOR_PALETTE.map(c => (
                 <button
@@ -194,7 +208,7 @@ export const ModuleModal: React.FC<{
                   onClick={() => setColor(c.hex)}
                   title={c.label}
                   className={`w-7 h-7 rounded-lg border transition-transform btn-press ${
-                    color === c.hex ? 'ring-2 ring-[#3B2418] ring-offset-1 scale-105' : 'border-[#D6C6B2]'
+                    color === c.hex ? 'ring-2 ring-accent ring-offset-1 scale-105' : 'border-line'
                   }`}
                   style={{ backgroundColor: c.hex }}
                   aria-label={`Color ${c.label}`}
@@ -204,11 +218,11 @@ export const ModuleModal: React.FC<{
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-[#6E5648] mb-1.5">Module Status</label>
+            <label className="block text-xs font-semibold text-ink-muted mb-1.5">Module Status</label>
             <select
               value={status}
               onChange={e => setStatus(e.target.value as LearningStatus)}
-              className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
+              className="w-full px-3 py-2 rounded-xl bg-canvas border border-line text-xs text-ink focus:ring-2 focus:ring-accent focus:outline-hidden"
             >
               <option value="not_started">Not Started</option>
               <option value="in_progress">In Progress</option>
@@ -218,8 +232,8 @@ export const ModuleModal: React.FC<{
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-[#6E5648] mb-1.5">Module Icon</label>
-          <div className="grid grid-cols-6 gap-2">
+          <label className="block text-xs font-semibold text-ink-muted mb-1.5">Module Icon</label>
+          <div className="grid grid-cols-4 sm:grid-cols-6 gap-2">
             {MODULE_ICON_OPTIONS.map(opt => {
               const Icon = opt.Icon;
               const selected = icon === opt.id;
@@ -228,10 +242,10 @@ export const ModuleModal: React.FC<{
                   key={opt.id}
                   type="button"
                   onClick={() => setIcon(opt.id)}
-                  className={`flex flex-col items-center justify-center gap-1 py-2 px-1 rounded-lg border text-[10px] transition-colors btn-press ${
+                  className={`flex flex-col items-center justify-center gap-1 py-2 px-1 rounded-xl border text-[10px] transition-colors btn-press ${
                     selected
-                      ? 'bg-[#3B2418] text-[#8EC5FF] border-[#3B2418]'
-                      : 'bg-[#F2E8DA] text-[#6E5648] border-[#D6C6B2] hover:border-[#8EC5FF] hover:text-[#3B2418]'
+                      ? 'bg-accent text-accent-ink border-accent font-semibold'
+                      : 'bg-canvas text-ink-muted border-line hover:border-accent hover:text-ink'
                   }`}
                 >
                   <Icon className="w-3.5 h-3.5" />
@@ -242,18 +256,18 @@ export const ModuleModal: React.FC<{
           </div>
         </div>
 
-        <div className="flex justify-end gap-2 pt-3 border-t border-[#D6C6B2]">
+        <div className="flex justify-end gap-2 pt-3 border-t border-line">
           <button
             type="button"
             onClick={onClose}
-            className="btn-press px-3 py-1.5 text-xs font-medium text-[#6E5648] hover:text-[#3B2418]"
+            className="btn-press px-4 py-2 text-xs font-medium text-ink-muted hover:text-ink"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={saving}
-            className="btn-press px-4 py-2 rounded-lg bg-[#8EC5FF] hover:bg-[#73B6FC] text-[#3B2418] border border-[#3B2418]/15 font-bold text-xs shadow-xs disabled:opacity-60"
+            className="btn-press px-4 py-2 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs disabled:opacity-60"
           >
             {saving ? 'Saving...' : editingModule ? 'Save Module' : 'Create Module'}
           </button>
@@ -336,36 +350,31 @@ export const LessonModal: React.FC<{
   };
 
   return (
-    <ModalShell
-      isOpen={isOpen}
-      onClose={onClose}
-      maxWidthClass="max-w-xl"
-      panelClassName="bg-[#FAF5ED] border border-[#D6C6B2] rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[88vh]"
-    >
-      <div className="flex items-center justify-between px-6 py-4 border-b border-[#5A3927] bg-[#3B2418] shrink-0">
-        <h3 className="text-sm font-bold text-[#F2E8DA]">
+    <ModalShell isOpen={isOpen} onClose={onClose} maxWidthClass="max-w-xl">
+      <div className="flex items-center justify-between px-5 sm:px-6 py-4 border-b border-line bg-brand dark:bg-surface-warm shrink-0">
+        <h3 className="text-sm font-semibold text-brand-ink dark:text-ink">
           {editingLesson ? 'Edit Lesson' : 'Add Lesson'}
         </h3>
         <button
           type="button"
           onClick={onClose}
-          className="p-1 rounded text-[#D8C7B4] hover:text-[#F2E8DA] hover:bg-[#4D3021]"
+          className="p-1.5 rounded-lg text-brand-ink/80 dark:text-ink-muted hover:text-brand-ink dark:hover:text-ink"
           aria-label="Close modal"
         >
           <X className="w-4 h-4" />
         </button>
       </div>
 
-      <form onSubmit={handleSubmit} className="p-6 space-y-4 overflow-y-auto flex-1">
+      <form onSubmit={handleSubmit} className="p-5 sm:p-6 space-y-4 overflow-y-auto flex-1">
         {error && (
-          <div className="p-2.5 rounded-lg bg-[#B84A44]/10 border border-[#B84A44]/40 text-xs text-[#9E3530]">
+          <div className="p-2.5 rounded-xl bg-danger/10 border border-danger/30 text-xs text-danger">
             {error}
           </div>
         )}
 
         <div>
-          <label className="block text-xs font-semibold text-[#6E5648] mb-1">
-            Lesson Title <span className="text-[#1E5A99]">*</span>
+          <label className="block text-xs font-semibold text-ink-muted mb-1.5">
+            Lesson Title <span className="text-accent">*</span>
           </label>
           <input
             type="text"
@@ -373,37 +382,39 @@ export const LessonModal: React.FC<{
             value={title}
             onChange={e => setTitle(e.target.value)}
             placeholder="e.g. Lecture 02: TLS 1.3 Handshake & Forward Secrecy"
-            className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
+            className="w-full px-3 py-2 rounded-xl bg-canvas border border-line text-xs text-ink placeholder:text-ink-muted focus:ring-2 focus:ring-accent focus:outline-hidden"
             autoFocus
           />
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div>
-            <label className="block text-xs font-semibold text-[#6E5648] mb-1">Teacher / Instructor</label>
+            <label className="block text-xs font-semibold text-ink-muted mb-1.5">
+              Teacher / Instructor
+            </label>
             <input
               type="text"
               value={teacherName}
               onChange={e => setTeacherName(e.target.value)}
               placeholder="e.g. Prof. Meyer"
-              className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
+              className="w-full px-3 py-2 rounded-xl bg-canvas border border-line text-xs text-ink placeholder:text-ink-muted focus:ring-2 focus:ring-accent focus:outline-hidden"
             />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-[#6E5648] mb-1">Lesson Date</label>
+            <label className="block text-xs font-semibold text-ink-muted mb-1.5">Lesson Date</label>
             <input
               type="date"
               value={lessonDate}
               onChange={e => setLessonDate(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
+              className="w-full px-3 py-2 rounded-xl bg-canvas border border-line text-xs text-ink font-mono focus:ring-2 focus:ring-accent focus:outline-hidden"
             />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-[#6E5648] mb-1">Status</label>
+            <label className="block text-xs font-semibold text-ink-muted mb-1.5">Status</label>
             <select
               value={status}
               onChange={e => setStatus(e.target.value as LearningStatus)}
-              className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
+              className="w-full px-3 py-2 rounded-xl bg-canvas border border-line text-xs text-ink focus:ring-2 focus:ring-accent focus:outline-hidden"
             >
               <option value="not_started">Not Started</option>
               <option value="in_progress">In Progress</option>
@@ -413,45 +424,46 @@ export const LessonModal: React.FC<{
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-[#6E5648] mb-1">Description</label>
+          <label className="block text-xs font-semibold text-ink-muted mb-1.5">Description</label>
           <textarea
             rows={3}
             value={description}
             onChange={e => setDescription(e.target.value)}
             placeholder="Key topics covered, chapters, or lecture summary..."
-            className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
+            className="w-full px-3 py-2 rounded-xl bg-canvas border border-line text-xs text-ink placeholder:text-ink-muted focus:ring-2 focus:ring-accent focus:outline-hidden"
           />
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
-            <label className="block text-xs font-semibold text-[#6E5648] mb-1">Estimated Duration (min)</label>
+            <label className="block text-xs font-semibold text-ink-muted mb-1.5">
+              Estimated Duration (min)
+            </label>
             <input
               type="number"
               min={5}
               max={600}
               value={studyDurationMinutes}
               onChange={e => setStudyDurationMinutes(Number(e.target.value))}
-              className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs font-mono text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
+              className="w-full px-3 py-2 rounded-xl bg-canvas border border-line text-xs font-mono text-ink focus:ring-2 focus:ring-accent focus:outline-hidden"
             />
           </div>
         </div>
 
-        {/* Learning Objectives */}
         <div className="space-y-2 pt-1">
-          <label className="block text-xs font-semibold text-[#6E5648]">Learning Objectives</label>
+          <label className="block text-xs font-semibold text-ink-muted">Learning Objectives</label>
           {objectives.length > 0 && (
             <ul className="space-y-1.5">
               {objectives.map((obj, idx) => (
                 <li
                   key={idx}
-                  className="flex items-center justify-between gap-2 px-3 py-1.5 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418]"
+                  className="flex items-center justify-between gap-2 px-3 py-1.5 rounded-xl bg-canvas border border-line text-xs text-ink"
                 >
                   <span className="truncate">{obj}</span>
                   <button
                     type="button"
                     onClick={() => setObjectives(prev => prev.filter((_, i) => i !== idx))}
-                    className="text-[#6E5648] hover:text-[#B84A44] shrink-0"
+                    className="text-ink-muted hover:text-danger shrink-0"
                     aria-label="Remove objective"
                   >
                     <X className="w-3.5 h-3.5" />
@@ -472,30 +484,31 @@ export const LessonModal: React.FC<{
                 }
               }}
               placeholder="Add an objective and press Enter..."
-              className="flex-1 px-3 py-1.5 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
+              className="flex-1 px-3 py-2 rounded-xl bg-canvas border border-line text-xs text-ink placeholder:text-ink-muted focus:ring-2 focus:ring-accent focus:outline-hidden"
             />
             <button
               type="button"
               onClick={handleAddObjective}
-              className="btn-press px-3 py-1.5 rounded-lg bg-[#EAE0D0] hover:bg-[#E3D5C1] text-[#3B2418] text-xs font-semibold border border-[#D6C6B2]"
+              aria-label="Add learning objective"
+              className="btn-press px-3 py-2 rounded-xl bg-surface-warm hover:bg-surface-hover text-ink text-xs font-semibold border border-line"
             >
               <Plus className="w-3.5 h-3.5" />
             </button>
           </div>
         </div>
 
-        <div className="flex justify-end gap-2 pt-3 border-t border-[#D6C6B2]">
+        <div className="flex justify-end gap-2 pt-3 border-t border-line">
           <button
             type="button"
             onClick={onClose}
-            className="btn-press px-3 py-1.5 text-xs font-medium text-[#6E5648] hover:text-[#3B2418]"
+            className="btn-press px-4 py-2 text-xs font-medium text-ink-muted hover:text-ink"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={saving}
-            className="btn-press px-4 py-2 rounded-lg bg-[#8EC5FF] hover:bg-[#73B6FC] text-[#3B2418] border border-[#3B2418]/15 font-bold text-xs shadow-xs disabled:opacity-60"
+            className="btn-press px-4 py-2 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs disabled:opacity-60"
           >
             {saving ? 'Saving...' : editingLesson ? 'Save Lesson' : 'Create Lesson'}
           </button>
@@ -524,28 +537,28 @@ export const ConfirmDeleteDialog: React.FC<{
 }) => {
   return (
     <ModalShell isOpen={isOpen} onClose={onCancel} maxWidthClass="max-w-md">
-      <div className="px-5 py-4 border-b border-[#5A3927] bg-[#3B2418] flex items-center justify-between">
+      <div className="px-5 py-4 border-b border-line bg-brand dark:bg-surface-warm flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <AlertTriangle className="w-4 h-4 text-[#8EC5FF]" />
-          <h3 className="text-sm font-bold text-[#F2E8DA]">{title}</h3>
+          <AlertTriangle className="w-4 h-4 text-accent" />
+          <h3 className="text-sm font-semibold text-brand-ink dark:text-ink">{title}</h3>
         </div>
         <button
           type="button"
           onClick={onCancel}
-          className="p-1 rounded text-[#D8C7B4] hover:text-[#F2E8DA]"
+          className="p-1.5 rounded-lg text-brand-ink/80 dark:text-ink-muted hover:text-brand-ink dark:hover:text-ink"
           aria-label="Close confirmation"
         >
           <X className="w-4 h-4" />
         </button>
       </div>
       <div className="p-5 space-y-4">
-        <p className="text-xs text-[#6E5648] leading-relaxed">{description}</p>
-        <div className="flex justify-end gap-2 pt-2 border-t border-[#D6C6B2]">
+        <p className="text-xs text-ink-muted leading-relaxed">{description}</p>
+        <div className="flex justify-end gap-2 pt-2 border-t border-line">
           <button
             type="button"
             onClick={onCancel}
             disabled={busy}
-            className="btn-press px-3 py-1.5 rounded-lg text-xs font-medium text-[#6E5648] hover:text-[#3B2418]"
+            className="btn-press px-4 py-2 rounded-xl text-xs font-medium text-ink-muted hover:text-ink"
           >
             Cancel
           </button>
@@ -553,7 +566,7 @@ export const ConfirmDeleteDialog: React.FC<{
             type="button"
             disabled={busy}
             onClick={onConfirm}
-            className="btn-press flex items-center gap-1.5 px-4 py-1.5 rounded-lg bg-[#B84A44] hover:bg-[#9E3530] text-[#FAF5ED] font-semibold text-xs shadow-xs disabled:opacity-60"
+            className="btn-press flex items-center gap-1.5 px-4 py-2 rounded-xl bg-danger hover:opacity-90 text-white font-semibold text-xs disabled:opacity-60"
           >
             <Trash2 className="w-3.5 h-3.5" />
             <span>{busy ? 'Deleting...' : confirmLabel}</span>

@@ -78,117 +78,117 @@ export const FinanceOverviewTab: React.FC<Props> = ({
     <div className="space-y-6">
       {/* 5 KPI Cards */}
       <StaggerContainer className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-        <StaggerItem className="card-hover p-4 rounded-2xl bg-[#3B2418] text-[#F2E8DA] border border-[#5A3927] shadow-sm flex flex-col justify-between">
+        <StaggerItem className="card-hover p-4 rounded-2xl bg-brand dark:bg-surface-warm text-brand-ink dark:text-ink border border-line flex flex-col justify-between">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] font-mono uppercase tracking-wider text-[#D8C7B4]">
+            <span className="text-[10px] font-mono uppercase tracking-wider text-brand-ink/80 dark:text-ink-muted">
               Available Balance
             </span>
-            <Wallet className="w-4 h-4 text-[#8EC5FF]" />
+            <Wallet className="w-4 h-4 text-accent" />
           </div>
-          <div className="my-2 font-mono text-xl xl:text-2xl font-extrabold text-[#F2E8DA] truncate">
+          <div className="my-2 font-mono text-xl xl:text-2xl font-bold truncate tabular-nums">
             <AnimatedNumber value={summary.totalBalance} formatter={v => formatCurrency(v, currency)} />
           </div>
-          <span className="text-[11px] text-[#8EC5FF]">Net all-time position</span>
+          <span className="text-[11px] text-accent">Net all-time position</span>
         </StaggerItem>
 
-        <StaggerItem className="card-hover p-4 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] shadow-xs flex flex-col justify-between">
+        <StaggerItem className="card-hover p-4 rounded-2xl bg-surface border border-line flex flex-col justify-between">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] font-mono uppercase tracking-wider text-[#6E5648]">
+            <span className="text-[10px] font-mono uppercase tracking-wider text-ink-muted">
               Income ({rangeLabel})
             </span>
-            <ArrowDownLeft className="w-4 h-4 text-[#3E7B52]" />
+            <ArrowDownLeft className="w-4 h-4 text-success" />
           </div>
-          <div className="my-2 font-mono text-xl xl:text-2xl font-extrabold text-[#3E7B52] truncate">
+          <div className="my-2 font-mono text-xl xl:text-2xl font-bold text-success truncate tabular-nums">
             <AnimatedNumber value={summary.periodIncome} formatter={v => formatCurrency(v, currency)} />
           </div>
-          <span className="text-[11px] text-[#6E5648]">Recorded inflows</span>
+          <span className="text-[11px] text-ink-muted">Recorded inflows</span>
         </StaggerItem>
 
-        <StaggerItem className="card-hover p-4 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] shadow-xs flex flex-col justify-between">
+        <StaggerItem className="card-hover p-4 rounded-2xl bg-surface border border-line flex flex-col justify-between">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] font-mono uppercase tracking-wider text-[#6E5648]">
+            <span className="text-[10px] font-mono uppercase tracking-wider text-ink-muted">
               Expenses ({rangeLabel})
             </span>
-            <ArrowUpRight className="w-4 h-4 text-[#B84A44]" />
+            <ArrowUpRight className="w-4 h-4 text-danger" />
           </div>
-          <div className="my-2 font-mono text-xl xl:text-2xl font-extrabold text-[#B84A44] truncate">
+          <div className="my-2 font-mono text-xl xl:text-2xl font-bold text-danger truncate tabular-nums">
             <AnimatedNumber value={summary.periodExpenses} formatter={v => formatCurrency(v, currency)} />
           </div>
-          <span className="text-[11px] text-[#6E5648]">Recorded outflows</span>
+          <span className="text-[11px] text-ink-muted">Recorded outflows</span>
         </StaggerItem>
 
-        <StaggerItem className="card-hover p-4 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] shadow-xs flex flex-col justify-between">
+        <StaggerItem className="card-hover p-4 rounded-2xl bg-surface border border-line flex flex-col justify-between">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] font-mono uppercase tracking-wider text-[#6E5648]">
+            <span className="text-[10px] font-mono uppercase tracking-wider text-ink-muted">
               Net Savings
             </span>
-            <TrendingUp className="w-4 h-4 text-[#1E5A99]" />
+            <TrendingUp className="w-4 h-4 text-accent" />
           </div>
           <div
-            className={`my-2 font-mono text-xl xl:text-2xl font-extrabold truncate ${
-              summary.periodSavings >= 0 ? 'text-[#3B2418]' : 'text-[#9E3530]'
+            className={`my-2 font-mono text-xl xl:text-2xl font-bold truncate tabular-nums ${
+              summary.periodSavings >= 0 ? 'text-ink' : 'text-danger'
             }`}
           >
             <AnimatedNumber value={summary.periodSavings} formatter={v => formatCurrency(v, currency)} />
           </div>
-          <span className="text-[11px] text-[#6E5648]">Income minus expenses</span>
+          <span className="text-[11px] text-ink-muted">Income minus expenses</span>
         </StaggerItem>
 
-        <StaggerItem className="card-hover p-4 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] shadow-xs flex flex-col justify-between">
+        <StaggerItem className="card-hover p-4 rounded-2xl bg-surface border border-line flex flex-col justify-between">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] font-mono uppercase tracking-wider text-[#6E5648]">
+            <span className="text-[10px] font-mono uppercase tracking-wider text-ink-muted">
               Savings Rate
             </span>
-            <PieChart className="w-4 h-4 text-[#1E5A99]" />
+            <PieChart className="w-4 h-4 text-accent" />
           </div>
-          <div className="my-2 font-mono text-xl xl:text-2xl font-extrabold text-[#1E5A99]">
+          <div className="my-2 font-mono text-xl xl:text-2xl font-bold text-accent tabular-nums">
             <AnimatedNumber value={summary.savingsRate} formatter={v => `${v.toFixed(1)}%`} />
           </div>
           <AnimatedProgressBar
             percentage={Math.max(0, Math.min(100, summary.savingsRate))}
-            trackClassName="w-full bg-[#EAE0D0] h-1.5 rounded-full overflow-hidden"
-            fillClassName="bg-[#8EC5FF] h-full rounded-full"
+            trackClassName="w-full bg-surface-inset h-1.5 rounded-full overflow-hidden"
+            fillClassName="bg-accent h-full rounded-full"
           />
         </StaggerItem>
       </StaggerContainer>
 
       {/* Main Row: Income vs Expenses Chart + Budget Overview */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Income vs Expenses 6-Month Chart */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.24, ease: MOMENTUM_EASE }}
-          className="lg:col-span-7 p-6 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] shadow-xs space-y-4"
+          className="lg:col-span-7 p-6 rounded-2xl bg-surface border border-line space-y-4"
         >
-          <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-[#D6C6B2]">
+          <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-line">
             <div>
-              <h3 className="text-sm font-bold uppercase tracking-wider text-[#3B2418]">
+              <h3 className="text-sm font-bold uppercase tracking-wider text-ink">
                 Income vs. Expenses (6 Months)
               </h3>
-              <p className="text-xs text-[#6E5648]">
+              <p className="text-xs text-ink-muted">
                 Hover any month to inspect exact cash flow figures.
               </p>
             </div>
             <div className="flex items-center gap-3 text-[11px] font-medium">
-              <span className="flex items-center gap-1.5 text-[#3B2418]">
-                <span className="w-2.5 h-2.5 rounded-xs bg-[#3E7B52]" /> Income
+              <span className="flex items-center gap-1.5 text-ink">
+                <span className="w-2.5 h-2.5 rounded-xs bg-success" /> Income
               </span>
-              <span className="flex items-center gap-1.5 text-[#3B2418]">
-                <span className="w-2.5 h-2.5 rounded-xs bg-[#B84A44]" /> Expenses
+              <span className="flex items-center gap-1.5 text-ink">
+                <span className="w-2.5 h-2.5 rounded-xs bg-danger" /> Expenses
               </span>
             </div>
           </div>
 
           {monthlySeries.every(m => m.income === 0 && m.expenses === 0) ? (
-            <div className="h-52 flex flex-col items-center justify-center text-center space-y-2 bg-[#F2E8DA]/60 rounded-xl border border-dashed border-[#D6C6B2] p-6">
-              <p className="text-xs font-semibold text-[#3B2418]">No cash flow history recorded yet</p>
-              <p className="text-xs text-[#6E5648] max-w-xs">
+            <div className="h-52 flex flex-col items-center justify-center text-center space-y-2 bg-canvas rounded-xl border border-dashed border-line p-6">
+              <p className="text-xs font-semibold text-ink">No cash flow history recorded yet</p>
+              <p className="text-xs text-ink-muted max-w-xs">
                 Log your first income or expense transaction to visualize monthly cash flow trends.
               </p>
               <button
+                type="button"
                 onClick={onAddTransaction}
-                className="btn-press mt-1 px-3.5 py-1.5 rounded-lg bg-[#8EC5FF] text-[#3B2418] text-xs font-bold border border-[#3B2418]/15"
+                className="btn-press mt-1 px-3.5 py-1.5 rounded-xl bg-accent text-accent-ink text-xs font-semibold"
               >
                 + Record Transaction
               </button>
@@ -208,8 +208,8 @@ export const FinanceOverviewTab: React.FC<Props> = ({
                     className="flex-1 flex flex-col items-center h-full justify-end relative group cursor-pointer"
                   >
                     {isHovered && (
-                      <div className="absolute -top-2 z-20 px-2.5 py-1.5 rounded-lg bg-[#3B2418] text-[#F2E8DA] text-[10px] font-mono shadow-lg whitespace-nowrap pointer-events-none border border-[#5A3927]">
-                        <div className="text-[#8EC5FF] font-bold">{pt.label}</div>
+                      <div className="absolute -top-2 z-20 px-2.5 py-1.5 rounded-lg bg-brand dark:bg-charcoal text-brand-ink text-[10px] font-mono shadow-lg whitespace-nowrap pointer-events-none border border-line tabular-nums">
+                        <div className="text-accent font-bold">{pt.label}</div>
                         <div>In: {formatCurrency(pt.income, currency)}</div>
                         <div>Out: {formatCurrency(pt.expenses, currency)}</div>
                       </div>
@@ -219,16 +219,16 @@ export const FinanceOverviewTab: React.FC<Props> = ({
                         initial={{ height: 0 }}
                         animate={{ height: `${Math.max(pt.income > 0 ? 6 : 2, incPct)}%` }}
                         transition={{ duration: 0.45, ease: MOMENTUM_EASE }}
-                        className="w-3 sm:w-5 rounded-t-md bg-[#3E7B52] group-hover:brightness-110 transition-all"
+                        className="w-3 sm:w-5 rounded-t-md bg-success group-hover:brightness-110 transition-all"
                       />
                       <motion.div
                         initial={{ height: 0 }}
                         animate={{ height: `${Math.max(pt.expenses > 0 ? 6 : 2, expPct)}%` }}
                         transition={{ duration: 0.45, ease: MOMENTUM_EASE }}
-                        className="w-3 sm:w-5 rounded-t-md bg-[#B84A44] group-hover:brightness-110 transition-all"
+                        className="w-3 sm:w-5 rounded-t-md bg-danger group-hover:brightness-110 transition-all"
                       />
                     </div>
-                    <span className="mt-2 text-[10px] font-mono text-[#6E5648] font-medium">
+                    <span className="mt-2 text-[10px] font-mono text-ink-muted font-medium">
                       {pt.label}
                     </span>
                   </div>
@@ -243,15 +243,16 @@ export const FinanceOverviewTab: React.FC<Props> = ({
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.24, delay: 0.06, ease: MOMENTUM_EASE }}
-          className="lg:col-span-5 p-6 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] shadow-xs flex flex-col justify-between space-y-4"
+          className="lg:col-span-5 p-6 rounded-2xl bg-surface border border-line flex flex-col justify-between space-y-4"
         >
-          <div className="flex items-center justify-between pb-3 border-b border-[#D6C6B2]">
-            <h3 className="text-sm font-bold uppercase tracking-wider text-[#3B2418]">
+          <div className="flex items-center justify-between pb-3 border-b border-line">
+            <h3 className="text-sm font-bold uppercase tracking-wider text-ink">
               Monthly Budget Overview
             </h3>
             <button
+              type="button"
               onClick={() => onNavigateTab('budgets')}
-              className="text-xs font-semibold text-[#1E5A99] hover:underline flex items-center gap-1"
+              className="text-xs font-semibold text-accent hover:underline flex items-center gap-1"
             >
               <span>Manage</span>
               <ArrowRight className="w-3 h-3" />
@@ -260,13 +261,14 @@ export const FinanceOverviewTab: React.FC<Props> = ({
 
           {budgetProgress.length === 0 ? (
             <div className="flex-1 flex flex-col items-center justify-center text-center py-6 space-y-2">
-              <p className="text-xs font-semibold text-[#3B2418]">No budgets configured for this month</p>
-              <p className="text-xs text-[#6E5648]">
+              <p className="text-xs font-semibold text-ink">No budgets configured for this month</p>
+              <p className="text-xs text-ink-muted">
                 Set spending limits by category to get automatic alerts before overspending.
               </p>
               <button
+                type="button"
                 onClick={() => onNavigateTab('budgets')}
-                className="btn-press mt-1 px-3 py-1.5 rounded-lg bg-[#F2E8DA] hover:bg-[#EAE0D0] border border-[#D6C6B2] text-xs font-semibold text-[#3B2418]"
+                className="btn-press mt-1 px-3 py-1.5 rounded-xl bg-canvas hover:bg-surface-warm border border-line text-xs font-semibold text-ink"
               >
                 Set Monthly Budgets
               </button>
@@ -277,32 +279,32 @@ export const FinanceOverviewTab: React.FC<Props> = ({
                 <div key={b.id} className="space-y-1.5">
                   <div className="flex items-center justify-between text-xs">
                     <div className="flex items-center gap-1.5">
-                      <span className="font-semibold text-[#3B2418]">{b.category}</span>
+                      <span className="font-semibold text-ink">{b.category}</span>
                       {b.status === 'exceeded' && (
-                        <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-[#B84A44]/15 text-[#9E3530] text-[10px] font-bold">
+                        <span className="inline-flex items-center gap-0.5 text-danger text-[10px] font-bold">
                           <AlertTriangle className="w-2.5 h-2.5" /> Over
                         </span>
                       )}
                       {b.status === 'warning' && (
-                        <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-[#A36116]/15 text-[#A36116] text-[10px] font-bold">
+                        <span className="inline-flex items-center gap-0.5 text-warning text-[10px] font-bold tabular-nums">
                           <AlertTriangle className="w-2.5 h-2.5" /> {Math.round(b.rawPercentage)}%
                         </span>
                       )}
                     </div>
-                    <span className="font-mono text-[11px] text-[#6E5648]">
-                      <strong className="text-[#3B2418]">{formatCurrency(b.spent, currency)}</strong> /{' '}
+                    <span className="font-mono text-[11px] text-ink-muted tabular-nums">
+                      <strong className="text-ink">{formatCurrency(b.spent, currency)}</strong> /{' '}
                       {formatCurrency(b.limitAmount, currency)}
                     </span>
                   </div>
                   <AnimatedProgressBar
                     percentage={b.clampedPercentage}
-                    trackClassName="w-full h-2 bg-[#EAE0D0] rounded-full overflow-hidden"
+                    trackClassName="w-full h-2 bg-surface-inset rounded-full overflow-hidden"
                     fillClassName={`h-full rounded-full ${
                       b.status === 'exceeded'
-                        ? 'bg-[#B84A44]'
+                        ? 'bg-danger'
                         : b.status === 'warning'
-                        ? 'bg-[#A36116]'
-                        : 'bg-[#3E7B52]'
+                        ? 'bg-warning'
+                        : 'bg-success'
                     }`}
                   />
                 </div>
@@ -314,27 +316,28 @@ export const FinanceOverviewTab: React.FC<Props> = ({
 
       {/* Bottom Row: Recent Transactions + Upcoming Payments */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Recent Transactions */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.24, delay: 0.1, ease: MOMENTUM_EASE }}
-          className="lg:col-span-7 p-6 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] shadow-xs space-y-4"
+          className="lg:col-span-7 p-6 rounded-2xl bg-surface border border-line space-y-4"
         >
-          <div className="flex items-center justify-between pb-3 border-b border-[#D6C6B2]">
-            <h3 className="text-sm font-bold uppercase tracking-wider text-[#3B2418]">
+          <div className="flex items-center justify-between pb-3 border-b border-line">
+            <h3 className="text-sm font-bold uppercase tracking-wider text-ink">
               Recent Transactions
             </h3>
             <div className="flex items-center gap-3">
               <button
+                type="button"
                 onClick={onAddTransaction}
-                className="btn-press flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#8EC5FF] text-[#3B2418] text-[11px] font-bold border border-[#3B2418]/15"
+                className="btn-press flex items-center gap-1 px-2.5 py-1 rounded-lg bg-accent text-accent-ink text-[11px] font-semibold"
               >
                 <Plus className="w-3 h-3" /> Add
               </button>
               <button
+                type="button"
                 onClick={() => onNavigateTab('transactions')}
-                className="text-xs font-semibold text-[#1E5A99] hover:underline flex items-center gap-1"
+                className="text-xs font-semibold text-accent hover:underline flex items-center gap-1"
               >
                 <span>History</span>
                 <ArrowRight className="w-3 h-3" />
@@ -343,19 +346,19 @@ export const FinanceOverviewTab: React.FC<Props> = ({
           </div>
 
           {recentTransactions.length === 0 ? (
-            <div className="py-8 text-center text-xs text-[#6E5648]">
+            <div className="py-8 text-center text-xs text-ink-muted">
               No transactions in this date range yet.
             </div>
           ) : (
-            <div className="divide-y divide-[#D6C6B2]/60">
+            <div className="divide-y divide-line">
               {recentTransactions.slice(0, 6).map(tx => (
                 <div key={tx.id} className="py-2.5 flex items-center justify-between gap-3 text-xs">
                   <div className="flex items-center gap-3 min-w-0">
                     <div
                       className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
                         tx.type === 'income'
-                          ? 'bg-[#3E7B52]/15 text-[#3E7B52]'
-                          : 'bg-[#B84A44]/15 text-[#B84A44]'
+                          ? 'bg-success/15 text-success'
+                          : 'bg-danger/15 text-danger'
                       }`}
                     >
                       {tx.type === 'income' ? (
@@ -365,21 +368,21 @@ export const FinanceOverviewTab: React.FC<Props> = ({
                       )}
                     </div>
                     <div className="min-w-0">
-                      <div className="font-semibold text-[#3B2418] truncate">
+                      <div className="font-semibold text-ink truncate">
                         {tx.description || tx.category}
                       </div>
-                      <div className="text-[11px] text-[#6E5648] flex items-center gap-2">
+                      <div className="text-[11px] text-ink-muted flex flex-wrap items-center gap-1.5">
                         <span>{tx.category}</span>
-                        <span>•</span>
+                        <span aria-hidden="true">·</span>
                         <span>{tx.paymentMethod}</span>
-                        <span>•</span>
-                        <span className="font-mono">{tx.date}</span>
+                        <span aria-hidden="true">·</span>
+                        <span className="font-mono tabular-nums">{tx.date}</span>
                       </div>
                     </div>
                   </div>
                   <span
-                    className={`font-mono font-bold shrink-0 ${
-                      tx.type === 'income' ? 'text-[#3E7B52]' : 'text-[#3B2418]'
+                    className={`font-mono font-bold shrink-0 tabular-nums ${
+                      tx.type === 'income' ? 'text-success' : 'text-ink'
                     }`}
                   >
                     {tx.type === 'income' ? '+' : '-'}
@@ -391,23 +394,23 @@ export const FinanceOverviewTab: React.FC<Props> = ({
           )}
         </motion.div>
 
-        {/* Upcoming Payments */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.24, delay: 0.14, ease: MOMENTUM_EASE }}
-          className="lg:col-span-5 p-6 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] shadow-xs space-y-4"
+          className="lg:col-span-5 p-6 rounded-2xl bg-surface border border-line space-y-4"
         >
-          <div className="flex items-center justify-between pb-3 border-b border-[#D6C6B2]">
+          <div className="flex items-center justify-between pb-3 border-b border-line">
             <div className="flex items-center gap-2">
-              <CalendarClock className="w-4 h-4 text-[#1E5A99]" />
-              <h3 className="text-sm font-bold uppercase tracking-wider text-[#3B2418]">
+              <CalendarClock className="w-4 h-4 text-accent" />
+              <h3 className="text-sm font-bold uppercase tracking-wider text-ink">
                 Upcoming Payments
               </h3>
             </div>
             <button
+              type="button"
               onClick={() => onNavigateTab('recurring')}
-              className="text-xs font-semibold text-[#1E5A99] hover:underline flex items-center gap-1"
+              className="text-xs font-semibold text-accent hover:underline flex items-center gap-1"
             >
               <span>All Schedules</span>
               <ArrowRight className="w-3 h-3" />
@@ -416,13 +419,14 @@ export const FinanceOverviewTab: React.FC<Props> = ({
 
           {upcomingPayments.length === 0 ? (
             <div className="py-8 text-center space-y-2">
-              <p className="text-xs font-semibold text-[#3B2418]">No upcoming recurring bills or income</p>
-              <p className="text-xs text-[#6E5648]">
+              <p className="text-xs font-semibold text-ink">No upcoming recurring bills or income</p>
+              <p className="text-xs text-ink-muted">
                 Track rent, internet bills, subscriptions, or recurring salary.
               </p>
               <button
+                type="button"
                 onClick={() => onNavigateTab('recurring')}
-                className="btn-press px-3 py-1.5 rounded-lg bg-[#F2E8DA] hover:bg-[#EAE0D0] border border-[#D6C6B2] text-xs font-semibold text-[#3B2418]"
+                className="btn-press px-3 py-1.5 rounded-xl bg-canvas hover:bg-surface-warm border border-line text-xs font-semibold text-ink"
               >
                 Add Recurring Item
               </button>
@@ -441,19 +445,20 @@ export const FinanceOverviewTab: React.FC<Props> = ({
                 return (
                   <div
                     key={rec.id}
-                    className="p-3 rounded-xl bg-[#F2E8DA] border border-[#D6C6B2] flex items-center justify-between gap-3"
+                    className="p-3 rounded-xl bg-canvas border border-line flex items-center justify-between gap-3"
                   >
                     <div className="min-w-0">
-                      <div className="text-xs font-semibold text-[#3B2418] truncate">{rec.title}</div>
+                      <div className="text-xs font-semibold text-ink truncate">{rec.title}</div>
                       <div className="flex items-center gap-2 mt-0.5 text-[10px]">
-                        <span className="font-mono text-[#6E5648]">{rec.nextDueDate}</span>
+                        <span className="font-mono text-ink-muted tabular-nums">{rec.nextDueDate}</span>
+                        <span aria-hidden="true" className="text-line-strong">·</span>
                         <span
-                          className={`px-1.5 py-0.5 rounded font-semibold ${
+                          className={`font-semibold tabular-nums ${
                             days <= 0
-                              ? 'bg-[#B84A44]/15 text-[#9E3530]'
+                              ? 'text-danger'
                               : days <= 5
-                              ? 'bg-[#A36116]/15 text-[#A36116]'
-                              : 'bg-[#8EC5FF]/40 text-[#1E5A99]'
+                              ? 'text-warning'
+                              : 'text-accent'
                           }`}
                         >
                           {badgeText}
@@ -462,18 +467,20 @@ export const FinanceOverviewTab: React.FC<Props> = ({
                     </div>
                     <div className="flex items-center gap-2 shrink-0">
                       <span
-                        className={`font-mono text-xs font-bold ${
-                          rec.type === 'income' ? 'text-[#3E7B52]' : 'text-[#3B2418]'
+                        className={`font-mono text-xs font-bold tabular-nums ${
+                          rec.type === 'income' ? 'text-success' : 'text-ink'
                         }`}
                       >
                         {rec.type === 'income' ? '+' : '-'}
                         {formatCurrency(rec.amount, currency)}
                       </span>
                       <button
+                        type="button"
                         onClick={() => handlePay(rec.id)}
                         disabled={payingId === rec.id}
                         title="Record payment now & advance schedule"
-                        className="btn-press p-1.5 rounded-lg bg-[#FAF5ED] hover:bg-[#8EC5FF] border border-[#D6C6B2] text-[#3B2418] transition-colors"
+                        aria-label={`Record ${rec.title}`}
+                        className="btn-press p-1.5 rounded-lg bg-surface hover:bg-accent hover:text-accent-ink border border-line text-ink transition-colors"
                       >
                         <Check className="w-3.5 h-3.5" />
                       </button>

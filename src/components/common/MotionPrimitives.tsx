@@ -27,7 +27,7 @@ export const PageTransition: React.FC<{
 };
 
 /**
- * Reusable Modal shell with smooth backdrop fade + panel scale/fade on BOTH open and close.
+ * Reusable Modal shell with smooth backdrop fade + bottom-sheet adaptation on mobile.
  */
 export const ModalShell: React.FC<{
   isOpen: boolean;
@@ -43,10 +43,10 @@ export const ModalShell: React.FC<{
   onClose,
   children,
   maxWidthClass = 'max-w-lg',
-  panelClassName = 'bg-[#FAF5ED] border border-[#D6C6B2] rounded-2xl shadow-2xl overflow-hidden',
+  panelClassName = 'bg-surface border border-line text-ink rounded-t-2xl sm:rounded-2xl shadow-2xl overflow-hidden',
   alignTop = false,
   fullscreen = false,
-  backdropClassName = 'bg-[#3B2418]/65 backdrop-blur-xs',
+  backdropClassName = 'bg-charcoal/65 dark:bg-black/70 backdrop-blur-xs',
 }) => {
   const prefersReduced = useReducedMotion();
 
@@ -63,25 +63,29 @@ export const ModalShell: React.FC<{
             fullscreen
               ? 'items-center p-0'
               : alignTop
-              ? 'items-start pt-16 md:pt-24 px-4'
-              : 'items-center p-4'
+              ? 'items-start pt-14 md:pt-24 px-3 sm:px-4'
+              : 'items-end sm:items-center p-0 sm:p-4'
           } ${backdropClassName}`}
         >
           <motion.div
             initial={
               prefersReduced
                 ? { opacity: 1 }
-                : { opacity: 0, scale: 0.96, y: alignTop ? -8 : 8 }
+                : { opacity: 0, scale: alignTop ? 0.97 : 0.98, y: alignTop ? -8 : 20 }
             }
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={
               prefersReduced
                 ? { opacity: 0 }
-                : { opacity: 0, scale: 0.97, y: alignTop ? -6 : 4 }
+                : { opacity: 0, scale: 0.98, y: alignTop ? -6 : 16 }
             }
-            transition={{ duration: prefersReduced ? 0.01 : 0.18, ease: MOMENTUM_EASE }}
+            transition={{ duration: prefersReduced ? 0.01 : 0.2, ease: MOMENTUM_EASE }}
             onClick={e => e.stopPropagation()}
-            className={`w-full ${fullscreen ? 'h-screen w-screen max-w-none rounded-none border-0' : maxWidthClass} ${panelClassName}`}
+            className={`w-full ${
+              fullscreen
+                ? 'h-dvh w-screen max-w-none rounded-none border-0'
+                : `${maxWidthClass} max-h-[90dvh] overflow-y-auto`
+            } ${panelClassName}`}
           >
             {children}
           </motion.div>
@@ -92,7 +96,7 @@ export const ModalShell: React.FC<{
 };
 
 /**
- * Reusable Drawer shell for slide-over panels (NotificationsDrawer, Mobile Sidebar).
+ * Reusable Drawer shell for slide-over panels (NotificationsDrawer, sheets).
  */
 export const DrawerShell: React.FC<{
   isOpen: boolean;
@@ -105,7 +109,7 @@ export const DrawerShell: React.FC<{
   onClose,
   side = 'right',
   children,
-  panelClassName = 'w-full max-w-sm h-full bg-[#FAF5ED] border-l border-[#D6C6B2] shadow-2xl flex flex-col',
+  panelClassName = 'w-full max-w-sm h-full bg-surface border-l border-line text-ink shadow-2xl flex flex-col',
 }) => {
   const prefersReduced = useReducedMotion();
   const initialX = side === 'right' ? '100%' : '-100%';
@@ -121,7 +125,7 @@ export const DrawerShell: React.FC<{
           onClick={onClose}
           className={`fixed inset-0 z-50 flex ${
             side === 'right' ? 'justify-end' : 'justify-start'
-          } bg-[#3B2418]/55 backdrop-blur-xs`}
+          } bg-charcoal/55 dark:bg-black/65 backdrop-blur-xs`}
         >
           <motion.div
             initial={prefersReduced ? { opacity: 0 } : { x: initialX }}
@@ -170,9 +174,8 @@ export const AnimatedNumber: React.FC<{
     let rafId = 0;
 
     const tick = (now: number) => {
-      const elapsed = now - startTime;
-      const t = Math.min(1, elapsed / duration);
-      // ease-out cubic
+      const elapsed = Math.max(0, now - startTime);
+      const t = Math.max(0, Math.min(1, elapsed / duration));
       const eased = 1 - Math.pow(1 - t, 3);
       const current = startVal + (endVal - startVal) * eased;
       setDisplayValue(t >= 1 ? endVal : Math.round(current));
@@ -200,8 +203,8 @@ export const AnimatedProgressBar: React.FC<{
   fillClassName?: string;
 }> = ({
   percentage,
-  trackClassName = 'w-full bg-[#EAE0D0] h-2 rounded-full overflow-hidden',
-  fillClassName = 'bg-[#8EC5FF] h-full rounded-full',
+  trackClassName = 'w-full bg-surface-inset h-2 rounded-full overflow-hidden',
+  fillClassName = 'bg-accent h-full rounded-full',
 }) => {
   const prefersReduced = useReducedMotion();
   const clamped = Math.max(0, Math.min(100, percentage));
@@ -237,7 +240,7 @@ export const AnimatedCheckButton: React.FC<{
       type="button"
       onClick={onClick}
       whileTap={prefersReduced ? undefined : { scale: 0.85 }}
-      className={`text-[#6E5648] hover:text-[#3E7B52] transition-colors shrink-0 relative flex items-center justify-center ${className}`}
+      className={`text-ink-muted hover:text-success transition-colors shrink-0 relative flex items-center justify-center ${className}`}
       aria-label={ariaLabel || (checked ? 'Mark incomplete' : 'Mark completed')}
     >
       <AnimatePresence mode="wait" initial={false}>
@@ -250,7 +253,7 @@ export const AnimatedCheckButton: React.FC<{
             transition={{ duration: prefersReduced ? 0.01 : 0.18, ease: MOMENTUM_EASE }}
             className="flex items-center justify-center"
           >
-            <CheckCircle2 className={`${dim} text-[#3E7B52] fill-[#3E7B52]/15`} />
+            <CheckCircle2 className={`${dim} text-success fill-success/15`} />
           </motion.span>
         ) : (
           <motion.span

@@ -36,23 +36,28 @@ export const ConfirmDeleteModal: React.FC<{
   onClose: () => void;
 }> = ({ isOpen, title, description, loading, onConfirm, onClose }) => (
   <ModalShell isOpen={isOpen} onClose={onClose} maxWidthClass="max-w-sm">
-    <div className="px-5 py-3.5 border-b border-[#5A3927] bg-[#3B2418] flex items-center justify-between">
-      <div className="flex items-center gap-2 text-[#F2E8DA]">
-        <AlertTriangle className="w-4 h-4 text-[#8EC5FF]" />
+    <div className="px-5 py-3.5 border-b border-line bg-brand dark:bg-surface-warm flex items-center justify-between">
+      <div className="flex items-center gap-2 text-brand-ink dark:text-ink">
+        <AlertTriangle className="w-4 h-4 text-accent" />
         <h3 className="text-xs font-bold uppercase tracking-wider">{title}</h3>
       </div>
-      <button onClick={onClose} className="text-[#D8C7B4] hover:text-[#F2E8DA] btn-press">
+      <button
+        type="button"
+        onClick={onClose}
+        aria-label="Close modal"
+        className="text-brand-ink/80 dark:text-ink-muted hover:text-brand-ink dark:hover:text-ink btn-press"
+      >
         <X className="w-4 h-4" />
       </button>
     </div>
     <div className="p-5 space-y-4">
-      <p className="text-xs text-[#6E5648] leading-relaxed">{description}</p>
-      <div className="flex justify-end gap-2 pt-2 border-t border-[#D6C6B2]">
+      <p className="text-xs text-ink-muted leading-relaxed">{description}</p>
+      <div className="flex justify-end gap-2 pt-2 border-t border-line">
         <button
           type="button"
           onClick={onClose}
           disabled={loading}
-          className="btn-press px-3 py-1.5 rounded-lg text-xs text-[#6E5648] hover:text-[#3B2418]"
+          className="btn-press px-3 py-1.5 rounded-lg text-xs text-ink-muted hover:text-ink"
         >
           Cancel
         </button>
@@ -60,7 +65,7 @@ export const ConfirmDeleteModal: React.FC<{
           type="button"
           onClick={onConfirm}
           disabled={loading}
-          className="btn-press px-4 py-1.5 rounded-lg bg-[#B84A44] hover:bg-[#9E3530] text-[#FAF5ED] font-bold text-xs flex items-center gap-1.5 disabled:opacity-60"
+          className="btn-press px-4 py-1.5 rounded-xl bg-danger hover:brightness-110 text-white font-semibold text-xs flex items-center gap-1.5 disabled:opacity-60"
         >
           {loading && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
           <span>Confirm Delete</span>
@@ -175,30 +180,35 @@ export const TransactionModal: React.FC<{
 
   return (
     <ModalShell isOpen={isOpen} onClose={onClose} maxWidthClass="max-w-md">
-      <div className="px-5 py-3.5 border-b border-[#5A3927] bg-[#3B2418] flex items-center justify-between">
-        <span className="text-xs font-bold uppercase tracking-wider text-[#F2E8DA]">
+      <div className="px-5 py-3.5 border-b border-line bg-brand dark:bg-surface-warm flex items-center justify-between">
+        <span className="text-xs font-bold uppercase tracking-wider text-brand-ink dark:text-ink">
           {editing ? 'Edit Transaction' : 'Record Transaction'}
         </span>
-        <button onClick={onClose} className="text-[#D8C7B4] hover:text-[#F2E8DA] btn-press">
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label="Close modal"
+          className="text-brand-ink/80 dark:text-ink-muted hover:text-brand-ink dark:hover:text-ink btn-press"
+        >
           <X className="w-4 h-4" />
         </button>
       </div>
 
       <form onSubmit={handleSubmit} className="p-5 space-y-4">
         {error && (
-          <div className="p-2.5 rounded-lg bg-[#B84A44]/15 border border-[#B84A44]/40 text-xs text-[#9E3530]">
+          <div className="p-2.5 rounded-xl bg-danger/10 border border-danger/30 text-xs text-danger">
             {error}
           </div>
         )}
 
-        <div className="grid grid-cols-2 gap-2 p-1 rounded-xl bg-[#EAE0D0] border border-[#D6C6B2] text-xs">
+        <div className="grid grid-cols-2 gap-2 p-1 rounded-xl bg-canvas border border-line text-xs">
           <button
             type="button"
             onClick={() => setType('expense')}
             className={`py-2 rounded-lg font-semibold flex items-center justify-center gap-1.5 transition-colors btn-press ${
               type === 'expense'
-                ? 'bg-[#B84A44] text-[#FAF5ED] shadow-xs'
-                : 'text-[#6E5648] hover:text-[#3B2418]'
+                ? 'bg-danger text-white shadow-xs'
+                : 'text-ink-muted hover:text-ink'
             }`}
           >
             <ArrowUpRight className="w-3.5 h-3.5" />
@@ -209,8 +219,8 @@ export const TransactionModal: React.FC<{
             onClick={() => setType('income')}
             className={`py-2 rounded-lg font-semibold flex items-center justify-center gap-1.5 transition-colors btn-press ${
               type === 'income'
-                ? 'bg-[#3E7B52] text-[#FAF5ED] shadow-xs'
-                : 'text-[#6E5648] hover:text-[#3B2418]'
+                ? 'bg-success text-white shadow-xs'
+                : 'text-ink-muted hover:text-ink'
             }`}
           >
             <ArrowDownLeft className="w-3.5 h-3.5" />
@@ -220,10 +230,14 @@ export const TransactionModal: React.FC<{
 
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="block text-xs font-semibold text-[#6E5648] mb-1">
+            <label
+              htmlFor="tx-amount"
+              className="block text-xs font-semibold text-ink-muted mb-1"
+            >
               Amount ({currency}) *
             </label>
             <input
+              id="tx-amount"
               type="number"
               step="0.01"
               min="0.01"
@@ -231,29 +245,34 @@ export const TransactionModal: React.FC<{
               value={amount}
               onChange={e => setAmount(e.target.value)}
               placeholder="0.00"
-              className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] font-mono text-sm font-bold text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
+              className="w-full px-3 py-2 rounded-xl bg-canvas border border-line font-mono text-sm font-bold text-ink tabular-nums focus:ring-2 focus:ring-accent focus:outline-hidden"
               autoFocus
             />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-[#6E5648] mb-1">Date *</label>
+            <label htmlFor="tx-date" className="block text-xs font-semibold text-ink-muted mb-1">
+              Date *
+            </label>
             <input
+              id="tx-date"
               type="date"
               required
               value={date}
               onChange={e => setDate(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
+              className="w-full px-3 py-2 rounded-xl bg-canvas border border-line text-xs text-ink font-mono tabular-nums focus:ring-2 focus:ring-accent focus:outline-hidden"
             />
           </div>
         </div>
 
         <div>
           <div className="flex items-center justify-between mb-1">
-            <label className="text-xs font-semibold text-[#6E5648]">Category *</label>
+            <label htmlFor="tx-category" className="text-xs font-semibold text-ink-muted">
+              Category *
+            </label>
             <button
               type="button"
               onClick={() => setAddingCat(v => !v)}
-              className="text-[11px] font-semibold text-[#1E5A99] hover:underline"
+              className="text-[11px] font-semibold text-accent hover:underline"
             >
               {addingCat ? 'Cancel' : '+ Custom Category'}
             </button>
@@ -265,21 +284,23 @@ export const TransactionModal: React.FC<{
                 value={newCategoryName}
                 onChange={e => setNewCategoryName(e.target.value)}
                 placeholder="e.g. Coffee, Books, Freelance..."
-                className="flex-1 px-3 py-1.5 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
+                aria-label="New custom category name"
+                className="flex-1 px-3 py-1.5 rounded-xl bg-canvas border border-line text-xs text-ink focus:ring-2 focus:ring-accent focus:outline-hidden"
               />
               <button
                 type="button"
                 onClick={handleQuickAddCat}
-                className="px-3 py-1.5 rounded-lg bg-[#8EC5FF] text-[#3B2418] font-bold text-xs btn-press"
+                className="px-3 py-1.5 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs btn-press"
               >
                 Add
               </button>
             </div>
           ) : (
             <select
+              id="tx-category"
               value={category}
               onChange={e => setCategory(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
+              className="w-full px-3 py-2 rounded-xl bg-canvas border border-line text-xs text-ink focus:ring-2 focus:ring-accent focus:outline-hidden"
             >
               {availableCategories.map(c => (
                 <option key={c.id} value={c.name}>
@@ -294,11 +315,14 @@ export const TransactionModal: React.FC<{
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-[#6E5648] mb-1">Payment Method</label>
+          <label htmlFor="tx-method" className="block text-xs font-semibold text-ink-muted mb-1">
+            Payment Method
+          </label>
           <select
+            id="tx-method"
             value={paymentMethod}
             onChange={e => setPaymentMethod(e.target.value as PaymentMethod)}
-            className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
+            className="w-full px-3 py-2 rounded-xl bg-canvas border border-line text-xs text-ink focus:ring-2 focus:ring-accent focus:outline-hidden"
           >
             {PAYMENT_METHODS.map(pm => (
               <option key={pm} value={pm}>
@@ -309,28 +333,31 @@ export const TransactionModal: React.FC<{
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-[#6E5648] mb-1">Description</label>
+          <label htmlFor="tx-desc" className="block text-xs font-semibold text-ink-muted mb-1">
+            Description
+          </label>
           <input
+            id="tx-desc"
             type="text"
             value={description}
             onChange={e => setDescription(e.target.value)}
             placeholder="e.g. Weekly groceries, Client invoice #12..."
-            className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
+            className="w-full px-3 py-2 rounded-xl bg-canvas border border-line text-xs text-ink focus:ring-2 focus:ring-accent focus:outline-hidden"
           />
         </div>
 
-        <div className="flex justify-end gap-2 pt-2 border-t border-[#D6C6B2]">
+        <div className="flex justify-end gap-2 pt-2 border-t border-line">
           <button
             type="button"
             onClick={onClose}
-            className="btn-press px-3 py-1.5 text-xs text-[#6E5648] hover:text-[#3B2418]"
+            className="btn-press px-3 py-1.5 text-xs text-ink-muted hover:text-ink"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={saving}
-            className="btn-press px-4 py-1.5 rounded-lg bg-[#8EC5FF] hover:bg-[#73B6FC] text-[#3B2418] border border-[#3B2418]/15 font-bold text-xs shadow-xs flex items-center gap-1.5 disabled:opacity-60"
+            className="btn-press px-4 py-1.5 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs flex items-center gap-1.5 disabled:opacity-60"
           >
             {saving && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
             <span>{editing ? 'Update Transaction' : 'Save Transaction'}</span>
@@ -342,7 +369,15 @@ export const TransactionModal: React.FC<{
 };
 
 // 3. Custom Categories Manager Modal
-const CATEGORY_COLORS = ['#8EC5FF', '#1E5A99', '#3E7B52', '#A36116', '#B84A44', '#3B2418', '#6E5648'];
+const CATEGORY_COLORS = [
+  '#D2925B',
+  '#64432B',
+  '#333C44',
+  '#868A7A',
+  '#3E7B52',
+  '#B87222',
+  '#B84A44',
+];
 
 export const CategoryManagerModal: React.FC<{
   isOpen: boolean;
@@ -353,7 +388,7 @@ export const CategoryManagerModal: React.FC<{
 }> = ({ isOpen, categories, onCreate, onDelete, onClose }) => {
   const [name, setName] = useState('');
   const [type, setType] = useState<'expense' | 'income'>('expense');
-  const [color, setColor] = useState('#8EC5FF');
+  const [color, setColor] = useState('#D2925B');
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
 
@@ -376,27 +411,35 @@ export const CategoryManagerModal: React.FC<{
 
   return (
     <ModalShell isOpen={isOpen} onClose={onClose} maxWidthClass="max-w-md">
-      <div className="px-5 py-3.5 border-b border-[#5A3927] bg-[#3B2418] flex items-center justify-between">
+      <div className="px-5 py-3.5 border-b border-line bg-brand dark:bg-surface-warm flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Tag className="w-4 h-4 text-[#8EC5FF]" />
-          <span className="text-xs font-bold uppercase tracking-wider text-[#F2E8DA]">
+          <Tag className="w-4 h-4 text-accent" />
+          <span className="text-xs font-bold uppercase tracking-wider text-brand-ink dark:text-ink">
             Manage Categories
           </span>
         </div>
-        <button onClick={onClose} className="text-[#D8C7B4] hover:text-[#F2E8DA] btn-press">
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label="Close modal"
+          className="text-brand-ink/80 dark:text-ink-muted hover:text-brand-ink dark:hover:text-ink btn-press"
+        >
           <X className="w-4 h-4" />
         </button>
       </div>
 
       <div className="p-5 space-y-5">
         {error && (
-          <div className="p-2.5 rounded-lg bg-[#B84A44]/15 border border-[#B84A44]/40 text-xs text-[#9E3530]">
+          <div className="p-2.5 rounded-xl bg-danger/10 border border-danger/30 text-xs text-danger">
             {error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-3 p-3.5 rounded-xl bg-[#F2E8DA] border border-[#D6C6B2]">
-          <span className="text-xs font-bold text-[#3B2418] block">Create Custom Category</span>
+        <form
+          onSubmit={handleSubmit}
+          className="space-y-3 p-3.5 rounded-xl bg-canvas border border-line"
+        >
+          <span className="text-xs font-bold text-ink block">Create Custom Category</span>
           <div className="grid grid-cols-3 gap-2">
             <input
               type="text"
@@ -404,12 +447,14 @@ export const CategoryManagerModal: React.FC<{
               value={name}
               onChange={e => setName(e.target.value)}
               placeholder="Category name"
-              className="col-span-2 px-3 py-1.5 rounded-lg bg-[#FAF5ED] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
+              aria-label="Category name"
+              className="col-span-2 px-3 py-1.5 rounded-xl bg-surface border border-line text-xs text-ink focus:ring-2 focus:ring-accent focus:outline-hidden"
             />
             <select
               value={type}
               onChange={e => setType(e.target.value as 'expense' | 'income')}
-              className="px-2 py-1.5 rounded-lg bg-[#FAF5ED] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
+              aria-label="Category type"
+              className="px-2 py-1.5 rounded-xl bg-surface border border-line text-xs text-ink focus:ring-2 focus:ring-accent focus:outline-hidden"
             >
               <option value="expense">Expense</option>
               <option value="income">Income</option>
@@ -424,7 +469,7 @@ export const CategoryManagerModal: React.FC<{
                   type="button"
                   onClick={() => setColor(c)}
                   className={`w-5 h-5 rounded-full border-2 transition-transform ${
-                    color === c ? 'border-[#3B2418] scale-110' : 'border-transparent'
+                    color === c ? 'border-ink scale-110' : 'border-transparent'
                   }`}
                   style={{ backgroundColor: c }}
                   aria-label={`Select color ${c}`}
@@ -434,7 +479,7 @@ export const CategoryManagerModal: React.FC<{
             <button
               type="submit"
               disabled={saving}
-              className="btn-press px-3 py-1.5 rounded-lg bg-[#8EC5FF] hover:bg-[#73B6FC] text-[#3B2418] font-bold text-xs flex items-center gap-1"
+              className="btn-press px-3 py-1.5 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs flex items-center gap-1"
             >
               <Plus className="w-3.5 h-3.5" />
               <span>Add</span>
@@ -443,29 +488,32 @@ export const CategoryManagerModal: React.FC<{
         </form>
 
         <div className="space-y-2 max-h-56 overflow-y-auto">
-          <span className="text-[11px] font-mono uppercase text-[#6E5648]">
+          <span className="text-[11px] font-mono uppercase tracking-wider text-ink-muted block">
             Custom Categories ({customCats.length})
           </span>
           {customCats.length === 0 ? (
-            <p className="text-xs text-[#6E5648] italic">
+            <p className="text-xs text-ink-muted italic">
               No custom categories yet. All standard defaults (Food, Transport, Education, etc.) are active.
             </p>
           ) : (
             customCats.map(cat => (
               <div
                 key={cat.id}
-                className="flex items-center justify-between px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs"
+                className="flex items-center justify-between px-3 py-2 rounded-xl bg-canvas border border-line text-xs"
               >
                 <div className="flex items-center gap-2">
                   <span className="w-3 h-3 rounded-full" style={{ backgroundColor: cat.color }} />
-                  <span className="font-semibold text-[#3B2418]">{cat.name}</span>
-                  <span className="text-[10px] font-mono uppercase text-[#6E5648]">({cat.type})</span>
+                  <span className="font-semibold text-ink">{cat.name}</span>
+                  <span className="text-[10px] font-mono uppercase text-ink-muted">
+                    ({cat.type})
+                  </span>
                 </div>
                 <button
                   type="button"
                   onClick={() => onDelete(cat.id)}
-                  className="text-[#9E3530] hover:text-[#B84A44] p-1 btn-press"
+                  className="text-danger hover:brightness-110 p-1 btn-press"
                   title="Delete custom category"
+                  aria-label={`Delete custom category ${cat.name}`}
                 >
                   <Trash2 className="w-3.5 h-3.5" />
                 </button>
@@ -543,29 +591,40 @@ export const BudgetModal: React.FC<{
 
   return (
     <ModalShell isOpen={isOpen} onClose={onClose} maxWidthClass="max-w-md">
-      <div className="px-5 py-3.5 border-b border-[#5A3927] bg-[#3B2418] flex items-center justify-between">
-        <span className="text-xs font-bold uppercase tracking-wider text-[#F2E8DA]">
+      <div className="px-5 py-3.5 border-b border-line bg-brand dark:bg-surface-warm flex items-center justify-between">
+        <span className="text-xs font-bold uppercase tracking-wider text-brand-ink dark:text-ink">
           {editing ? 'Edit Monthly Budget' : 'Create Monthly Budget'}
         </span>
-        <button onClick={onClose} className="text-[#D8C7B4] hover:text-[#F2E8DA] btn-press">
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label="Close modal"
+          className="text-brand-ink/80 dark:text-ink-muted hover:text-brand-ink dark:hover:text-ink btn-press"
+        >
           <X className="w-4 h-4" />
         </button>
       </div>
 
       <form onSubmit={handleSubmit} className="p-5 space-y-4">
         {error && (
-          <div className="p-2.5 rounded-lg bg-[#B84A44]/15 border border-[#B84A44]/40 text-xs text-[#9E3530]">
+          <div className="p-2.5 rounded-xl bg-danger/10 border border-danger/30 text-xs text-danger">
             {error}
           </div>
         )}
 
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="block text-xs font-semibold text-[#6E5648] mb-1">Category</label>
+            <label
+              htmlFor="budget-category"
+              className="block text-xs font-semibold text-ink-muted mb-1"
+            >
+              Category
+            </label>
             <select
+              id="budget-category"
               value={category}
               onChange={e => setCategory(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
+              className="w-full px-3 py-2 rounded-xl bg-canvas border border-line text-xs text-ink focus:ring-2 focus:ring-accent focus:outline-hidden"
             >
               {expenseCategories.map(c => (
                 <option key={c.id} value={c.name}>
@@ -575,23 +634,33 @@ export const BudgetModal: React.FC<{
             </select>
           </div>
           <div>
-            <label className="block text-xs font-semibold text-[#6E5648] mb-1">Month</label>
+            <label
+              htmlFor="budget-month"
+              className="block text-xs font-semibold text-ink-muted mb-1"
+            >
+              Month
+            </label>
             <input
+              id="budget-month"
               type="month"
               required
               value={month}
               onChange={e => setMonth(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
+              className="w-full px-3 py-2 rounded-xl bg-canvas border border-line text-xs text-ink font-mono tabular-nums focus:ring-2 focus:ring-accent focus:outline-hidden"
             />
           </div>
         </div>
 
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="block text-xs font-semibold text-[#6E5648] mb-1">
+            <label
+              htmlFor="budget-limit"
+              className="block text-xs font-semibold text-ink-muted mb-1"
+            >
               Spending Limit ({currency}) *
             </label>
             <input
+              id="budget-limit"
               type="number"
               step="0.01"
               min="0.01"
@@ -599,37 +668,41 @@ export const BudgetModal: React.FC<{
               value={limitAmount}
               onChange={e => setLimitAmount(e.target.value)}
               placeholder="1500.00"
-              className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] font-mono text-sm font-bold text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
+              className="w-full px-3 py-2 rounded-xl bg-canvas border border-line font-mono text-sm font-bold text-ink tabular-nums focus:ring-2 focus:ring-accent focus:outline-hidden"
               autoFocus
             />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-[#6E5648] mb-1">
+            <label
+              htmlFor="budget-alert"
+              className="block text-xs font-semibold text-ink-muted mb-1"
+            >
               Warning Alert (%)
             </label>
             <input
+              id="budget-alert"
               type="number"
               min="10"
               max="100"
               value={warningThresholdPercent}
               onChange={e => setWarningThresholdPercent(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] font-mono text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
+              className="w-full px-3 py-2 rounded-xl bg-canvas border border-line font-mono text-xs text-ink tabular-nums focus:ring-2 focus:ring-accent focus:outline-hidden"
             />
           </div>
         </div>
 
-        <div className="flex justify-end gap-2 pt-2 border-t border-[#D6C6B2]">
+        <div className="flex justify-end gap-2 pt-2 border-t border-line">
           <button
             type="button"
             onClick={onClose}
-            className="btn-press px-3 py-1.5 text-xs text-[#6E5648] hover:text-[#3B2418]"
+            className="btn-press px-3 py-1.5 text-xs text-ink-muted hover:text-ink"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={saving}
-            className="btn-press px-4 py-1.5 rounded-lg bg-[#8EC5FF] hover:bg-[#73B6FC] text-[#3B2418] border border-[#3B2418]/15 font-bold text-xs flex items-center gap-1.5 disabled:opacity-60"
+            className="btn-press px-4 py-1.5 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs flex items-center gap-1.5 disabled:opacity-60"
           >
             {saving && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
             <span>{editing ? 'Update Budget' : 'Save Budget'}</span>
@@ -719,44 +792,56 @@ export const SavingsGoalModal: React.FC<{
 
   return (
     <ModalShell isOpen={isOpen} onClose={onClose} maxWidthClass="max-w-md">
-      <div className="px-5 py-3.5 border-b border-[#5A3927] bg-[#3B2418] flex items-center justify-between">
+      <div className="px-5 py-3.5 border-b border-line bg-brand dark:bg-surface-warm flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <PiggyBank className="w-4 h-4 text-[#8EC5FF]" />
-          <span className="text-xs font-bold uppercase tracking-wider text-[#F2E8DA]">
+          <PiggyBank className="w-4 h-4 text-accent" />
+          <span className="text-xs font-bold uppercase tracking-wider text-brand-ink dark:text-ink">
             {editing ? 'Edit Savings Goal' : 'Create Savings Goal'}
           </span>
         </div>
-        <button onClick={onClose} className="text-[#D8C7B4] hover:text-[#F2E8DA] btn-press">
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label="Close modal"
+          className="text-brand-ink/80 dark:text-ink-muted hover:text-brand-ink dark:hover:text-ink btn-press"
+        >
           <X className="w-4 h-4" />
         </button>
       </div>
 
       <form onSubmit={handleSubmit} className="p-5 space-y-4">
         {error && (
-          <div className="p-2.5 rounded-lg bg-[#B84A44]/15 border border-[#B84A44]/40 text-xs text-[#9E3530]">
+          <div className="p-2.5 rounded-xl bg-danger/10 border border-danger/30 text-xs text-danger">
             {error}
           </div>
         )}
 
         <div>
-          <label className="block text-xs font-semibold text-[#6E5648] mb-1">Goal Name *</label>
+          <label htmlFor="goal-name" className="block text-xs font-semibold text-ink-muted mb-1">
+            Goal Name *
+          </label>
           <input
+            id="goal-name"
             type="text"
             required
             value={name}
             onChange={e => setName(e.target.value)}
             placeholder="e.g. Emergency Fund, MacBook Pro, Tuition..."
-            className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
+            className="w-full px-3 py-2 rounded-xl bg-canvas border border-line text-xs text-ink focus:ring-2 focus:ring-accent focus:outline-hidden"
             autoFocus
           />
         </div>
 
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="block text-xs font-semibold text-[#6E5648] mb-1">
+            <label
+              htmlFor="goal-target"
+              className="block text-xs font-semibold text-ink-muted mb-1"
+            >
               Target ({currency}) *
             </label>
             <input
+              id="goal-target"
               type="number"
               step="0.01"
               min="0.01"
@@ -764,31 +849,38 @@ export const SavingsGoalModal: React.FC<{
               value={targetAmount}
               onChange={e => setTargetAmount(e.target.value)}
               placeholder="15000.00"
-              className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] font-mono text-xs font-bold text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
+              className="w-full px-3 py-2 rounded-xl bg-canvas border border-line font-mono text-xs font-bold text-ink tabular-nums focus:ring-2 focus:ring-accent focus:outline-hidden"
             />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-[#6E5648] mb-1">
+            <label htmlFor="goal-saved" className="block text-xs font-semibold text-ink-muted mb-1">
               Already Saved ({currency})
             </label>
             <input
+              id="goal-saved"
               type="number"
               step="0.01"
               min="0"
               value={currentAmount}
               onChange={e => setCurrentAmount(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] font-mono text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
+              className="w-full px-3 py-2 rounded-xl bg-canvas border border-line font-mono text-xs text-ink tabular-nums focus:ring-2 focus:ring-accent focus:outline-hidden"
             />
           </div>
         </div>
 
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="block text-xs font-semibold text-[#6E5648] mb-1">Category</label>
+            <label
+              htmlFor="goal-category"
+              className="block text-xs font-semibold text-ink-muted mb-1"
+            >
+              Category
+            </label>
             <select
+              id="goal-category"
               value={category}
               onChange={e => setCategory(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
+              className="w-full px-3 py-2 rounded-xl bg-canvas border border-line text-xs text-ink focus:ring-2 focus:ring-accent focus:outline-hidden"
             >
               <option value="Emergency Fund">Emergency Fund</option>
               <option value="Tech / Laptop">Tech / Laptop</option>
@@ -800,40 +892,49 @@ export const SavingsGoalModal: React.FC<{
             </select>
           </div>
           <div>
-            <label className="block text-xs font-semibold text-[#6E5648] mb-1">Target Deadline *</label>
+            <label
+              htmlFor="goal-deadline"
+              className="block text-xs font-semibold text-ink-muted mb-1"
+            >
+              Target Deadline *
+            </label>
             <input
+              id="goal-deadline"
               type="date"
               required
               value={deadline}
               onChange={e => setDeadline(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
+              className="w-full px-3 py-2 rounded-xl bg-canvas border border-line text-xs text-ink font-mono tabular-nums focus:ring-2 focus:ring-accent focus:outline-hidden"
             />
           </div>
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-[#6E5648] mb-1">Notes</label>
+          <label htmlFor="goal-notes" className="block text-xs font-semibold text-ink-muted mb-1">
+            Notes
+          </label>
           <textarea
+            id="goal-notes"
             rows={2}
             value={notes}
             onChange={e => setNotes(e.target.value)}
             placeholder="Optional savings strategy or target milestone..."
-            className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
+            className="w-full px-3 py-2 rounded-xl bg-canvas border border-line text-xs text-ink focus:ring-2 focus:ring-accent focus:outline-hidden"
           />
         </div>
 
-        <div className="flex justify-end gap-2 pt-2 border-t border-[#D6C6B2]">
+        <div className="flex justify-end gap-2 pt-2 border-t border-line">
           <button
             type="button"
             onClick={onClose}
-            className="btn-press px-3 py-1.5 text-xs text-[#6E5648] hover:text-[#3B2418]"
+            className="btn-press px-3 py-1.5 text-xs text-ink-muted hover:text-ink"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={saving}
-            className="btn-press px-4 py-1.5 rounded-lg bg-[#8EC5FF] hover:bg-[#73B6FC] text-[#3B2418] border border-[#3B2418]/15 font-bold text-xs flex items-center gap-1.5 disabled:opacity-60"
+            className="btn-press px-4 py-1.5 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs flex items-center gap-1.5 disabled:opacity-60"
           >
             {saving && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
             <span>{editing ? 'Update Goal' : 'Create Goal'}</span>
@@ -900,39 +1001,51 @@ export const ContributionModal: React.FC<{
 
   return (
     <ModalShell isOpen={Boolean(goal)} onClose={onClose} maxWidthClass="max-w-sm">
-      <div className="px-5 py-3.5 border-b border-[#5A3927] bg-[#3B2418] flex items-center justify-between">
+      <div className="px-5 py-3.5 border-b border-line bg-brand dark:bg-surface-warm flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <TrendingUp className="w-4 h-4 text-[#8EC5FF]" />
-          <span className="text-xs font-bold uppercase tracking-wider text-[#F2E8DA]">
+          <TrendingUp className="w-4 h-4 text-accent" />
+          <span className="text-xs font-bold uppercase tracking-wider text-brand-ink dark:text-ink">
             Add Contribution
           </span>
         </div>
-        <button onClick={onClose} className="text-[#D8C7B4] hover:text-[#F2E8DA] btn-press">
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label="Close modal"
+          className="text-brand-ink/80 dark:text-ink-muted hover:text-brand-ink dark:hover:text-ink btn-press"
+        >
           <X className="w-4 h-4" />
         </button>
       </div>
 
       {goal && (
         <form onSubmit={handleSubmit} className="p-5 space-y-4">
-          <div className="p-3 rounded-xl bg-[#F2E8DA] border border-[#D6C6B2] space-y-1 text-xs">
-            <span className="font-bold text-[#3B2418] block">{goal.name}</span>
-            <span className="text-[#6E5648]">
-              Remaining to target: <strong className="font-mono text-[#1E5A99]">{formatCurrency(remaining, currency)}</strong>
+          <div className="p-3 rounded-xl bg-canvas border border-line space-y-1 text-xs">
+            <span className="font-bold text-ink block">{goal.name}</span>
+            <span className="text-ink-muted tabular-nums">
+              Remaining to target:{' '}
+              <strong className="font-mono text-accent">
+                {formatCurrency(remaining, currency)}
+              </strong>
             </span>
           </div>
 
           {error && (
-            <div className="p-2.5 rounded-lg bg-[#B84A44]/15 border border-[#B84A44]/40 text-xs text-[#9E3530]">
+            <div className="p-2.5 rounded-xl bg-danger/10 border border-danger/30 text-xs text-danger">
               {error}
             </div>
           )}
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-semibold text-[#6E5648] mb-1">
+              <label
+                htmlFor="contrib-amount"
+                className="block text-xs font-semibold text-ink-muted mb-1"
+              >
                 Amount ({currency}) *
               </label>
               <input
+                id="contrib-amount"
                 type="number"
                 step="0.01"
                 min="0.01"
@@ -940,55 +1053,67 @@ export const ContributionModal: React.FC<{
                 value={amount}
                 onChange={e => setAmount(e.target.value)}
                 placeholder="500.00"
-                className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] font-mono text-sm font-bold text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
+                className="w-full px-3 py-2 rounded-xl bg-canvas border border-line font-mono text-sm font-bold text-ink tabular-nums focus:ring-2 focus:ring-accent focus:outline-hidden"
                 autoFocus
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-[#6E5648] mb-1">Date</label>
+              <label
+                htmlFor="contrib-date"
+                className="block text-xs font-semibold text-ink-muted mb-1"
+              >
+                Date
+              </label>
               <input
+                id="contrib-date"
                 type="date"
                 required
                 value={date}
                 onChange={e => setDate(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
+                className="w-full px-3 py-2 rounded-xl bg-canvas border border-line text-xs text-ink font-mono tabular-nums focus:ring-2 focus:ring-accent focus:outline-hidden"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-[#6E5648] mb-1">Note</label>
+            <label
+              htmlFor="contrib-note"
+              className="block text-xs font-semibold text-ink-muted mb-1"
+            >
+              Note
+            </label>
             <input
+              id="contrib-note"
               type="text"
               value={note}
               onChange={e => setNote(e.target.value)}
               placeholder="e.g. Monthly transfer"
-              className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
+              className="w-full px-3 py-2 rounded-xl bg-canvas border border-line text-xs text-ink focus:ring-2 focus:ring-accent focus:outline-hidden"
             />
           </div>
 
-          <label className="flex items-center gap-2 text-xs text-[#3B2418] cursor-pointer">
+          <label className="flex items-center gap-2 text-xs text-ink cursor-pointer">
             <input
               type="checkbox"
               checked={alsoRecordExpense}
               onChange={e => setAlsoRecordExpense(e.target.checked)}
-              className="rounded accent-[#3B2418]"
+              className="rounded accent-brand dark:accent-accent"
             />
             <span>Also log as an outflow transaction from balance</span>
           </label>
 
-          <div className="flex justify-end gap-2 pt-2 border-t border-[#D6C6B2]">
+          <div className="flex justify-end gap-2 pt-2 border-t border-line">
             <button
               type="button"
               onClick={onClose}
-              className="btn-press px-3 py-1.5 text-xs text-[#6E5648] hover:text-[#3B2418]"
+              className="btn-press px-3 py-1.5 text-xs text-ink-muted hover:text-ink"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={saving}
-              className="btn-press px-4 py-1.5 rounded-lg bg-[#8EC5FF] hover:bg-[#73B6FC] text-[#3B2418] border border-[#3B2418]/15 font-bold text-xs flex items-center gap-1.5 disabled:opacity-60"
+              className="btn-press px-4 py-1.5 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs flex items-center gap-1.5 disabled:opacity-60"
             >
               {saving && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
               <span>Add Funds</span>
@@ -1102,45 +1227,56 @@ export const RecurringModal: React.FC<{
 
   return (
     <ModalShell isOpen={isOpen} onClose={onClose} maxWidthClass="max-w-md">
-      <div className="px-5 py-3.5 border-b border-[#5A3927] bg-[#3B2418] flex items-center justify-between">
+      <div className="px-5 py-3.5 border-b border-line bg-brand dark:bg-surface-warm flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <CalendarClock className="w-4 h-4 text-[#8EC5FF]" />
-          <span className="text-xs font-bold uppercase tracking-wider text-[#F2E8DA]">
+          <CalendarClock className="w-4 h-4 text-accent" />
+          <span className="text-xs font-bold uppercase tracking-wider text-brand-ink dark:text-ink">
             {editing ? 'Edit Recurring Item' : 'New Recurring Payment / Income'}
           </span>
         </div>
-        <button onClick={onClose} className="text-[#D8C7B4] hover:text-[#F2E8DA] btn-press">
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label="Close modal"
+          className="text-brand-ink/80 dark:text-ink-muted hover:text-brand-ink dark:hover:text-ink btn-press"
+        >
           <X className="w-4 h-4" />
         </button>
       </div>
 
       <form onSubmit={handleSubmit} className="p-5 space-y-3.5">
         {error && (
-          <div className="p-2.5 rounded-lg bg-[#B84A44]/15 border border-[#B84A44]/40 text-xs text-[#9E3530]">
+          <div className="p-2.5 rounded-xl bg-danger/10 border border-danger/30 text-xs text-danger">
             {error}
           </div>
         )}
 
         <div>
-          <label className="block text-xs font-semibold text-[#6E5648] mb-1">Title *</label>
+          <label htmlFor="rec-title" className="block text-xs font-semibold text-ink-muted mb-1">
+            Title *
+          </label>
           <input
+            id="rec-title"
             type="text"
             required
             value={title}
             onChange={e => setTitle(e.target.value)}
             placeholder="e.g. Apartment Rent, Fiber Internet, Cloud Hosting..."
-            className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
+            className="w-full px-3 py-2 rounded-xl bg-canvas border border-line text-xs text-ink focus:ring-2 focus:ring-accent focus:outline-hidden"
             autoFocus
           />
         </div>
 
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="block text-xs font-semibold text-[#6E5648] mb-1">Recurring Type</label>
+            <label htmlFor="rec-kind" className="block text-xs font-semibold text-ink-muted mb-1">
+              Recurring Type
+            </label>
             <select
+              id="rec-kind"
               value={kind}
               onChange={e => handleKindChange(e.target.value as RecurringKind)}
-              className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
+              className="w-full px-3 py-2 rounded-xl bg-canvas border border-line text-xs text-ink focus:ring-2 focus:ring-accent focus:outline-hidden"
             >
               <option value="subscription">Monthly Subscription</option>
               <option value="rent">Rent</option>
@@ -1150,11 +1286,14 @@ export const RecurringModal: React.FC<{
             </select>
           </div>
           <div>
-            <label className="block text-xs font-semibold text-[#6E5648] mb-1">Flow Direction</label>
+            <label htmlFor="rec-flow" className="block text-xs font-semibold text-ink-muted mb-1">
+              Flow Direction
+            </label>
             <select
+              id="rec-flow"
               value={type}
               onChange={e => setType(e.target.value as 'income' | 'expense')}
-              className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
+              className="w-full px-3 py-2 rounded-xl bg-canvas border border-line text-xs text-ink focus:ring-2 focus:ring-accent focus:outline-hidden"
             >
               <option value="expense">Expense (Outflow)</option>
               <option value="income">Income (Inflow)</option>
@@ -1164,10 +1303,11 @@ export const RecurringModal: React.FC<{
 
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="block text-xs font-semibold text-[#6E5648] mb-1">
+            <label htmlFor="rec-amount" className="block text-xs font-semibold text-ink-muted mb-1">
               Amount ({currency}) *
             </label>
             <input
+              id="rec-amount"
               type="number"
               step="0.01"
               min="0.01"
@@ -1175,15 +1315,18 @@ export const RecurringModal: React.FC<{
               value={amount}
               onChange={e => setAmount(e.target.value)}
               placeholder="0.00"
-              className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] font-mono text-sm font-bold text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
+              className="w-full px-3 py-2 rounded-xl bg-canvas border border-line font-mono text-sm font-bold text-ink tabular-nums focus:ring-2 focus:ring-accent focus:outline-hidden"
             />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-[#6E5648] mb-1">Frequency</label>
+            <label htmlFor="rec-freq" className="block text-xs font-semibold text-ink-muted mb-1">
+              Frequency
+            </label>
             <select
+              id="rec-freq"
               value={frequency}
               onChange={e => setFrequency(e.target.value as RecurringFrequency)}
-              className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
+              className="w-full px-3 py-2 rounded-xl bg-canvas border border-line text-xs text-ink focus:ring-2 focus:ring-accent focus:outline-hidden"
             >
               <option value="weekly">Weekly</option>
               <option value="monthly">Monthly</option>
@@ -1195,11 +1338,17 @@ export const RecurringModal: React.FC<{
 
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="block text-xs font-semibold text-[#6E5648] mb-1">Category</label>
+            <label
+              htmlFor="rec-category"
+              className="block text-xs font-semibold text-ink-muted mb-1"
+            >
+              Category
+            </label>
             <select
+              id="rec-category"
               value={category}
               onChange={e => setCategory(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
+              className="w-full px-3 py-2 rounded-xl bg-canvas border border-line text-xs text-ink focus:ring-2 focus:ring-accent focus:outline-hidden"
             >
               {availableCategories.map(c => (
                 <option key={c.id} value={c.name}>
@@ -1212,11 +1361,14 @@ export const RecurringModal: React.FC<{
             </select>
           </div>
           <div>
-            <label className="block text-xs font-semibold text-[#6E5648] mb-1">Payment Method</label>
+            <label htmlFor="rec-method" className="block text-xs font-semibold text-ink-muted mb-1">
+              Payment Method
+            </label>
             <select
+              id="rec-method"
               value={paymentMethod}
               onChange={e => setPaymentMethod(e.target.value as PaymentMethod)}
-              className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
+              className="w-full px-3 py-2 rounded-xl bg-canvas border border-line text-xs text-ink focus:ring-2 focus:ring-accent focus:outline-hidden"
             >
               {PAYMENT_METHODS.map(pm => (
                 <option key={pm} value={pm}>
@@ -1229,38 +1381,41 @@ export const RecurringModal: React.FC<{
 
         <div className="grid grid-cols-2 gap-3 items-end">
           <div>
-            <label className="block text-xs font-semibold text-[#6E5648] mb-1">Next Due Date *</label>
+            <label htmlFor="rec-due" className="block text-xs font-semibold text-ink-muted mb-1">
+              Next Due Date *
+            </label>
             <input
+              id="rec-due"
               type="date"
               required
               value={nextDueDate}
               onChange={e => setNextDueDate(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
+              className="w-full px-3 py-2 rounded-xl bg-canvas border border-line text-xs text-ink font-mono tabular-nums focus:ring-2 focus:ring-accent focus:outline-hidden"
             />
           </div>
-          <label className="flex items-center gap-2 text-xs text-[#3B2418] pb-2 cursor-pointer">
+          <label className="flex items-center gap-2 text-xs text-ink pb-2 cursor-pointer">
             <input
               type="checkbox"
               checked={active}
               onChange={e => setActive(e.target.checked)}
-              className="rounded accent-[#3B2418]"
+              className="rounded accent-brand dark:accent-accent"
             />
             <span>Schedule active</span>
           </label>
         </div>
 
-        <div className="flex justify-end gap-2 pt-2 border-t border-[#D6C6B2]">
+        <div className="flex justify-end gap-2 pt-2 border-t border-line">
           <button
             type="button"
             onClick={onClose}
-            className="btn-press px-3 py-1.5 text-xs text-[#6E5648] hover:text-[#3B2418]"
+            className="btn-press px-3 py-1.5 text-xs text-ink-muted hover:text-ink"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={saving}
-            className="btn-press px-4 py-1.5 rounded-lg bg-[#8EC5FF] hover:bg-[#73B6FC] text-[#3B2418] border border-[#3B2418]/15 font-bold text-xs flex items-center gap-1.5 disabled:opacity-60"
+            className="btn-press px-4 py-1.5 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs flex items-center gap-1.5 disabled:opacity-60"
           >
             {saving && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
             <span>{editing ? 'Update Schedule' : 'Save Schedule'}</span>

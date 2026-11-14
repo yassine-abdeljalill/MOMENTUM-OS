@@ -30,7 +30,6 @@ export const LessonTasksTab: React.FC<{
   const [statusFilter, setStatusFilter] = useState<'all' | LearningTaskStatus>('all');
   const [kindFilter, setKindFilter] = useState<'all' | LearningTaskKind>('all');
 
-  // Quick create form
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [editingTask, setEditingTask] = useState<LearningTask | null>(null);
   const [title, setTitle] = useState('');
@@ -41,7 +40,6 @@ export const LessonTasksTab: React.FC<{
   const [dueDate, setDueDate] = useState('');
   const [saving, setSaving] = useState(false);
 
-  // Quick inline input
   const [inlineTitle, setInlineTitle] = useState('');
   const [inlineKind, setInlineKind] = useState<LearningTaskKind>('exercise');
   const [inlineDueDate, setInlineDueDate] = useState('');
@@ -197,22 +195,22 @@ export const LessonTasksTab: React.FC<{
   return (
     <div className="space-y-5">
       {/* Summary & Sync Info */}
-      <div className="p-4 rounded-xl bg-[#F2E8DA] border border-[#D6C6B2] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="p-4 rounded-2xl bg-surface border border-line flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="space-y-1.5 flex-1">
           <div className="flex items-center justify-between gap-3">
-            <span className="text-xs font-bold text-[#3B2418]">
+            <span className="text-xs font-bold text-ink">
               {scopeLabel === 'module' ? 'Module Tasks & Assignments' : 'Tasks, Practical Labs & Exercises'}
             </span>
-            <span className="font-mono text-xs font-bold text-[#1E5A99] tabular-nums">
+            <span className="font-mono text-xs font-bold text-accent tabular-nums">
               {completedCount}/{tasks.length} completed ({pct}%)
             </span>
           </div>
           <AnimatedProgressBar
             percentage={pct}
-            trackClassName="w-full h-1.5 rounded-full bg-[#EAE0D0] overflow-hidden"
-            fillClassName="h-full bg-[#3E7B52] rounded-full"
+            trackClassName="w-full h-1.5 rounded-full bg-surface-inset overflow-hidden"
+            fillClassName="h-full bg-success rounded-full"
           />
-          <p className="text-[11px] text-[#6E5648]">
+          <p className="text-[11px] text-ink-muted">
             Tasks created here automatically appear on the main MOMENTUM Tasks board and Calendar without duplication.
           </p>
         </div>
@@ -220,7 +218,7 @@ export const LessonTasksTab: React.FC<{
         <button
           type="button"
           onClick={openCreateModal}
-          className="btn-press flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#8EC5FF] hover:bg-[#73B6FC] text-[#3B2418] border border-[#3B2418]/15 font-bold text-xs shadow-xs shrink-0"
+          className="btn-press flex items-center gap-1.5 px-3.5 py-2 min-h-[40px] sm:min-h-0 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs shrink-0 whitespace-nowrap"
         >
           <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
           <span>New Task / Lab</span>
@@ -230,20 +228,21 @@ export const LessonTasksTab: React.FC<{
       {/* Quick Inline Add */}
       <form
         onSubmit={handleQuickInlineCreate}
-        className="p-3.5 rounded-xl bg-[#FAF5ED] border border-[#D6C6B2] flex flex-wrap items-center gap-2.5"
+        className="p-3.5 rounded-2xl bg-surface border border-line flex flex-wrap items-center gap-2.5"
       >
-        <Plus className="w-4 h-4 text-[#1E5A99] shrink-0" />
+        <Plus className="w-4 h-4 text-accent shrink-0" />
         <input
           type="text"
           value={inlineTitle}
           onChange={e => setInlineTitle(e.target.value)}
           placeholder="Quick add exercise, lab, or assignment..."
-          className="flex-1 min-w-[200px] bg-transparent text-xs text-[#3B2418] focus:outline-hidden placeholder-[#6E5648]"
+          className="flex-1 min-w-[200px] bg-transparent text-xs text-ink focus:outline-hidden placeholder:text-ink-muted"
         />
         <select
           value={inlineKind}
           onChange={e => setInlineKind(e.target.value as LearningTaskKind)}
-          className="px-2.5 py-1.5 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418]"
+          className="px-2.5 py-1.5 rounded-xl bg-canvas border border-line text-xs text-ink"
+          aria-label="Task kind"
         >
           <option value="task">Task</option>
           <option value="assignment">Assignment</option>
@@ -254,12 +253,12 @@ export const LessonTasksTab: React.FC<{
           type="date"
           value={inlineDueDate}
           onChange={e => setInlineDueDate(e.target.value)}
-          className="px-2.5 py-1.5 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418]"
+          className="px-2.5 py-1.5 rounded-xl bg-canvas border border-line text-xs text-ink font-mono"
           aria-label="Deadline"
         />
         <button
           type="submit"
-          className="btn-press px-3 py-1.5 rounded-lg bg-[#3B2418] text-[#F2E8DA] text-xs font-semibold hover:bg-[#4D3021]"
+          className="btn-press px-3.5 py-1.5 rounded-xl bg-brand text-brand-ink text-xs font-semibold hover:bg-brand-hover"
         >
           Add
         </button>
@@ -273,10 +272,10 @@ export const LessonTasksTab: React.FC<{
               key={st}
               type="button"
               onClick={() => setStatusFilter(st)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors ${
+              className={`px-3 py-1.5 rounded-xl text-xs font-medium border transition-colors whitespace-nowrap ${
                 statusFilter === st
-                  ? 'bg-[#3B2418] text-[#8EC5FF] border-[#3B2418]'
-                  : 'bg-[#FAF5ED] text-[#6E5648] border-[#D6C6B2] hover:text-[#3B2418]'
+                  ? 'bg-brand text-brand-ink border-brand'
+                  : 'bg-surface text-ink-muted border-line hover:text-ink'
               }`}
             >
               {st === 'all' ? 'All' : LEARNING_TASK_STATUS_META[st].label}
@@ -287,7 +286,8 @@ export const LessonTasksTab: React.FC<{
         <select
           value={kindFilter}
           onChange={e => setKindFilter(e.target.value as any)}
-          className="px-2.5 py-1.5 rounded-lg bg-[#FAF5ED] border border-[#D6C6B2] text-xs text-[#3B2418]"
+          className="px-2.5 py-1.5 rounded-xl bg-surface border border-line text-xs text-ink"
+          aria-label="Filter by task type"
         >
           <option value="all">All Types</option>
           <option value="task">Tasks</option>
@@ -299,12 +299,12 @@ export const LessonTasksTab: React.FC<{
 
       {/* Tasks List */}
       {filteredTasks.length === 0 ? (
-        <div className="p-10 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] text-center space-y-2">
-          <CheckSquare className="w-8 h-8 text-[#1E5A99] mx-auto opacity-60" />
-          <p className="text-sm font-semibold text-[#3B2418]">
+        <div className="p-10 rounded-2xl bg-surface border border-line text-center space-y-2">
+          <CheckSquare className="w-8 h-8 text-accent mx-auto opacity-70" />
+          <p className="text-sm font-semibold text-ink">
             {tasks.length === 0 ? `No tasks or exercises for this ${scopeLabel} yet` : 'No tasks match current filters'}
           </p>
-          <p className="text-xs text-[#6E5648]">
+          <p className="text-xs text-ink-muted">
             Track assignments, hands-on labs, and practice exercises with deadlines and priorities.
           </p>
         </div>
@@ -316,10 +316,10 @@ export const LessonTasksTab: React.FC<{
             return (
               <div
                 key={t.id}
-                className={`p-4 rounded-xl border transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
+                className={`p-4 rounded-2xl border transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
                   isDone
-                    ? 'bg-[#EAE0D0]/60 border-[#D6C6B2] opacity-80'
-                    : 'bg-[#FAF5ED] border-[#D6C6B2] hover:border-[#8EC5FF]'
+                    ? 'bg-surface-warm/60 border-line opacity-75'
+                    : 'bg-surface border-line hover:border-accent'
                 }`}
               >
                 <div className="flex items-start gap-3 min-w-0">
@@ -334,23 +334,21 @@ export const LessonTasksTab: React.FC<{
                     <div className="flex flex-wrap items-center gap-2">
                       <span
                         className={`text-xs font-bold ${
-                          isDone ? 'line-through text-[#6E5648]' : 'text-[#3B2418]'
+                          isDone ? 'line-through text-ink-muted' : 'text-ink'
                         }`}
                       >
                         {t.title}
                       </span>
                     </div>
                     {t.description && (
-                      <p className="text-xs text-[#6E5648] line-clamp-2">{t.description}</p>
+                      <p className="text-xs text-ink-muted line-clamp-2">{t.description}</p>
                     )}
-                    <div className="flex flex-wrap items-center gap-2 text-[11px] text-[#6E5648]">
-                      <span className="font-medium text-[#1E5A99]">
+                    <div className="flex flex-wrap items-center gap-2 text-[11px] text-ink-muted">
+                      <span className="font-medium text-accent">
                         {LEARNING_TASK_KIND_LABELS[t.taskKind]}
                       </span>
                       <span aria-hidden="true">·</span>
-                      <span
-                        className={`font-mono text-[10px] uppercase font-semibold px-1.5 py-0.2 rounded border ${pColor.bg} ${pColor.text} ${pColor.border}`}
-                      >
+                      <span className={`font-mono text-[10px] uppercase font-semibold ${pColor.text}`}>
                         {t.priority}
                       </span>
                       {t.dueDate && (
@@ -370,7 +368,7 @@ export const LessonTasksTab: React.FC<{
                   <select
                     value={t.status}
                     onChange={e => void handleChangeStatus(t, e.target.value as LearningTaskStatus)}
-                    className="px-2 py-1 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs font-medium text-[#3B2418]"
+                    className="px-2.5 py-1.5 rounded-xl bg-canvas border border-line text-xs font-medium text-ink"
                     aria-label="Task status"
                   >
                     <option value="todo">To Do</option>
@@ -380,16 +378,18 @@ export const LessonTasksTab: React.FC<{
                   <button
                     type="button"
                     onClick={() => openEditModal(t)}
-                    className="btn-press p-1.5 rounded-lg text-[#6E5648] hover:text-[#3B2418] hover:bg-[#EAE0D0]"
+                    className="btn-press p-1.5 rounded-lg text-ink-muted hover:text-ink hover:bg-surface-warm"
                     title="Edit task"
+                    aria-label="Edit task"
                   >
                     <Edit3 className="w-3.5 h-3.5" />
                   </button>
                   <button
                     type="button"
                     onClick={() => setDeleteTarget(t)}
-                    className="btn-press p-1.5 rounded-lg text-[#6E5648] hover:text-[#B84A44] hover:bg-[#EAE0D0]"
+                    className="btn-press p-1.5 rounded-lg text-ink-muted hover:text-danger hover:bg-surface-warm"
                     title="Delete task"
+                    aria-label="Delete task"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                   </button>
@@ -402,39 +402,40 @@ export const LessonTasksTab: React.FC<{
 
       {/* Create / Edit Task Modal */}
       <ModalShell isOpen={showCreateModal} onClose={() => setShowCreateModal(false)} maxWidthClass="max-w-lg">
-        <div className="px-6 py-4 border-b border-[#5A3927] bg-[#3B2418] flex items-center justify-between">
-          <h3 className="text-sm font-bold text-[#F2E8DA]">
+        <div className="px-6 py-4 border-b border-line bg-brand dark:bg-surface-warm flex items-center justify-between">
+          <h3 className="text-sm font-bold text-brand-ink dark:text-ink">
             {editingTask ? 'Edit Learning Task' : 'New Task / Exercise'}
           </h3>
           <button
             type="button"
             onClick={() => setShowCreateModal(false)}
-            className="text-[#D8C7B4] hover:text-[#F2E8DA]"
+            className="text-brand-ink/80 dark:text-ink-muted hover:text-brand-ink dark:hover:text-ink"
+            aria-label="Close modal"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
         <form onSubmit={handleSaveTaskModal} className="p-6 space-y-4">
           <div>
-            <label className="block text-xs font-semibold text-[#6E5648] mb-1">Title *</label>
+            <label className="block text-xs font-semibold text-ink-muted mb-1">Title *</label>
             <input
               type="text"
               required
               value={title}
               onChange={e => setTitle(e.target.value)}
               placeholder="e.g. Complete Wireshark TLS Handshake Lab"
-              className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
+              className="w-full px-3 py-2 rounded-xl bg-canvas border border-line text-xs text-ink placeholder:text-ink-muted focus:ring-2 focus:ring-accent focus:outline-hidden"
               autoFocus
             />
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <div>
-              <label className="block text-xs font-semibold text-[#6E5648] mb-1">Type</label>
+              <label className="block text-xs font-semibold text-ink-muted mb-1">Type</label>
               <select
                 value={taskKind}
                 onChange={e => setTaskKind(e.target.value as LearningTaskKind)}
-                className="w-full px-2.5 py-1.5 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418]"
+                className="w-full px-2.5 py-2 rounded-xl bg-canvas border border-line text-xs text-ink"
               >
                 <option value="task">Task</option>
                 <option value="assignment">Assignment</option>
@@ -444,11 +445,11 @@ export const LessonTasksTab: React.FC<{
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-[#6E5648] mb-1">Status</label>
+              <label className="block text-xs font-semibold text-ink-muted mb-1">Status</label>
               <select
                 value={status}
                 onChange={e => setStatus(e.target.value as LearningTaskStatus)}
-                className="w-full px-2.5 py-1.5 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418]"
+                className="w-full px-2.5 py-2 rounded-xl bg-canvas border border-line text-xs text-ink"
               >
                 <option value="todo">To Do</option>
                 <option value="in_progress">In Progress</option>
@@ -457,11 +458,11 @@ export const LessonTasksTab: React.FC<{
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-[#6E5648] mb-1">Priority</label>
+              <label className="block text-xs font-semibold text-ink-muted mb-1">Priority</label>
               <select
                 value={priority}
                 onChange={e => setPriority(e.target.value as Priority)}
-                className="w-full px-2.5 py-1.5 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418]"
+                className="w-full px-2.5 py-2 rounded-xl bg-canvas border border-line text-xs text-ink"
               >
                 <option value="low">Low</option>
                 <option value="medium">Medium</option>
@@ -471,39 +472,39 @@ export const LessonTasksTab: React.FC<{
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-[#6E5648] mb-1">Deadline</label>
+              <label className="block text-xs font-semibold text-ink-muted mb-1">Deadline</label>
               <input
                 type="date"
                 value={dueDate}
                 onChange={e => setDueDate(e.target.value)}
-                className="w-full px-2 py-1.5 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418]"
+                className="w-full px-2 py-2 rounded-xl bg-canvas border border-line text-xs text-ink font-mono"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-[#6E5648] mb-1">Description</label>
+            <label className="block text-xs font-semibold text-ink-muted mb-1">Description</label>
             <textarea
               rows={3}
               value={description}
               onChange={e => setDescription(e.target.value)}
               placeholder="Deliverables, steps, or grading rubric..."
-              className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
+              className="w-full px-3 py-2 rounded-xl bg-canvas border border-line text-xs text-ink placeholder:text-ink-muted focus:ring-2 focus:ring-accent focus:outline-hidden"
             />
           </div>
 
-          <div className="flex justify-end gap-2 pt-3 border-t border-[#D6C6B2]">
+          <div className="flex justify-end gap-2 pt-3 border-t border-line">
             <button
               type="button"
               onClick={() => setShowCreateModal(false)}
-              className="px-3 py-1.5 text-xs text-[#6E5648] hover:text-[#3B2418]"
+              className="px-3 py-1.5 text-xs text-ink-muted hover:text-ink"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={saving}
-              className="btn-press px-4 py-1.5 rounded-lg bg-[#8EC5FF] hover:bg-[#73B6FC] text-[#3B2418] font-bold text-xs border border-[#3B2418]/15"
+              className="btn-press px-4 py-1.5 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs"
             >
               {saving ? 'Saving...' : editingTask ? 'Save Changes' : 'Create Task'}
             </button>

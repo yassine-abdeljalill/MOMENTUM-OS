@@ -6,7 +6,6 @@ import {
   Sparkles,
   FolderGit2,
   BookOpen,
-  Dumbbell,
   Plus,
 } from 'lucide-react';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
@@ -14,7 +13,7 @@ import { useApp } from '../../lib/context';
 import { LifeArea, Priority } from '../../types';
 import { ModalShell, MOMENTUM_EASE } from './MotionPrimitives';
 
-type CreationTab = 'task' | 'goal' | 'habit' | 'project' | 'journal' | 'workout';
+type CreationTab = 'task' | 'goal' | 'habit' | 'project' | 'journal';
 
 export const QuickAddModal: React.FC = () => {
   const {
@@ -32,7 +31,6 @@ export const QuickAddModal: React.FC = () => {
   const prefersReduced = useReducedMotion();
   const [activeTab, setActiveTab] = useState<CreationTab>('task');
 
-  // Task form state
   const [taskTitle, setTaskTitle] = useState('');
   const [taskCategory, setTaskCategory] = useState<LifeArea>('education');
   const [taskPriority, setTaskPriority] = useState<Priority>('medium');
@@ -40,9 +38,7 @@ export const QuickAddModal: React.FC = () => {
   const [taskDueTime, setTaskDueTime] = useState('');
   const [taskIsDailyPriority, setTaskIsDailyPriority] = useState(false);
   const [taskProjectId, setTaskProjectId] = useState<string>('');
-  const [taskGoalId, setTaskGoalId] = useState<string>('');
 
-  // Goal form state
   const [goalTitle, setGoalTitle] = useState('');
   const [goalDescription, setGoalDescription] = useState('');
   const [goalCategory, setGoalCategory] = useState<LifeArea>('career');
@@ -51,12 +47,10 @@ export const QuickAddModal: React.FC = () => {
   );
   const [goalMotivation, setGoalMotivation] = useState('');
 
-  // Habit form state
   const [habitName, setHabitName] = useState('');
   const [habitCategory, setHabitCategory] = useState<LifeArea>('personal_development');
   const [habitFrequency, setHabitFrequency] = useState<'daily' | 'weekdays'>('daily');
 
-  // Project form state
   const [projectName, setProjectName] = useState('');
   const [projectDescription, setProjectDescription] = useState('');
   const [projectCategory, setProjectCategory] = useState<LifeArea>('career');
@@ -64,7 +58,6 @@ export const QuickAddModal: React.FC = () => {
     new Date(Date.now() + 45 * 86400000).toISOString().split('T')[0]
   );
 
-  // Journal form state
   const [journalTitle, setJournalTitle] = useState('');
   const [journalContent, setJournalContent] = useState('');
   const [journalMood, setJournalMood] = useState<'great' | 'good' | 'neutral' | 'challenging'>('good');
@@ -83,7 +76,6 @@ export const QuickAddModal: React.FC = () => {
       isDailyPriority: taskIsDailyPriority,
       priorityRank: taskIsDailyPriority ? 1 : undefined,
       relatedProjectId: taskProjectId || undefined,
-      relatedGoalId: taskGoalId || undefined,
       tags: [],
       subtasks: [],
     });
@@ -131,7 +123,7 @@ export const QuickAddModal: React.FC = () => {
       frequency: habitFrequency,
       targetCountPerDay: 1,
       startDate: new Date().toISOString().split('T')[0],
-      color: '#8EC5FF',
+      color: '#D2925B',
       active: true,
     });
 
@@ -148,7 +140,7 @@ export const QuickAddModal: React.FC = () => {
       name: projectName.trim(),
       description: projectDescription.trim(),
       category: projectCategory,
-      color: '#8EC5FF',
+      color: '#D2925B',
       status: 'active',
       priority: 'high',
       startDate: new Date().toISOString().split('T')[0],
@@ -184,23 +176,25 @@ export const QuickAddModal: React.FC = () => {
     setIsQuickAddOpen(false);
   };
 
+  const inputCls =
+    'w-full px-3 py-2 rounded-xl bg-surface-warm/70 border border-line text-ink text-xs focus:border-accent focus:ring-2 focus:ring-accent/30 focus:outline-hidden';
+
   return (
     <ModalShell
       isOpen={isQuickAddOpen}
       onClose={() => setIsQuickAddOpen(false)}
       maxWidthClass="max-w-lg"
-      backdropClassName="bg-[#3B2418]/60 backdrop-blur-xs"
-      panelClassName="bg-[#FAF5ED] border border-[#D6C6B2] rounded-xl shadow-2xl overflow-hidden flex flex-col"
     >
       {/* Header */}
-      <div className="flex items-center justify-between px-5 py-3.5 border-b border-[#5A3927] bg-[#3B2418]">
+      <div className="flex items-center justify-between px-5 py-3.5 border-b border-line bg-brand text-brand-ink">
         <div className="flex items-center gap-2">
-          <Plus className="w-4 h-4 text-[#8EC5FF]" />
-          <h2 className="font-semibold text-sm text-[#F2E8DA]">Quick Create</h2>
+          <Plus className="w-4 h-4 text-accent" />
+          <h2 className="font-semibold text-sm font-heading">Quick Create</h2>
         </div>
         <button
+          type="button"
           onClick={() => setIsQuickAddOpen(false)}
-          className="p-1 rounded text-[#D8C7B4] hover:text-[#F2E8DA] hover:bg-[#4D3021] btn-press"
+          className="p-1.5 rounded-lg text-brand-ink/75 hover:text-brand-ink hover:bg-white/10 btn-press"
           aria-label="Close dialog"
         >
           <X className="w-4 h-4" />
@@ -208,7 +202,7 @@ export const QuickAddModal: React.FC = () => {
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b border-[#D6C6B2] bg-[#EAE0D0] px-3 pt-2 gap-1 overflow-x-auto">
+      <div className="flex border-b border-line bg-surface-warm px-3 pt-2 gap-1 overflow-x-auto">
         {[
           { id: 'task', label: 'Task', icon: CheckSquare },
           { id: 'goal', label: 'Goal', icon: Target },
@@ -221,16 +215,17 @@ export const QuickAddModal: React.FC = () => {
           return (
             <button
               key={tab.id}
+              type="button"
               onClick={() => setActiveTab(tab.id as CreationTab)}
-              className={`relative flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-t-lg transition-colors btn-press ${
-                isActive ? 'text-[#3B2418]' : 'text-[#6E5648] hover:text-[#3B2418]'
+              className={`relative flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-t-xl transition-colors btn-press whitespace-nowrap ${
+                isActive ? 'text-ink' : 'text-ink-muted hover:text-ink'
               }`}
             >
               {isActive && (
                 <motion.div
                   layoutId="quickadd-tab-bg"
                   transition={{ duration: prefersReduced ? 0.01 : 0.18, ease: MOMENTUM_EASE }}
-                  className="absolute inset-0 bg-[#FAF5ED] rounded-t-lg border-b-2 border-[#3B2418] z-0"
+                  className="absolute inset-0 bg-surface rounded-t-xl border-b-2 border-accent z-0"
                 />
               )}
               <Icon className="w-3.5 h-3.5 relative z-10" />
@@ -250,402 +245,402 @@ export const QuickAddModal: React.FC = () => {
             exit={prefersReduced ? { opacity: 0 } : { opacity: 0, y: -4 }}
             transition={{ duration: prefersReduced ? 0.01 : 0.14, ease: MOMENTUM_EASE }}
           >
-          {activeTab === 'task' && (
-            <form onSubmit={handleCreateTask} className="space-y-4">
-              <div>
-                <label className="block text-xs font-medium text-[#6E5648] mb-1">
-                  Task Title <span className="text-[#1E5A99]">*</span>
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={taskTitle}
-                  onChange={e => setTaskTitle(e.target.value)}
-                  placeholder="e.g. Audit student portal authentication middleware"
-                  className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-[#3B2418] text-sm focus:border-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
-                  autoFocus
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
+            {activeTab === 'task' && (
+              <form onSubmit={handleCreateTask} className="space-y-4">
                 <div>
-                  <label className="block text-xs font-medium text-[#6E5648] mb-1">Life Area</label>
-                  <select
-                    value={taskCategory}
-                    onChange={e => setTaskCategory(e.target.value as LifeArea)}
-                    className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-[#3B2418] text-xs focus:border-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
-                  >
-                    <option value="education">Education</option>
-                    <option value="career">Career</option>
-                    <option value="health">Health</option>
-                    <option value="fitness">Fitness</option>
-                    <option value="financial">Financial</option>
-                    <option value="personal_development">Personal Development</option>
-                    <option value="relationships">Relationships</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-medium text-[#6E5648] mb-1">Priority</label>
-                  <select
-                    value={taskPriority}
-                    onChange={e => setTaskPriority(e.target.value as Priority)}
-                    className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-[#3B2418] text-xs focus:border-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
-                  >
-                    <option value="low">Low</option>
-                    <option value="medium">Medium</option>
-                    <option value="high">High</option>
-                    <option value="urgent">Urgent</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-medium text-[#6E5648] mb-1">Due Date</label>
-                  <input
-                    type="date"
-                    value={taskDueDate}
-                    onChange={e => setTaskDueDate(e.target.value)}
-                    className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-[#3B2418] text-xs focus:border-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-[#6E5648] mb-1">Due Time (opt)</label>
-                  <input
-                    type="time"
-                    value={taskDueTime}
-                    onChange={e => setTaskDueTime(e.target.value)}
-                    className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-[#3B2418] text-xs focus:border-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
-                  />
-                </div>
-              </div>
-
-              {state.projects.length > 0 && (
-                <div>
-                  <label className="block text-xs font-medium text-[#6E5648] mb-1">
-                    Related Project (Optional)
+                  <label className="block text-xs font-medium text-ink-muted mb-1">
+                    Task Title <span className="text-accent">*</span>
                   </label>
-                  <select
-                    value={taskProjectId}
-                    onChange={e => setTaskProjectId(e.target.value)}
-                    className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-[#3B2418] text-xs focus:border-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
-                  >
-                    <option value="">No Project</option>
-                    {state.projects.map(p => (
-                      <option key={p.id} value={p.id}>{p.name}</option>
-                    ))}
-                  </select>
-                </div>
-              )}
-
-              <div className="flex items-center gap-2 pt-1">
-                <input
-                  type="checkbox"
-                  id="quick-daily-prio"
-                  checked={taskIsDailyPriority}
-                  onChange={e => setTaskIsDailyPriority(e.target.checked)}
-                  className="rounded bg-[#F2E8DA] border-[#D6C6B2] accent-[#3B2418] focus:ring-0"
-                />
-                <label htmlFor="quick-daily-prio" className="text-xs text-[#3B2418] font-medium cursor-pointer">
-                  Mark as one of Today&apos;s Core Priorities
-                </label>
-              </div>
-
-              <div className="flex justify-end gap-2 pt-2 border-t border-[#D6C6B2]">
-                <button
-                  type="button"
-                  onClick={() => setIsQuickAddOpen(false)}
-                  className="px-3 py-1.5 rounded-lg text-xs font-medium text-[#6E5648] hover:text-[#3B2418]"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-1.5 rounded-lg text-xs font-semibold bg-[#8EC5FF] text-[#3B2418] hover:bg-[#73B6FC] border border-[#3B2418]/15"
-                >
-                  Create Task
-                </button>
-              </div>
-            </form>
-          )}
-
-          {activeTab === 'goal' && (
-            <form onSubmit={handleCreateGoal} className="space-y-4">
-              <div>
-                <label className="block text-xs font-medium text-[#6E5648] mb-1">
-                  Goal Objective <span className="text-[#1E5A99]">*</span>
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={goalTitle}
-                  onChange={e => setGoalTitle(e.target.value)}
-                  placeholder="e.g. Master Distributed Systems Architecture"
-                  className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-[#3B2418] text-sm focus:border-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
-                  autoFocus
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-medium text-[#6E5648] mb-1">Category</label>
-                  <select
-                    value={goalCategory}
-                    onChange={e => setGoalCategory(e.target.value as LifeArea)}
-                    className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-[#3B2418] text-xs focus:border-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
-                  >
-                    <option value="education">Education</option>
-                    <option value="career">Career</option>
-                    <option value="fitness">Fitness</option>
-                    <option value="personal_development">Personal Development</option>
-                    <option value="financial">Financial</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-[#6E5648] mb-1">Target Date</label>
                   <input
-                    type="date"
+                    type="text"
                     required
-                    value={goalTargetDate}
-                    onChange={e => setGoalTargetDate(e.target.value)}
-                    className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-[#3B2418] text-xs focus:border-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
+                    value={taskTitle}
+                    onChange={e => setTaskTitle(e.target.value)}
+                    placeholder="e.g. Audit student portal authentication middleware"
+                    className={`${inputCls} text-sm`}
+                    autoFocus
                   />
                 </div>
-              </div>
 
-              <div>
-                <label className="block text-xs font-medium text-[#6E5648] mb-1">
-                  Why does this matter? (Motivation)
-                </label>
-                <input
-                  type="text"
-                  value={goalMotivation}
-                  onChange={e => setGoalMotivation(e.target.value)}
-                  placeholder="To build resilient infrastructure and achieve professional mastery"
-                  className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-[#3B2418] text-xs focus:border-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
-                />
-              </div>
-
-              <div className="flex justify-end gap-2 pt-2 border-t border-[#D6C6B2]">
-                <button
-                  type="button"
-                  onClick={() => setIsQuickAddOpen(false)}
-                  className="px-3 py-1.5 rounded-lg text-xs font-medium text-[#6E5648] hover:text-[#3B2418]"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-1.5 rounded-lg text-xs font-semibold bg-[#8EC5FF] text-[#3B2418] hover:bg-[#73B6FC] border border-[#3B2418]/15"
-                >
-                  Create Goal
-                </button>
-              </div>
-            </form>
-          )}
-
-          {activeTab === 'habit' && (
-            <form onSubmit={handleCreateHabit} className="space-y-4">
-              <div>
-                <label className="block text-xs font-medium text-[#6E5648] mb-1">
-                  Habit Name <span className="text-[#1E5A99]">*</span>
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={habitName}
-                  onChange={e => setHabitName(e.target.value)}
-                  placeholder="e.g. Read 20 pages of technical literature"
-                  className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-[#3B2418] text-sm focus:border-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
-                  autoFocus
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-medium text-[#6E5648] mb-1">Life Area</label>
-                  <select
-                    value={habitCategory}
-                    onChange={e => setHabitCategory(e.target.value as LifeArea)}
-                    className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-[#3B2418] text-xs focus:border-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
-                  >
-                    <option value="personal_development">Personal Development</option>
-                    <option value="education">Education</option>
-                    <option value="fitness">Fitness</option>
-                    <option value="health">Health</option>
-                    <option value="career">Career</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-[#6E5648] mb-1">Frequency</label>
-                  <select
-                    value={habitFrequency}
-                    onChange={e => setHabitFrequency(e.target.value as 'daily' | 'weekdays')}
-                    className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-[#3B2418] text-xs focus:border-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
-                  >
-                    <option value="daily">Every Day</option>
-                    <option value="weekdays">Weekdays Only (Mon-Fri)</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="flex justify-end gap-2 pt-2 border-t border-[#D6C6B2]">
-                <button
-                  type="button"
-                  onClick={() => setIsQuickAddOpen(false)}
-                  className="px-3 py-1.5 rounded-lg text-xs font-medium text-[#6E5648] hover:text-[#3B2418]"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-1.5 rounded-lg text-xs font-semibold bg-[#8EC5FF] text-[#3B2418] hover:bg-[#73B6FC] border border-[#3B2418]/15"
-                >
-                  Create Habit
-                </button>
-              </div>
-            </form>
-          )}
-
-          {activeTab === 'project' && (
-            <form onSubmit={handleCreateProject} className="space-y-4">
-              <div>
-                <label className="block text-xs font-medium text-[#6E5648] mb-1">
-                  Project Title <span className="text-[#1E5A99]">*</span>
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={projectName}
-                  onChange={e => setProjectName(e.target.value)}
-                  placeholder="e.g. Distributed Consensus Lab Engine"
-                  className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-[#3B2418] text-sm focus:border-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
-                  autoFocus
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-medium text-[#6E5648] mb-1">Description</label>
-                <textarea
-                  rows={2}
-                  value={projectDescription}
-                  onChange={e => setProjectDescription(e.target.value)}
-                  placeholder="Short summary of project scope and core deliverable..."
-                  className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-[#3B2418] text-xs focus:border-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-medium text-[#6E5648] mb-1">Category</label>
-                  <select
-                    value={projectCategory}
-                    onChange={e => setProjectCategory(e.target.value as LifeArea)}
-                    className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-[#3B2418] text-xs focus:border-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
-                  >
-                    <option value="career">Career</option>
-                    <option value="education">Education</option>
-                    <option value="personal_development">Personal</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-[#6E5648] mb-1">Deadline</label>
-                  <input
-                    type="date"
-                    value={projectDeadline}
-                    onChange={e => setProjectDeadline(e.target.value)}
-                    className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-[#3B2418] text-xs focus:border-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
-                  />
-                </div>
-              </div>
-
-              <div className="flex justify-end gap-2 pt-2 border-t border-[#D6C6B2]">
-                <button
-                  type="button"
-                  onClick={() => setIsQuickAddOpen(false)}
-                  className="px-3 py-1.5 rounded-lg text-xs font-medium text-[#6E5648] hover:text-[#3B2418]"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-1.5 rounded-lg text-xs font-semibold bg-[#8EC5FF] text-[#3B2418] hover:bg-[#73B6FC] border border-[#3B2418]/15"
-                >
-                  Create Project
-                </button>
-              </div>
-            </form>
-          )}
-
-          {activeTab === 'journal' && (
-            <form onSubmit={handleCreateJournal} className="space-y-4">
-              <div>
-                <label className="block text-xs font-medium text-[#6E5648] mb-1">
-                  Reflection Title <span className="text-[#1E5A99]">*</span>
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={journalTitle}
-                  onChange={e => setJournalTitle(e.target.value)}
-                  placeholder="e.g. Closing the week with intentional focus"
-                  className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-[#3B2418] text-sm focus:border-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
-                  autoFocus
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-medium text-[#6E5648] mb-1">Mood</label>
-                <div className="flex gap-2">
-                  {(['great', 'good', 'neutral', 'challenging'] as const).map(m => (
-                    <button
-                      key={m}
-                      type="button"
-                      onClick={() => setJournalMood(m)}
-                      className={`px-3 py-1 text-xs rounded-lg capitalize border ${
-                        journalMood === m
-                          ? 'border-[#3B2418] bg-[#8EC5FF] text-[#3B2418] font-semibold'
-                          : 'border-[#D6C6B2] text-[#6E5648] hover:text-[#3B2418] bg-[#F2E8DA]'
-                      }`}
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-medium text-ink-muted mb-1">Life Area</label>
+                    <select
+                      value={taskCategory}
+                      onChange={e => setTaskCategory(e.target.value as LifeArea)}
+                      className={inputCls}
                     >
-                      {m}
-                    </button>
-                  ))}
+                      <option value="education">Education</option>
+                      <option value="career">Career</option>
+                      <option value="health">Health</option>
+                      <option value="fitness">Fitness</option>
+                      <option value="financial">Financial</option>
+                      <option value="personal_development">Personal Development</option>
+                      <option value="relationships">Relationships</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-medium text-ink-muted mb-1">Priority</label>
+                    <select
+                      value={taskPriority}
+                      onChange={e => setTaskPriority(e.target.value as Priority)}
+                      className={inputCls}
+                    >
+                      <option value="low">Low</option>
+                      <option value="medium">Medium</option>
+                      <option value="high">High</option>
+                      <option value="urgent">Urgent</option>
+                    </select>
+                  </div>
                 </div>
-              </div>
 
-              <div>
-                <label className="block text-xs font-medium text-[#6E5648] mb-1">
-                  Content <span className="text-[#1E5A99]">*</span>
-                </label>
-                <textarea
-                  rows={4}
-                  required
-                  value={journalContent}
-                  onChange={e => setJournalContent(e.target.value)}
-                  placeholder="What went well today? What resisted progress? What is the main priority for tomorrow?"
-                  className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-[#3B2418] text-xs focus:border-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden leading-relaxed"
-                />
-              </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-medium text-ink-muted mb-1">Due Date</label>
+                    <input
+                      type="date"
+                      value={taskDueDate}
+                      onChange={e => setTaskDueDate(e.target.value)}
+                      className={inputCls}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-ink-muted mb-1">Due Time (opt)</label>
+                    <input
+                      type="time"
+                      value={taskDueTime}
+                      onChange={e => setTaskDueTime(e.target.value)}
+                      className={inputCls}
+                    />
+                  </div>
+                </div>
 
-              <div className="flex justify-end gap-2 pt-2 border-t border-[#D6C6B2]">
-                <button
-                  type="button"
-                  onClick={() => setIsQuickAddOpen(false)}
-                  className="px-3 py-1.5 rounded-lg text-xs font-medium text-[#6E5648] hover:text-[#3B2418] btn-press"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-1.5 rounded-lg text-xs font-semibold bg-[#8EC5FF] text-[#3B2418] hover:bg-[#73B6FC] border border-[#3B2418]/15 btn-press"
-                >
-                  Save Reflection
-                </button>
-              </div>
-            </form>
-          )}
+                {state.projects.length > 0 && (
+                  <div>
+                    <label className="block text-xs font-medium text-ink-muted mb-1">
+                      Related Project (Optional)
+                    </label>
+                    <select
+                      value={taskProjectId}
+                      onChange={e => setTaskProjectId(e.target.value)}
+                      className={inputCls}
+                    >
+                      <option value="">No Project</option>
+                      {state.projects.map(p => (
+                        <option key={p.id} value={p.id}>{p.name}</option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+
+                <div className="flex items-center gap-2 pt-1">
+                  <input
+                    type="checkbox"
+                    id="quick-daily-prio"
+                    checked={taskIsDailyPriority}
+                    onChange={e => setTaskIsDailyPriority(e.target.checked)}
+                    className="rounded border-line accent-brand focus:ring-0"
+                  />
+                  <label htmlFor="quick-daily-prio" className="text-xs text-ink font-medium cursor-pointer">
+                    Mark as one of Today&apos;s Core Priorities
+                  </label>
+                </div>
+
+                <div className="flex justify-end gap-2 pt-3 border-t border-line">
+                  <button
+                    type="button"
+                    onClick={() => setIsQuickAddOpen(false)}
+                    className="px-3 py-1.5 rounded-lg text-xs font-medium text-ink-muted hover:text-ink"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-4 py-2 rounded-xl text-xs font-bold bg-accent hover:bg-accent-hover text-accent-ink btn-press"
+                  >
+                    Create Task
+                  </button>
+                </div>
+              </form>
+            )}
+
+            {activeTab === 'goal' && (
+              <form onSubmit={handleCreateGoal} className="space-y-4">
+                <div>
+                  <label className="block text-xs font-medium text-ink-muted mb-1">
+                    Goal Objective <span className="text-accent">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={goalTitle}
+                    onChange={e => setGoalTitle(e.target.value)}
+                    placeholder="e.g. Master Distributed Systems Architecture"
+                    className={`${inputCls} text-sm`}
+                    autoFocus
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-medium text-ink-muted mb-1">Category</label>
+                    <select
+                      value={goalCategory}
+                      onChange={e => setGoalCategory(e.target.value as LifeArea)}
+                      className={inputCls}
+                    >
+                      <option value="education">Education</option>
+                      <option value="career">Career</option>
+                      <option value="fitness">Fitness</option>
+                      <option value="personal_development">Personal Development</option>
+                      <option value="financial">Financial</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-ink-muted mb-1">Target Date</label>
+                    <input
+                      type="date"
+                      required
+                      value={goalTargetDate}
+                      onChange={e => setGoalTargetDate(e.target.value)}
+                      className={inputCls}
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-medium text-ink-muted mb-1">
+                    Why does this matter? (Motivation)
+                  </label>
+                  <input
+                    type="text"
+                    value={goalMotivation}
+                    onChange={e => setGoalMotivation(e.target.value)}
+                    placeholder="To build resilient infrastructure and achieve professional mastery"
+                    className={inputCls}
+                  />
+                </div>
+
+                <div className="flex justify-end gap-2 pt-3 border-t border-line">
+                  <button
+                    type="button"
+                    onClick={() => setIsQuickAddOpen(false)}
+                    className="px-3 py-1.5 rounded-lg text-xs font-medium text-ink-muted hover:text-ink"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-4 py-2 rounded-xl text-xs font-bold bg-accent hover:bg-accent-hover text-accent-ink btn-press"
+                  >
+                    Create Goal
+                  </button>
+                </div>
+              </form>
+            )}
+
+            {activeTab === 'habit' && (
+              <form onSubmit={handleCreateHabit} className="space-y-4">
+                <div>
+                  <label className="block text-xs font-medium text-ink-muted mb-1">
+                    Habit Name <span className="text-accent">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={habitName}
+                    onChange={e => setHabitName(e.target.value)}
+                    placeholder="e.g. Read 20 pages of technical literature"
+                    className={`${inputCls} text-sm`}
+                    autoFocus
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-medium text-ink-muted mb-1">Life Area</label>
+                    <select
+                      value={habitCategory}
+                      onChange={e => setHabitCategory(e.target.value as LifeArea)}
+                      className={inputCls}
+                    >
+                      <option value="personal_development">Personal Development</option>
+                      <option value="education">Education</option>
+                      <option value="fitness">Fitness</option>
+                      <option value="health">Health</option>
+                      <option value="career">Career</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-ink-muted mb-1">Frequency</label>
+                    <select
+                      value={habitFrequency}
+                      onChange={e => setHabitFrequency(e.target.value as 'daily' | 'weekdays')}
+                      className={inputCls}
+                    >
+                      <option value="daily">Every Day</option>
+                      <option value="weekdays">Weekdays Only (Mon-Fri)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="flex justify-end gap-2 pt-3 border-t border-line">
+                  <button
+                    type="button"
+                    onClick={() => setIsQuickAddOpen(false)}
+                    className="px-3 py-1.5 rounded-lg text-xs font-medium text-ink-muted hover:text-ink"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-4 py-2 rounded-xl text-xs font-bold bg-accent hover:bg-accent-hover text-accent-ink btn-press"
+                  >
+                    Create Habit
+                  </button>
+                </div>
+              </form>
+            )}
+
+            {activeTab === 'project' && (
+              <form onSubmit={handleCreateProject} className="space-y-4">
+                <div>
+                  <label className="block text-xs font-medium text-ink-muted mb-1">
+                    Project Title <span className="text-accent">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={projectName}
+                    onChange={e => setProjectName(e.target.value)}
+                    placeholder="e.g. Distributed Consensus Lab Engine"
+                    className={`${inputCls} text-sm`}
+                    autoFocus
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-medium text-ink-muted mb-1">Description</label>
+                  <textarea
+                    rows={2}
+                    value={projectDescription}
+                    onChange={e => setProjectDescription(e.target.value)}
+                    placeholder="Short summary of project scope and core deliverable..."
+                    className={inputCls}
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-medium text-ink-muted mb-1">Category</label>
+                    <select
+                      value={projectCategory}
+                      onChange={e => setProjectCategory(e.target.value as LifeArea)}
+                      className={inputCls}
+                    >
+                      <option value="career">Career</option>
+                      <option value="education">Education</option>
+                      <option value="personal_development">Personal</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-ink-muted mb-1">Deadline</label>
+                    <input
+                      type="date"
+                      value={projectDeadline}
+                      onChange={e => setProjectDeadline(e.target.value)}
+                      className={inputCls}
+                    />
+                  </div>
+                </div>
+
+                <div className="flex justify-end gap-2 pt-3 border-t border-line">
+                  <button
+                    type="button"
+                    onClick={() => setIsQuickAddOpen(false)}
+                    className="px-3 py-1.5 rounded-lg text-xs font-medium text-ink-muted hover:text-ink"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-4 py-2 rounded-xl text-xs font-bold bg-accent hover:bg-accent-hover text-accent-ink btn-press"
+                  >
+                    Create Project
+                  </button>
+                </div>
+              </form>
+            )}
+
+            {activeTab === 'journal' && (
+              <form onSubmit={handleCreateJournal} className="space-y-4">
+                <div>
+                  <label className="block text-xs font-medium text-ink-muted mb-1">
+                    Reflection Title <span className="text-accent">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={journalTitle}
+                    onChange={e => setJournalTitle(e.target.value)}
+                    placeholder="e.g. Closing the week with intentional focus"
+                    className={`${inputCls} text-sm`}
+                    autoFocus
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-medium text-ink-muted mb-1">Mood</label>
+                  <div className="flex flex-wrap gap-2">
+                    {(['great', 'good', 'neutral', 'challenging'] as const).map(m => (
+                      <button
+                        key={m}
+                        type="button"
+                        onClick={() => setJournalMood(m)}
+                        className={`px-3 py-1.5 text-xs rounded-xl capitalize border transition-colors ${
+                          journalMood === m
+                            ? 'border-accent bg-accent text-accent-ink font-semibold'
+                            : 'border-line text-ink-muted hover:text-ink bg-surface-warm/60'
+                        }`}
+                      >
+                        {m}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-medium text-ink-muted mb-1">
+                    Content <span className="text-accent">*</span>
+                  </label>
+                  <textarea
+                    rows={4}
+                    required
+                    value={journalContent}
+                    onChange={e => setJournalContent(e.target.value)}
+                    placeholder="What went well today? What resisted progress? What is the main priority for tomorrow?"
+                    className={`${inputCls} leading-relaxed`}
+                  />
+                </div>
+
+                <div className="flex justify-end gap-2 pt-3 border-t border-line">
+                  <button
+                    type="button"
+                    onClick={() => setIsQuickAddOpen(false)}
+                    className="px-3 py-1.5 rounded-lg text-xs font-medium text-ink-muted hover:text-ink btn-press"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-4 py-2 rounded-xl text-xs font-bold bg-accent hover:bg-accent-hover text-accent-ink btn-press"
+                  >
+                    Save Reflection
+                  </button>
+                </div>
+              </form>
+            )}
           </motion.div>
         </AnimatePresence>
       </div>

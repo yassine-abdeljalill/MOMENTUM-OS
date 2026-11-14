@@ -1,15 +1,9 @@
 import React, { useState } from 'react';
 import {
-  BarChart3,
-  TrendingUp,
   Clock,
-  CheckCircle2,
   Download,
-  Calendar,
-  Sparkles,
-  Target,
-  Dumbbell,
   BookOpen,
+  BarChart3,
 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useApp } from '../../lib/context';
@@ -27,7 +21,8 @@ export const AnalyticsView: React.FC = () => {
   const { state, learningData, showToast } = useApp();
   const [dateRange, setDateRange] = useState<'7d' | '30d' | '90d'>('30d');
 
-  // Compute metrics
+  const rangeDays = dateRange === '7d' ? 7 : dateRange === '30d' ? 30 : 90;
+
   const totalTasks = state.tasks.length;
   const completedTasks = state.tasks.filter(t => t.status === 'completed').length;
   const taskCompletionRate = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
@@ -55,12 +50,35 @@ export const AnalyticsView: React.FC = () => {
     return acc + sess.sets.reduce((sAcc, s) => sAcc + (s.completed ? s.reps * s.weightKg : 0), 0);
   }, 0);
 
-  const activeGoalsCount = state.goals.filter(g => g.status === 'active' || g.status === 'in_progress').length;
   const totalMilestones = state.goals.reduce((acc, g) => acc + g.milestones.length, 0);
   const completedMilestones = state.goals.reduce(
     (acc, g) => acc + g.milestones.filter(m => m.completed).length,
     0
   );
+
+  const unscheduledRatio =
+    totalTasks > 0
+      ? Math.round((state.tasks.filter(t => !t.dueDate).length / totalTasks) * 100)
+      : 0;
+
+  const domainDistribution = [
+    {
+      label: 'Deep Work & Focus',
+      minutes: totalFocusMinutes,
+      color: 'bg-accent',
+    },
+    {
+      label: 'Academic & Study',
+      minutes: totalStudyMinutes,
+      color: 'bg-brand',
+    },
+    {
+      label: 'Physical Training',
+      minutes: state.workoutSessions.reduce((acc, s) => acc + s.durationMinutes, 0),
+      color: 'bg-success',
+    },
+  ];
+  const maxDomainMinutes = Math.max(1, ...domainDistribution.map(d => d.minutes));
 
   const handleExportTasks = () => {
     const csv = exportTasksToCsv(state.tasks);
@@ -89,35 +107,34 @@ export const AnalyticsView: React.FC = () => {
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-16">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 rounded-2xl bg-surface border border-line">
         <div className="space-y-1">
-          <h1 className="text-xl md:text-2xl font-bold text-[#3B2418] tracking-tight">
+          <h1 className="text-xl md:text-2xl font-bold text-ink tracking-tight">
             Personal Analytics & Trajectory
           </h1>
-          <p className="text-xs text-[#6E5648]">
+          <p className="text-xs text-ink-muted">
             Evidence-based metrics distinguishing planned effort, deliberate time spent, and actual outcome progress.
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
-          <div className="flex bg-[#F2E8DA] p-1 rounded-xl border border-[#D6C6B2] text-xs">
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="flex bg-canvas p-1 rounded-xl border border-line text-xs">
             {(['7d', '30d', '90d'] as const).map(range => {
               const isActive = dateRange === range;
               return (
                 <button
                   key={range}
+                  type="button"
                   onClick={() => setDateRange(range)}
-                  className={`relative px-3 py-1 rounded-lg font-medium uppercase transition-colors ${
-                    isActive
-                      ? 'text-[#3B2418] font-bold'
-                      : 'text-[#6E5648] hover:text-[#3B2418]'
+                  className={`relative px-3 py-1.5 rounded-lg font-medium uppercase transition-colors ${
+                    isActive ? 'text-accent-ink font-semibold' : 'text-ink-muted hover:text-ink'
                   }`}
                 >
                   {isActive && (
                     <motion.span
                       layoutId="analytics-range-pill"
                       transition={{ type: 'spring', stiffness: 420, damping: 32 }}
-                      className="absolute inset-0 rounded-lg bg-[#8EC5FF] shadow-xs"
+                      className="absolute inset-0 rounded-lg bg-accent"
                     />
                   )}
                   <span className="relative z-10">{range}</span>
@@ -128,19 +145,21 @@ export const AnalyticsView: React.FC = () => {
 
           <div className="flex items-center gap-2">
             <button
+              type="button"
               onClick={handleExportTasks}
-              className="btn-press flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#F2E8DA] hover:bg-[#EAE0D0] text-xs font-medium text-[#3B2418] border border-[#D6C6B2] transition-colors"
+              className="btn-press flex items-center gap-1.5 px-3 py-2 rounded-xl bg-canvas hover:bg-surface-warm text-xs font-medium text-ink border border-line transition-colors whitespace-nowrap"
               title="Export tasks to CSV"
             >
-              <Download className="w-3.5 h-3.5 text-[#1E5A99]" />
+              <Download className="w-3.5 h-3.5 text-accent" />
               <span className="hidden sm:inline">Tasks CSV</span>
             </button>
             <button
+              type="button"
               onClick={handleExportGoals}
-              className="btn-press flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#F2E8DA] hover:bg-[#EAE0D0] text-xs font-medium text-[#3B2418] border border-[#D6C6B2] transition-colors"
+              className="btn-press flex items-center gap-1.5 px-3 py-2 rounded-xl bg-canvas hover:bg-surface-warm text-xs font-medium text-ink border border-line transition-colors whitespace-nowrap"
               title="Export goals to CSV"
             >
-              <Download className="w-3.5 h-3.5 text-[#1E5A99]" />
+              <Download className="w-3.5 h-3.5 text-accent" />
               <span className="hidden sm:inline">Goals CSV</span>
             </button>
           </div>
@@ -149,123 +168,169 @@ export const AnalyticsView: React.FC = () => {
 
       {/* KPI 4-Card Overview */}
       <StaggerContainer className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <StaggerItem className="card-hover p-5 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] shadow-xs">
-          <span className="text-[10px] font-mono uppercase text-[#6E5648]">Task Execution Rate</span>
+        <StaggerItem className="card-hover p-5 rounded-2xl bg-surface border border-line">
+          <span className="text-[10px] font-mono uppercase tracking-wider text-ink-muted">Task Execution Rate</span>
           <div className="my-2 flex items-baseline gap-2">
-            <span className="font-mono text-3xl font-extrabold text-[#3B2418]">
+            <span className="font-mono text-3xl font-bold text-ink tabular-nums">
               <AnimatedNumber value={taskCompletionRate} formatter={v => `${Math.round(v)}%`} />
             </span>
-            <span className="text-xs text-[#6E5648]">({completedTasks}/{totalTasks})</span>
+            <span className="text-xs font-mono text-ink-muted tabular-nums">
+              ({completedTasks}/{totalTasks})
+            </span>
           </div>
           <AnimatedProgressBar
             percentage={taskCompletionRate}
-            trackClassName="w-full bg-[#EAE0D0] h-1.5 rounded-full overflow-hidden"
-            fillClassName="bg-[#3E7B52] h-full rounded-full"
+            trackClassName="w-full bg-surface-inset h-1.5 rounded-full overflow-hidden"
+            fillClassName="bg-success h-full rounded-full"
           />
         </StaggerItem>
 
-        <StaggerItem className="card-hover p-5 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] shadow-xs">
-          <span className="text-[10px] font-mono uppercase text-[#6E5648]">Recorded Deep Work</span>
+        <StaggerItem className="card-hover p-5 rounded-2xl bg-surface border border-line">
+          <span className="text-[10px] font-mono uppercase tracking-wider text-ink-muted">Recorded Deep Work</span>
           <div className="my-2 flex items-baseline gap-2">
-            <span className="font-mono text-3xl font-extrabold text-[#1E5A99]">
+            <span className="font-mono text-3xl font-bold text-accent tabular-nums">
               <AnimatedNumber value={totalFocusMinutes} formatter={v => formatMinutes(Math.round(v))} />
             </span>
           </div>
-          <span className="text-xs text-[#6E5648]">{state.focusSessions.length} total sessions</span>
+          <span className="text-xs text-ink-muted tabular-nums">
+            {state.focusSessions.length} total sessions
+          </span>
         </StaggerItem>
 
-        <StaggerItem className="card-hover p-5 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] shadow-xs">
-          <span className="text-[10px] font-mono uppercase text-[#6E5648]">Milestone Completion</span>
+        <StaggerItem className="card-hover p-5 rounded-2xl bg-surface border border-line">
+          <span className="text-[10px] font-mono uppercase tracking-wider text-ink-muted">Milestone Completion</span>
           <div className="my-2 flex items-baseline gap-2">
-            <span className="font-mono text-3xl font-extrabold text-[#3B2418]">
+            <span className="font-mono text-3xl font-bold text-ink tabular-nums">
               <AnimatedNumber
                 value={totalMilestones > 0 ? Math.round((completedMilestones / totalMilestones) * 100) : 0}
                 formatter={v => `${Math.round(v)}%`}
               />
             </span>
-            <span className="text-xs text-[#6E5648]">({completedMilestones}/{totalMilestones})</span>
+            <span className="text-xs font-mono text-ink-muted tabular-nums">
+              ({completedMilestones}/{totalMilestones})
+            </span>
           </div>
           <AnimatedProgressBar
             percentage={totalMilestones > 0 ? (completedMilestones / totalMilestones) * 100 : 0}
-            trackClassName="w-full bg-[#EAE0D0] h-1.5 rounded-full overflow-hidden"
-            fillClassName="bg-[#8EC5FF] h-full rounded-full"
+            trackClassName="w-full bg-surface-inset h-1.5 rounded-full overflow-hidden"
+            fillClassName="bg-accent h-full rounded-full"
           />
         </StaggerItem>
 
-        <StaggerItem className="card-hover p-5 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] shadow-xs">
-          <span className="text-[10px] font-mono uppercase text-[#6E5648]">Training Volume</span>
+        <StaggerItem className="card-hover p-5 rounded-2xl bg-surface border border-line">
+          <span className="text-[10px] font-mono uppercase tracking-wider text-ink-muted">Training Volume</span>
           <div className="my-2 flex items-baseline gap-2">
-            <span className="font-mono text-3xl font-extrabold text-[#3B2418]">
+            <span className="font-mono text-3xl font-bold text-ink tabular-nums">
               <AnimatedNumber value={totalVolumeKg} formatter={v => Math.round(v).toLocaleString()} />
             </span>
-            <span className="text-xs text-[#6E5648]">kg</span>
+            <span className="text-xs text-ink-muted">kg</span>
           </div>
-          <span className="text-xs text-[#6E5648]">{totalWorkouts} sessions logged</span>
+          <span className="text-xs text-ink-muted tabular-nums">{totalWorkouts} sessions logged</span>
         </StaggerItem>
       </StaggerContainer>
 
+      {/* Time Allocation Distribution */}
+      <div className="p-6 rounded-2xl bg-surface border border-line space-y-4">
+        <div className="flex items-center justify-between pb-3 border-b border-line">
+          <div className="flex items-center gap-2">
+            <BarChart3 className="w-4 h-4 text-accent" />
+            <h3 className="text-sm font-bold uppercase tracking-wider text-ink">
+              Invested Effort Across Domains ({dateRange} window)
+            </h3>
+          </div>
+          <span className="text-xs font-mono text-ink-muted tabular-nums">
+            {formatMinutes(domainDistribution.reduce((s, d) => s + d.minutes, 0))} tracked
+          </span>
+        </div>
+
+        <div className="space-y-3">
+          {domainDistribution.map(item => {
+            const pct = Math.round((item.minutes / maxDomainMinutes) * 100);
+            return (
+              <div key={item.label} className="space-y-1.5">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="font-medium text-ink">{item.label}</span>
+                  <span className="font-mono text-ink-muted tabular-nums">
+                    {formatMinutes(item.minutes)}
+                  </span>
+                </div>
+                <AnimatedProgressBar
+                  percentage={pct}
+                  trackClassName="w-full h-2 rounded-full bg-surface-inset overflow-hidden"
+                  fillClassName={`${item.color} h-full rounded-full`}
+                />
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
       {/* Domain Breakdown Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Productivity & Focus Analytics */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.25, delay: 0.1, ease: MOMENTUM_EASE }}
-          className="card-hover p-6 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] shadow-xs space-y-4"
+          className="card-hover p-6 rounded-2xl bg-surface border border-line space-y-4"
         >
-          <div className="flex items-center gap-2 pb-3 border-b border-[#D6C6B2]">
-            <Clock className="w-4 h-4 text-[#1E5A99]" />
-            <h3 className="text-sm font-bold uppercase tracking-wider text-[#3B2418]">
+          <div className="flex items-center gap-2 pb-3 border-b border-line">
+            <Clock className="w-4 h-4 text-accent" />
+            <h3 className="text-sm font-bold uppercase tracking-wider text-ink">
               Productivity & Focus Trends
             </h3>
           </div>
 
           <div className="space-y-3">
             <div className="flex justify-between items-center text-xs">
-              <span className="text-[#6E5648]">Daily Focus Average:</span>
-              <span className="font-mono font-bold text-[#3B2418]">
-                {formatMinutes(Math.round(totalFocusMinutes / 7))} / day
+              <span className="text-ink-muted">Daily Focus Average ({dateRange}):</span>
+              <span className="font-mono font-bold text-ink tabular-nums">
+                {formatMinutes(Math.round(totalFocusMinutes / rangeDays))} / day
               </span>
             </div>
             <div className="flex justify-between items-center text-xs">
-              <span className="text-[#6E5648]">Active Habits Consistency:</span>
-              <span className="font-mono font-bold text-[#3E7B52]">86% (sustainable)</span>
+              <span className="text-ink-muted">Active Habits Tracked:</span>
+              <span className="font-mono font-bold text-success tabular-nums">
+                {state.habits.length} active
+              </span>
             </div>
             <div className="flex justify-between items-center text-xs">
-              <span className="text-[#6E5648]">Unscheduled Task Ratio:</span>
-              <span className="font-mono font-bold text-[#1E5A99]">18%</span>
+              <span className="text-ink-muted">Unscheduled Task Ratio:</span>
+              <span className="font-mono font-bold text-accent tabular-nums">{unscheduledRatio}%</span>
             </div>
           </div>
         </motion.div>
 
-        {/* Academic & Intellectual Analytics */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.25, delay: 0.16, ease: MOMENTUM_EASE }}
-          className="card-hover p-6 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] shadow-xs space-y-4"
+          className="card-hover p-6 rounded-2xl bg-surface border border-line space-y-4"
         >
-          <div className="flex items-center gap-2 pb-3 border-b border-[#D6C6B2]">
-            <BookOpen className="w-4 h-4 text-[#1E5A99]" />
-            <h3 className="text-sm font-bold uppercase tracking-wider text-[#3B2418]">
+          <div className="flex items-center gap-2 pb-3 border-b border-line">
+            <BookOpen className="w-4 h-4 text-accent" />
+            <h3 className="text-sm font-bold uppercase tracking-wider text-ink">
               Knowledge & Course Progress
             </h3>
           </div>
 
           <div className="space-y-3">
             <div className="flex justify-between items-center text-xs">
-              <span className="text-[#6E5648]">Total Dedicated Study Time:</span>
-              <span className="font-mono font-bold text-[#3B2418]">{formatMinutes(totalStudyMinutes)}</span>
+              <span className="text-ink-muted">Total Dedicated Study Time:</span>
+              <span className="font-mono font-bold text-ink tabular-nums">
+                {formatMinutes(totalStudyMinutes)}
+              </span>
             </div>
             <div className="flex justify-between items-center text-xs">
-              <span className="text-[#6E5648]">Modules & Lessons Completed:</span>
-              <span className="font-mono font-bold text-[#1E5A99]">
+              <span className="text-ink-muted">Modules & Lessons Completed:</span>
+              <span className="font-mono font-bold text-accent tabular-nums">
                 {learningModulesCount} modules · {learningCompletedLessons}/{learningLessonsCount} lessons
               </span>
             </div>
             <div className="flex justify-between items-center text-xs">
-              <span className="text-[#6E5648]">Study Log Entries:</span>
-              <span className="font-mono font-bold text-[#3E7B52]">{studySessionCount} sessions</span>
+              <span className="text-ink-muted">Study Log Entries:</span>
+              <span className="font-mono font-bold text-success tabular-nums">
+                {studySessionCount} sessions
+              </span>
             </div>
           </div>
         </motion.div>

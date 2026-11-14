@@ -37,37 +37,45 @@ export const FinanceSavingsTab: React.FC<Props> = ({
 }) => {
   const totalSaved = goals.reduce((acc, g) => acc + g.currentAmount, 0);
   const totalTarget = goals.reduce((acc, g) => acc + g.targetAmount, 0);
-  const overallPct = totalTarget > 0 ? Math.min(100, Math.round((totalSaved / totalTarget) * 1000) / 10) : 0;
+  const overallPct =
+    totalTarget > 0 ? Math.min(100, Math.round((totalSaved / totalTarget) * 1000) / 10) : 0;
 
   return (
     <div className="space-y-6">
       {/* Summary Header */}
       <StaggerContainer className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <StaggerItem className="card-hover p-4 rounded-2xl bg-[#3B2418] text-[#F2E8DA] border border-[#5A3927]">
-          <span className="text-[10px] font-mono uppercase text-[#D8C7B4]">Total Saved</span>
-          <div className="mt-1.5 font-mono text-xl font-extrabold text-[#8EC5FF]">
+        <StaggerItem className="card-hover p-4 rounded-2xl bg-brand dark:bg-surface-warm text-brand-ink dark:text-ink border border-line">
+          <span className="text-[10px] font-mono uppercase tracking-wider text-brand-ink/80 dark:text-ink-muted">
+            Total Saved
+          </span>
+          <div className="mt-1.5 font-mono text-xl font-extrabold text-accent tabular-nums">
             <AnimatedNumber value={totalSaved} formatter={v => formatCurrency(v, currency)} />
           </div>
         </StaggerItem>
 
-        <StaggerItem className="card-hover p-4 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2]">
-          <span className="text-[10px] font-mono uppercase text-[#6E5648]">Combined Target</span>
-          <div className="mt-1.5 font-mono text-xl font-extrabold text-[#3B2418]">
+        <StaggerItem className="card-hover p-4 rounded-2xl bg-surface border border-line">
+          <span className="text-[10px] font-mono uppercase tracking-wider text-ink-muted">
+            Combined Target
+          </span>
+          <div className="mt-1.5 font-mono text-xl font-extrabold text-ink tabular-nums">
             <AnimatedNumber value={totalTarget} formatter={v => formatCurrency(v, currency)} />
           </div>
         </StaggerItem>
 
-        <StaggerItem className="card-hover p-4 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2]">
-          <span className="text-[10px] font-mono uppercase text-[#6E5648]">Overall Progress</span>
-          <div className="mt-1.5 font-mono text-xl font-extrabold text-[#3E7B52]">
+        <StaggerItem className="card-hover p-4 rounded-2xl bg-surface border border-line">
+          <span className="text-[10px] font-mono uppercase tracking-wider text-ink-muted">
+            Overall Progress
+          </span>
+          <div className="mt-1.5 font-mono text-xl font-extrabold text-success tabular-nums">
             <AnimatedNumber value={overallPct} formatter={v => `${v.toFixed(1)}%`} />
           </div>
         </StaggerItem>
 
-        <StaggerItem className="p-4 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] flex items-center justify-center">
+        <StaggerItem className="p-4 rounded-2xl bg-surface border border-line flex items-center justify-center">
           <button
+            type="button"
             onClick={onAddGoal}
-            className="btn-press w-full h-full min-h-[44px] flex items-center justify-center gap-2 rounded-xl bg-[#8EC5FF] hover:bg-[#73B6FC] text-[#3B2418] font-bold text-xs border border-[#3B2418]/15 shadow-xs"
+            className="btn-press w-full h-full min-h-[44px] flex items-center justify-center gap-2 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs"
           >
             <Plus className="w-4 h-4" />
             <span>New Savings Goal</span>
@@ -77,17 +85,18 @@ export const FinanceSavingsTab: React.FC<Props> = ({
 
       {/* Goals Grid */}
       {goals.length === 0 ? (
-        <div className="p-12 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] text-center space-y-3">
-          <div className="w-12 h-12 rounded-xl bg-[#F2E8DA] border border-[#D6C6B2] flex items-center justify-center mx-auto text-[#1E5A99]">
+        <div className="p-12 rounded-2xl bg-surface border border-line text-center space-y-3">
+          <div className="w-12 h-12 rounded-xl bg-canvas border border-line flex items-center justify-center mx-auto text-accent">
             <PiggyBank className="w-6 h-6" />
           </div>
-          <h3 className="text-sm font-bold text-[#3B2418]">No Savings Goals Created Yet</h3>
-          <p className="text-xs text-[#6E5648] max-w-md mx-auto">
+          <h3 className="text-sm font-bold text-ink">No Savings Goals Created Yet</h3>
+          <p className="text-xs text-ink-muted max-w-md mx-auto">
             Create dedicated savings targets for your Emergency Fund, a new Laptop, Travel, or Education and track every contribution.
           </p>
           <button
+            type="button"
             onClick={onAddGoal}
-            className="btn-press px-4 py-2 rounded-xl bg-[#8EC5FF] hover:bg-[#73B6FC] text-[#3B2418] font-bold text-xs border border-[#3B2418]/15"
+            className="btn-press min-h-[44px] px-4 py-2 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs"
           >
             + Create First Savings Goal
           </button>
@@ -96,8 +105,14 @@ export const FinanceSavingsTab: React.FC<Props> = ({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <AnimatePresence initial={false}>
             {goals.map(goal => {
-              const remaining = Math.max(0, Math.round((goal.targetAmount - goal.currentAmount) * 100) / 100);
-              const pct = goal.targetAmount > 0 ? Math.min(100, (goal.currentAmount / goal.targetAmount) * 100) : 0;
+              const remaining = Math.max(
+                0,
+                Math.round((goal.targetAmount - goal.currentAmount) * 100) / 100
+              );
+              const pct =
+                goal.targetAmount > 0
+                  ? Math.min(100, (goal.currentAmount / goal.targetAmount) * 100)
+                  : 0;
               const daysLeft = getDaysUntilDate(goal.deadline);
               const isFunded = remaining <= 0;
 
@@ -109,28 +124,32 @@ export const FinanceSavingsTab: React.FC<Props> = ({
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.96 }}
                   transition={{ duration: 0.2, ease: MOMENTUM_EASE }}
-                  className="card-hover p-5 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] shadow-xs space-y-4 flex flex-col justify-between"
+                  className="card-hover p-5 rounded-2xl bg-surface border border-line space-y-4 flex flex-col justify-between"
                 >
                   <div className="space-y-3">
                     <div className="flex items-start justify-between gap-2">
-                      <div className="space-y-1">
-                        <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-[#3B2418] text-[#8EC5FF]">
+                      <div className="space-y-1 min-w-0">
+                        <span className="text-[10px] font-mono uppercase tracking-wider text-accent font-semibold block">
                           {goal.category}
                         </span>
-                        <h4 className="text-base font-bold text-[#3B2418]">{goal.name}</h4>
+                        <h4 className="text-base font-bold text-ink truncate">{goal.name}</h4>
                       </div>
-                      <div className="flex items-center gap-1">
+                      <div className="flex items-center gap-1 shrink-0">
                         <button
+                          type="button"
                           onClick={() => onEditGoal(goal)}
-                          className="p-1.5 rounded-lg text-[#6E5648] hover:text-[#1E5A99] hover:bg-[#F2E8DA] btn-press"
+                          className="p-2 rounded-lg text-ink-muted hover:text-accent hover:bg-surface-warm btn-press"
                           title="Edit savings goal"
+                          aria-label={`Edit savings goal ${goal.name}`}
                         >
                           <Edit2 className="w-3.5 h-3.5" />
                         </button>
                         <button
+                          type="button"
                           onClick={() => onDeleteGoal(goal)}
-                          className="p-1.5 rounded-lg text-[#6E5648] hover:text-[#B84A44] hover:bg-[#B84A44]/10 btn-press"
+                          className="p-2 rounded-lg text-ink-muted hover:text-danger hover:bg-danger/10 btn-press"
                           title="Delete savings goal"
+                          aria-label={`Delete savings goal ${goal.name}`}
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>
@@ -138,54 +157,61 @@ export const FinanceSavingsTab: React.FC<Props> = ({
                     </div>
 
                     {goal.notes && (
-                      <p className="text-xs text-[#6E5648] leading-relaxed">{goal.notes}</p>
+                      <p className="text-xs text-ink-muted leading-relaxed">{goal.notes}</p>
                     )}
 
                     {/* Progress Visual */}
-                    <div className="p-3.5 rounded-xl bg-[#F2E8DA] border border-[#D6C6B2] space-y-2">
-                      <div className="flex items-baseline justify-between text-xs">
-                        <span className="font-mono font-bold text-[#3B2418]">
+                    <div className="p-3.5 rounded-xl bg-canvas border border-line space-y-2">
+                      <div className="flex items-baseline justify-between text-xs gap-2">
+                        <span className="font-mono font-bold text-ink tabular-nums">
                           {formatCurrency(goal.currentAmount, currency)}
                         </span>
-                        <span className="font-mono text-[#6E5648]">
+                        <span className="font-mono text-ink-muted tabular-nums">
                           Target: {formatCurrency(goal.targetAmount, currency)}
                         </span>
                       </div>
 
                       <AnimatedProgressBar
                         percentage={pct}
-                        trackClassName="w-full h-2.5 bg-[#EAE0D0] rounded-full overflow-hidden"
+                        trackClassName="w-full h-2.5 bg-surface-inset rounded-full overflow-hidden"
                         fillClassName={`h-full rounded-full ${
-                          isFunded ? 'bg-[#3E7B52]' : 'bg-[#8EC5FF]'
+                          isFunded ? 'bg-success' : 'bg-accent'
                         }`}
                       />
 
                       <div className="flex items-center justify-between text-[11px]">
-                        <span className="font-semibold text-[#1E5A99]">
+                        <span
+                          className={`font-semibold tabular-nums ${
+                            isFunded ? 'text-success' : 'text-accent'
+                          }`}
+                        >
                           {isFunded
-                            ? 'Target Reached!'
+                            ? 'Target Reached'
                             : `Remaining: ${formatCurrency(remaining, currency)}`}
                         </span>
-                        <span className="font-mono font-bold text-[#3B2418]">{pct.toFixed(1)}%</span>
+                        <span className="font-mono font-bold text-ink tabular-nums">
+                          {pct.toFixed(1)}%
+                        </span>
                       </div>
                     </div>
 
                     {/* Recent Contributions */}
                     {goal.contributions && goal.contributions.length > 0 && (
-                      <div className="space-y-1">
-                        <span className="text-[10px] font-mono uppercase text-[#6E5648]">
+                      <div className="space-y-1.5">
+                        <span className="text-[10px] font-mono uppercase tracking-wider text-ink-muted block">
                           Recent Contributions ({goal.contributions.length})
                         </span>
-                        <div className="space-y-1 max-h-24 overflow-y-auto">
+                        <div className="divide-y divide-line rounded-xl bg-canvas border border-line max-h-28 overflow-y-auto">
                           {goal.contributions.slice(0, 3).map(c => (
                             <div
                               key={c.id}
-                              className="flex items-center justify-between text-[11px] px-2.5 py-1 rounded bg-[#F2E8DA]/70 text-[#6E5648]"
+                              className="flex items-center justify-between text-[11px] px-3 py-1.5 text-ink-muted gap-2"
                             >
-                              <span className="truncate">
-                                {c.date} {c.note ? `• ${c.note}` : ''}
+                              <span className="truncate tabular-nums">
+                                {c.date}
+                                {c.note ? ` · ${c.note}` : ''}
                               </span>
-                              <span className="font-mono font-bold text-[#3E7B52] shrink-0">
+                              <span className="font-mono font-bold text-success shrink-0 tabular-nums">
                                 +{formatCurrency(c.amount, currency)}
                               </span>
                             </div>
@@ -196,20 +222,21 @@ export const FinanceSavingsTab: React.FC<Props> = ({
                   </div>
 
                   {/* Footer */}
-                  <div className="pt-3 border-t border-[#D6C6B2] flex items-center justify-between gap-2">
-                    <div className="flex items-center gap-1.5 text-xs text-[#6E5648]">
-                      <Calendar className="w-3.5 h-3.5 text-[#1E5A99]" />
+                  <div className="pt-3 border-t border-line flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-1.5 text-xs text-ink-muted tabular-nums">
+                      <Calendar className="w-3.5 h-3.5 text-accent shrink-0" />
                       <span className="font-mono text-[11px]">{goal.deadline}</span>
-                      <span className="text-[10px] font-medium">
-                        ({daysLeft >= 0 ? `${daysLeft}d left` : `${Math.abs(daysLeft)}d past`})
+                      <span className="text-[11px] font-medium">
+                        · {daysLeft >= 0 ? `${daysLeft}d left` : `${Math.abs(daysLeft)}d past`}
                       </span>
                     </div>
 
                     <button
+                      type="button"
                       onClick={() => onContributeGoal(goal)}
-                      className="btn-press flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#3B2418] hover:bg-[#4D3021] text-[#F2E8DA] text-xs font-semibold"
+                      className="btn-press min-h-[38px] flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-brand hover:bg-brand-hover dark:bg-accent dark:hover:bg-accent-hover text-brand-ink dark:text-accent-ink text-xs font-semibold whitespace-nowrap shrink-0"
                     >
-                      <TrendingUp className="w-3.5 h-3.5 text-[#8EC5FF]" />
+                      <TrendingUp className="w-3.5 h-3.5 text-accent dark:text-accent-ink" />
                       <span>Add Contribution</span>
                     </button>
                   </div>

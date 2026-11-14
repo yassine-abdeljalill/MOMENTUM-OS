@@ -3,26 +3,16 @@ import {
   CheckSquare,
   Plus,
   Search,
-  Filter,
-  CheckCircle2,
-  Circle,
-  Clock,
-  Tag,
   Trash2,
   Edit3,
-  Calendar,
   X,
-  Target,
-  FolderGit2,
   List,
   LayoutGrid,
-  ChevronDown,
-  Sparkles,
 } from 'lucide-react';
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { useApp } from '../../lib/context';
 import { Task, TaskStatus, Priority, LifeArea } from '../../types';
-import { getPriorityColor, formatMinutes } from '../../lib/logic';
+import { getPriorityColor } from '../../lib/logic';
 import { ModalShell, AnimatedCheckButton, MOMENTUM_EASE } from '../common/MotionPrimitives';
 
 type TaskViewMode = 'board' | 'list';
@@ -37,9 +27,6 @@ export const TasksView: React.FC = () => {
     deleteTask,
     toggleTaskCompleted,
     toggleSubtaskCompleted,
-    setDailyPriorityRank,
-    startFocusTimer,
-    setIsFocusTimerOpen,
   } = useApp();
 
   const [viewMode, setViewMode] = useState<TaskViewMode>('board');
@@ -47,7 +34,6 @@ export const TasksView: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
   const [priorityFilter, setPriorityFilter] = useState<string>('all');
-  const [projectFilter, setProjectFilter] = useState<string>('all');
 
   // Fast inline task creation state
   const [inlineTitle, setInlineTitle] = useState('');
@@ -59,17 +45,14 @@ export const TasksView: React.FC = () => {
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [newSubtaskTitle, setNewSubtaskTitle] = useState('');
 
-  // Keep modal subtask/status state synced with context state
   const activeEditingTask = editingTask
     ? state.tasks.find(t => t.id === editingTask.id) ?? editingTask
     : null;
 
   const todayStr = new Date().toISOString().split('T')[0];
 
-  // Filter tasks
   const filteredTasks = useMemo(() => {
     return state.tasks.filter(t => {
-      // Tab filter
       if (filterTab === 'today') {
         if (t.dueDate !== todayStr && !t.isDailyPriority) return false;
       } else if (filterTab === 'upcoming') {
@@ -78,7 +61,6 @@ export const TasksView: React.FC = () => {
         if (t.status !== 'completed') return false;
       }
 
-      // Search query
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase();
         const matchesTitle = t.title.toLowerCase().includes(q);
@@ -86,14 +68,12 @@ export const TasksView: React.FC = () => {
         if (!matchesTitle && !matchesDesc) return false;
       }
 
-      // Dropdown filters
       if (categoryFilter !== 'all' && t.category !== categoryFilter) return false;
       if (priorityFilter !== 'all' && t.priority !== priorityFilter) return false;
-      if (projectFilter !== 'all' && t.relatedProjectId !== projectFilter) return false;
 
       return true;
     });
-  }, [state.tasks, filterTab, searchQuery, categoryFilter, priorityFilter, projectFilter, todayStr]);
+  }, [state.tasks, filterTab, searchQuery, categoryFilter, priorityFilter, todayStr]);
 
   const handleCreateInline = (e: React.FormEvent) => {
     e.preventDefault();
@@ -139,72 +119,69 @@ export const TasksView: React.FC = () => {
   ];
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto pb-16">
+    <div className="space-y-6 max-w-7xl mx-auto pb-8">
       {/* View Header & Controls */}
-      <div className="p-6 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] space-y-4 shadow-xs">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="p-5 sm:p-6 rounded-2xl bg-surface border border-line space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="space-y-1">
-            <h1 className="text-xl md:text-2xl font-bold text-[#3B2418] tracking-tight">
+            <h1 className="text-xl md:text-2xl font-bold text-ink tracking-tight">
               Task Management
             </h1>
-            <p className="text-xs text-[#6E5648]">
-              Track execution, configure subtasks, and organize work into Kanban or detailed list view.
+            <p className="text-xs text-ink-muted">
+              Track execution, configure subtasks, and organize work into Kanban or list view.
             </p>
           </div>
 
-          {/* View mode toggle & quick count */}
-          <div className="flex items-center gap-2">
-            <div className="flex bg-[#F2E8DA] p-1 rounded-xl border border-[#D6C6B2] relative">
-              {(['board', 'list'] as const).map(mode => {
-                const isActive = viewMode === mode;
-                return (
-                  <button
-                    key={mode}
-                    onClick={() => setViewMode(mode)}
-                    className={`relative z-10 p-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors ${
-                      isActive ? 'text-[#3B2418]' : 'text-[#6E5648] hover:text-[#3B2418]'
-                    }`}
-                    title={mode === 'board' ? 'Board / Kanban View' : 'List View'}
-                  >
-                    {isActive && (
-                      <motion.span
-                        layoutId="tasks-view-mode-pill"
-                        transition={{ duration: prefersReduced ? 0.01 : 0.2, ease: MOMENTUM_EASE }}
-                        className="absolute inset-0 bg-[#8EC5FF] rounded-lg -z-10"
-                      />
-                    )}
-                    {mode === 'board' ? (
-                      <LayoutGrid className="w-3.5 h-3.5" />
-                    ) : (
-                      <List className="w-3.5 h-3.5" />
-                    )}
-                    <span className="hidden sm:inline capitalize">{mode}</span>
-                  </button>
-                );
-              })}
-            </div>
+          <div className="flex bg-surface-warm p-1 rounded-xl border border-line relative self-start sm:self-auto">
+            {(['board', 'list'] as const).map(mode => {
+              const isActive = viewMode === mode;
+              return (
+                <button
+                  key={mode}
+                  type="button"
+                  onClick={() => setViewMode(mode)}
+                  className={`relative z-10 px-3 py-1.5 min-h-[36px] rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors whitespace-nowrap ${
+                    isActive ? 'text-accent-ink' : 'text-ink-muted hover:text-ink'
+                  }`}
+                >
+                  {isActive && (
+                    <motion.span
+                      layoutId="tasks-view-mode-pill"
+                      transition={{ duration: prefersReduced ? 0.01 : 0.2, ease: MOMENTUM_EASE }}
+                      className="absolute inset-0 bg-accent rounded-lg -z-10"
+                    />
+                  )}
+                  {mode === 'board' ? (
+                    <LayoutGrid className="w-3.5 h-3.5" />
+                  ) : (
+                    <List className="w-3.5 h-3.5" />
+                  )}
+                  <span className="capitalize">{mode}</span>
+                </button>
+              );
+            })}
           </div>
         </div>
 
         {/* Filter Bar */}
-        <div className="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-[#D6C6B2]">
-          {/* Filter Tabs */}
-          <div className="flex bg-[#F2E8DA] p-1 rounded-lg border border-[#D6C6B2] text-xs relative">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 pt-3 border-t border-line">
+          <div className="flex bg-surface-warm p-1 rounded-xl border border-line text-xs relative overflow-x-auto max-w-full">
             {(['all', 'today', 'upcoming', 'completed'] as const).map(tab => {
               const isActive = filterTab === tab;
               return (
                 <button
                   key={tab}
+                  type="button"
                   onClick={() => setFilterTab(tab)}
-                  className={`relative z-10 px-3 py-1 rounded-md font-semibold capitalize transition-colors ${
-                    isActive ? 'text-[#8EC5FF]' : 'text-[#6E5648] hover:text-[#3B2418]'
+                  className={`relative z-10 px-3 py-1.5 rounded-lg font-semibold capitalize transition-colors whitespace-nowrap shrink-0 ${
+                    isActive ? 'text-brand-ink dark:text-ink' : 'text-ink-muted hover:text-ink'
                   }`}
                 >
                   {isActive && (
                     <motion.span
                       layoutId="tasks-filter-tab-pill"
                       transition={{ duration: prefersReduced ? 0.01 : 0.2, ease: MOMENTUM_EASE }}
-                      className="absolute inset-0 bg-[#3B2418] rounded-md -z-10"
+                      className="absolute inset-0 bg-brand dark:bg-surface-inset rounded-lg -z-10"
                     />
                   )}
                   {tab}
@@ -213,23 +190,24 @@ export const TasksView: React.FC = () => {
             })}
           </div>
 
-          {/* Search & Dropdowns */}
           <div className="flex flex-wrap items-center gap-2">
-            <div className="relative">
-              <Search className="w-3.5 h-3.5 text-[#6E5648] absolute left-3 top-2.5" />
+            <div className="relative flex-1 sm:flex-initial min-w-[160px]">
+              <Search className="w-3.5 h-3.5 text-ink-muted absolute left-3 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
                 placeholder="Search tasks..."
-                className="pl-8 pr-3 py-1.5 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-[#3B2418] text-xs focus:outline-hidden focus:ring-2 focus:ring-[#8EC5FF] w-36 sm:w-48"
+                aria-label="Search tasks"
+                className="w-full sm:w-48 pl-8 pr-3 py-2 rounded-xl bg-canvas border border-line text-ink text-xs placeholder:text-ink-muted focus:outline-hidden focus:ring-2 focus:ring-accent"
               />
             </div>
 
             <select
               value={categoryFilter}
               onChange={e => setCategoryFilter(e.target.value)}
-              className="px-2.5 py-1.5 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-[#3B2418] text-xs focus:outline-hidden"
+              aria-label="Filter by life area"
+              className="px-3 py-2 rounded-xl bg-canvas border border-line text-ink text-xs focus:outline-hidden focus:ring-2 focus:ring-accent"
             >
               <option value="all">All Areas</option>
               <option value="education">Education</option>
@@ -242,7 +220,8 @@ export const TasksView: React.FC = () => {
             <select
               value={priorityFilter}
               onChange={e => setPriorityFilter(e.target.value)}
-              className="px-2.5 py-1.5 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-[#3B2418] text-xs focus:outline-hidden"
+              aria-label="Filter by priority"
+              className="px-3 py-2 rounded-xl bg-canvas border border-line text-ink text-xs focus:outline-hidden focus:ring-2 focus:ring-accent"
             >
               <option value="all">All Priorities</option>
               <option value="urgent">Urgent</option>
@@ -257,55 +236,59 @@ export const TasksView: React.FC = () => {
       {/* Inline Fast Task Creator */}
       <form
         onSubmit={handleCreateInline}
-        className="p-4 rounded-xl bg-[#FAF5ED] border border-[#D6C6B2] flex flex-wrap items-center gap-3 shadow-xs"
+        className="p-3.5 sm:p-4 rounded-2xl bg-surface border border-line flex flex-wrap items-center gap-2.5"
       >
-        <Plus className="w-4 h-4 text-[#1E5A99] shrink-0" />
+        <Plus className="w-4 h-4 text-accent shrink-0" />
         <input
           type="text"
           required
           value={inlineTitle}
           onChange={e => setInlineTitle(e.target.value)}
           placeholder="Create task quickly... (press Enter to add)"
-          className="flex-1 min-w-[200px] bg-transparent border-0 text-[#3B2418] text-xs focus:outline-hidden placeholder-[#6E5648]"
+          className="flex-1 min-w-[200px] bg-transparent border-0 text-ink text-xs focus:outline-hidden placeholder:text-ink-muted py-1.5"
         />
-        <select
-          value={inlineCategory}
-          onChange={e => setInlineCategory(e.target.value as LifeArea)}
-          className="px-2 py-1 rounded bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:outline-hidden"
-        >
-          <option value="career">Career</option>
-          <option value="education">Education</option>
-          <option value="fitness">Fitness</option>
-          <option value="personal_development">Personal</option>
-        </select>
-        <select
-          value={inlinePriority}
-          onChange={e => setInlinePriority(e.target.value as Priority)}
-          className="px-2 py-1 rounded bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:outline-hidden"
-        >
-          <option value="medium">Medium</option>
-          <option value="high">High</option>
-          <option value="urgent">Urgent</option>
-          <option value="low">Low</option>
-        </select>
-        <input
-          type="date"
-          value={inlineDueDate}
-          onChange={e => setInlineDueDate(e.target.value)}
-          className="px-2 py-1 rounded bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:outline-hidden"
-        />
-        <button
-          type="submit"
-          className="btn-press px-3 py-1 rounded-lg bg-[#8EC5FF] hover:bg-[#73B6FC] text-[#3B2418] border border-[#3B2418]/15 font-semibold text-xs transition-colors shrink-0"
-        >
-          Add
-        </button>
+        <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+          <select
+            value={inlineCategory}
+            onChange={e => setInlineCategory(e.target.value as LifeArea)}
+            aria-label="Task life area"
+            className="px-2.5 py-1.5 rounded-lg bg-canvas border border-line text-xs text-ink focus:outline-hidden"
+          >
+            <option value="career">Career</option>
+            <option value="education">Education</option>
+            <option value="fitness">Fitness</option>
+            <option value="personal_development">Personal</option>
+          </select>
+          <select
+            value={inlinePriority}
+            onChange={e => setInlinePriority(e.target.value as Priority)}
+            aria-label="Task priority"
+            className="px-2.5 py-1.5 rounded-lg bg-canvas border border-line text-xs text-ink focus:outline-hidden"
+          >
+            <option value="medium">Medium</option>
+            <option value="high">High</option>
+            <option value="urgent">Urgent</option>
+            <option value="low">Low</option>
+          </select>
+          <input
+            type="date"
+            value={inlineDueDate}
+            onChange={e => setInlineDueDate(e.target.value)}
+            aria-label="Task due date"
+            className="px-2.5 py-1.5 rounded-lg bg-canvas border border-line text-xs text-ink font-mono focus:outline-hidden"
+          />
+          <button
+            type="submit"
+            className="btn-press px-4 py-1.5 min-h-[36px] rounded-lg bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs transition-colors shrink-0"
+          >
+            Add
+          </button>
+        </div>
       </form>
 
       {/* Main View Display */}
       <AnimatePresence mode="wait" initial={false}>
         {viewMode === 'board' ? (
-          /* Kanban Board */
           <motion.div
             key="board"
             initial={prefersReduced ? { opacity: 1 } : { opacity: 0, y: 6 }}
@@ -319,24 +302,18 @@ export const TasksView: React.FC = () => {
               return (
                 <div
                   key={col.status}
-                  className="p-4 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] flex flex-col min-h-[500px] shadow-xs"
+                  className="p-4 rounded-2xl bg-surface border border-line flex flex-col min-h-[320px] lg:min-h-[480px]"
                 >
-                  {/* Column Header */}
-                  <div className="flex items-center justify-between pb-3 mb-3 border-b border-[#D6C6B2]">
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs font-bold uppercase tracking-wider text-[#3B2418]">
-                        {col.label}
-                      </span>
-                      <span className="font-mono text-[10px] px-1.5 py-0.5 rounded bg-[#8EC5FF]/60 text-[#3B2418] font-bold">
-                        {colTasks.length}
-                      </span>
-                    </div>
+                  <div className="flex items-center justify-between pb-3 mb-3 border-b border-line">
+                    <span className="text-xs font-semibold text-ink">{col.label}</span>
+                    <span className="font-mono text-xs text-ink-muted tabular-nums">
+                      {colTasks.length}
+                    </span>
                   </div>
 
-                  {/* Column Cards */}
-                  <div className="flex-1 space-y-3 overflow-y-auto pr-1">
+                  <div className="flex-1 space-y-2.5 overflow-y-auto pr-0.5">
                     {colTasks.length === 0 ? (
-                      <div className="py-12 text-center text-xs text-[#6E5648]">
+                      <div className="py-10 text-center text-xs text-ink-muted">
                         No tasks in {col.label}
                       </div>
                     ) : (
@@ -353,51 +330,50 @@ export const TasksView: React.FC = () => {
                               animate={{ opacity: 1, y: 0 }}
                               exit={prefersReduced ? { opacity: 0 } : { opacity: 0, scale: 0.96 }}
                               transition={{ duration: prefersReduced ? 0.01 : 0.18, ease: MOMENTUM_EASE }}
-                              className="p-3.5 rounded-xl bg-[#F2E8DA] border border-[#D6C6B2] hover:border-[#8EC5FF] transition-all space-y-2 group shadow-xs cursor-pointer card-hover"
-                              onClick={() => setEditingTask(task)}
+                              className="p-3.5 rounded-xl bg-surface-warm/60 border border-line hover:border-accent/60 transition-colors space-y-2 card-hover"
                             >
-                              <div className="flex items-start justify-between gap-2">
+                              <button
+                                type="button"
+                                onClick={() => setEditingTask(task)}
+                                className="w-full text-left space-y-1.5"
+                              >
                                 <span
-                                  className={`text-xs font-semibold transition-colors ${
-                                    isDone ? 'line-through text-[#6E5648]' : 'text-[#3B2418]'
+                                  className={`block text-xs font-semibold transition-colors ${
+                                    isDone ? 'line-through text-ink-muted' : 'text-ink'
                                   }`}
                                 >
                                   {task.title}
                                 </span>
-                              </div>
 
-                              {task.description && (
-                                <p className="text-[11px] text-[#6E5648] line-clamp-2">
-                                  {task.description}
-                                </p>
-                              )}
+                                {task.description && (
+                                  <p className="text-[11px] text-ink-muted line-clamp-2">
+                                    {task.description}
+                                  </p>
+                                )}
+                              </button>
 
                               {task.learningModuleTitle && (
-                                <div className="text-[10px] text-[#1E5A99] font-medium truncate">
+                                <div className="text-[11px] text-accent font-medium truncate">
                                   {task.learningModuleTitle}
                                   {task.learningLessonTitle ? ` · ${task.learningLessonTitle}` : ''}
                                 </div>
                               )}
 
-                              {/* Subtasks Progress if any */}
                               {task.subtasks.length > 0 && (
-                                <div className="text-[10px] text-[#6E5648] flex items-center gap-1 font-mono">
-                                  <CheckSquare className="w-3 h-3 text-[#1E5A99]" />
+                                <div className="text-[11px] text-ink-muted flex items-center gap-1 font-mono tabular-nums">
+                                  <CheckSquare className="w-3 h-3 text-accent" />
                                   <span>
                                     {task.subtasks.filter(s => s.completed).length}/{task.subtasks.length} subtasks
                                   </span>
                                 </div>
                               )}
 
-                              <div className="flex items-center justify-between pt-2 border-t border-[#D6C6B2]">
-                                <span
-                                  className={`text-[9px] font-mono px-1.5 py-0.2 rounded border uppercase font-semibold ${pColor.bg} ${pColor.text} ${pColor.border}`}
-                                >
+                              <div className="flex items-center justify-between pt-2 border-t border-line text-[11px]">
+                                <span className={`font-medium capitalize ${pColor.text}`}>
                                   {task.priority}
                                 </span>
-
                                 {task.dueDate && (
-                                  <span className="text-[10px] font-mono text-[#6E5648]">
+                                  <span className="font-mono text-ink-muted tabular-nums">
                                     {task.dueDate}
                                   </span>
                                 )}
@@ -413,92 +389,102 @@ export const TasksView: React.FC = () => {
             })}
           </motion.div>
         ) : (
-          /* List View */
           <motion.div
             key="list"
             initial={prefersReduced ? { opacity: 1 } : { opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
             exit={prefersReduced ? { opacity: 0 } : { opacity: 0, y: -4 }}
             transition={{ duration: prefersReduced ? 0.01 : 0.16, ease: MOMENTUM_EASE }}
-            className="p-6 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] space-y-3 shadow-xs"
+            className="p-4 sm:p-6 rounded-2xl bg-surface border border-line"
           >
             {filteredTasks.length === 0 ? (
-              <div className="py-12 text-center text-[#6E5648] space-y-2">
-                <CheckSquare className="w-8 h-8 mx-auto opacity-40 text-[#1E5A99]" />
-                <p className="text-sm font-medium text-[#3B2418]">No matching tasks</p>
-                <p className="text-xs text-[#6E5648]">Create your first task or change filter options above.</p>
+              <div className="py-12 text-center text-ink-muted space-y-2">
+                <CheckSquare className="w-8 h-8 mx-auto opacity-40 text-accent" />
+                <p className="text-sm font-medium text-ink">No matching tasks</p>
+                <p className="text-xs text-ink-muted">
+                  Create your first task or change filter options above.
+                </p>
               </div>
             ) : (
-              <AnimatePresence initial={false}>
-                {filteredTasks.map(task => {
-                  const isDone = task.status === 'completed';
-                  const pColor = getPriorityColor(task.priority);
+              <div className="divide-y divide-line">
+                <AnimatePresence initial={false}>
+                  {filteredTasks.map(task => {
+                    const isDone = task.status === 'completed';
+                    const pColor = getPriorityColor(task.priority);
 
-                  return (
-                    <motion.div
-                      key={task.id}
-                      layout={!prefersReduced}
-                      initial={prefersReduced ? { opacity: 1 } : { opacity: 0, y: 6 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={prefersReduced ? { opacity: 0 } : { opacity: 0, x: -12 }}
-                      transition={{ duration: prefersReduced ? 0.01 : 0.18, ease: MOMENTUM_EASE }}
-                      className={`p-3.5 rounded-xl border flex items-center justify-between gap-3 transition-all duration-200 ${
-                        isDone
-                          ? 'bg-[#EAE0D0]/60 border-[#D6C6B2] opacity-75'
-                          : 'bg-[#F2E8DA] border-[#D6C6B2] hover:border-[#8EC5FF]'
-                      }`}
-                    >
-                      <div className="flex items-center gap-3 min-w-0">
-                        <AnimatedCheckButton
-                          checked={isDone}
-                          size="sm"
-                          onClick={() => toggleTaskCompleted(task.id)}
-                        />
-                        <div className="flex flex-col min-w-0">
-                          <span className={`text-xs font-semibold truncate transition-colors ${isDone ? 'line-through text-[#6E5648]' : 'text-[#3B2418]'}`}>
-                            {task.title}
-                          </span>
-                          <div className="flex flex-wrap items-center gap-2 text-[10px] text-[#6E5648] mt-0.5">
-                            <span className="capitalize">{task.category}</span>
-                            {task.learningModuleTitle && (
-                              <span className="text-[#1E5A99] font-medium truncate max-w-[220px]">
-                                • {task.learningModuleTitle}
-                                {task.learningLessonTitle ? ` · ${task.learningLessonTitle}` : ''}
-                              </span>
-                            )}
-                            {task.dueDate && <span>• Due {task.dueDate}</span>}
-                            {task.subtasks.length > 0 && (
-                              <span>
-                                • {task.subtasks.filter(s => s.completed).length}/{task.subtasks.length} subtasks
-                              </span>
-                            )}
+                    return (
+                      <motion.div
+                        key={task.id}
+                        layout={!prefersReduced}
+                        initial={prefersReduced ? { opacity: 1 } : { opacity: 0, y: 6 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={prefersReduced ? { opacity: 0 } : { opacity: 0, x: -12 }}
+                        transition={{ duration: prefersReduced ? 0.01 : 0.18, ease: MOMENTUM_EASE }}
+                        className={`py-3 flex items-center justify-between gap-3 min-h-[48px] ${
+                          isDone ? 'opacity-65' : ''
+                        }`}
+                      >
+                        <div className="flex items-center gap-3 min-w-0">
+                          <AnimatedCheckButton
+                            checked={isDone}
+                            size="sm"
+                            onClick={() => toggleTaskCompleted(task.id)}
+                            ariaLabel={isDone ? `Mark "${task.title}" incomplete` : `Complete "${task.title}"`}
+                          />
+                          <div className="flex flex-col min-w-0">
+                            <span
+                              className={`text-xs sm:text-sm font-medium truncate transition-colors ${
+                                isDone ? 'line-through text-ink-muted' : 'text-ink'
+                              }`}
+                            >
+                              {task.title}
+                            </span>
+                            <div className="flex flex-wrap items-center gap-2 text-[11px] text-ink-muted mt-0.5">
+                              <span className="capitalize">{task.category.replace('_', ' ')}</span>
+                              {task.learningModuleTitle && (
+                                <span className="text-accent font-medium truncate max-w-[220px]">
+                                  · {task.learningModuleTitle}
+                                  {task.learningLessonTitle ? ` · ${task.learningLessonTitle}` : ''}
+                                </span>
+                              )}
+                              {task.dueDate && (
+                                <span className="font-mono tabular-nums">· Due {task.dueDate}</span>
+                              )}
+                              {task.subtasks.length > 0 && (
+                                <span className="font-mono tabular-nums">
+                                  · {task.subtasks.filter(s => s.completed).length}/{task.subtasks.length} subtasks
+                                </span>
+                              )}
+                            </div>
                           </div>
                         </div>
-                      </div>
 
-                      <div className="flex items-center gap-2 shrink-0">
-                        <span
-                          className={`text-[9px] font-mono px-1.5 py-0.2 rounded border uppercase font-semibold ${pColor.bg} ${pColor.text} ${pColor.border}`}
-                        >
-                          {task.priority}
-                        </span>
-                        <button
-                          onClick={() => setEditingTask(task)}
-                          className="btn-press p-1 rounded text-[#6E5648] hover:text-[#3B2418] hover:bg-[#EAE0D0] transition-colors"
-                        >
-                          <Edit3 className="w-3.5 h-3.5" />
-                        </button>
-                        <button
-                          onClick={() => deleteTask(task.id)}
-                          className="btn-press p-1 rounded text-[#6E5648] hover:text-[#B84A44] hover:bg-[#EAE0D0] transition-colors"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
-                    </motion.div>
-                  );
-                })}
-              </AnimatePresence>
+                        <div className="flex items-center gap-2 shrink-0">
+                          <span className={`text-xs font-medium capitalize ${pColor.text}`}>
+                            {task.priority}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => setEditingTask(task)}
+                            className="btn-press p-1.5 rounded-lg text-ink-muted hover:text-ink hover:bg-surface-warm transition-colors"
+                            aria-label={`Edit "${task.title}"`}
+                          >
+                            <Edit3 className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => deleteTask(task.id)}
+                            className="btn-press p-1.5 rounded-lg text-ink-muted hover:text-danger hover:bg-surface-warm transition-colors"
+                            aria-label={`Delete "${task.title}"`}
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </motion.div>
+                    );
+                  })}
+                </AnimatePresence>
+              </div>
             )}
           </motion.div>
         )}
@@ -509,27 +495,27 @@ export const TasksView: React.FC = () => {
         isOpen={Boolean(activeEditingTask)}
         onClose={() => setEditingTask(null)}
         maxWidthClass="max-w-xl"
-        panelClassName="bg-[#FAF5ED] border border-[#D6C6B2] rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[85vh]"
       >
         {activeEditingTask && (
           <>
-            <div className="flex items-center justify-between px-6 py-4 border-b border-[#5A3927] bg-[#3B2418]">
+            <div className="flex items-center justify-between px-5 sm:px-6 py-4 border-b border-line bg-brand dark:bg-surface-warm">
               <div className="flex items-center gap-2">
-                <Edit3 className="w-4 h-4 text-[#8EC5FF]" />
-                <h3 className="text-sm font-bold text-[#F2E8DA]">Task Details</h3>
+                <Edit3 className="w-4 h-4 text-accent" />
+                <h3 className="text-sm font-semibold text-brand-ink dark:text-ink">Task Details</h3>
               </div>
               <button
+                type="button"
                 onClick={() => setEditingTask(null)}
-                className="text-[#D8C7B4] hover:text-[#F2E8DA] transition-colors"
+                className="p-1.5 rounded-lg text-brand-ink/80 dark:text-ink-muted hover:text-brand-ink dark:hover:text-ink transition-colors"
+                aria-label="Close task details"
               >
-                ✕
+                <X className="w-4 h-4" />
               </button>
             </div>
 
-            <div className="p-6 space-y-4 overflow-y-auto flex-1">
-              {/* Title */}
+            <div className="p-5 sm:p-6 space-y-4 overflow-y-auto flex-1">
               <div>
-                <label className="block text-xs font-semibold text-[#6E5648] mb-1">Title</label>
+                <label className="block text-xs font-semibold text-ink-muted mb-1.5">Title</label>
                 <input
                   type="text"
                   value={activeEditingTask.title}
@@ -538,14 +524,13 @@ export const TasksView: React.FC = () => {
                     setEditingTask(updated);
                     updateTask(activeEditingTask.id, { title: e.target.value });
                   }}
-                  className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-[#3B2418] text-xs font-medium focus:outline-hidden focus:ring-2 focus:ring-[#8EC5FF]"
+                  className="w-full px-3 py-2 rounded-xl bg-canvas border border-line text-ink text-xs font-medium focus:outline-hidden focus:ring-2 focus:ring-accent"
                 />
               </div>
 
-              {/* Status & Priority Row */}
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-[#6E5648] mb-1">Status</label>
+                  <label className="block text-xs font-semibold text-ink-muted mb-1.5">Status</label>
                   <select
                     value={activeEditingTask.status}
                     onChange={e => {
@@ -553,7 +538,7 @@ export const TasksView: React.FC = () => {
                       setEditingTask({ ...activeEditingTask, status: newStatus });
                       updateTask(activeEditingTask.id, { status: newStatus });
                     }}
-                    className="w-full px-2.5 py-1.5 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:outline-hidden"
+                    className="w-full px-2.5 py-2 rounded-xl bg-canvas border border-line text-xs text-ink focus:outline-hidden"
                   >
                     <option value="inbox">Inbox</option>
                     <option value="not_started">To Do</option>
@@ -564,7 +549,7 @@ export const TasksView: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-[#6E5648] mb-1">Priority</label>
+                  <label className="block text-xs font-semibold text-ink-muted mb-1.5">Priority</label>
                   <select
                     value={activeEditingTask.priority}
                     onChange={e => {
@@ -572,7 +557,7 @@ export const TasksView: React.FC = () => {
                       setEditingTask({ ...activeEditingTask, priority: newPriority });
                       updateTask(activeEditingTask.id, { priority: newPriority });
                     }}
-                    className="w-full px-2.5 py-1.5 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:outline-hidden"
+                    className="w-full px-2.5 py-2 rounded-xl bg-canvas border border-line text-xs text-ink focus:outline-hidden"
                   >
                     <option value="low">Low</option>
                     <option value="medium">Medium</option>
@@ -581,8 +566,8 @@ export const TasksView: React.FC = () => {
                   </select>
                 </div>
 
-                <div>
-                  <label className="block text-xs font-semibold text-[#6E5648] mb-1">Due Date</label>
+                <div className="col-span-2 sm:col-span-1">
+                  <label className="block text-xs font-semibold text-ink-muted mb-1.5">Due Date</label>
                   <input
                     type="date"
                     value={activeEditingTask.dueDate || ''}
@@ -590,14 +575,13 @@ export const TasksView: React.FC = () => {
                       setEditingTask({ ...activeEditingTask, dueDate: e.target.value });
                       updateTask(activeEditingTask.id, { dueDate: e.target.value || undefined });
                     }}
-                    className="w-full px-2.5 py-1.5 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:outline-hidden"
+                    className="w-full px-2.5 py-2 rounded-xl bg-canvas border border-line text-xs text-ink font-mono focus:outline-hidden"
                   />
                 </div>
               </div>
 
-              {/* Description */}
               <div>
-                <label className="block text-xs font-semibold text-[#6E5648] mb-1">Description</label>
+                <label className="block text-xs font-semibold text-ink-muted mb-1.5">Description</label>
                 <textarea
                   rows={3}
                   value={activeEditingTask.description || ''}
@@ -605,13 +589,12 @@ export const TasksView: React.FC = () => {
                     setEditingTask({ ...activeEditingTask, description: e.target.value });
                     updateTask(activeEditingTask.id, { description: e.target.value });
                   }}
-                  className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:outline-hidden"
+                  className="w-full px-3 py-2 rounded-xl bg-canvas border border-line text-xs text-ink focus:outline-hidden"
                 />
               </div>
 
-              {/* Subtasks Section */}
-              <div className="space-y-2 pt-2 border-t border-[#D6C6B2]">
-                <span className="text-xs font-semibold text-[#3B2418] block">Subtasks</span>
+              <div className="space-y-2.5 pt-3 border-t border-line">
+                <span className="text-xs font-semibold text-ink block">Subtasks</span>
                 <div className="space-y-1.5">
                   <AnimatePresence initial={false}>
                     {activeEditingTask.subtasks.map(st => (
@@ -621,14 +604,19 @@ export const TasksView: React.FC = () => {
                         animate={{ opacity: 1, y: 0 }}
                         exit={prefersReduced ? { opacity: 0 } : { opacity: 0 }}
                         transition={{ duration: prefersReduced ? 0.01 : 0.16, ease: MOMENTUM_EASE }}
-                        className="flex items-center gap-2 p-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2]"
+                        className="flex items-center gap-2.5 p-2.5 rounded-xl bg-surface-warm/60 border border-line"
                       >
                         <AnimatedCheckButton
                           checked={st.completed}
                           size="sm"
                           onClick={() => toggleSubtaskCompleted(activeEditingTask.id, st.id)}
+                          ariaLabel={st.completed ? `Uncheck ${st.title}` : `Complete ${st.title}`}
                         />
-                        <span className={`text-xs flex-1 transition-colors ${st.completed ? 'line-through text-[#6E5648]' : 'text-[#3B2418]'}`}>
+                        <span
+                          className={`text-xs flex-1 transition-colors ${
+                            st.completed ? 'line-through text-ink-muted' : 'text-ink'
+                          }`}
+                        >
                           {st.title}
                         </span>
                       </motion.div>
@@ -642,11 +630,11 @@ export const TasksView: React.FC = () => {
                     value={newSubtaskTitle}
                     onChange={e => setNewSubtaskTitle(e.target.value)}
                     placeholder="Add a subtask..."
-                    className="flex-1 px-3 py-1.5 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:outline-hidden"
+                    className="flex-1 px-3 py-2 rounded-xl bg-canvas border border-line text-xs text-ink placeholder:text-ink-muted focus:outline-hidden"
                   />
                   <button
                     type="submit"
-                    className="btn-press px-3 py-1.5 rounded-lg bg-[#8EC5FF] hover:bg-[#73B6FC] text-[#3B2418] font-semibold text-xs border border-[#3B2418]/15 transition-colors"
+                    className="btn-press px-4 py-2 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs transition-colors"
                   >
                     Add
                   </button>
@@ -654,21 +642,22 @@ export const TasksView: React.FC = () => {
               </div>
             </div>
 
-            {/* Bottom Actions */}
-            <div className="p-4 border-t border-[#D6C6B2] bg-[#EAE0D0] flex items-center justify-between">
+            <div className="p-4 border-t border-line bg-surface-warm flex items-center justify-between">
               <button
+                type="button"
                 onClick={() => {
                   deleteTask(activeEditingTask.id);
                   setEditingTask(null);
                 }}
-                className="btn-press text-xs text-[#9E3530] hover:underline flex items-center gap-1 font-medium"
+                className="btn-press text-xs text-danger hover:underline flex items-center gap-1.5 font-medium"
               >
                 <Trash2 className="w-3.5 h-3.5" />
                 <span>Delete Task</span>
               </button>
               <button
+                type="button"
                 onClick={() => setEditingTask(null)}
-                className="btn-press px-4 py-1.5 rounded-lg bg-[#8EC5FF] hover:bg-[#73B6FC] text-[#3B2418] font-semibold text-xs border border-[#3B2418]/15 transition-colors"
+                className="btn-press px-4 py-2 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs transition-colors"
               >
                 Done
               </button>

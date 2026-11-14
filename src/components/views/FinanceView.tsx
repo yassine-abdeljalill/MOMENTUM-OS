@@ -66,13 +66,11 @@ export const FinanceView: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [loadError, setLoadError] = useState('');
 
-  // Filters
   const [rangePreset, setRangePreset] = useState<DateRangePreset>('this_month');
   const [customStart, setCustomStart] = useState('');
   const [customEnd, setCustomEnd] = useState('');
   const [budgetMonth, setBudgetMonth] = useState(getMonthKey());
 
-  // Modals State
   const [txModalOpen, setTxModalOpen] = useState(false);
   const [editingTx, setEditingTx] = useState<FinanceTransaction | null>(null);
   const [categoryModalOpen, setCategoryModalOpen] = useState(false);
@@ -176,7 +174,6 @@ export const FinanceView: React.FC = () => {
       .sort((a, b) => a.nextDueDate.localeCompare(b.nextDueDate));
   }, [data]);
 
-  // Handlers
   const handleCurrencyChange = async (nextCurrency: CurrencyCode) => {
     if (!data) return;
     try {
@@ -438,14 +435,14 @@ export const FinanceView: React.FC = () => {
 
   if (!authChecked || (loading && !data)) {
     return (
-      <div className="max-w-7xl mx-auto py-20 flex flex-col items-center justify-center text-[#6E5648] gap-3">
+      <div className="max-w-7xl mx-auto py-20 flex flex-col items-center justify-center text-ink-muted gap-3">
         <img
           src="/brand-logo.png"
           alt="MOMENTUM"
           className="w-12 h-12 rounded-xl object-contain shadow-md"
         />
         <div className="flex items-center gap-2">
-          <Loader2 className="w-4 h-4 animate-spin text-[#1E5A99]" />
+          <Loader2 className="w-4 h-4 animate-spin text-accent" />
           <span className="text-xs font-mono">Loading Finance workspace...</span>
         </div>
       </div>
@@ -454,24 +451,26 @@ export const FinanceView: React.FC = () => {
 
   if (!authUser) {
     return (
-      <div className="max-w-lg mx-auto my-12 p-8 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] shadow-xs text-center space-y-4">
-        <div className="w-12 h-12 rounded-xl bg-[#3B2418] text-[#8EC5FF] flex items-center justify-center mx-auto">
+      <div className="max-w-lg mx-auto my-12 p-8 rounded-2xl bg-surface border border-line text-center space-y-4">
+        <div className="w-12 h-12 rounded-xl bg-brand text-brand-ink flex items-center justify-center mx-auto">
           <Wallet className="w-6 h-6" />
         </div>
         <div className="space-y-1.5">
-          <h2 className="text-lg font-bold text-[#3B2418]">MOMENTUM Session Signed Out</h2>
-          <p className="text-xs text-[#6E5648] leading-relaxed">
+          <h2 className="text-lg font-bold text-ink">MOMENTUM Session Signed Out</h2>
+          <p className="text-xs text-ink-muted leading-relaxed">
             Sign in to your MOMENTUM account to restore your financial records, or continue in a fresh personal workspace.
           </p>
         </div>
         <div className="flex flex-wrap items-center justify-center gap-2 pt-2">
           <button
+            type="button"
             onClick={() => setIsAuthModalOpen(true)}
-            className="btn-press px-5 py-2 rounded-xl bg-[#8EC5FF] hover:bg-[#73B6FC] text-[#3B2418] border border-[#3B2418]/15 font-bold text-xs shadow-xs"
+            className="btn-press px-5 py-2 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs"
           >
             Sign In to MOMENTUM
           </button>
           <button
+            type="button"
             onClick={async () => {
               try {
                 const { user } = await authApi.ensureWorkspaceSession(state.profile.fullName);
@@ -480,7 +479,7 @@ export const FinanceView: React.FC = () => {
                 showToast(err?.message || 'Unable to start workspace session.', 'error');
               }
             }}
-            className="btn-press px-4 py-2 rounded-xl bg-[#F2E8DA] hover:bg-[#EAE0D0] border border-[#D6C6B2] text-xs font-semibold text-[#3B2418]"
+            className="btn-press px-4 py-2 rounded-xl bg-canvas hover:bg-surface-warm border border-line text-xs font-semibold text-ink"
           >
             Use Personal Workspace
           </button>
@@ -491,12 +490,13 @@ export const FinanceView: React.FC = () => {
 
   if (loadError) {
     return (
-      <div className="max-w-xl mx-auto my-12 p-6 rounded-2xl bg-[#FAF5ED] border border-[#B84A44]/40 text-center space-y-3">
-        <p className="text-sm font-bold text-[#9E3530]">Unable to load financial data</p>
-        <p className="text-xs text-[#6E5648]">{loadError}</p>
+      <div className="max-w-xl mx-auto my-12 p-6 rounded-2xl bg-surface border border-danger/40 text-center space-y-3">
+        <p className="text-sm font-bold text-danger">Unable to load financial data</p>
+        <p className="text-xs text-ink-muted">{loadError}</p>
         <button
+          type="button"
           onClick={loadFinanceData}
-          className="btn-press px-4 py-2 rounded-lg bg-[#8EC5FF] text-[#3B2418] text-xs font-bold"
+          className="btn-press px-4 py-2 rounded-xl bg-accent text-accent-ink text-xs font-semibold"
         >
           Retry
         </button>
@@ -520,29 +520,29 @@ export const FinanceView: React.FC = () => {
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-16">
       {/* Top Finance Command Header */}
-      <div className="p-5 md:p-6 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] shadow-xs space-y-4">
+      <div className="p-5 md:p-6 rounded-2xl bg-surface border border-line space-y-4">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div className="space-y-1">
             <div className="flex items-center gap-2">
-              <Wallet className="w-5 h-5 text-[#1E5A99]" />
-              <h1 className="text-xl md:text-2xl font-bold text-[#3B2418] tracking-tight">
+              <Wallet className="w-5 h-5 text-accent" />
+              <h1 className="text-xl md:text-2xl font-bold text-ink tracking-tight">
                 Finance Management Center
               </h1>
             </div>
-            <p className="text-xs text-[#6E5648]">
+            <p className="text-xs text-ink-muted">
               Track cash flow, enforce category budgets, grow savings goals, and manage recurring obligations.
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2 w-full lg:w-auto">
             {/* Currency Selector */}
-            <div className="flex items-center gap-1.5 bg-[#F2E8DA] px-2.5 py-1.5 rounded-xl border border-[#D6C6B2] text-xs">
-              <SlidersHorizontal className="w-3.5 h-3.5 text-[#1E5A99]" />
+            <div className="flex items-center gap-1.5 bg-canvas px-2.5 py-2 rounded-xl border border-line text-xs shrink-0">
+              <SlidersHorizontal className="w-3.5 h-3.5 text-accent" />
               <select
                 value={currency}
                 onChange={e => handleCurrencyChange(e.target.value as CurrencyCode)}
                 aria-label="Preferred currency"
-                className="bg-transparent font-mono font-bold text-[#3B2418] focus:outline-hidden cursor-pointer"
+                className="bg-transparent font-mono font-bold text-ink focus:outline-hidden cursor-pointer"
               >
                 {CURRENCY_OPTIONS.map(opt => (
                   <option key={opt.code} value={opt.code}>
@@ -557,7 +557,7 @@ export const FinanceView: React.FC = () => {
               value={rangePreset}
               onChange={e => setRangePreset(e.target.value as DateRangePreset)}
               aria-label="Date range filter"
-              className="px-3 py-1.5 rounded-xl bg-[#F2E8DA] border border-[#D6C6B2] text-xs font-semibold text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
+              className="flex-1 sm:flex-initial min-w-[120px] px-3 py-2 rounded-xl bg-canvas border border-line text-xs font-semibold text-ink focus:ring-2 focus:ring-accent focus:outline-hidden"
             >
               <option value="this_month">This Month</option>
               <option value="last_month">Last Month</option>
@@ -568,19 +568,22 @@ export const FinanceView: React.FC = () => {
             </select>
 
             <button
+              type="button"
               onClick={handleExportCsv}
-              className="btn-press flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#F2E8DA] hover:bg-[#EAE0D0] border border-[#D6C6B2] text-xs font-semibold text-[#3B2418]"
+              aria-label="Export transactions to CSV"
+              className="btn-press flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-canvas hover:bg-surface-warm border border-line text-xs font-semibold text-ink whitespace-nowrap shrink-0"
             >
-              <Download className="w-3.5 h-3.5 text-[#1E5A99]" />
+              <Download className="w-3.5 h-3.5 text-accent" />
               <span className="hidden sm:inline">Export CSV</span>
             </button>
 
             <button
+              type="button"
               onClick={() => {
                 setEditingTx(null);
                 setTxModalOpen(true);
               }}
-              className="btn-press flex items-center gap-1.5 px-4 py-1.5 rounded-xl bg-[#8EC5FF] hover:bg-[#73B6FC] text-[#3B2418] border border-[#3B2418]/15 font-bold text-xs shadow-xs"
+              className="btn-press w-full sm:w-auto flex items-center justify-center gap-1.5 px-4 py-2 min-h-[44px] sm:min-h-0 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs whitespace-nowrap shrink-0"
             >
               <Plus className="w-4 h-4 stroke-[2.5]" />
               <span>Add Transaction</span>
@@ -597,28 +600,28 @@ export const FinanceView: React.FC = () => {
               exit={{ opacity: 0, height: 0 }}
               className="overflow-hidden"
             >
-              <div className="flex flex-wrap items-center gap-3 pt-2 border-t border-[#D6C6B2] text-xs">
-                <span className="font-semibold text-[#6E5648]">From:</span>
+              <div className="flex flex-wrap items-center gap-3 pt-2 border-t border-line text-xs">
+                <span className="font-semibold text-ink-muted">From:</span>
                 <input
                   type="date"
                   value={customStart}
                   onChange={e => setCustomStart(e.target.value)}
-                  className="px-2.5 py-1 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-[#3B2418]"
+                  className="px-2.5 py-1.5 rounded-xl bg-canvas border border-line text-ink font-mono"
                 />
-                <span className="font-semibold text-[#6E5648]">To:</span>
+                <span className="font-semibold text-ink-muted">To:</span>
                 <input
                   type="date"
                   value={customEnd}
                   onChange={e => setCustomEnd(e.target.value)}
-                  className="px-2.5 py-1 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-[#3B2418]"
+                  className="px-2.5 py-1.5 rounded-xl bg-canvas border border-line text-ink font-mono"
                 />
               </div>
             </motion.div>
           )}
         </AnimatePresence>
 
-        {/* Sub-Navigation Pills */}
-        <div className="flex flex-wrap gap-1 bg-[#F2E8DA] p-1 rounded-xl border border-[#D6C6B2] text-xs">
+        {/* Sub-Navigation Tabs */}
+        <div className="flex overflow-x-auto sm:flex-wrap gap-1 bg-canvas p-1 rounded-xl border border-line text-xs">
           {(
             [
               { id: 'overview', label: 'Dashboard', icon: LayoutGrid },
@@ -634,16 +637,17 @@ export const FinanceView: React.FC = () => {
             return (
               <button
                 key={tab.id}
+                type="button"
                 onClick={() => setActiveTab(tab.id)}
-                className={`relative flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg font-semibold transition-colors btn-press ${
-                  isActive ? 'text-[#3B2418]' : 'text-[#6E5648] hover:text-[#3B2418]'
+                className={`relative flex items-center gap-1.5 px-3.5 py-2 sm:py-1.5 rounded-lg font-semibold transition-colors btn-press whitespace-nowrap shrink-0 ${
+                  isActive ? 'text-accent-ink' : 'text-ink-muted hover:text-ink'
                 }`}
               >
                 {isActive && (
                   <motion.span
                     layoutId="finance-subtab-pill"
                     transition={{ type: 'spring', stiffness: 420, damping: 32 }}
-                    className="absolute inset-0 rounded-lg bg-[#8EC5FF] shadow-xs"
+                    className="absolute inset-0 rounded-lg bg-accent"
                   />
                 )}
                 <Icon className="w-3.5 h-3.5 relative z-10" />

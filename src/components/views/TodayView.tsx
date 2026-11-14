@@ -1,24 +1,21 @@
 import React, { useState } from 'react';
 import {
   SunMedium,
-  CheckCircle2,
-  Circle,
   Plus,
   Clock,
   Sparkles,
-  Timer,
   BookOpen,
   ArrowUp,
   ArrowDown,
   Trash2,
   Calendar,
-  AlertCircle,
   Play,
   Check,
+  X,
 } from 'lucide-react';
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { useApp } from '../../lib/context';
-import { getPriorityColor, formatMinutes } from '../../lib/logic';
+import { getPriorityColor } from '../../lib/logic';
 import { ModalShell, AnimatedCheckButton, MOMENTUM_EASE } from '../common/MotionPrimitives';
 
 export const TodayView: React.FC = () => {
@@ -42,7 +39,7 @@ export const TodayView: React.FC = () => {
 
   // Daily reflection modal state
   const [showReflectionModal, setShowReflectionModal] = useState(false);
-  const [reflectionTitle, setReflectionTitle] = useState(
+  const [reflectionTitle] = useState(
     `Daily Reflection — ${new Date().toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}`
   );
   const [wentWell, setWentWell] = useState('');
@@ -139,11 +136,11 @@ export const TodayView: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto pb-16">
+    <div className="space-y-6 max-w-7xl mx-auto pb-8">
       {/* Top Header Card */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 sm:p-6 rounded-2xl bg-surface border border-line">
         <div className="space-y-1">
-          <div className="flex items-center gap-2 text-xs font-mono text-[#1E5A99] font-semibold">
+          <div className="flex items-center gap-2 text-xs font-mono text-accent font-medium tabular-nums">
             <Calendar className="w-3.5 h-3.5" />
             <span>
               {new Date().toLocaleDateString(undefined, {
@@ -154,44 +151,43 @@ export const TodayView: React.FC = () => {
               })}
             </span>
           </div>
-          <h1 className="text-xl md:text-2xl font-bold text-[#3B2418] tracking-tight">
+          <h1 className="text-xl md:text-2xl font-bold text-ink tracking-tight">
             Daily Execution Command Center
           </h1>
-          <p className="text-xs text-[#6E5648]">
+          <p className="text-xs text-ink-muted">
             Commit to the Top 3 priorities first. Guard your deep focus blocks against trivial urgency.
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => setShowReflectionModal(true)}
-            className="btn-press flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#3B2418] hover:bg-[#4D3021] text-[#F2E8DA] border border-[#5A3927] text-xs font-semibold shadow-xs transition-colors"
-          >
-            <BookOpen className="w-3.5 h-3.5 text-[#8EC5FF]" />
-            <span>Daily Reflection</span>
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={() => setShowReflectionModal(true)}
+          className="btn-press self-start sm:self-auto flex items-center gap-1.5 px-4 py-2.5 min-h-[44px] sm:min-h-0 rounded-xl bg-brand hover:bg-brand-hover text-brand-ink text-xs font-semibold transition-colors whitespace-nowrap shrink-0"
+        >
+          <BookOpen className="w-3.5 h-3.5 text-accent" />
+          <span>Daily Reflection</span>
+        </button>
       </div>
 
       {/* Main 2-Column Split: Priorities & Schedule Timeline */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Left Column (7 cols): The 3 Core Priorities System */}
         <div className="lg:col-span-7 space-y-6">
-          {/* Top 3 Priorities Card */}
-          <div className="p-6 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] space-y-4 shadow-xs">
-            <div className="flex items-center justify-between">
+          <section className="p-5 sm:p-6 rounded-2xl bg-surface border border-line space-y-4">
+            <div className="flex items-center justify-between gap-3">
               <div>
-                <h2 className="text-sm font-bold uppercase tracking-wider text-[#3B2418] flex items-center gap-2">
-                  <SunMedium className="w-4 h-4 text-[#1E5A99]" />
+                <h2 className="text-sm font-semibold text-ink flex items-center gap-2">
+                  <SunMedium className="w-4 h-4 text-accent" />
                   <span>The Three Core Priorities</span>
                 </h2>
-                <p className="text-xs text-[#6E5648]">
+                <p className="text-xs text-ink-muted">
                   Visually emphasized anchors for today. Rank in order of importance.
                 </p>
               </div>
               <button
+                type="button"
                 onClick={() => setIsQuickAddOpen(true)}
-                className="text-xs text-[#1E5A99] hover:underline flex items-center gap-1 font-semibold"
+                className="text-xs text-brand dark:text-accent hover:underline flex items-center gap-1 font-medium whitespace-nowrap shrink-0 min-h-[36px]"
               >
                 <Plus className="w-3.5 h-3.5" />
                 <span>New Priority</span>
@@ -205,26 +201,31 @@ export const TodayView: React.FC = () => {
                   return (
                     <div
                       key={rank}
-                      className="p-4 rounded-xl border border-dashed border-[#D6C6B2] bg-[#F2E8DA]/60 flex items-center justify-between text-xs text-[#6E5648]"
+                      className="p-4 rounded-xl border border-dashed border-line bg-surface-warm/40 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-ink-muted"
                     >
                       <div className="flex items-center gap-3">
-                        <span className="font-mono font-bold text-[#3B2418] px-2 py-0.5 rounded bg-[#EAE0D0]">
-                          #{rank}
+                        <span className="font-mono font-semibold text-ink tabular-nums">
+                          0{rank}.
                         </span>
                         <span>No priority assigned for slot #{rank}</span>
                       </div>
                       <select
+                        aria-label={`Assign task to priority slot ${rank}`}
                         onChange={e => {
                           if (e.target.value) {
                             setDailyPriorityRank(e.target.value, rank);
                           }
                         }}
-                        className="px-2 py-1 rounded bg-[#FAF5ED] border border-[#D6C6B2] text-[#3B2418] text-xs focus:outline-hidden"
+                        className="px-3 py-2 min-h-[40px] sm:min-h-0 rounded-lg bg-surface border border-line text-ink text-xs focus:outline-hidden focus:ring-2 focus:ring-accent"
                         defaultValue=""
                       >
-                        <option value="" disabled>Assign from tasks...</option>
+                        <option value="" disabled>
+                          Assign from tasks...
+                        </option>
                         {unscheduledTasks.map(t => (
-                          <option key={t.id} value={t.id}>{t.title}</option>
+                          <option key={t.id} value={t.id}>
+                            {t.title}
+                          </option>
                         ))}
                       </select>
                     </div>
@@ -241,25 +242,26 @@ export const TodayView: React.FC = () => {
                     key={task.id}
                     className={`p-4 rounded-xl border transition-all duration-200 flex items-start gap-3 ${
                       isDone
-                        ? 'bg-[#EAE0D0]/60 border-[#D6C6B2] opacity-75'
-                        : 'bg-[#F2E8DA] border-[#D6C6B2] hover:border-[#8EC5FF] shadow-xs card-hover'
+                        ? 'bg-surface-warm/40 border-line opacity-70'
+                        : 'bg-surface-warm/70 border-line hover:border-accent/60 card-hover'
                     }`}
                   >
                     <AnimatedCheckButton
                       checked={isDone}
                       onClick={() => toggleTaskCompleted(task.id)}
                       className="mt-0.5"
+                      ariaLabel={isDone ? `Mark "${task.title}" incomplete` : `Mark "${task.title}" complete`}
                     />
 
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between gap-2">
-                        <div className="flex items-center gap-2 truncate">
-                          <span className="font-mono text-xs px-2 py-0.5 rounded bg-[#8EC5FF] text-[#3B2418] font-bold">
-                            #{rank}
+                        <div className="flex items-center gap-2 min-w-0">
+                          <span className="font-mono text-xs text-accent font-bold tabular-nums shrink-0">
+                            0{rank}.
                           </span>
                           <span
                             className={`text-sm font-semibold truncate ${
-                              isDone ? 'line-through text-[#6E5648]' : 'text-[#3B2418]'
+                              isDone ? 'line-through text-ink-muted' : 'text-ink'
                             }`}
                           >
                             {task.title}
@@ -270,26 +272,29 @@ export const TodayView: React.FC = () => {
                         <div className="flex items-center gap-1 shrink-0">
                           {rank > 1 && (
                             <button
+                              type="button"
                               onClick={() => handleMovePriority(task.id, 'up')}
-                              className="p-1 rounded text-[#6E5648] hover:text-[#3B2418] hover:bg-[#EAE0D0]"
-                              title="Move priority up"
+                              className="p-1.5 rounded-lg text-ink-muted hover:text-ink hover:bg-surface-inset transition-colors"
+                              aria-label={`Move "${task.title}" priority up`}
                             >
                               <ArrowUp className="w-3.5 h-3.5" />
                             </button>
                           )}
                           {rank < dailyPriorities.length && (
                             <button
+                              type="button"
                               onClick={() => handleMovePriority(task.id, 'down')}
-                              className="p-1 rounded text-[#6E5648] hover:text-[#3B2418] hover:bg-[#EAE0D0]"
-                              title="Move priority down"
+                              className="p-1.5 rounded-lg text-ink-muted hover:text-ink hover:bg-surface-inset transition-colors"
+                              aria-label={`Move "${task.title}" priority down`}
                             >
                               <ArrowDown className="w-3.5 h-3.5" />
                             </button>
                           )}
                           <button
+                            type="button"
                             onClick={() => setDailyPriorityRank(task.id, undefined)}
-                            className="p-1 rounded text-[#6E5648] hover:text-[#B84A44] hover:bg-[#EAE0D0]"
-                            title="Remove from core priorities"
+                            className="p-1.5 rounded-lg text-ink-muted hover:text-danger hover:bg-surface-inset transition-colors"
+                            aria-label={`Remove "${task.title}" from core priorities`}
                           >
                             <Trash2 className="w-3.5 h-3.5" />
                           </button>
@@ -297,35 +302,37 @@ export const TodayView: React.FC = () => {
                       </div>
 
                       {task.description && (
-                        <p className="text-xs text-[#6E5648] mt-1 line-clamp-1">
+                        <p className="text-xs text-ink-muted mt-1 line-clamp-1">
                           {task.description}
                         </p>
                       )}
 
-                      <div className="flex items-center justify-between gap-2 mt-3 pt-2 border-t border-[#D6C6B2]">
-                        <div className="flex items-center gap-2">
-                          <span
-                            className={`text-[10px] font-mono px-2 py-0.5 rounded border uppercase font-semibold ${pColor.bg} ${pColor.text} ${pColor.border}`}
-                          >
+                      <div className="flex items-center justify-between gap-2 mt-3 pt-2.5 border-t border-line">
+                        <div className="flex items-center gap-2 text-xs">
+                          <span className={`font-medium capitalize ${pColor.text}`}>
                             {task.priority}
                           </span>
                           {task.dueTime && (
-                            <span className="text-[11px] text-[#6E5648] font-mono flex items-center gap-1">
-                              <Clock className="w-3 h-3 text-[#3B2418]" />
-                              {task.dueTime}
-                            </span>
+                            <>
+                              <span aria-hidden="true" className="text-ink-muted">·</span>
+                              <span className="text-ink-muted font-mono tabular-nums flex items-center gap-1">
+                                <Clock className="w-3 h-3" />
+                                {task.dueTime}
+                              </span>
+                            </>
                           )}
                         </div>
 
                         <button
+                          type="button"
                           onClick={() => {
                             startFocusTimer(25, { id: task.id, title: task.title });
                             setIsFocusTimerOpen(true);
                           }}
-                          className="btn-press flex items-center gap-1 text-[11px] font-semibold text-[#3B2418] px-2.5 py-1 rounded-lg bg-[#8EC5FF] hover:bg-[#73B6FC] border border-[#3B2418]/15 transition-colors"
+                          className="btn-press flex items-center gap-1.5 text-xs font-semibold text-accent-ink px-3 py-1.5 rounded-lg bg-accent hover:bg-accent-hover transition-colors whitespace-nowrap shrink-0"
                         >
                           <Play className="w-3 h-3 fill-current" />
-                          <span>Focus On This</span>
+                          <span>Focus</span>
                         </button>
                       </div>
                     </div>
@@ -333,23 +340,24 @@ export const TodayView: React.FC = () => {
                 );
               })}
             </div>
-          </div>
+          </section>
 
           {/* Unscheduled Queue */}
-          <div className="p-6 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] space-y-4 shadow-xs">
-            <div className="flex items-center justify-between">
-              <h2 className="text-xs font-bold uppercase tracking-wider text-[#3B2418]">
+          <section className="p-5 sm:p-6 rounded-2xl bg-surface border border-line space-y-4">
+            <div className="flex items-center justify-between gap-3">
+              <h2 className="text-sm font-semibold text-ink">
                 Pending & Unscheduled Tasks ({unscheduledTasks.length})
               </h2>
               <button
+                type="button"
                 onClick={() => setIsQuickAddOpen(true)}
-                className="text-xs text-[#1E5A99] font-semibold hover:underline"
+                className="text-xs text-brand dark:text-accent font-medium hover:underline whitespace-nowrap shrink-0"
               >
                 + Add Task
               </button>
             </div>
 
-            <div className="space-y-2 max-h-64 overflow-y-auto pr-1">
+            <div className="divide-y divide-line border-t border-line max-h-72 overflow-y-auto">
               <AnimatePresence initial={false}>
                 {unscheduledTasks.slice(0, 6).map(task => {
                   const isDone = task.status === 'completed';
@@ -361,10 +369,8 @@ export const TodayView: React.FC = () => {
                       animate={{ opacity: 1, y: 0 }}
                       exit={prefersReduced ? { opacity: 0 } : { opacity: 0, x: -8 }}
                       transition={{ duration: prefersReduced ? 0.01 : 0.18, ease: MOMENTUM_EASE }}
-                      className={`flex items-center justify-between p-3 rounded-xl border transition-all duration-200 ${
-                        isDone
-                          ? 'bg-[#EAE0D0]/60 border-[#D6C6B2] opacity-75'
-                          : 'bg-[#F2E8DA] border-[#D6C6B2] hover:border-[#8EC5FF]'
+                      className={`flex items-center justify-between py-2.5 gap-3 min-h-[44px] ${
+                        isDone ? 'opacity-60' : ''
                       }`}
                     >
                       <div className="flex items-center gap-2.5 min-w-0">
@@ -372,55 +378,55 @@ export const TodayView: React.FC = () => {
                           checked={isDone}
                           size="sm"
                           onClick={() => toggleTaskCompleted(task.id)}
+                          ariaLabel={isDone ? `Mark "${task.title}" incomplete` : `Complete "${task.title}"`}
                         />
-                        <span className={`text-xs truncate font-medium transition-colors ${isDone ? 'line-through text-[#6E5648]' : 'text-[#3B2418]'}`}>
+                        <span
+                          className={`text-xs truncate font-medium transition-colors ${
+                            isDone ? 'line-through text-ink-muted' : 'text-ink'
+                          }`}
+                        >
                           {task.title}
                         </span>
                       </div>
 
-                      <div className="flex items-center gap-2 shrink-0">
-                        <button
-                          onClick={() => {
-                            const nextRank = dailyPriorities.length + 1;
-                            if (nextRank <= 3) {
-                              setDailyPriorityRank(task.id, nextRank);
-                            }
-                          }}
-                          disabled={dailyPriorities.length >= 3}
-                          className="btn-press text-[10px] font-semibold px-2 py-0.5 rounded bg-[#8EC5FF]/60 text-[#3B2418] hover:bg-[#8EC5FF] disabled:opacity-35 border border-[#8EC5FF] transition-colors"
-                          title="Promote to Top 3 Priorities"
-                        >
-                          + Top 3
-                        </button>
-                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const nextRank = dailyPriorities.length + 1;
+                          if (nextRank <= 3) {
+                            setDailyPriorityRank(task.id, nextRank);
+                          }
+                        }}
+                        disabled={dailyPriorities.length >= 3}
+                        className="btn-press text-xs font-medium px-2.5 py-1 rounded-lg bg-surface-warm hover:bg-accent/20 text-ink disabled:opacity-35 border border-line transition-colors whitespace-nowrap shrink-0"
+                      >
+                        + Top 3
+                      </button>
                     </motion.div>
                   );
                 })}
               </AnimatePresence>
             </div>
-          </div>
+          </section>
         </div>
 
         {/* Right Column (5 cols): Daily Schedule Timeline & Habits */}
         <div className="lg:col-span-5 space-y-6">
-          {/* Timeline View */}
-          <div className="p-6 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] space-y-4 shadow-xs">
-            <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-sm font-bold uppercase tracking-wider text-[#3B2418] flex items-center gap-2">
-                  <Clock className="w-4 h-4 text-[#1E5A99]" />
-                  <span>Time-Blocked Schedule</span>
-                </h2>
-              </div>
+          <section className="p-5 sm:p-6 rounded-2xl bg-surface border border-line space-y-4">
+            <div className="flex items-center justify-between gap-2">
+              <h2 className="text-sm font-semibold text-ink flex items-center gap-2">
+                <Clock className="w-4 h-4 text-accent" />
+                <span>Time-Blocked Schedule</span>
+              </h2>
               <button
+                type="button"
                 onClick={() => setShowAddActivityForm(!showAddActivityForm)}
-                className="text-xs text-[#1E5A99] font-semibold hover:underline"
+                className="text-xs text-brand dark:text-accent font-medium hover:underline whitespace-nowrap"
               >
                 {showAddActivityForm ? 'Cancel' : '+ Block Time'}
               </button>
             </div>
 
-            {/* Inline Add Activity Form */}
             <AnimatePresence initial={false}>
               {showAddActivityForm && (
                 <motion.form
@@ -431,31 +437,33 @@ export const TodayView: React.FC = () => {
                   onSubmit={handleCreateActivity}
                   className="overflow-hidden"
                 >
-                  <div className="p-3 rounded-xl bg-[#F2E8DA] border border-[#D6C6B2] space-y-2">
+                  <div className="p-3 rounded-xl bg-surface-warm border border-line space-y-2.5">
                     <input
                       type="text"
                       required
                       value={newActivityTitle}
                       onChange={e => setNewActivityTitle(e.target.value)}
                       placeholder="Activity title..."
-                      className="w-full px-2.5 py-1.5 rounded-lg bg-[#FAF5ED] border border-[#D6C6B2] text-xs text-[#3B2418] focus:outline-hidden focus:ring-2 focus:ring-[#8EC5FF]"
+                      className="w-full px-3 py-2 rounded-lg bg-surface border border-line text-xs text-ink placeholder:text-ink-muted focus:outline-hidden focus:ring-2 focus:ring-accent"
                     />
                     <div className="flex gap-2">
                       <input
                         type="time"
                         value={newActivityStart}
                         onChange={e => setNewActivityStart(e.target.value)}
-                        className="flex-1 px-2 py-1 rounded-lg bg-[#FAF5ED] border border-[#D6C6B2] text-xs text-[#3B2418]"
+                        aria-label="Start time"
+                        className="flex-1 px-2.5 py-1.5 rounded-lg bg-surface border border-line text-xs text-ink font-mono"
                       />
                       <input
                         type="time"
                         value={newActivityEnd}
                         onChange={e => setNewActivityEnd(e.target.value)}
-                        className="flex-1 px-2 py-1 rounded-lg bg-[#FAF5ED] border border-[#D6C6B2] text-xs text-[#3B2418]"
+                        aria-label="End time"
+                        className="flex-1 px-2.5 py-1.5 rounded-lg bg-surface border border-line text-xs text-ink font-mono"
                       />
                       <button
                         type="submit"
-                        className="btn-press px-3 py-1 rounded-lg bg-[#8EC5FF] hover:bg-[#73B6FC] text-[#3B2418] font-semibold text-xs border border-[#3B2418]/15 transition-colors"
+                        className="btn-press px-3.5 py-1.5 rounded-lg bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs transition-colors whitespace-nowrap"
                       >
                         Save
                       </button>
@@ -465,60 +473,67 @@ export const TodayView: React.FC = () => {
               )}
             </AnimatePresence>
 
-            {/* Schedule Timeline List */}
-            <div className="space-y-2.5">
+            <div className="divide-y divide-line border-t border-line">
               <AnimatePresence initial={false}>
-                {scheduleActivities.map(act => (
-                  <motion.div
-                    key={act.id}
-                    layout={!prefersReduced}
-                    initial={prefersReduced ? { opacity: 1 } : { opacity: 0, y: 6 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={prefersReduced ? { opacity: 0 } : { opacity: 0, x: -12 }}
-                    transition={{ duration: prefersReduced ? 0.01 : 0.18, ease: MOMENTUM_EASE }}
-                    className={`p-3 rounded-xl border flex items-center justify-between transition-all duration-200 ${
-                      act.completed
-                        ? 'bg-[#EAE0D0]/60 border-[#D6C6B2] opacity-75'
-                        : 'bg-[#F2E8DA] border-[#D6C6B2] hover:border-[#8EC5FF]'
-                    }`}
-                  >
-                    <div className="flex items-center gap-3 min-w-0">
-                      <AnimatedCheckButton
-                        checked={act.completed}
-                        size="sm"
-                        onClick={() => toggleScheduleActivityCompleted(act.id)}
-                      />
-                      <div className="flex flex-col min-w-0">
-                        <span className={`text-xs font-semibold truncate transition-colors ${act.completed ? 'line-through text-[#6E5648]' : 'text-[#3B2418]'}`}>
-                          {act.title}
-                        </span>
-                        <span className="font-mono text-[10px] text-[#1E5A99] font-semibold">
-                          {act.startTime} — {act.endTime}
-                        </span>
-                      </div>
-                    </div>
-
-                    <button
-                      onClick={() => deleteScheduleActivity(act.id)}
-                      className="btn-press text-[#6E5648] hover:text-[#B84A44] p-1 transition-colors"
+                {scheduleActivities.length === 0 ? (
+                  <p className="py-6 text-center text-xs text-ink-muted">
+                    No blocks scheduled for today yet.
+                  </p>
+                ) : (
+                  scheduleActivities.map(act => (
+                    <motion.div
+                      key={act.id}
+                      layout={!prefersReduced}
+                      initial={prefersReduced ? { opacity: 1 } : { opacity: 0, y: 6 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={prefersReduced ? { opacity: 0 } : { opacity: 0, x: -12 }}
+                      transition={{ duration: prefersReduced ? 0.01 : 0.18, ease: MOMENTUM_EASE }}
+                      className={`py-2.5 flex items-center justify-between gap-3 min-h-[44px] ${
+                        act.completed ? 'opacity-65' : ''
+                      }`}
                     >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
-                  </motion.div>
-                ))}
+                      <div className="flex items-center gap-3 min-w-0">
+                        <AnimatedCheckButton
+                          checked={act.completed}
+                          size="sm"
+                          onClick={() => toggleScheduleActivityCompleted(act.id)}
+                          ariaLabel={act.completed ? `Uncheck ${act.title}` : `Complete ${act.title}`}
+                        />
+                        <div className="flex flex-col min-w-0">
+                          <span
+                            className={`text-xs font-medium truncate transition-colors ${
+                              act.completed ? 'line-through text-ink-muted' : 'text-ink'
+                            }`}
+                          >
+                            {act.title}
+                          </span>
+                          <span className="font-mono text-[11px] text-accent tabular-nums">
+                            {act.startTime} — {act.endTime}
+                          </span>
+                        </div>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => deleteScheduleActivity(act.id)}
+                        className="btn-press text-ink-muted hover:text-danger p-1.5 rounded-lg transition-colors"
+                        aria-label={`Delete block "${act.title}"`}
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </motion.div>
+                  ))
+                )}
               </AnimatePresence>
             </div>
-          </div>
+          </section>
 
-          {/* Today's Habits */}
-          <div className="p-6 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] space-y-4 shadow-xs">
-            <div className="flex items-center justify-between">
-              <h2 className="text-xs font-bold uppercase tracking-wider text-[#3B2418] flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-[#1E5A99]" />
-                <span>Today&apos;s Habits</span>
-              </h2>
-            </div>
-            <div className="space-y-2">
+          <section className="p-5 sm:p-6 rounded-2xl bg-surface border border-line space-y-4">
+            <h2 className="text-sm font-semibold text-ink flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-sage" />
+              <span>Today&apos;s Habits</span>
+            </h2>
+            <div className="divide-y divide-line border-t border-line">
               {activeHabits.map(habit => {
                 const isDone = state.habitCompletions.some(
                   c => c.habitId === habit.id && c.date === todayStr && c.completed
@@ -526,19 +541,20 @@ export const TodayView: React.FC = () => {
                 return (
                   <div
                     key={habit.id}
-                    className={`flex items-center justify-between p-3 rounded-xl border transition-all duration-200 ${
-                      isDone
-                        ? 'bg-[#EAE0D0]/70 border-[#3E7B52]/35'
-                        : 'bg-[#F2E8DA] border-[#D6C6B2] hover:border-[#8EC5FF]'
-                    }`}
+                    className="flex items-center justify-between py-2.5 gap-3 min-h-[44px]"
                   >
-                    <div className="flex items-center gap-2.5 truncate">
+                    <div className="flex items-center gap-2.5 min-w-0">
                       <AnimatedCheckButton
                         checked={isDone}
                         size="sm"
                         onClick={() => toggleHabitCompletion(habit.id, todayStr)}
+                        ariaLabel={isDone ? `Uncheck ${habit.name}` : `Complete ${habit.name}`}
                       />
-                      <span className={`text-xs font-medium truncate transition-colors ${isDone ? 'line-through text-[#6E5648]' : 'text-[#3B2418]'}`}>
+                      <span
+                        className={`text-xs font-medium truncate transition-colors ${
+                          isDone ? 'line-through text-ink-muted' : 'text-ink'
+                        }`}
+                      >
                         {habit.name}
                       </span>
                     </div>
@@ -546,7 +562,7 @@ export const TodayView: React.FC = () => {
                 );
               })}
             </div>
-          </div>
+          </section>
         </div>
       </div>
 
@@ -556,22 +572,26 @@ export const TodayView: React.FC = () => {
         onClose={() => setShowReflectionModal(false)}
         maxWidthClass="max-w-lg"
       >
-        <div className="flex items-center justify-between px-6 py-4 border-b border-[#5A3927] bg-[#3B2418]">
+        <div className="flex items-center justify-between px-5 sm:px-6 py-4 border-b border-line bg-brand dark:bg-surface-warm">
           <div className="flex items-center gap-2">
-            <BookOpen className="w-4 h-4 text-[#8EC5FF]" />
-            <h3 className="text-sm font-bold text-[#F2E8DA]">End of Day Reflection</h3>
+            <BookOpen className="w-4 h-4 text-accent" />
+            <h3 className="text-sm font-semibold text-brand-ink dark:text-ink">
+              End of Day Reflection
+            </h3>
           </div>
           <button
+            type="button"
             onClick={() => setShowReflectionModal(false)}
-            className="text-[#D8C7B4] hover:text-[#F2E8DA] transition-colors"
+            className="p-1.5 rounded-lg text-brand-ink/80 dark:text-ink-muted hover:text-brand-ink dark:hover:text-ink transition-colors"
+            aria-label="Close reflection modal"
           >
-            ✕
+            <X className="w-4 h-4" />
           </button>
         </div>
 
-        <form onSubmit={handleSaveReflection} className="p-6 space-y-4">
+        <form onSubmit={handleSaveReflection} className="p-5 sm:p-6 space-y-4">
           <div>
-            <label className="block text-xs font-semibold text-[#1E5A99] mb-1">
+            <label className="block text-xs font-semibold text-ink mb-1.5">
               1. What went well today?
             </label>
             <textarea
@@ -580,12 +600,12 @@ export const TodayView: React.FC = () => {
               value={wentWell}
               onChange={e => setWentWell(e.target.value)}
               placeholder="Completed uninterrupted deep work session, hit lifting numbers..."
-              className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-[#3B2418] text-xs focus:border-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
+              className="w-full px-3 py-2 rounded-xl bg-canvas border border-line text-ink text-xs placeholder:text-ink-muted focus:border-accent focus:ring-2 focus:ring-accent/30 focus:outline-hidden"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-[#6E5648] mb-1">
+            <label className="block text-xs font-semibold text-ink-muted mb-1.5">
               2. What could have been better?
             </label>
             <textarea
@@ -593,12 +613,12 @@ export const TodayView: React.FC = () => {
               value={couldBeBetter}
               onChange={e => setCouldBeBetter(e.target.value)}
               placeholder="Delayed afternoon study block, context switched too frequently..."
-              className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-[#3B2418] text-xs focus:border-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
+              className="w-full px-3 py-2 rounded-xl bg-canvas border border-line text-ink text-xs placeholder:text-ink-muted focus:border-accent focus:ring-2 focus:ring-accent/30 focus:outline-hidden"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-[#6E5648] mb-1">
+            <label className="block text-xs font-semibold text-ink-muted mb-1.5">
               3. What did I learn?
             </label>
             <textarea
@@ -606,12 +626,12 @@ export const TodayView: React.FC = () => {
               value={learned}
               onChange={e => setLearned(e.target.value)}
               placeholder="Starting small dissolves executive friction..."
-              className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-[#3B2418] text-xs focus:border-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
+              className="w-full px-3 py-2 rounded-xl bg-canvas border border-line text-ink text-xs placeholder:text-ink-muted focus:border-accent focus:ring-2 focus:ring-accent/30 focus:outline-hidden"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-[#1E5A99] mb-1">
+            <label className="block text-xs font-semibold text-ink mb-1.5">
               4. What should I prioritize tomorrow?
             </label>
             <input
@@ -620,7 +640,7 @@ export const TodayView: React.FC = () => {
               value={tomorrowPriority}
               onChange={e => setTomorrowPriority(e.target.value)}
               placeholder="e.g. Audit API authorization checks first thing in morning"
-              className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-[#3B2418] text-xs focus:border-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
+              className="w-full px-3 py-2 rounded-xl bg-canvas border border-line text-ink text-xs placeholder:text-ink-muted focus:border-accent focus:ring-2 focus:ring-accent/30 focus:outline-hidden"
             />
           </div>
 
@@ -630,7 +650,7 @@ export const TodayView: React.FC = () => {
                 initial={{ opacity: 0, y: -4 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
-                className="p-2.5 rounded-lg bg-[#3E7B52]/15 border border-[#3E7B52]/40 text-xs text-[#2D6240] flex items-center gap-2"
+                className="p-2.5 rounded-xl bg-success/15 border border-success/30 text-xs text-success flex items-center gap-2"
               >
                 <Check className="w-4 h-4" />
                 <span>Saved to private Journal!</span>
@@ -638,17 +658,17 @@ export const TodayView: React.FC = () => {
             )}
           </AnimatePresence>
 
-          <div className="flex justify-end gap-2 pt-2 border-t border-[#D6C6B2]">
+          <div className="flex justify-end gap-2 pt-3 border-t border-line">
             <button
               type="button"
               onClick={() => setShowReflectionModal(false)}
-              className="btn-press px-3 py-1.5 text-xs text-[#6E5648] hover:text-[#3B2418]"
+              className="btn-press px-4 py-2 rounded-xl text-xs font-medium text-ink-muted hover:text-ink"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="btn-press px-4 py-1.5 rounded-lg text-xs font-bold bg-[#8EC5FF] hover:bg-[#73B6FC] text-[#3B2418] border border-[#3B2418]/15 transition-colors"
+              className="btn-press px-4 py-2 rounded-xl text-xs font-semibold bg-accent hover:bg-accent-hover text-accent-ink transition-colors"
             >
               Save to Journal
             </button>

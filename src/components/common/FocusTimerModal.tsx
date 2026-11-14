@@ -38,7 +38,6 @@ export const FocusTimerModal: React.FC = () => {
   const [now, setNow] = useState(Date.now());
   const [justCompleted, setJustCompleted] = useState(false);
 
-  // High-frequency tick for UI refresh only (math uses actual Date.now() timestamp!)
   useEffect(() => {
     if (!focusTimer.isActive || focusTimer.isPaused) return;
     setNow(Date.now());
@@ -48,7 +47,6 @@ export const FocusTimerModal: React.FC = () => {
     return () => clearInterval(interval);
   }, [focusTimer.isActive, focusTimer.isPaused]);
 
-  // Sync selected task when modal opens
   useEffect(() => {
     if (focusTimer.linkedTaskId) {
       setSelectedTaskId(focusTimer.linkedTaskId);
@@ -61,7 +59,6 @@ export const FocusTimerModal: React.FC = () => {
     }
   }, [isFocusTimerOpen]);
 
-  // Calculate elapsed & remaining based on actual timestamp delta
   let elapsedSeconds = 0;
   if (focusTimer.isActive) {
     const refNow = focusTimer.isPaused && focusTimer.pausedAtMs ? focusTimer.pausedAtMs : now;
@@ -69,15 +66,15 @@ export const FocusTimerModal: React.FC = () => {
     elapsedSeconds = Math.max(0, Math.floor(deltaMs / 1000));
   }
   const remainingSeconds = Math.max(0, focusTimer.totalDurationSeconds - elapsedSeconds);
-  const progressPercent = focusTimer.totalDurationSeconds > 0
-    ? Math.min(100, (elapsedSeconds / focusTimer.totalDurationSeconds) * 100)
-    : 0;
+  const progressPercent =
+    focusTimer.totalDurationSeconds > 0
+      ? Math.min(100, (elapsedSeconds / focusTimer.totalDurationSeconds) * 100)
+      : 0;
 
   const displayMinutes = Math.floor(remainingSeconds / 60);
   const displaySeconds = remainingSeconds % 60;
   const timeFormatted = `${String(displayMinutes).padStart(2, '0')}:${String(displaySeconds).padStart(2, '0')}`;
 
-  // Fixed SVG geometry for smooth cross-browser stroke-dashoffset animation
   const radius = 104;
   const circumference = 2 * Math.PI * radius;
   const strokeDashoffset = justCompleted
@@ -115,15 +112,15 @@ export const FocusTimerModal: React.FC = () => {
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.type = 'sine';
-      osc.frequency.setValueAtTime(587.33, ctx.currentTime); // D5
+      osc.frequency.setValueAtTime(587.33, ctx.currentTime);
       gain.gain.setValueAtTime(0.1, ctx.currentTime);
       gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.6);
       osc.connect(gain);
       gain.connect(ctx.destination);
       osc.start();
       osc.stop(ctx.currentTime + 0.6);
-    } catch (e) {
-      // Audio context might be restricted
+    } catch {
+      // Ignore audio restrictions
     }
   };
 
@@ -136,10 +133,10 @@ export const FocusTimerModal: React.FC = () => {
           particleCount: 36,
           spread: 55,
           origin: { y: 0.55 },
-          colors: ['#8EC5FF', '#F2E8DA', '#3E7B52'],
+          colors: ['#D2925B', '#F7F1E8', '#3E7B52'],
         });
       } catch {
-        // Ignore confetti errors in non-DOM test contexts
+        // Ignore confetti errors
       }
     }
     completeFocusSession();
@@ -160,43 +157,45 @@ export const FocusTimerModal: React.FC = () => {
       onClose={() => setIsFocusTimerOpen(false)}
       fullscreen={isFullscreen}
       maxWidthClass="max-w-xl"
-      backdropClassName="bg-[#3B2418]/70 backdrop-blur-sm"
-      panelClassName={`bg-[#3B2418] border border-[#5A3927] shadow-2xl flex flex-col overflow-hidden transition-all duration-200 ${
-        isFullscreen ? 'rounded-none border-0' : 'rounded-2xl'
+      panelClassName={`bg-charcoal text-[#F7F1E8] border border-line/30 shadow-2xl flex flex-col overflow-hidden transition-all duration-200 ${
+        isFullscreen ? 'rounded-none border-0' : 'rounded-t-2xl sm:rounded-2xl'
       }`}
     >
       {/* Top bar */}
-      <div className="flex items-center justify-between px-6 py-4 border-b border-[#5A3927] bg-[#4D3021]">
+      <div className="flex items-center justify-between px-6 py-4 border-b border-white/10 bg-black/20">
         <div className="flex items-center gap-2 min-w-0">
-          <Timer className="w-5 h-5 text-[#8EC5FF] shrink-0" />
-          <h2 className="font-semibold text-sm text-[#F2E8DA] tracking-wide truncate">
+          <Timer className="w-5 h-5 text-accent shrink-0" />
+          <h2 className="font-semibold text-sm text-[#F7F1E8] tracking-wide truncate font-heading">
             {focusTimer.sessionType === 'focus' ? 'Deep Work Focus Timer' : 'Restorative Break'}
           </h2>
           {focusTimer.linkedTaskTitle && (
-            <span className="hidden sm:inline-block text-xs px-2 py-0.5 rounded bg-[#8EC5FF]/20 text-[#8EC5FF] border border-[#8EC5FF]/30 truncate max-w-[200px]">
+            <span className="hidden sm:inline-block text-xs px-2 py-0.5 rounded-md bg-accent/20 text-accent border border-accent/35 truncate max-w-[200px]">
               {focusTimer.linkedTaskTitle}
             </span>
           )}
         </div>
 
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex items-center gap-1.5 shrink-0">
           <button
+            type="button"
             onClick={() => setSoundEnabled(!soundEnabled)}
-            className="p-1.5 rounded-lg text-[#D8C7B4] hover:text-[#F2E8DA] hover:bg-[#3B2418] btn-press"
+            className="p-1.5 rounded-lg text-[#D8C9B8] hover:text-[#F7F1E8] hover:bg-white/10 btn-press"
             title={soundEnabled ? 'Mute chime' : 'Enable chime'}
           >
             {soundEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
           </button>
           <button
+            type="button"
             onClick={() => setIsFullscreen(!isFullscreen)}
-            className="p-1.5 rounded-lg text-[#D8C7B4] hover:text-[#F2E8DA] hover:bg-[#3B2418] btn-press"
+            className="p-1.5 rounded-lg text-[#D8C9B8] hover:text-[#F7F1E8] hover:bg-white/10 btn-press"
             title={isFullscreen ? 'Exit Fullscreen' : 'Fullscreen Focus Mode'}
           >
             {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
           </button>
           <button
+            type="button"
             onClick={() => setIsFocusTimerOpen(false)}
-            className="p-1.5 rounded-lg text-[#D8C7B4] hover:text-[#F2E8DA] hover:bg-[#3B2418] btn-press"
+            className="p-1.5 rounded-lg text-[#D8C9B8] hover:text-[#F7F1E8] hover:bg-white/10 btn-press"
             aria-label="Close timer"
           >
             <X className="w-4 h-4" />
@@ -205,31 +204,28 @@ export const FocusTimerModal: React.FC = () => {
       </div>
 
       {/* Timer Core Display */}
-      <div className="flex-1 flex flex-col items-center justify-center p-8 select-none">
-        {/* Circular / Ring Progress Container */}
-        <div className="relative w-64 h-64 sm:w-72 sm:h-72 flex items-center justify-center">
-          {/* Subtle ambient ring glow when running or just completed */}
+      <div className="flex-1 flex flex-col items-center justify-center p-6 sm:p-8 select-none">
+        <div className="relative w-60 h-60 sm:w-72 sm:h-72 flex items-center justify-center">
           <AnimatePresence>
             {((focusTimer.isActive && !focusTimer.isPaused) || justCompleted) && !prefersReduced && (
               <motion.div
                 initial={{ opacity: 0, scale: 0.92 }}
-                animate={{ opacity: justCompleted ? 0.35 : 0.16, scale: 1 }}
+                animate={{ opacity: justCompleted ? 0.35 : 0.2, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
                 transition={{ duration: 0.4, ease: MOMENTUM_EASE }}
                 className={`absolute inset-4 rounded-full blur-xl pointer-events-none ${
-                  justCompleted ? 'bg-[#3E7B52]' : 'bg-[#8EC5FF]'
+                  justCompleted ? 'bg-success' : 'bg-accent'
                 }`}
               />
             )}
           </AnimatePresence>
 
-          {/* SVG Progress Circle */}
           <svg viewBox="0 0 240 240" className="w-full h-full transform -rotate-90 relative z-10">
             <circle
               cx="120"
               cy="120"
               r={radius}
-              className="stroke-[#4D3021]"
+              className="stroke-white/10"
               strokeWidth="8"
               fill="transparent"
             />
@@ -237,7 +233,7 @@ export const FocusTimerModal: React.FC = () => {
               cx="120"
               cy="120"
               r={radius}
-              className={justCompleted ? 'stroke-[#9FE2B5]' : 'stroke-[#8EC5FF]'}
+              className={justCompleted ? 'stroke-success' : 'stroke-accent'}
               style={{
                 transition: prefersReduced
                   ? 'none'
@@ -251,7 +247,6 @@ export const FocusTimerModal: React.FC = () => {
             />
           </svg>
 
-          {/* Inner Digits */}
           <div className="absolute inset-0 flex flex-col items-center justify-center z-20">
             <AnimatePresence mode="wait" initial={false}>
               {justCompleted ? (
@@ -263,15 +258,15 @@ export const FocusTimerModal: React.FC = () => {
                   transition={{ duration: prefersReduced ? 0.01 : 0.22, ease: MOMENTUM_EASE }}
                   className="flex flex-col items-center text-center px-4"
                 >
-                  <CheckCircle2 className="w-12 h-12 text-[#9FE2B5] mb-2" />
-                  <span className="text-sm font-bold text-[#F2E8DA]">Focus Recorded</span>
+                  <CheckCircle2 className="w-12 h-12 text-success mb-2" />
+                  <span className="text-sm font-bold text-[#F7F1E8]">Focus Recorded</span>
                 </motion.div>
               ) : (
                 <motion.span
                   key="timer-digits"
                   initial={{ opacity: 0.8 }}
                   animate={{ opacity: 1 }}
-                  className="font-mono text-5xl sm:text-6xl font-extrabold text-[#F2E8DA] tracking-tight tabular-nums"
+                  className="font-mono text-5xl sm:text-6xl font-extrabold text-[#F7F1E8] tracking-tight tabular-nums"
                 >
                   {timeFormatted}
                 </motion.span>
@@ -286,7 +281,7 @@ export const FocusTimerModal: React.FC = () => {
                 exit={prefersReduced ? { opacity: 0 } : { opacity: 0, y: -3 }}
                 transition={{ duration: prefersReduced ? 0.01 : 0.16 }}
                 className={`text-xs font-medium uppercase tracking-widest mt-2 flex items-center gap-1.5 ${
-                  justCompleted ? 'text-[#9FE2B5]' : 'text-[#8EC5FF]'
+                  justCompleted ? 'text-success' : 'text-accent'
                 }`}
               >
                 {justCompleted && <Sparkles className="w-3.5 h-3.5" />}
@@ -297,7 +292,7 @@ export const FocusTimerModal: React.FC = () => {
         </div>
 
         {/* Controls Bar */}
-        <div className="flex items-center gap-3 mt-8">
+        <div className="flex items-center gap-3 mt-6 sm:mt-8">
           <AnimatePresence mode="wait" initial={false}>
             {focusTimer.isActive ? (
               <motion.div
@@ -309,8 +304,9 @@ export const FocusTimerModal: React.FC = () => {
                 className="flex items-center gap-3"
               >
                 <button
+                  type="button"
                   onClick={focusTimer.isPaused ? resumeFocusTimer : pauseFocusTimer}
-                  className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#8EC5FF] hover:bg-[#73B6FC] text-[#3B2418] font-bold text-sm shadow-md btn-press"
+                  className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-bold text-sm shadow-md btn-press"
                 >
                   {focusTimer.isPaused ? (
                     <>
@@ -325,18 +321,20 @@ export const FocusTimerModal: React.FC = () => {
                   )}
                 </button>
                 <button
+                  type="button"
                   onClick={resetFocusTimer}
-                  className="p-2.5 rounded-xl bg-[#4D3021] hover:bg-[#5A3927] text-[#F2E8DA] border border-[#5A3927] btn-press"
+                  className="p-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-[#F7F1E8] border border-white/15 btn-press"
                   title="Reset Timer"
                 >
                   <RotateCcw className="w-4 h-4" />
                 </button>
                 <button
+                  type="button"
                   onClick={handleFinish}
-                  className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#3E7B52]/30 hover:bg-[#3E7B52]/45 text-[#9FE2B5] border border-[#3E7B52]/60 font-semibold text-xs btn-press"
+                  className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-success/25 hover:bg-success/35 text-[#F7F1E8] border border-success/50 font-semibold text-xs btn-press"
                   title="Complete session and record focus time"
                 >
-                  <CheckCircle2 className="w-4 h-4" />
+                  <CheckCircle2 className="w-4 h-4 text-success" />
                   <span>Complete</span>
                 </button>
               </motion.div>
@@ -349,8 +347,9 @@ export const FocusTimerModal: React.FC = () => {
                 transition={{ duration: prefersReduced ? 0.01 : 0.16, ease: MOMENTUM_EASE }}
               >
                 <button
+                  type="button"
                   onClick={() => handleStartPreset(25, 'focus')}
-                  className="flex items-center gap-2 px-8 py-3 rounded-xl bg-[#8EC5FF] hover:bg-[#73B6FC] text-[#3B2418] font-bold text-sm shadow-lg btn-press"
+                  className="flex items-center gap-2 px-8 py-3 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-bold text-sm shadow-lg btn-press"
                 >
                   <Play className="w-4 h-4 fill-current" />
                   <span>Start 25m Focus</span>
@@ -363,48 +362,50 @@ export const FocusTimerModal: React.FC = () => {
 
       {/* Presets & Link to Task */}
       {!isFullscreen && (
-        <div className="p-6 border-t border-[#D6C6B2] bg-[#FAF5ED] space-y-4">
-          {/* Presets */}
+        <div className="p-5 sm:p-6 border-t border-line bg-surface text-ink space-y-4">
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <span className="text-xs text-[#6E5648] font-medium">Presets:</span>
+            <span className="text-xs text-ink-muted font-medium">Presets:</span>
             <div className="flex flex-wrap gap-2">
               <button
+                type="button"
                 onClick={() => handleStartPreset(25, 'focus')}
-                className="px-3 py-1 text-xs rounded-lg bg-[#F2E8DA] hover:bg-[#8EC5FF] text-[#3B2418] font-medium border border-[#D6C6B2] btn-press"
+                className="px-3 py-1.5 text-xs rounded-lg bg-surface-warm hover:bg-accent hover:text-accent-ink text-ink font-medium border border-line btn-press"
               >
                 25m Focus
               </button>
               <button
+                type="button"
                 onClick={() => handleStartPreset(50, 'focus')}
-                className="px-3 py-1 text-xs rounded-lg bg-[#F2E8DA] hover:bg-[#8EC5FF] text-[#3B2418] font-medium border border-[#D6C6B2] btn-press"
+                className="px-3 py-1.5 text-xs rounded-lg bg-surface-warm hover:bg-accent hover:text-accent-ink text-ink font-medium border border-line btn-press"
               >
                 50m Deep
               </button>
               <button
+                type="button"
                 onClick={() => handleStartPreset(5, 'break')}
-                className="px-3 py-1 text-xs rounded-lg bg-[#F2E8DA] hover:bg-[#E3D5C1] text-[#6E5648] hover:text-[#3B2418] border border-[#D6C6B2] btn-press"
+                className="px-3 py-1.5 text-xs rounded-lg bg-surface-warm hover:bg-surface-inset text-ink-muted hover:text-ink border border-line btn-press"
               >
                 5m Break
               </button>
               <button
+                type="button"
                 onClick={() => handleStartPreset(10, 'break')}
-                className="px-3 py-1 text-xs rounded-lg bg-[#F2E8DA] hover:bg-[#E3D5C1] text-[#6E5648] hover:text-[#3B2418] border border-[#D6C6B2] btn-press"
+                className="px-3 py-1.5 text-xs rounded-lg bg-surface-warm hover:bg-surface-inset text-ink-muted hover:text-ink border border-line btn-press"
               >
                 10m Break
               </button>
             </div>
           </div>
 
-          {/* Task Linking */}
           <div className="flex items-center gap-3">
-            <div className="flex items-center gap-1.5 text-xs text-[#6E5648] shrink-0 font-medium">
-              <CheckSquare className="w-3.5 h-3.5 text-[#3B2418]" />
+            <div className="flex items-center gap-1.5 text-xs text-ink-muted shrink-0 font-medium">
+              <CheckSquare className="w-3.5 h-3.5 text-accent" />
               <span>Link Task:</span>
             </div>
             <select
               value={selectedTaskId}
               onChange={e => handleTaskChange(e.target.value)}
-              className="flex-1 px-3 py-1.5 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-[#3B2418] text-xs focus:border-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
+              className="flex-1 px-3 py-2 rounded-xl bg-surface-warm/70 border border-line text-ink text-xs focus:border-accent focus:ring-2 focus:ring-accent/30 focus:outline-hidden"
             >
               <option value="">No task linked (general focus)</option>
               {state.tasks

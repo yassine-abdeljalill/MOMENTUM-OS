@@ -55,13 +55,12 @@ export const GlobalSearchModal: React.FC = () => {
       action?: () => void;
     }> = [];
 
-    // Search tasks
     for (const t of state.tasks) {
       if (t.title.toLowerCase().includes(q) || (t.description && t.description.toLowerCase().includes(q))) {
         results.push({
           id: `task-${t.id}`,
           title: t.title,
-          subtitle: `Task • Priority: ${t.priority} • Status: ${t.status}`,
+          subtitle: `Task · Priority: ${t.priority} · Status: ${t.status}`,
           category: 'Tasks',
           icon: CheckSquare,
           view: 'tasks',
@@ -69,13 +68,12 @@ export const GlobalSearchModal: React.FC = () => {
       }
     }
 
-    // Search goals
     for (const g of state.goals) {
       if (g.title.toLowerCase().includes(q) || g.description.toLowerCase().includes(q)) {
         results.push({
           id: `goal-${g.id}`,
           title: g.title,
-          subtitle: `Goal • ${g.category} • Target: ${g.targetDate}`,
+          subtitle: `Goal · ${g.category} · Target: ${g.targetDate}`,
           category: 'Goals',
           icon: Target,
           view: 'goals',
@@ -84,13 +82,12 @@ export const GlobalSearchModal: React.FC = () => {
       }
     }
 
-    // Search projects
     for (const p of state.projects) {
       if (p.name.toLowerCase().includes(q) || p.description.toLowerCase().includes(q)) {
         results.push({
           id: `proj-${p.id}`,
           title: p.name,
-          subtitle: `Project • ${p.category} • ${p.status}`,
+          subtitle: `Project · ${p.category} · ${p.status}`,
           category: 'Projects',
           icon: FolderGit2,
           view: 'projects',
@@ -99,7 +96,6 @@ export const GlobalSearchModal: React.FC = () => {
       }
     }
 
-    // Search Learning Modules, Lessons & Rich-Text Notes
     if (learningData) {
       const modulesById = new Map(learningData.modules.map(m => [m.id, m]));
       const lessonsById = new Map(learningData.lessons.map(l => [l.id, l]));
@@ -110,7 +106,7 @@ export const GlobalSearchModal: React.FC = () => {
           results.push({
             id: `lmod-${m.id}`,
             title: m.title,
-            subtitle: `Learning Module • ${count} lesson${count === 1 ? '' : 's'}`,
+            subtitle: `Learning Module · ${count} lesson${count === 1 ? '' : 's'}`,
             category: 'Learning',
             icon: GraduationCap,
             view: 'learning',
@@ -132,7 +128,7 @@ export const GlobalSearchModal: React.FC = () => {
           results.push({
             id: `lles-${l.id}`,
             title: l.title,
-            subtitle: `Lesson${mod ? ` in ${mod.title}` : ''}${l.teacherName ? ` • ${l.teacherName}` : ''}`,
+            subtitle: `Lesson${mod ? ` in ${mod.title}` : ''}${l.teacherName ? ` · ${l.teacherName}` : ''}`,
             category: 'Learning',
             icon: GraduationCap,
             view: 'learning',
@@ -150,7 +146,7 @@ export const GlobalSearchModal: React.FC = () => {
           results.push({
             id: `lnote-${n.id}`,
             title: n.title,
-            subtitle: `Lesson Note${les ? ` • ${les.title}` : ''}`,
+            subtitle: `Lesson Note${les ? ` · ${les.title}` : ''}`,
             category: 'Notes',
             icon: BookOpen,
             view: 'learning',
@@ -162,13 +158,12 @@ export const GlobalSearchModal: React.FC = () => {
         }
       }
     } else {
-      // Fallback legacy courses search if learningData hasn't loaded
       for (const c of state.courses) {
         if (c.title.toLowerCase().includes(q) || c.description.toLowerCase().includes(q)) {
           results.push({
             id: `course-${c.id}`,
             title: c.title,
-            subtitle: `Course • ${c.category} • ${c.lessons.length} lessons`,
+            subtitle: `Course · ${c.category} · ${c.lessons.length} lessons`,
             category: 'Learning',
             icon: GraduationCap,
             view: 'learning',
@@ -178,13 +173,12 @@ export const GlobalSearchModal: React.FC = () => {
       }
     }
 
-    // Search habits
     for (const h of state.habits) {
       if (h.name.toLowerCase().includes(q) || (h.description && h.description.toLowerCase().includes(q))) {
         results.push({
           id: `habit-${h.id}`,
           title: h.name,
-          subtitle: `Habit • Frequency: ${h.frequency}`,
+          subtitle: `Habit · Frequency: ${h.frequency}`,
           category: 'Habits',
           icon: Sparkles,
           view: 'habits',
@@ -192,13 +186,12 @@ export const GlobalSearchModal: React.FC = () => {
       }
     }
 
-    // Search journal
     for (const j of state.journalEntries) {
       if (j.title.toLowerCase().includes(q) || j.content.toLowerCase().includes(q)) {
         results.push({
           id: `journal-${j.id}`,
           title: j.title,
-          subtitle: `Journal • ${j.date} • ${j.category.replace('_', ' ')}`,
+          subtitle: `Journal · ${j.date} · ${j.category.replace('_', ' ')}`,
           category: 'Journal',
           icon: BookOpen,
           view: 'journal',
@@ -206,13 +199,12 @@ export const GlobalSearchModal: React.FC = () => {
       }
     }
 
-    // Search resources
     for (const r of state.resources) {
       if (r.title.toLowerCase().includes(q) || (r.description && r.description.toLowerCase().includes(q))) {
         results.push({
           id: `resource-${r.id}`,
           title: r.title,
-          subtitle: `Resource • ${r.resourceType} • ${r.category}`,
+          subtitle: `Resource · ${r.resourceType} · ${r.category}`,
           category: 'Resources',
           icon: Library,
           view: 'resources',
@@ -238,53 +230,54 @@ export const GlobalSearchModal: React.FC = () => {
       onClose={() => setIsSearchOpen(false)}
       alignTop
       maxWidthClass="max-w-2xl"
-      backdropClassName="bg-[#3B2418]/60 backdrop-blur-xs"
-      panelClassName="bg-[#FAF5ED] border border-[#D6C6B2] rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-[75vh]"
+      panelClassName="bg-surface border border-line rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[75dvh]"
     >
       {/* Search Input Bar */}
-      <div className="flex items-center px-4 py-3.5 border-b border-[#5A3927] gap-3 bg-[#3B2418]">
-        <Search className="w-5 h-5 text-[#8EC5FF] shrink-0" />
+      <div className="flex items-center px-4 py-3.5 border-b border-line gap-3 bg-brand text-brand-ink">
+        <Search className="w-5 h-5 text-accent shrink-0" />
         <input
           ref={inputRef}
           type="text"
           value={query}
           onChange={e => setQuery(e.target.value)}
           placeholder="Search tasks, goals, projects, courses, notes, habits..."
-          className="flex-1 bg-transparent border-0 text-[#F2E8DA] placeholder-[#D8C7B4]/70 focus:outline-hidden text-sm"
+          className="flex-1 bg-transparent border-0 text-[#F7F1E8] placeholder-[#F7F1E8]/60 focus:outline-hidden text-sm"
         />
         {query && (
           <button
+            type="button"
             onClick={() => setQuery('')}
-            className="p-1 text-[#D8C7B4] hover:text-[#F2E8DA] btn-press"
+            className="p-1 text-[#F7F1E8]/75 hover:text-[#F7F1E8] btn-press"
             aria-label="Clear search"
           >
             <X className="w-4 h-4" />
           </button>
         )}
         <button
+          type="button"
           onClick={() => setIsSearchOpen(false)}
-          className="px-2 py-1 text-xs text-[#F2E8DA] hover:text-[#8EC5FF] bg-[#4D3021] rounded border border-[#5A3927] btn-press"
+          className="px-2 py-1 text-xs text-[#F7F1E8] hover:text-accent bg-white/10 rounded-lg border border-white/15 btn-press"
         >
           ESC
         </button>
       </div>
 
       {/* Results List */}
-      <div className="flex-1 overflow-y-auto p-2 divide-y divide-[#D6C6B2]/60">
+      <div className="flex-1 overflow-y-auto p-2 divide-y divide-line/60">
         {query.trim() === '' ? (
-          <div className="py-12 text-center text-[#6E5648] space-y-2">
-            <div className="w-12 h-12 rounded-xl bg-[#8EC5FF]/30 border border-[#8EC5FF] flex items-center justify-center mx-auto">
-              <Search className="w-6 h-6 text-[#3B2418]" />
+          <div className="py-12 text-center text-ink-muted space-y-2">
+            <div className="w-12 h-12 rounded-2xl bg-accent/18 border border-accent/40 flex items-center justify-center mx-auto">
+              <Search className="w-6 h-6 text-accent" />
             </div>
-            <p className="text-sm font-semibold text-[#3B2418]">Type to search across MOMENTUM</p>
-            <p className="text-xs text-[#6E5648]">
+            <p className="text-sm font-semibold text-ink font-heading">Type to search across MOMENTUM</p>
+            <p className="text-xs text-ink-muted">
               Quickly jump to any goal, project, course lesson, habit, or journal reflection.
             </p>
           </div>
         ) : searchResults.length === 0 ? (
-          <div className="py-10 text-center text-[#6E5648]">
-            <p className="text-sm font-medium text-[#3B2418]">No results found for &ldquo;{query}&rdquo;</p>
-            <p className="text-xs text-[#6E5648] mt-1">Try another keyword or filter.</p>
+          <div className="py-10 text-center text-ink-muted">
+            <p className="text-sm font-medium text-ink">No results found for &ldquo;{query}&rdquo;</p>
+            <p className="text-xs text-ink-muted mt-1">Try another keyword or filter.</p>
           </div>
         ) : (
           searchResults.map((item, idx) => {
@@ -292,6 +285,7 @@ export const GlobalSearchModal: React.FC = () => {
             return (
               <motion.button
                 key={item.id}
+                type="button"
                 initial={prefersReduced ? { opacity: 1 } : { opacity: 0, y: 4 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{
@@ -304,26 +298,26 @@ export const GlobalSearchModal: React.FC = () => {
                   setCurrentView(item.view);
                   setIsSearchOpen(false);
                 }}
-                className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-[#F2E8DA] transition-colors group text-left btn-press"
+                className="w-full flex items-center justify-between p-3 rounded-xl hover:bg-surface-warm/70 transition-colors group text-left btn-press"
               >
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className="p-2 rounded bg-[#3B2418] text-[#8EC5FF] shrink-0 transition-transform duration-150 group-hover:scale-105">
+                  <div className="p-2 rounded-xl bg-brand text-accent shrink-0 transition-transform duration-150 group-hover:scale-105">
                     <Icon className="w-4 h-4" />
                   </div>
                   <div className="flex flex-col min-w-0">
-                    <span className="text-sm font-semibold text-[#3B2418] truncate group-hover:text-[#1E5A99]">
+                    <span className="text-sm font-semibold text-ink truncate group-hover:text-accent">
                       {item.title}
                     </span>
-                    <span className="text-xs text-[#6E5648] truncate">
+                    <span className="text-xs text-ink-muted truncate">
                       {item.subtitle}
                     </span>
                   </div>
                 </div>
                 <div className="flex items-center gap-2 shrink-0 ml-3">
-                  <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-[#8EC5FF]/40 text-[#3B2418] border border-[#8EC5FF] font-semibold">
+                  <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded-md bg-accent/18 text-brand dark:text-accent border border-accent/40 font-semibold">
                     {item.category}
                   </span>
-                  <ArrowRight className="w-3.5 h-3.5 text-[#3B2418] opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
+                  <ArrowRight className="w-3.5 h-3.5 text-ink opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
                 </div>
               </motion.button>
             );

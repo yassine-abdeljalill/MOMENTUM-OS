@@ -44,7 +44,6 @@ export const LessonResourcesTab: React.FC<{
   const [uploadProgress, setUploadProgress] = useState(0);
   const [uploadError, setUploadError] = useState('');
 
-  // External Link modal
   const [linkModalOpen, setLinkModalOpen] = useState(false);
   const [linkTitle, setLinkTitle] = useState('');
   const [linkUrl, setLinkUrl] = useState('');
@@ -52,7 +51,6 @@ export const LessonResourcesTab: React.FC<{
   const [linkFolder, setLinkFolder] = useState('General');
   const [savingLink, setSavingLink] = useState(false);
 
-  // Edit Resource modal
   const [editingResource, setEditingResource] = useState<LearningResource | null>(null);
   const [editTitle, setEditTitle] = useState('');
   const [editDesc, setEditDesc] = useState('');
@@ -60,14 +58,12 @@ export const LessonResourcesTab: React.FC<{
   const [editUrl, setEditUrl] = useState('');
   const [savingEdit, setSavingEdit] = useState(false);
 
-  // Preview modal
   const [previewResource, setPreviewResource] = useState<LearningResource | null>(null);
   const [previewLoading, setPreviewLoading] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [previewText, setPreviewText] = useState<string | null>(null);
   const [previewError, setPreviewError] = useState('');
 
-  // Delete confirmation
   const [deleteTarget, setDeleteTarget] = useState<LearningResource | null>(null);
   const [deleting, setDeleting] = useState(false);
 
@@ -93,7 +89,6 @@ export const LessonResourcesTab: React.FC<{
     });
   }, [resources, selectedFolder, searchQuery]);
 
-  // Clean up preview blob URL on close or unmount
   useEffect(() => {
     return () => {
       if (previewUrl) URL.revokeObjectURL(previewUrl);
@@ -277,16 +272,16 @@ export const LessonResourcesTab: React.FC<{
   };
 
   const renderResourceIcon = (res: LearningResource) => {
-    if (res.kind === 'link') return <Globe className="w-4 h-4 text-[#1E5A99]" />;
+    if (res.kind === 'link') return <Globe className="w-4 h-4 text-accent" />;
     const ext = (res.fileExtension || '').toLowerCase();
-    if (ext === '.pdf') return <FileText className="w-4 h-4 text-[#B84A44]" />;
-    if (['.png', '.jpg', '.jpeg', '.webp'].includes(ext)) return <FileImage className="w-4 h-4 text-[#3E7B52]" />;
-    if (['.ppt', '.pptx', '.odp'].includes(ext)) return <Presentation className="w-4 h-4 text-[#A36116]" />;
-    if (['.xls', '.xlsx', '.csv'].includes(ext)) return <FileSpreadsheet className="w-4 h-4 text-[#3E7B52]" />;
+    if (ext === '.pdf') return <FileText className="w-4 h-4 text-danger" />;
+    if (['.png', '.jpg', '.jpeg', '.webp'].includes(ext)) return <FileImage className="w-4 h-4 text-success" />;
+    if (['.ppt', '.pptx', '.odp'].includes(ext)) return <Presentation className="w-4 h-4 text-warning" />;
+    if (['.xls', '.xlsx', '.csv'].includes(ext)) return <FileSpreadsheet className="w-4 h-4 text-success" />;
     if (['.py', '.js', '.ts', '.tsx', '.sh', '.sql', '.json', '.yaml', '.yml', '.md', '.txt'].includes(ext)) {
-      return <FileCode2 className="w-4 h-4 text-[#1E5A99]" />;
+      return <FileCode2 className="w-4 h-4 text-accent" />;
     }
-    return <File className="w-4 h-4 text-[#6E5648]" />;
+    return <File className="w-4 h-4 text-ink-muted" />;
   };
 
   return (
@@ -305,35 +300,35 @@ export const LessonResourcesTab: React.FC<{
         }}
         className={`p-5 rounded-2xl border-2 border-dashed transition-colors ${
           isDraggingOver
-            ? 'bg-[#8EC5FF]/20 border-[#1E5A99]'
-            : 'bg-[#F2E8DA] border-[#D6C6B2] hover:border-[#8EC5FF]'
+            ? 'bg-accent/15 border-accent'
+            : 'bg-surface border-line hover:border-accent'
         }`}
       >
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-start gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[#3B2418] text-[#8EC5FF] flex items-center justify-center shrink-0">
+            <div className="w-10 h-10 rounded-xl bg-brand text-brand-ink flex items-center justify-center shrink-0">
               <Upload className="w-5 h-5" />
             </div>
             <div className="space-y-1">
-              <h3 className="text-sm font-bold text-[#3B2418]">
+              <h3 className="text-sm font-bold text-ink">
                 Upload {scopeLabel === 'module' ? 'Module' : 'Lesson'} Materials
               </h3>
-              <p className="text-xs text-[#6E5648]">
+              <p className="text-xs text-ink-muted">
                 Drag and drop files here or browse. Supports PDF, PNG/JPG/WEBP, PPT/PPTX, DOC/DOCX, TXT/Code, and ZIP up to 25 MB.
               </p>
             </div>
           </div>
 
           <div className="flex flex-wrap items-center gap-2 shrink-0">
-            <div className="flex items-center gap-1.5 bg-[#FAF5ED] border border-[#D6C6B2] rounded-lg px-2.5 py-1.5">
-              <Folder className="w-3.5 h-3.5 text-[#6E5648]" />
+            <div className="flex items-center gap-1.5 bg-canvas border border-line rounded-xl px-2.5 py-2">
+              <Folder className="w-3.5 h-3.5 text-ink-muted" />
               <input
                 type="text"
                 value={uploadFolder}
                 onChange={e => setUploadFolder(e.target.value)}
                 placeholder="Folder name"
                 list="learning-folder-suggestions"
-                className="w-28 bg-transparent text-xs text-[#3B2418] focus:outline-hidden"
+                className="w-28 bg-transparent text-xs text-ink placeholder:text-ink-muted focus:outline-hidden"
                 aria-label="Target folder for uploaded files"
               />
               <datalist id="learning-folder-suggestions">
@@ -356,7 +351,7 @@ export const LessonResourcesTab: React.FC<{
               type="button"
               disabled={uploading}
               onClick={() => fileInputRef.current?.click()}
-              className="btn-press flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#8EC5FF] hover:bg-[#73B6FC] text-[#3B2418] border border-[#3B2418]/15 font-bold text-xs shadow-xs disabled:opacity-60"
+              className="btn-press flex items-center gap-1.5 px-3.5 py-2 min-h-[40px] sm:min-h-0 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs disabled:opacity-60 whitespace-nowrap"
             >
               {uploading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Upload className="w-3.5 h-3.5" />}
               <span>{uploading ? `Uploading ${uploadProgress}%` : 'Upload Files'}</span>
@@ -368,9 +363,9 @@ export const LessonResourcesTab: React.FC<{
                 setLinkFolder(uploadFolder || 'General');
                 setLinkModalOpen(true);
               }}
-              className="btn-press flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#FAF5ED] hover:bg-[#EAE0D0] text-[#3B2418] border border-[#D6C6B2] font-semibold text-xs"
+              className="btn-press flex items-center gap-1.5 px-3.5 py-2 min-h-[40px] sm:min-h-0 rounded-xl bg-canvas hover:bg-surface-warm text-ink border border-line font-semibold text-xs whitespace-nowrap"
             >
-              <Link2 className="w-3.5 h-3.5 text-[#1E5A99]" />
+              <Link2 className="w-3.5 h-3.5 text-accent" />
               <span>Add Link</span>
             </button>
           </div>
@@ -380,17 +375,22 @@ export const LessonResourcesTab: React.FC<{
           <div className="mt-3">
             <AnimatedProgressBar
               percentage={uploadProgress}
-              trackClassName="w-full h-1.5 rounded-full bg-[#EAE0D0] overflow-hidden"
-              fillClassName="h-full bg-[#1E5A99] rounded-full"
+              trackClassName="w-full h-1.5 rounded-full bg-surface-inset overflow-hidden"
+              fillClassName="h-full bg-accent rounded-full"
             />
           </div>
         )}
 
         {uploadError && (
-          <div className="mt-3 p-2.5 rounded-lg bg-[#B84A44]/10 border border-[#B84A44]/40 text-xs text-[#9E3530] flex items-center justify-between gap-2">
+          <div className="mt-3 p-2.5 rounded-xl bg-danger/10 border border-danger/40 text-xs text-danger flex items-center justify-between gap-2">
             <span>{uploadError}</span>
-            <button type="button" onClick={() => setUploadError('')} className="text-[#9E3530] font-bold">
-              ✕
+            <button
+              type="button"
+              onClick={() => setUploadError('')}
+              className="text-danger p-1 rounded hover:bg-danger/10"
+              aria-label="Dismiss upload error"
+            >
+              <X className="w-3.5 h-3.5" />
             </button>
           </div>
         )}
@@ -402,10 +402,10 @@ export const LessonResourcesTab: React.FC<{
           <button
             type="button"
             onClick={() => setSelectedFolder('all')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors ${
+            className={`px-3 py-1.5 rounded-xl text-xs font-medium border transition-colors whitespace-nowrap ${
               selectedFolder === 'all'
-                ? 'bg-[#3B2418] text-[#F2E8DA] border-[#3B2418]'
-                : 'bg-[#FAF5ED] text-[#6E5648] border-[#D6C6B2] hover:text-[#3B2418]'
+                ? 'bg-brand text-brand-ink border-brand'
+                : 'bg-surface text-ink-muted border-line hover:text-ink'
             }`}
           >
             All Folders ({resources.length})
@@ -418,42 +418,42 @@ export const LessonResourcesTab: React.FC<{
                 key={f}
                 type="button"
                 onClick={() => setSelectedFolder(f)}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors ${
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium border transition-colors whitespace-nowrap ${
                   selectedFolder === f
-                    ? 'bg-[#3B2418] text-[#8EC5FF] border-[#3B2418]'
-                    : 'bg-[#FAF5ED] text-[#6E5648] border-[#D6C6B2] hover:text-[#3B2418]'
+                    ? 'bg-brand text-brand-ink border-brand'
+                    : 'bg-surface text-ink-muted border-line hover:text-ink'
                 }`}
               >
                 <Folder className="w-3 h-3" />
                 <span>{f}</span>
-                <span className="font-mono text-[10px] opacity-80">{count}</span>
+                <span className="font-mono text-[10px] opacity-80 tabular-nums">{count}</span>
               </button>
             );
           })}
         </div>
 
         <div className="relative w-full sm:w-64">
-          <Search className="w-3.5 h-3.5 text-[#6E5648] absolute left-3 top-2.5" />
+          <Search className="w-3.5 h-3.5 text-ink-muted absolute left-3 top-2.5" />
           <input
             type="text"
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
             placeholder="Filter resources..."
-            className="w-full pl-8 pr-3 py-1.5 rounded-lg bg-[#FAF5ED] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
+            className="w-full pl-8 pr-3 py-2 rounded-xl bg-surface border border-line text-xs text-ink placeholder:text-ink-muted focus:ring-2 focus:ring-accent focus:outline-hidden"
           />
         </div>
       </div>
 
       {/* Resource List */}
       {filteredResources.length === 0 ? (
-        <div className="p-10 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] text-center space-y-2">
-          <FileText className="w-8 h-8 text-[#1E5A99] mx-auto opacity-60" />
-          <p className="text-sm font-semibold text-[#3B2418]">
+        <div className="p-10 rounded-2xl bg-surface border border-line text-center space-y-2">
+          <FileText className="w-8 h-8 text-accent mx-auto opacity-70" />
+          <p className="text-sm font-semibold text-ink">
             {searchQuery || selectedFolder !== 'all'
               ? 'No matching resources found'
               : `No resources attached to this ${scopeLabel} yet`}
           </p>
-          <p className="text-xs text-[#6E5648]">
+          <p className="text-xs text-ink-muted">
             Upload lecture slides, PDFs, lab guides, images, or attach external reference links.
           </p>
         </div>
@@ -464,18 +464,18 @@ export const LessonResourcesTab: React.FC<{
             return (
               <div
                 key={res.id}
-                className="p-4 rounded-xl bg-[#FAF5ED] border border-[#D6C6B2] hover:border-[#8EC5FF] transition-colors flex flex-col justify-between gap-3 card-hover"
+                className="p-4 rounded-2xl bg-surface border border-line hover:border-accent transition-colors flex flex-col justify-between gap-3 card-hover"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex items-start gap-3 min-w-0">
-                    <div className="w-9 h-9 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] flex items-center justify-center shrink-0">
+                    <div className="w-9 h-9 rounded-xl bg-surface-warm border border-line flex items-center justify-center shrink-0">
                       {renderResourceIcon(res)}
                     </div>
                     <div className="min-w-0 space-y-1">
-                      <h4 className="text-xs font-bold text-[#3B2418] truncate" title={res.title}>
+                      <h4 className="text-xs font-bold text-ink truncate" title={res.title}>
                         {res.title}
                       </h4>
-                      <div className="flex flex-wrap items-center gap-1.5 text-[11px] text-[#6E5648] font-mono tabular-nums">
+                      <div className="flex flex-wrap items-center gap-1.5 text-[11px] text-ink-muted font-mono tabular-nums">
                         <span>{getResourceCategoryLabel(res)}</span>
                         <span aria-hidden="true">·</span>
                         <span>{res.folderName || 'General'}</span>
@@ -487,7 +487,7 @@ export const LessonResourcesTab: React.FC<{
                         )}
                       </div>
                       {res.description && (
-                        <p className="text-xs text-[#6E5648] line-clamp-2 leading-relaxed pt-0.5">
+                        <p className="text-xs text-ink-muted line-clamp-2 leading-relaxed pt-0.5">
                           {res.description}
                         </p>
                       )}
@@ -495,8 +495,8 @@ export const LessonResourcesTab: React.FC<{
                   </div>
                 </div>
 
-                <div className="flex flex-wrap items-center justify-between gap-2 pt-2.5 border-t border-[#D6C6B2]/70">
-                  <span className="text-[10px] font-mono text-[#6E5648] tabular-nums">
+                <div className="flex flex-wrap items-center justify-between gap-2 pt-2.5 border-t border-line">
+                  <span className="text-[10px] font-mono text-ink-muted tabular-nums">
                     Added {new Date(res.createdAt).toLocaleDateString()}
                   </span>
                   <div className="flex items-center gap-1.5">
@@ -504,9 +504,9 @@ export const LessonResourcesTab: React.FC<{
                       <button
                         type="button"
                         onClick={() => void handleOpenPreview(res)}
-                        className="btn-press flex items-center gap-1 px-2.5 py-1 rounded-md bg-[#EAE0D0] hover:bg-[#8EC5FF]/40 text-[#3B2418] text-[11px] font-semibold"
+                        className="btn-press flex items-center gap-1 px-2.5 py-1 rounded-lg bg-surface-warm hover:bg-surface-hover text-ink text-[11px] font-semibold border border-line"
                       >
-                        <Eye className="w-3 h-3 text-[#1E5A99]" />
+                        <Eye className="w-3 h-3 text-accent" />
                         <span>Preview</span>
                       </button>
                     )}
@@ -515,7 +515,7 @@ export const LessonResourcesTab: React.FC<{
                       <button
                         type="button"
                         onClick={() => void handleDownload(res)}
-                        className="btn-press flex items-center gap-1 px-2.5 py-1 rounded-md bg-[#F2E8DA] hover:bg-[#EAE0D0] border border-[#D6C6B2] text-[#3B2418] text-[11px] font-semibold"
+                        className="btn-press flex items-center gap-1 px-2.5 py-1 rounded-lg bg-canvas hover:bg-surface-warm border border-line text-ink text-[11px] font-semibold"
                       >
                         <Download className="w-3 h-3" />
                         <span>Download</span>
@@ -525,7 +525,7 @@ export const LessonResourcesTab: React.FC<{
                         href={res.externalUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="btn-press flex items-center gap-1 px-2.5 py-1 rounded-md bg-[#8EC5FF]/35 hover:bg-[#8EC5FF]/60 border border-[#8EC5FF] text-[#3B2418] text-[11px] font-semibold"
+                        className="btn-press flex items-center gap-1 px-2.5 py-1 rounded-lg bg-accent hover:bg-accent-hover text-accent-ink text-[11px] font-semibold"
                       >
                         <span>Open Link</span>
                         <ExternalLink className="w-3 h-3" />
@@ -535,16 +535,18 @@ export const LessonResourcesTab: React.FC<{
                     <button
                       type="button"
                       onClick={() => openEditModal(res)}
-                      className="btn-press p-1.5 rounded-md text-[#6E5648] hover:text-[#3B2418] hover:bg-[#EAE0D0]"
+                      className="btn-press p-1.5 rounded-lg text-ink-muted hover:text-ink hover:bg-surface-warm"
                       title="Rename or edit details"
+                      aria-label="Edit resource"
                     >
                       <Edit3 className="w-3.5 h-3.5" />
                     </button>
                     <button
                       type="button"
                       onClick={() => setDeleteTarget(res)}
-                      className="btn-press p-1.5 rounded-md text-[#6E5648] hover:text-[#B84A44] hover:bg-[#EAE0D0]"
+                      className="btn-press p-1.5 rounded-lg text-ink-muted hover:text-danger hover:bg-surface-warm"
                       title="Delete resource"
+                      aria-label="Delete resource"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
@@ -558,72 +560,73 @@ export const LessonResourcesTab: React.FC<{
 
       {/* Add External Link Modal */}
       <ModalShell isOpen={linkModalOpen} onClose={() => setLinkModalOpen(false)} maxWidthClass="max-w-md">
-        <div className="px-5 py-3.5 border-b border-[#5A3927] bg-[#3B2418] flex items-center justify-between">
-          <span className="text-xs font-bold text-[#F2E8DA]">Add External Resource Link</span>
+        <div className="px-5 py-4 border-b border-line bg-brand dark:bg-surface-warm flex items-center justify-between">
+          <span className="text-xs font-bold text-brand-ink dark:text-ink">Add External Resource Link</span>
           <button
             type="button"
             onClick={() => setLinkModalOpen(false)}
-            className="text-[#D8C7B4] hover:text-[#F2E8DA]"
+            className="text-brand-ink/80 dark:text-ink-muted hover:text-brand-ink dark:hover:text-ink"
+            aria-label="Close modal"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
         <form onSubmit={handleAddExternalLink} className="p-5 space-y-3">
           <div>
-            <label className="block text-xs font-semibold text-[#6E5648] mb-1">Title *</label>
+            <label className="block text-xs font-semibold text-ink-muted mb-1">Title *</label>
             <input
               type="text"
               required
               value={linkTitle}
               onChange={e => setLinkTitle(e.target.value)}
               placeholder="e.g. RFC 8446 — TLS 1.3 Specification"
-              className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
+              className="w-full px-3 py-2 rounded-xl bg-canvas border border-line text-xs text-ink placeholder:text-ink-muted focus:ring-2 focus:ring-accent focus:outline-hidden"
               autoFocus
             />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-[#6E5648] mb-1">URL *</label>
+            <label className="block text-xs font-semibold text-ink-muted mb-1">URL *</label>
             <input
               type="url"
               required
               value={linkUrl}
               onChange={e => setLinkUrl(e.target.value)}
               placeholder="https://..."
-              className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
+              className="w-full px-3 py-2 rounded-xl bg-canvas border border-line text-xs text-ink placeholder:text-ink-muted focus:ring-2 focus:ring-accent focus:outline-hidden"
             />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-[#6E5648] mb-1">Folder</label>
+            <label className="block text-xs font-semibold text-ink-muted mb-1">Folder</label>
             <input
               type="text"
               value={linkFolder}
               onChange={e => setLinkFolder(e.target.value)}
               placeholder="General"
-              className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
+              className="w-full px-3 py-2 rounded-xl bg-canvas border border-line text-xs text-ink placeholder:text-ink-muted focus:ring-2 focus:ring-accent focus:outline-hidden"
             />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-[#6E5648] mb-1">Description</label>
+            <label className="block text-xs font-semibold text-ink-muted mb-1">Description</label>
             <textarea
               rows={2}
               value={linkDesc}
               onChange={e => setLinkDesc(e.target.value)}
               placeholder="Summary or why this reference is useful..."
-              className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
+              className="w-full px-3 py-2 rounded-xl bg-canvas border border-line text-xs text-ink placeholder:text-ink-muted focus:ring-2 focus:ring-accent focus:outline-hidden"
             />
           </div>
-          <div className="flex justify-end gap-2 pt-2 border-t border-[#D6C6B2]">
+          <div className="flex justify-end gap-2 pt-2 border-t border-line">
             <button
               type="button"
               onClick={() => setLinkModalOpen(false)}
-              className="px-3 py-1.5 text-xs text-[#6E5648] hover:text-[#3B2418]"
+              className="px-3 py-1.5 text-xs text-ink-muted hover:text-ink"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={savingLink}
-              className="btn-press px-4 py-1.5 rounded-lg bg-[#8EC5FF] hover:bg-[#73B6FC] text-[#3B2418] font-bold text-xs border border-[#3B2418]/15"
+              className="btn-press px-4 py-1.5 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs"
             >
               {savingLink ? 'Saving...' : 'Save Link'}
             </button>
@@ -633,70 +636,71 @@ export const LessonResourcesTab: React.FC<{
 
       {/* Edit / Rename Resource Modal */}
       <ModalShell isOpen={Boolean(editingResource)} onClose={() => setEditingResource(null)} maxWidthClass="max-w-md">
-        <div className="px-5 py-3.5 border-b border-[#5A3927] bg-[#3B2418] flex items-center justify-between">
-          <span className="text-xs font-bold text-[#F2E8DA]">Edit Resource</span>
+        <div className="px-5 py-4 border-b border-line bg-brand dark:bg-surface-warm flex items-center justify-between">
+          <span className="text-xs font-bold text-brand-ink dark:text-ink">Edit Resource</span>
           <button
             type="button"
             onClick={() => setEditingResource(null)}
-            className="text-[#D8C7B4] hover:text-[#F2E8DA]"
+            className="text-brand-ink/80 dark:text-ink-muted hover:text-brand-ink dark:hover:text-ink"
+            aria-label="Close modal"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
         <form onSubmit={handleSaveEdit} className="p-5 space-y-3">
           <div>
-            <label className="block text-xs font-semibold text-[#6E5648] mb-1">Resource Name *</label>
+            <label className="block text-xs font-semibold text-ink-muted mb-1">Resource Name *</label>
             <input
               type="text"
               required
               value={editTitle}
               onChange={e => setEditTitle(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
+              className="w-full px-3 py-2 rounded-xl bg-canvas border border-line text-xs text-ink focus:ring-2 focus:ring-accent focus:outline-hidden"
               autoFocus
             />
           </div>
           {editingResource?.kind === 'link' && (
             <div>
-              <label className="block text-xs font-semibold text-[#6E5648] mb-1">External URL *</label>
+              <label className="block text-xs font-semibold text-ink-muted mb-1">External URL *</label>
               <input
                 type="url"
                 required
                 value={editUrl}
                 onChange={e => setEditUrl(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
+                className="w-full px-3 py-2 rounded-xl bg-canvas border border-line text-xs text-ink focus:ring-2 focus:ring-accent focus:outline-hidden"
               />
             </div>
           )}
           <div>
-            <label className="block text-xs font-semibold text-[#6E5648] mb-1">Folder</label>
+            <label className="block text-xs font-semibold text-ink-muted mb-1">Folder</label>
             <input
               type="text"
               value={editFolder}
               onChange={e => setEditFolder(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
+              className="w-full px-3 py-2 rounded-xl bg-canvas border border-line text-xs text-ink focus:ring-2 focus:ring-accent focus:outline-hidden"
             />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-[#6E5648] mb-1">Description</label>
+            <label className="block text-xs font-semibold text-ink-muted mb-1">Description</label>
             <textarea
               rows={3}
               value={editDesc}
               onChange={e => setEditDesc(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
+              className="w-full px-3 py-2 rounded-xl bg-canvas border border-line text-xs text-ink focus:ring-2 focus:ring-accent focus:outline-hidden"
             />
           </div>
-          <div className="flex justify-end gap-2 pt-2 border-t border-[#D6C6B2]">
+          <div className="flex justify-end gap-2 pt-2 border-t border-line">
             <button
               type="button"
               onClick={() => setEditingResource(null)}
-              className="px-3 py-1.5 text-xs text-[#6E5648] hover:text-[#3B2418]"
+              className="px-3 py-1.5 text-xs text-ink-muted hover:text-ink"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={savingEdit}
-              className="btn-press px-4 py-1.5 rounded-lg bg-[#8EC5FF] hover:bg-[#73B6FC] text-[#3B2418] font-bold text-xs border border-[#3B2418]/15"
+              className="btn-press px-4 py-1.5 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs"
             >
               {savingEdit ? 'Saving...' : 'Save Changes'}
             </button>
@@ -709,14 +713,16 @@ export const LessonResourcesTab: React.FC<{
         isOpen={Boolean(previewResource)}
         onClose={handleClosePreview}
         maxWidthClass="max-w-4xl"
-        panelClassName="bg-[#FAF5ED] border border-[#D6C6B2] rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
+        panelClassName="bg-surface border border-line rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
       >
         {previewResource && (
           <>
-            <div className="px-5 py-3.5 border-b border-[#5A3927] bg-[#3B2418] flex items-center justify-between gap-3 shrink-0">
+            <div className="px-5 py-3.5 border-b border-line bg-brand dark:bg-surface-warm flex items-center justify-between gap-3 shrink-0">
               <div className="min-w-0">
-                <h3 className="text-sm font-bold text-[#F2E8DA] truncate">{previewResource.title}</h3>
-                <span className="text-[11px] font-mono text-[#8EC5FF]">
+                <h3 className="text-sm font-bold text-brand-ink dark:text-ink truncate">
+                  {previewResource.title}
+                </h3>
+                <span className="text-[11px] font-mono text-accent tabular-nums">
                   {previewResource.originalFilename} · {formatFileSize(previewResource.fileSize)}
                 </span>
               </div>
@@ -724,7 +730,7 @@ export const LessonResourcesTab: React.FC<{
                 <button
                   type="button"
                   onClick={() => void handleDownload(previewResource)}
-                  className="btn-press flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#8EC5FF] text-[#3B2418] text-xs font-bold"
+                  className="btn-press flex items-center gap-1 px-3 py-1.5 rounded-xl bg-accent text-accent-ink text-xs font-semibold"
                 >
                   <Download className="w-3.5 h-3.5" />
                   <span>Download</span>
@@ -732,7 +738,7 @@ export const LessonResourcesTab: React.FC<{
                 <button
                   type="button"
                   onClick={handleClosePreview}
-                  className="p-1.5 rounded text-[#D8C7B4] hover:text-[#F2E8DA]"
+                  className="p-1.5 rounded-lg text-brand-ink/80 dark:text-ink-muted hover:text-brand-ink dark:hover:text-ink"
                   aria-label="Close preview"
                 >
                   <X className="w-4 h-4" />
@@ -740,15 +746,15 @@ export const LessonResourcesTab: React.FC<{
               </div>
             </div>
 
-            <div className="flex-1 overflow-auto bg-[#EAE0D0] p-4 flex items-center justify-center min-h-[420px]">
+            <div className="flex-1 overflow-auto bg-canvas p-4 flex items-center justify-center min-h-[420px]">
               {previewLoading && (
-                <div className="flex items-center gap-2 text-xs text-[#3B2418]">
-                  <Loader2 className="w-4 h-4 animate-spin text-[#1E5A99]" />
+                <div className="flex items-center gap-2 text-xs text-ink">
+                  <Loader2 className="w-4 h-4 animate-spin text-accent" />
                   <span>Loading secure preview...</span>
                 </div>
               )}
               {previewError && (
-                <div className="p-4 rounded-xl bg-[#FAF5ED] border border-[#B84A44]/40 text-xs text-[#9E3530]">
+                <div className="p-4 rounded-xl bg-surface border border-danger/40 text-xs text-danger">
                   {previewError}
                 </div>
               )}
@@ -763,11 +769,11 @@ export const LessonResourcesTab: React.FC<{
                 <iframe
                   src={previewUrl}
                   title={previewResource.title}
-                  className="w-full h-[70vh] rounded-lg border border-[#D6C6B2] bg-white"
+                  className="w-full h-[70vh] rounded-lg border border-line bg-white"
                 />
               )}
               {!previewLoading && !previewError && previewText !== null && (
-                <pre className="w-full max-h-[70vh] overflow-auto p-4 rounded-xl bg-[#2B1A11] text-[#F2E8DA] font-mono text-xs leading-relaxed border border-[#5A3927]">
+                <pre className="w-full max-h-[70vh] overflow-auto p-4 rounded-xl bg-[#1B1F23] text-[#F7F1E8] font-mono text-xs leading-relaxed border border-line">
                   {previewText}
                 </pre>
               )}

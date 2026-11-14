@@ -64,33 +64,33 @@ export const LessonInfoTab: React.FC<{
 
   return (
     <form onSubmit={handleSave} className="space-y-6">
-      <div className="p-6 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] space-y-5 shadow-xs">
-        <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-[#D6C6B2]">
+      <div className="p-6 rounded-2xl bg-surface border border-line space-y-5">
+        <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-line">
           <div>
-            <h3 className="text-sm font-bold text-[#3B2418]">Lesson Information & Objectives</h3>
-            <p className="text-xs text-[#6E5648]">
+            <h3 className="text-sm font-bold text-ink">Lesson Information & Objectives</h3>
+            <p className="text-xs text-ink-muted">
               Maintain syllabus metadata, instructor details, dates, and target outcomes.
             </p>
           </div>
-          <div className="text-[11px] font-mono text-[#6E5648] tabular-nums">
+          <div className="text-[11px] font-mono text-ink-muted tabular-nums">
             Last updated: {new Date(lesson.updatedAt).toLocaleString()}
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="md:col-span-2">
-            <label className="block text-xs font-semibold text-[#6E5648] mb-1">Lesson Title *</label>
+            <label className="block text-xs font-semibold text-ink-muted mb-1">Lesson Title *</label>
             <input
               type="text"
               required
               value={title}
               onChange={e => setTitle(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs font-medium text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
+              className="w-full px-3 py-2 rounded-xl bg-canvas border border-line text-xs font-medium text-ink focus:ring-2 focus:ring-accent focus:outline-hidden"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-[#6E5648] mb-1">
+            <label className="block text-xs font-semibold text-ink-muted mb-1">
               <span className="inline-flex items-center gap-1">
                 <User className="w-3 h-3" /> Teacher / Instructor
               </span>
@@ -100,12 +100,12 @@ export const LessonInfoTab: React.FC<{
               value={teacherName}
               onChange={e => setTeacherName(e.target.value)}
               placeholder="e.g. Dr. Katherine Meyer"
-              className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
+              className="w-full px-3 py-2 rounded-xl bg-canvas border border-line text-xs text-ink placeholder:text-ink-muted focus:ring-2 focus:ring-accent focus:outline-hidden"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-[#6E5648] mb-1">
+            <label className="block text-xs font-semibold text-ink-muted mb-1">
               <span className="inline-flex items-center gap-1">
                 <Calendar className="w-3 h-3" /> Lesson Date
               </span>
@@ -114,16 +114,16 @@ export const LessonInfoTab: React.FC<{
               type="date"
               value={lessonDate}
               onChange={e => setLessonDate(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
+              className="w-full px-3 py-2 rounded-xl bg-canvas border border-line text-xs font-mono text-ink focus:ring-2 focus:ring-accent focus:outline-hidden"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-[#6E5648] mb-1">Completion Status</label>
+            <label className="block text-xs font-semibold text-ink-muted mb-1">Completion Status</label>
             <select
               value={status}
               onChange={e => setStatus(e.target.value as LearningStatus)}
-              className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs font-medium text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
+              className="w-full px-3 py-2 rounded-xl bg-canvas border border-line text-xs font-medium text-ink focus:ring-2 focus:ring-accent focus:outline-hidden"
             >
               <option value="not_started">Not Started</option>
               <option value="in_progress">In Progress</option>
@@ -132,7 +132,7 @@ export const LessonInfoTab: React.FC<{
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-[#6E5648] mb-1">
+            <label className="block text-xs font-semibold text-ink-muted mb-1">
               <span className="inline-flex items-center gap-1">
                 <Clock className="w-3 h-3" /> Study Duration (Minutes)
               </span>
@@ -143,27 +143,27 @@ export const LessonInfoTab: React.FC<{
               max={600}
               value={studyDurationMinutes}
               onChange={e => setStudyDurationMinutes(Number(e.target.value))}
-              className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs font-mono text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
+              className="w-full px-3 py-2 rounded-xl bg-canvas border border-line text-xs font-mono tabular-nums text-ink focus:ring-2 focus:ring-accent focus:outline-hidden"
             />
           </div>
 
           <div className="md:col-span-2">
-            <label className="block text-xs font-semibold text-[#6E5648] mb-1">Lesson Description</label>
+            <label className="block text-xs font-semibold text-ink-muted mb-1">Lesson Description</label>
             <textarea
               rows={4}
               value={description}
               onChange={e => setDescription(e.target.value)}
               placeholder="Overview of key topics, theorems, or practical architectures covered..."
-              className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] leading-relaxed focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
+              className="w-full px-3 py-2 rounded-xl bg-canvas border border-line text-xs text-ink placeholder:text-ink-muted leading-relaxed focus:ring-2 focus:ring-accent focus:outline-hidden"
             />
           </div>
         </div>
 
         {/* Learning Objectives */}
-        <div className="space-y-3 pt-2 border-t border-[#D6C6B2]">
+        <div className="space-y-3 pt-2 border-t border-line">
           <div className="flex items-center justify-between">
-            <label className="text-xs font-bold text-[#3B2418]">Learning Objectives</label>
-            <span className="text-[11px] font-mono text-[#6E5648] tabular-nums">
+            <label className="text-xs font-bold text-ink">Learning Objectives</label>
+            <span className="text-[11px] font-mono text-ink-muted tabular-nums">
               {objectives.length} objective{objectives.length === 1 ? '' : 's'}
             </span>
           </div>
@@ -173,16 +173,16 @@ export const LessonInfoTab: React.FC<{
               {objectives.map((obj, idx) => (
                 <li
                   key={idx}
-                  className="flex items-center justify-between gap-2 px-3.5 py-2 rounded-xl bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418]"
+                  className="flex items-center justify-between gap-2 px-3.5 py-2 rounded-xl bg-canvas border border-line text-xs text-ink"
                 >
                   <div className="flex items-center gap-2 min-w-0">
-                    <Check className="w-3.5 h-3.5 text-[#1E5A99] shrink-0" />
+                    <Check className="w-3.5 h-3.5 text-accent shrink-0" />
                     <span className="truncate">{obj}</span>
                   </div>
                   <button
                     type="button"
                     onClick={() => setObjectives(prev => prev.filter((_, i) => i !== idx))}
-                    className="p-1 text-[#6E5648] hover:text-[#B84A44] shrink-0"
+                    className="p-1 text-ink-muted hover:text-danger shrink-0"
                     aria-label="Remove objective"
                   >
                     <X className="w-3.5 h-3.5" />
@@ -191,9 +191,7 @@ export const LessonInfoTab: React.FC<{
               ))}
             </ul>
           ) : (
-            <p className="text-xs text-[#6E5648]">
-              No learning objectives added yet.
-            </p>
+            <p className="text-xs text-ink-muted">No learning objectives added yet.</p>
           )}
 
           <div className="flex gap-2">
@@ -208,12 +206,12 @@ export const LessonInfoTab: React.FC<{
                 }
               }}
               placeholder="Add a learning objective and press Enter..."
-              className="flex-1 px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
+              className="flex-1 px-3 py-2 rounded-xl bg-canvas border border-line text-xs text-ink placeholder:text-ink-muted focus:ring-2 focus:ring-accent focus:outline-hidden"
             />
             <button
               type="button"
               onClick={handleAddObjective}
-              className="btn-press flex items-center gap-1 px-3 py-2 rounded-lg bg-[#EAE0D0] hover:bg-[#E3D5C1] text-[#3B2418] border border-[#D6C6B2] text-xs font-semibold"
+              className="btn-press flex items-center gap-1 px-3 py-2 rounded-xl bg-surface-warm hover:bg-surface-hover text-ink border border-line text-xs font-semibold"
             >
               <Plus className="w-3.5 h-3.5" />
               <span>Add</span>
@@ -221,14 +219,14 @@ export const LessonInfoTab: React.FC<{
           </div>
         </div>
 
-        <div className="flex items-center justify-between pt-4 border-t border-[#D6C6B2]">
-          <span className="text-[11px] font-mono text-[#6E5648] tabular-nums">
+        <div className="flex items-center justify-between pt-4 border-t border-line">
+          <span className="text-[11px] font-mono text-ink-muted tabular-nums">
             Created {new Date(lesson.createdAt).toLocaleDateString()}
           </span>
           <button
             type="submit"
             disabled={saving}
-            className="btn-press flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#8EC5FF] hover:bg-[#73B6FC] text-[#3B2418] border border-[#3B2418]/15 font-bold text-xs shadow-xs disabled:opacity-60"
+            className="btn-press flex items-center gap-1.5 px-4 py-2 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs disabled:opacity-60"
           >
             <Save className="w-3.5 h-3.5" />
             <span>{saving ? 'Saving...' : 'Save Lesson Information'}</span>

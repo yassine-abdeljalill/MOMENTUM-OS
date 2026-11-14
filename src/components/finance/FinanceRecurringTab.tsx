@@ -101,31 +101,38 @@ export const FinanceRecurringTab: React.FC<Props> = ({
     <div className="space-y-6">
       {/* Top KPIs & Add Action */}
       <StaggerContainer className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <StaggerItem className="card-hover p-4 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2]">
-          <span className="text-[10px] font-mono uppercase text-[#6E5648]">Est. Monthly Outflow</span>
-          <div className="mt-1.5 font-mono text-xl font-extrabold text-[#B84A44]">
+        <StaggerItem className="card-hover p-4 rounded-2xl bg-surface border border-line">
+          <span className="text-[10px] font-mono uppercase tracking-wider text-ink-muted">
+            Est. Monthly Outflow
+          </span>
+          <div className="mt-1.5 font-mono text-xl font-extrabold text-danger tabular-nums">
             <AnimatedNumber value={monthlyExpenses} formatter={v => formatCurrency(v, currency)} />
           </div>
         </StaggerItem>
 
-        <StaggerItem className="card-hover p-4 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2]">
-          <span className="text-[10px] font-mono uppercase text-[#6E5648]">Est. Monthly Inflow</span>
-          <div className="mt-1.5 font-mono text-xl font-extrabold text-[#3E7B52]">
+        <StaggerItem className="card-hover p-4 rounded-2xl bg-surface border border-line">
+          <span className="text-[10px] font-mono uppercase tracking-wider text-ink-muted">
+            Est. Monthly Inflow
+          </span>
+          <div className="mt-1.5 font-mono text-xl font-extrabold text-success tabular-nums">
             <AnimatedNumber value={monthlyIncome} formatter={v => formatCurrency(v, currency)} />
           </div>
         </StaggerItem>
 
-        <StaggerItem className="card-hover p-4 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2]">
-          <span className="text-[10px] font-mono uppercase text-[#6E5648]">Due Within 7 Days</span>
-          <div className="mt-1.5 font-mono text-xl font-extrabold text-[#1E5A99]">
+        <StaggerItem className="card-hover p-4 rounded-2xl bg-surface border border-line">
+          <span className="text-[10px] font-mono uppercase tracking-wider text-ink-muted">
+            Due Within 7 Days
+          </span>
+          <div className="mt-1.5 font-mono text-xl font-extrabold text-accent tabular-nums">
             <AnimatedNumber value={dueSoonCount} formatter={v => `${Math.round(v)} items`} />
           </div>
         </StaggerItem>
 
-        <StaggerItem className="p-4 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] flex items-center justify-center">
+        <StaggerItem className="p-4 rounded-2xl bg-surface border border-line flex items-center justify-center">
           <button
+            type="button"
             onClick={onAdd}
-            className="btn-press w-full h-full min-h-[44px] flex items-center justify-center gap-2 rounded-xl bg-[#8EC5FF] hover:bg-[#73B6FC] text-[#3B2418] font-bold text-xs border border-[#3B2418]/15 shadow-xs"
+            className="btn-press w-full h-full min-h-[44px] flex items-center justify-center gap-2 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs"
           >
             <Plus className="w-4 h-4" />
             <span>Add Recurring Item</span>
@@ -135,17 +142,18 @@ export const FinanceRecurringTab: React.FC<Props> = ({
 
       {/* Recurring Schedules Grid */}
       {recurringPayments.length === 0 ? (
-        <div className="p-12 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] text-center space-y-3">
-          <div className="w-12 h-12 rounded-xl bg-[#F2E8DA] border border-[#D6C6B2] flex items-center justify-center mx-auto text-[#1E5A99]">
+        <div className="p-12 rounded-2xl bg-surface border border-line text-center space-y-3">
+          <div className="w-12 h-12 rounded-xl bg-canvas border border-line flex items-center justify-center mx-auto text-accent">
             <CalendarClock className="w-6 h-6" />
           </div>
-          <h3 className="text-sm font-bold text-[#3B2418]">No Recurring Bills or Income Scheduled</h3>
-          <p className="text-xs text-[#6E5648] max-w-md mx-auto">
+          <h3 className="text-sm font-bold text-ink">No Recurring Bills or Income Scheduled</h3>
+          <p className="text-xs text-ink-muted max-w-md mx-auto">
             Add monthly subscriptions, rent, internet & phone bills, or recurring income so you never miss an upcoming payment date.
           </p>
           <button
+            type="button"
             onClick={onAdd}
-            className="btn-press px-4 py-2 rounded-xl bg-[#8EC5FF] hover:bg-[#73B6FC] text-[#3B2418] font-bold text-xs border border-[#3B2418]/15"
+            className="btn-press min-h-[44px] px-4 py-2 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs"
           >
             + Schedule First Recurring Item
           </button>
@@ -170,8 +178,8 @@ export const FinanceRecurringTab: React.FC<Props> = ({
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.96 }}
                   transition={{ duration: 0.2, ease: MOMENTUM_EASE }}
-                  className={`card-hover p-5 rounded-2xl bg-[#FAF5ED] border shadow-xs flex flex-col justify-between space-y-4 ${
-                    rec.active ? 'border-[#D6C6B2]' : 'border-[#D6C6B2] opacity-70'
+                  className={`card-hover p-5 rounded-2xl bg-surface border border-line flex flex-col justify-between space-y-4 ${
+                    rec.active ? '' : 'opacity-70'
                   }`}
                 >
                   <div className="space-y-3">
@@ -180,89 +188,100 @@ export const FinanceRecurringTab: React.FC<Props> = ({
                         <div
                           className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${
                             rec.type === 'income'
-                              ? 'bg-[#3E7B52]/15 text-[#3E7B52]'
-                              : 'bg-[#3B2418] text-[#8EC5FF]'
+                              ? 'bg-success/15 text-success'
+                              : 'bg-brand text-accent'
                           }`}
                         >
                           {getKindIcon(rec.kind)}
                         </div>
                         <div className="min-w-0">
-                          <h4 className="text-sm font-bold text-[#3B2418] truncate">{rec.title}</h4>
-                          <span className="text-[10px] font-mono uppercase text-[#6E5648]">
-                            {KIND_LABELS[rec.kind]} • {rec.frequency}
+                          <h4 className="text-sm font-bold text-ink truncate">{rec.title}</h4>
+                          <span className="text-[10px] font-mono uppercase text-ink-muted">
+                            {KIND_LABELS[rec.kind]} · {rec.frequency}
                           </span>
                         </div>
                       </div>
 
                       <div className="flex items-center gap-1 shrink-0">
                         <button
+                          type="button"
                           onClick={() => onToggleActive(rec)}
-                          className="p-1.5 rounded-lg text-[#6E5648] hover:text-[#3B2418] hover:bg-[#F2E8DA] btn-press"
+                          className="p-1.5 rounded-lg text-ink-muted hover:text-ink hover:bg-surface-warm btn-press"
                           title={rec.active ? 'Pause schedule' : 'Resume schedule'}
+                          aria-label={
+                            rec.active
+                              ? `Pause schedule ${rec.title}`
+                              : `Resume schedule ${rec.title}`
+                          }
                         >
                           {rec.active ? (
                             <PauseCircle className="w-3.5 h-3.5" />
                           ) : (
-                            <PlayCircle className="w-3.5 h-3.5 text-[#3E7B52]" />
+                            <PlayCircle className="w-3.5 h-3.5 text-success" />
                           )}
                         </button>
                         <button
+                          type="button"
                           onClick={() => onEdit(rec)}
-                          className="p-1.5 rounded-lg text-[#6E5648] hover:text-[#1E5A99] hover:bg-[#F2E8DA] btn-press"
+                          className="p-1.5 rounded-lg text-ink-muted hover:text-accent hover:bg-surface-warm btn-press"
                           title="Edit schedule"
+                          aria-label={`Edit schedule ${rec.title}`}
                         >
                           <Edit2 className="w-3.5 h-3.5" />
                         </button>
                         <button
+                          type="button"
                           onClick={() => onDelete(rec)}
-                          className="p-1.5 rounded-lg text-[#6E5648] hover:text-[#B84A44] hover:bg-[#B84A44]/10 btn-press"
+                          className="p-1.5 rounded-lg text-ink-muted hover:text-danger hover:bg-danger/10 btn-press"
                           title="Delete schedule"
+                          aria-label={`Delete schedule ${rec.title}`}
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>
                       </div>
                     </div>
 
-                    <div className="flex items-baseline justify-between p-3 rounded-xl bg-[#F2E8DA] border border-[#D6C6B2]">
+                    <div className="flex items-baseline justify-between p-3 rounded-xl bg-canvas border border-line">
                       <span
-                        className={`font-mono text-lg font-extrabold ${
-                          rec.type === 'income' ? 'text-[#3E7B52]' : 'text-[#3B2418]'
+                        className={`font-mono text-lg font-extrabold tabular-nums ${
+                          rec.type === 'income' ? 'text-success' : 'text-ink'
                         }`}
                       >
                         {rec.type === 'income' ? '+' : '-'}
                         {formatCurrency(rec.amount, currency)}
                       </span>
-                      <span className="text-[11px] text-[#6E5648]">{rec.category}</span>
+                      <span className="text-[11px] text-ink-muted">{rec.category}</span>
                     </div>
 
                     <div className="flex items-center justify-between text-xs">
-                      <span className="font-mono text-[#6E5648]">Next: {rec.nextDueDate}</span>
+                      <span className="font-mono text-ink-muted tabular-nums">
+                        Next: {rec.nextDueDate}
+                      </span>
                       {rec.active ? (
                         <span
-                          className={`px-2 py-0.5 rounded font-semibold text-[10px] ${
+                          className={`font-semibold text-[11px] tabular-nums ${
                             days <= 0
-                              ? 'bg-[#B84A44]/15 text-[#9E3530]'
+                              ? 'text-danger'
                               : days <= 5
-                              ? 'bg-[#A36116]/15 text-[#A36116]'
-                              : 'bg-[#8EC5FF]/40 text-[#1E5A99]'
+                              ? 'text-warning'
+                              : 'text-accent'
                           }`}
                         >
                           {dueLabel}
                         </span>
                       ) : (
-                        <span className="px-2 py-0.5 rounded bg-[#EAE0D0] text-[#6E5648] text-[10px] font-semibold">
-                          Paused
-                        </span>
+                        <span className="text-ink-muted text-[11px] font-semibold">Paused</span>
                       )}
                     </div>
                   </div>
 
-                  <div className="pt-2 border-t border-[#D6C6B2]/70 flex items-center justify-between gap-2">
-                    <span className="text-[11px] text-[#6E5648]">{rec.paymentMethod}</span>
+                  <div className="pt-2.5 border-t border-line flex items-center justify-between gap-2">
+                    <span className="text-[11px] text-ink-muted truncate">{rec.paymentMethod}</span>
                     <button
+                      type="button"
                       onClick={() => handlePay(rec.id)}
                       disabled={payingId === rec.id}
-                      className="btn-press flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#8EC5FF] hover:bg-[#73B6FC] text-[#3B2418] text-xs font-bold border border-[#3B2418]/15 disabled:opacity-60"
+                      className="btn-press min-h-[36px] flex items-center gap-1 px-3 py-1.5 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink text-xs font-semibold disabled:opacity-60 whitespace-nowrap shrink-0"
                     >
                       <Check className="w-3.5 h-3.5" />
                       <span>{rec.type === 'income' ? 'Log Received' : 'Record Paid'}</span>

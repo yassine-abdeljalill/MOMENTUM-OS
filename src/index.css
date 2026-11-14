@@ -1,38 +1,119 @@
 @import "tailwindcss";
 
-@theme {
-  --color-main-cream: #F2E8DA;
-  --color-cream-elevated: #FAF5ED;
-  --color-cream-inset: #EAE0D0;
-  --color-cream-hover: #E3D5C1;
-  --color-secondary-espresso: #3B2418;
-  --color-espresso-light: #4D3021;
-  --color-espresso-border: #5A3927;
-  --color-detail-sky: #8EC5FF;
-  --color-detail-sky-hover: #73B6FC;
-  --color-detail-sky-deep: #1E5A99;
-  --color-brand-text: #3B2418;
-  --color-brand-muted: #6E5648;
-  --color-brand-border: #D6C6B2;
-  --color-status-success: #3E7B52;
-  --color-status-warning: #A36116;
-  --color-status-danger: #B84A44;
-  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --bg-canvas: #F7F1E8;
+  --bg-surface: #FFFFFF;
+  --bg-surface-warm: #EFE3D3;
+  --bg-surface-inset: #E6D5C1;
+  --bg-surface-hover: #DFCCB6;
+  --border-line: #DDD0BE;
+  --border-strong: #C9B59E;
+  --text-ink: #2B1F18;
+  --text-ink-muted: #6C5F54;
+  --brand-primary: #64432B;
+  --brand-primary-hover: #533622;
+  --brand-primary-ink: #F7F1E8;
+  --brand-accent: #D2925B;
+  --brand-accent-hover: #C27F46;
+  --brand-accent-ink: #2B1F18;
+  --brand-charcoal: #333C44;
+  --brand-sage: #868A7A;
+  --status-success: #3E7B52;
+  --status-warning: #B87222;
+  --status-danger: #B84A44;
+  --sidebar-bg: #543723;
+  --sidebar-surface: #64432B;
+  --sidebar-border: #785337;
+  --sidebar-ink: #F7F1E8;
+  --sidebar-muted: #D8C9B8;
+  --code-bg: #252A2E;
+  --code-ink: #F7F1E8;
+}
+
+.dark {
+  --bg-canvas: #252A2E;
+  --bg-surface: #2E353B;
+  --bg-surface-warm: #333C44;
+  --bg-surface-inset: #3B444D;
+  --bg-surface-hover: #444F5A;
+  --border-line: #404952;
+  --border-strong: #53606B;
+  --text-ink: #F7F1E8;
+  --text-ink-muted: #A9AC9E;
+  --brand-primary: #64432B;
+  --brand-primary-hover: #755035;
+  --brand-primary-ink: #F7F1E8;
+  --brand-accent: #D2925B;
+  --brand-accent-hover: #DF9F68;
+  --brand-accent-ink: #252A2E;
+  --brand-charcoal: #333C44;
+  --brand-sage: #868A7A;
+  --status-success: #5EA675;
+  --status-warning: #E09B4B;
+  --status-danger: #DF6B64;
+  --sidebar-bg: #1F2428;
+  --sidebar-surface: #2B3238;
+  --sidebar-border: #3B444D;
+  --sidebar-ink: #F7F1E8;
+  --sidebar-muted: #A9AC9E;
+  --code-bg: #1B1F23;
+  --code-ink: #F7F1E8;
+}
+
+@theme inline {
+  --color-canvas: var(--bg-canvas);
+  --color-surface: var(--bg-surface);
+  --color-surface-warm: var(--bg-surface-warm);
+  --color-surface-inset: var(--bg-surface-inset);
+  --color-surface-hover: var(--bg-surface-hover);
+  --color-line: var(--border-line);
+  --color-line-strong: var(--border-strong);
+  --color-ink: var(--text-ink);
+  --color-ink-muted: var(--text-ink-muted);
+  --color-brand: var(--brand-primary);
+  --color-brand-hover: var(--brand-primary-hover);
+  --color-brand-ink: var(--brand-primary-ink);
+  --color-accent: var(--brand-accent);
+  --color-accent-hover: var(--brand-accent-hover);
+  --color-accent-ink: var(--brand-accent-ink);
+  --color-charcoal: var(--brand-charcoal);
+  --color-sage: var(--brand-sage);
+  --color-success: var(--status-success);
+  --color-warning: var(--status-warning);
+  --color-danger: var(--status-danger);
+  --color-sidebar: var(--sidebar-bg);
+  --color-sidebar-surface: var(--sidebar-surface);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ink: var(--sidebar-ink);
+  --color-sidebar-muted: var(--sidebar-muted);
+
+  --font-heading: 'Manrope', 'DM Sans', system-ui, sans-serif;
+  --font-sans: 'DM Sans', system-ui, -apple-system, sans-serif;
   --font-serif: 'Playfair Display', Georgia, serif;
   --font-mono: 'JetBrains Mono', monospace;
 }
 
+html,
 body {
   font-family: var(--font-sans);
-  background-color: #F2E8DA;
-  color: #3B2418;
-  min-height: 100vh;
+  background-color: var(--bg-canvas);
+  color: var(--text-ink);
   margin: 0;
+  padding: 0;
   overflow-x: hidden;
-  padding-top: env(safe-area-inset-top);
-  padding-bottom: env(safe-area-inset-bottom);
-  padding-left: env(safe-area-inset-left);
-  padding-right: env(safe-area-inset-right);
+}
+
+h1,
+h2,
+h3,
+.font-heading {
+  font-family: var(--font-heading);
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
 }
 
 /* Custom subtle scrollbars */
@@ -44,11 +125,11 @@ body {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(59, 36, 24, 0.22);
+  background: color-mix(in srgb, var(--text-ink-muted) 32%, transparent);
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(142, 197, 255, 0.85);
+  background: color-mix(in srgb, var(--brand-accent) 75%, transparent);
 }
 
 /* Animation & Micro-Interaction Utilities */
@@ -94,7 +175,7 @@ body {
 }
 
 .btn-press:active:not(:disabled) {
-  transform: scale(0.96);
+  transform: scale(0.97);
 }
 
 .card-hover {
@@ -109,7 +190,10 @@ body {
 @media (hover: hover) {
   .card-hover:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px -8px rgba(59, 36, 24, 0.14);
+    box-shadow: 0 10px 24px -10px rgba(43, 31, 24, 0.16);
+  }
+  .dark .card-hover:hover {
+    box-shadow: 0 10px 24px -10px rgba(0, 0, 0, 0.45);
   }
 }
 
@@ -134,32 +218,35 @@ body {
 .learning-note-editor {
   outline: none;
   line-height: 1.65;
-  color: #3B2418;
+  color: var(--text-ink);
   font-size: 0.875rem;
 }
 
 .learning-note-editor h1 {
+  font-family: var(--font-heading);
   font-size: 1.375rem;
   font-weight: 700;
-  color: #3B2418;
+  color: var(--text-ink);
   margin-top: 0.9rem;
   margin-bottom: 0.45rem;
   line-height: 1.3;
 }
 
 .learning-note-editor h2 {
+  font-family: var(--font-heading);
   font-size: 1.125rem;
   font-weight: 700;
-  color: #3B2418;
+  color: var(--text-ink);
   margin-top: 0.75rem;
   margin-bottom: 0.35rem;
   line-height: 1.35;
 }
 
 .learning-note-editor h3 {
+  font-family: var(--font-heading);
   font-size: 0.975rem;
   font-weight: 700;
-  color: #1E5A99;
+  color: var(--brand-accent);
   margin-top: 0.65rem;
   margin-bottom: 0.25rem;
 }
@@ -187,22 +274,22 @@ body {
 .learning-note-editor code {
   font-family: var(--font-mono);
   font-size: 0.8em;
-  background-color: #EAE0D0;
-  color: #3B2418;
+  background-color: var(--bg-surface-inset);
+  color: var(--text-ink);
   padding: 0.1rem 0.35rem;
   border-radius: 0.3rem;
-  border: 1px solid #D6C6B2;
+  border: 1px solid var(--border-line);
 }
 
 .learning-note-editor pre {
   font-family: var(--font-mono);
   font-size: 0.8rem;
   line-height: 1.55;
-  background-color: #2B1A11;
-  color: #F2E8DA;
+  background-color: var(--code-bg);
+  color: var(--code-ink);
   padding: 0.85rem 1rem;
   border-radius: 0.65rem;
-  border: 1px solid #5A3927;
+  border: 1px solid var(--border-line);
   overflow-x: auto;
   margin: 0.65rem 0;
   white-space: pre-wrap;
@@ -235,12 +322,12 @@ body {
   margin-top: 0.25rem;
   width: 0.95rem;
   height: 0.95rem;
-  accent-color: #1E5A99;
+  accent-color: var(--brand-accent);
   cursor: pointer;
   flex-shrink: 0;
 }
 
 .learning-note-editor ul[data-type="checklist"] li[data-checked="true"] > span {
   text-decoration: line-through;
-  color: #6E5648;
+  color: var(--text-ink-muted);
 }

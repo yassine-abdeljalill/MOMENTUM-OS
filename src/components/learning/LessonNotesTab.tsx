@@ -66,7 +66,6 @@ export const LessonNotesTab: React.FC<{
     [notes, filteredNotes, selectedNoteId]
   );
 
-  // Ensure selectedNoteId tracks valid note when lesson changes or notes update
   useEffect(() => {
     if (!notes.length) {
       setSelectedNoteId(null);
@@ -112,7 +111,6 @@ export const LessonNotesTab: React.FC<{
     [showToast, updateLearningData]
   );
 
-  // Sync editor DOM ONLY when switching to a different note ID
   useEffect(() => {
     if (!activeNote) {
       if (editorRef.current) editorRef.current.innerHTML = '';
@@ -129,7 +127,6 @@ export const LessonNotesTab: React.FC<{
       setDraftTitle(activeNote.title);
       if (editorRef.current) {
         editorRef.current.innerHTML = activeNote.contentHtml || '<p></p>';
-        // Sync DOM checkbox checked property with data-checked attribute
         editorRef.current.querySelectorAll('ul[data-type="checklist"] li').forEach(li => {
           const cb = li.querySelector('input[type="checkbox"]') as HTMLInputElement | null;
           if (cb) {
@@ -142,7 +139,6 @@ export const LessonNotesTab: React.FC<{
     }
   }, [activeNote, flushPendingSave]);
 
-  // Warn before tab/window close if note has unsaved changes & flush on unmount
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
       if (activeDraftRef.current) {
@@ -175,7 +171,6 @@ export const LessonNotesTab: React.FC<{
 
   const handleEditorInput = () => {
     if (!activeNote || !editorRef.current) return;
-    // Ensure checkbox attributes reflect DOM checked state before serializing
     editorRef.current.querySelectorAll('ul[data-type="checklist"] li').forEach(li => {
       const cb = li.querySelector('input[type="checkbox"]') as HTMLInputElement | null;
       if (cb) {
@@ -255,7 +250,6 @@ export const LessonNotesTab: React.FC<{
     }
   };
 
-  // Rich-text toolbar actions
   const runFormat = (command: string, value?: string) => {
     if (!editorRef.current) return;
     editorRef.current.focus();
@@ -365,7 +359,6 @@ export const LessonNotesTab: React.FC<{
     const anchorEl =
       anchorNode instanceof HTMLElement ? anchorNode : anchorNode?.parentElement || null;
 
-    // Handle Tab inside <pre> code blocks cleanly
     const preEl = anchorEl?.closest('pre');
     if (preEl) {
       if (e.key === 'Tab') {
@@ -389,14 +382,12 @@ export const LessonNotesTab: React.FC<{
       }
     }
 
-    // Handle Enter inside custom checklist items
     const checklistLi = anchorEl?.closest('ul[data-type="checklist"] li');
     if (checklistLi && e.key === 'Enter') {
       e.preventDefault();
       const span = checklistLi.querySelector('span');
       const currentText = span?.textContent?.trim() || '';
       if (!currentText) {
-        // Exit checklist into clean paragraph
         const ul = checklistLi.parentElement;
         const p = document.createElement('p');
         p.innerHTML = '<br>';
@@ -446,20 +437,20 @@ export const LessonNotesTab: React.FC<{
       <div className="lg:col-span-4 space-y-3">
         <div className="flex items-center justify-between gap-2">
           <div className="relative flex-1">
-            <Search className="w-3.5 h-3.5 text-[#6E5648] absolute left-3 top-2.5" />
+            <Search className="w-3.5 h-3.5 text-ink-muted absolute left-3 top-2.5" />
             <input
               type="text"
               value={noteSearch}
               onChange={e => setNoteSearch(e.target.value)}
               placeholder="Search notes..."
-              className="w-full pl-8 pr-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
+              className="w-full pl-8 pr-3 py-2 rounded-xl bg-surface border border-line text-xs text-ink placeholder:text-ink-muted focus:ring-2 focus:ring-accent focus:outline-hidden"
             />
           </div>
           <button
             type="button"
             disabled={creatingNote}
             onClick={handleCreateNote}
-            className="btn-press flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[#8EC5FF] hover:bg-[#73B6FC] text-[#3B2418] border border-[#3B2418]/15 font-bold text-xs shrink-0"
+            className="btn-press flex items-center gap-1.5 px-3 py-2 min-h-[38px] sm:min-h-0 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs shrink-0 whitespace-nowrap"
           >
             <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
             <span>New Note</span>
@@ -468,16 +459,16 @@ export const LessonNotesTab: React.FC<{
 
         <div className="space-y-2 max-h-[540px] overflow-y-auto pr-1">
           {filteredNotes.length === 0 ? (
-            <div className="p-6 rounded-xl bg-[#F2E8DA] border border-[#D6C6B2] text-center space-y-2">
-              <StickyNote className="w-6 h-6 text-[#1E5A99] mx-auto opacity-70" />
-              <p className="text-xs font-medium text-[#3B2418]">
+            <div className="p-6 rounded-2xl bg-surface border border-line text-center space-y-2">
+              <StickyNote className="w-6 h-6 text-accent mx-auto opacity-80" />
+              <p className="text-xs font-medium text-ink">
                 {noteSearch ? 'No matching notes' : 'No notes in this lesson yet'}
               </p>
               {!noteSearch && (
                 <button
                   type="button"
                   onClick={handleCreateNote}
-                  className="btn-press text-xs font-semibold text-[#1E5A99] hover:underline"
+                  className="btn-press text-xs font-semibold text-accent hover:underline"
                 >
                   Create your first note
                 </button>
@@ -489,11 +480,19 @@ export const LessonNotesTab: React.FC<{
               return (
                 <div
                   key={note.id}
+                  role="button"
+                  tabIndex={0}
                   onClick={() => setSelectedNoteId(note.id)}
-                  className={`p-3.5 rounded-xl border cursor-pointer transition-all group space-y-1.5 ${
+                  onKeyDown={e => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      setSelectedNoteId(note.id);
+                    }
+                  }}
+                  className={`p-3.5 rounded-xl border cursor-pointer transition-colors group space-y-1.5 ${
                     isSelected
-                      ? 'bg-[#3B2418] border-[#5A3927] text-[#F2E8DA] shadow-sm'
-                      : 'bg-[#F2E8DA] border-[#D6C6B2] text-[#3B2418] hover:border-[#8EC5FF]'
+                      ? 'bg-brand border-brand text-brand-ink'
+                      : 'bg-surface border-line text-ink hover:border-accent'
                   }`}
                 >
                   <div className="flex items-start justify-between gap-2">
@@ -507,12 +506,13 @@ export const LessonNotesTab: React.FC<{
                         }}
                         className={`p-1 rounded transition-colors ${
                           note.isPinned
-                            ? 'text-[#8EC5FF]'
+                            ? 'text-accent'
                             : isSelected
-                            ? 'text-[#D8C7B4]/60 hover:text-[#8EC5FF]'
-                            : 'text-[#6E5648]/60 hover:text-[#1E5A99]'
+                            ? 'text-brand-ink/70 hover:text-accent'
+                            : 'text-ink-muted hover:text-accent'
                         }`}
                         title={note.isPinned ? 'Unpin note' : 'Pin note'}
+                        aria-label={note.isPinned ? 'Unpin note' : 'Pin note'}
                       >
                         <Pin className="w-3 h-3" />
                       </button>
@@ -524,10 +524,11 @@ export const LessonNotesTab: React.FC<{
                         }}
                         className={`p-1 rounded transition-colors ${
                           isSelected
-                            ? 'text-[#D8C7B4]/70 hover:text-[#F2E8DA]'
-                            : 'text-[#6E5648]/70 hover:text-[#B84A44]'
+                            ? 'text-brand-ink/70 hover:text-brand-ink'
+                            : 'text-ink-muted hover:text-danger'
                         }`}
                         title="Delete note"
+                        aria-label="Delete note"
                       >
                         <Trash2 className="w-3 h-3" />
                       </button>
@@ -535,14 +536,14 @@ export const LessonNotesTab: React.FC<{
                   </div>
                   <p
                     className={`text-[11px] line-clamp-2 leading-relaxed ${
-                      isSelected ? 'text-[#D8C7B4]' : 'text-[#6E5648]'
+                      isSelected ? 'text-brand-ink/80' : 'text-ink-muted'
                     }`}
                   >
                     {note.plainText || 'Empty note — click to start writing...'}
                   </p>
                   <div
                     className={`text-[10px] font-mono tabular-nums ${
-                      isSelected ? 'text-[#8EC5FF]' : 'text-[#6E5648]'
+                      isSelected ? 'text-accent' : 'text-ink-muted'
                     }`}
                   >
                     Updated {new Date(note.updatedAt).toLocaleDateString()}
@@ -557,46 +558,52 @@ export const LessonNotesTab: React.FC<{
       {/* Right Rich-Text Note Editor (8 cols) */}
       <div className="lg:col-span-8">
         {activeNote ? (
-          <div className="rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] shadow-xs overflow-hidden flex flex-col">
+          <div className="rounded-2xl bg-surface border border-line overflow-hidden flex flex-col">
             {/* Title & Auto-Save Status Bar */}
-            <div className="px-5 py-3.5 border-b border-[#D6C6B2] bg-[#F2E8DA] flex flex-wrap items-center justify-between gap-3">
+            <div className="px-5 py-3.5 border-b border-line bg-surface-warm flex flex-wrap items-center justify-between gap-3">
               <input
                 type="text"
                 value={draftTitle}
                 onChange={e => handleTitleChange(e.target.value)}
                 placeholder="Note title..."
-                className="flex-1 min-w-[200px] bg-transparent border-0 text-base font-bold text-[#3B2418] focus:outline-hidden"
+                className="flex-1 min-w-[200px] bg-transparent border-0 text-base font-bold text-ink placeholder:text-ink-muted focus:outline-hidden"
               />
               <div className="flex items-center gap-2 text-[11px] font-mono shrink-0">
                 {saveState === 'saving' && (
-                  <span className="flex items-center gap-1 text-[#1E5A99]">
+                  <span className="flex items-center gap-1 text-accent">
                     <Loader2 className="w-3 h-3 animate-spin" />
                     Saving...
                   </span>
                 )}
                 {saveState === 'dirty' && (
-                  <span className="text-[#A36116]">Unsaved edits...</span>
+                  <span className="text-warning">Unsaved edits...</span>
                 )}
                 {saveState === 'error' && (
                   <button
                     type="button"
                     onClick={() => void flushPendingSave()}
-                    className="text-[#B84A44] underline font-semibold"
+                    className="text-danger underline font-semibold"
                   >
                     Retry save
                   </button>
                 )}
                 {saveState === 'saved' && (
-                  <span className="flex items-center gap-1 text-[#3E7B52]">
+                  <span className="flex items-center gap-1 text-success">
                     <Check className="w-3 h-3" />
-                    Saved{lastSavedAt ? ` · ${new Date(lastSavedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}` : ''}
+                    Saved
+                    {lastSavedAt
+                      ? ` · ${new Date(lastSavedAt).toLocaleTimeString([], {
+                          hour: '2-digit',
+                          minute: '2-digit',
+                        })}`
+                      : ''}
                   </span>
                 )}
               </div>
             </div>
 
             {/* Formatting Toolbar */}
-            <div className="px-4 py-2 border-b border-[#D6C6B2] bg-[#EAE0D0]/65 flex flex-wrap items-center gap-1">
+            <div className="px-4 py-2 border-b border-line bg-canvas flex flex-wrap items-center gap-1">
               {[
                 { label: 'H1', title: 'Heading 1', Icon: Heading1, action: () => runFormat('formatBlock', 'H1') },
                 { label: 'H2', title: 'Heading 2', Icon: Heading2, action: () => runFormat('formatBlock', 'H2') },
@@ -608,13 +615,14 @@ export const LessonNotesTab: React.FC<{
                   onMouseDown={e => e.preventDefault()}
                   onClick={btn.action}
                   title={btn.title}
-                  className="btn-press p-1.5 rounded-md text-[#3B2418] hover:bg-[#FAF5ED] border border-transparent hover:border-[#D6C6B2] transition-colors"
+                  aria-label={btn.title}
+                  className="btn-press p-1.5 rounded-md text-ink hover:bg-surface border border-transparent hover:border-line transition-colors"
                 >
                   <btn.Icon className="w-3.5 h-3.5" />
                 </button>
               ))}
 
-              <span className="w-px h-4 bg-[#D6C6B2] mx-1" aria-hidden="true" />
+              <span className="w-px h-4 bg-line mx-1" aria-hidden="true" />
 
               {[
                 { title: 'Bold (Ctrl+B)', Icon: Bold, action: () => runFormat('bold') },
@@ -627,20 +635,22 @@ export const LessonNotesTab: React.FC<{
                   onMouseDown={e => e.preventDefault()}
                   onClick={btn.action}
                   title={btn.title}
-                  className="btn-press p-1.5 rounded-md text-[#3B2418] hover:bg-[#FAF5ED] border border-transparent hover:border-[#D6C6B2] transition-colors"
+                  aria-label={btn.title}
+                  className="btn-press p-1.5 rounded-md text-ink hover:bg-surface border border-transparent hover:border-line transition-colors"
                 >
                   <btn.Icon className="w-3.5 h-3.5" />
                 </button>
               ))}
 
-              <span className="w-px h-4 bg-[#D6C6B2] mx-1" aria-hidden="true" />
+              <span className="w-px h-4 bg-line mx-1" aria-hidden="true" />
 
               <button
                 type="button"
                 onMouseDown={e => e.preventDefault()}
                 onClick={() => runFormat('insertUnorderedList')}
                 title="Bulleted list"
-                className="btn-press p-1.5 rounded-md text-[#3B2418] hover:bg-[#FAF5ED] border border-transparent hover:border-[#D6C6B2] transition-colors"
+                aria-label="Bulleted list"
+                className="btn-press p-1.5 rounded-md text-ink hover:bg-surface border border-transparent hover:border-line transition-colors"
               >
                 <List className="w-3.5 h-3.5" />
               </button>
@@ -649,7 +659,8 @@ export const LessonNotesTab: React.FC<{
                 onMouseDown={e => e.preventDefault()}
                 onClick={() => runFormat('insertOrderedList')}
                 title="Numbered list"
-                className="btn-press p-1.5 rounded-md text-[#3B2418] hover:bg-[#FAF5ED] border border-transparent hover:border-[#D6C6B2] transition-colors"
+                aria-label="Numbered list"
+                className="btn-press p-1.5 rounded-md text-ink hover:bg-surface border border-transparent hover:border-line transition-colors"
               >
                 <ListOrdered className="w-3.5 h-3.5" />
               </button>
@@ -658,20 +669,21 @@ export const LessonNotesTab: React.FC<{
                 onMouseDown={e => e.preventDefault()}
                 onClick={insertChecklistItem}
                 title="Insert Checklist"
-                className="btn-press flex items-center gap-1 px-2 py-1 rounded-md text-[11px] font-medium text-[#3B2418] hover:bg-[#FAF5ED] border border-transparent hover:border-[#D6C6B2] transition-colors"
+                className="btn-press flex items-center gap-1 px-2 py-1 rounded-md text-[11px] font-medium text-ink hover:bg-surface border border-transparent hover:border-line transition-colors"
               >
-                <CheckSquare className="w-3.5 h-3.5 text-[#1E5A99]" />
+                <CheckSquare className="w-3.5 h-3.5 text-accent" />
                 <span>Checklist</span>
               </button>
 
-              <span className="w-px h-4 bg-[#D6C6B2] mx-1" aria-hidden="true" />
+              <span className="w-px h-4 bg-line mx-1" aria-hidden="true" />
 
               <button
                 type="button"
                 onMouseDown={e => e.preventDefault()}
                 onClick={insertInlineCode}
                 title="Inline Code"
-                className="btn-press p-1.5 rounded-md text-[#3B2418] hover:bg-[#FAF5ED] border border-transparent hover:border-[#D6C6B2] transition-colors"
+                aria-label="Inline Code"
+                className="btn-press p-1.5 rounded-md text-ink hover:bg-surface border border-transparent hover:border-line transition-colors"
               >
                 <Code className="w-3.5 h-3.5" />
               </button>
@@ -680,9 +692,9 @@ export const LessonNotesTab: React.FC<{
                 onMouseDown={e => e.preventDefault()}
                 onClick={insertCodeBlock}
                 title="Code Block (Shift+Enter to exit)"
-                className="btn-press flex items-center gap-1 px-2 py-1 rounded-md text-[11px] font-medium text-[#3B2418] hover:bg-[#FAF5ED] border border-transparent hover:border-[#D6C6B2] transition-colors"
+                className="btn-press flex items-center gap-1 px-2 py-1 rounded-md text-[11px] font-medium text-ink hover:bg-surface border border-transparent hover:border-line transition-colors"
               >
-                <FileCode2 className="w-3.5 h-3.5 text-[#1E5A99]" />
+                <FileCode2 className="w-3.5 h-3.5 text-accent" />
                 <span>Code Block</span>
               </button>
             </div>
@@ -700,28 +712,28 @@ export const LessonNotesTab: React.FC<{
                   void flushPendingSave();
                 }
               }}
-              className="learning-note-editor min-h-[380px] p-5 bg-[#FAF5ED] overflow-y-auto"
+              className="learning-note-editor min-h-[380px] p-5 bg-surface overflow-y-auto"
               aria-label="Lesson note rich text editor"
             />
 
-            <div className="px-4 py-2 border-t border-[#D6C6B2] bg-[#F2E8DA] text-[11px] text-[#6E5648] flex flex-wrap items-center justify-between gap-2">
+            <div className="px-4 py-2 border-t border-line bg-surface-warm text-[11px] text-ink-muted flex flex-wrap items-center justify-between gap-2">
               <span>Auto-save enabled · Inside code blocks press Tab to indent and Shift+Enter to exit.</span>
               <span className="font-mono">Ctrl/Cmd + S to save now</span>
             </div>
           </div>
         ) : (
-          <div className="p-12 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] text-center space-y-3">
-            <StickyNote className="w-8 h-8 text-[#1E5A99] mx-auto opacity-75" />
+          <div className="p-12 rounded-2xl bg-surface border border-line text-center space-y-3">
+            <StickyNote className="w-8 h-8 text-accent mx-auto opacity-80" />
             <div className="space-y-1">
-              <h3 className="text-sm font-bold text-[#3B2418]">Capture Structured Study Notes</h3>
-              <p className="text-xs text-[#6E5648] max-w-md mx-auto">
-                Write lecture summaries, interactive checklists, and cybersecurity or programming code blocks with automatic saving.
+              <h3 className="text-sm font-bold text-ink">Capture Structured Study Notes</h3>
+              <p className="text-xs text-ink-muted max-w-md mx-auto">
+                Write lecture summaries, interactive checklists, and technical code blocks with automatic saving.
               </p>
             </div>
             <button
               type="button"
               onClick={handleCreateNote}
-              className="btn-press inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#8EC5FF] hover:bg-[#73B6FC] text-[#3B2418] border border-[#3B2418]/15 font-bold text-xs shadow-xs"
+              className="btn-press inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs"
             >
               <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
               <span>Create First Note</span>

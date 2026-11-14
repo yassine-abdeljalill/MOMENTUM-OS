@@ -3,6 +3,8 @@ import { AnimatePresence, MotionConfig } from 'motion/react';
 import { AppProvider, useApp } from './lib/context';
 import { Sidebar } from './components/layout/Sidebar';
 import { Header } from './components/layout/Header';
+import { MobileNav } from './components/layout/MobileNav';
+import { IntroSplash } from './components/common/IntroSplash';
 import { OverviewView } from './components/views/OverviewView';
 import { TodayView } from './components/views/TodayView';
 import { TasksView } from './components/views/TasksView';
@@ -73,17 +75,21 @@ const MainContent: React.FC = () => {
   };
 
   return (
-    <div className="flex h-screen w-screen overflow-hidden bg-[#F2E8DA] text-[#3B2418]">
-      {/* Persistent Left Sidebar */}
+    <div className="flex h-dvh w-screen overflow-hidden bg-canvas text-ink">
+      {/* Animated Intro Splash (session-gated, bypassed with ?autostart=1) */}
+      <IntroSplash />
+
+      {/* Desktop Grouped Sidebar */}
       <Sidebar />
 
       {/* Main App Canvas */}
       <div className="flex-1 flex flex-col min-w-0 h-full overflow-hidden">
-        {/* Top Header */}
         <Header />
 
-        {/* Dynamic Scrollable Page Content */}
-        <main ref={mainRef} className="flex-1 overflow-y-auto p-4 md:p-8 pt-16 md:pt-8 bg-[#F2E8DA]">
+        <main
+          ref={mainRef}
+          className="flex-1 overflow-y-auto px-4 pt-4 pb-24 md:p-7 bg-canvas"
+        >
           <AnimatePresence mode="wait" initial={false}>
             <PageTransition viewKey={currentView}>
               {renderCurrentView()}
@@ -91,6 +97,9 @@ const MainContent: React.FC = () => {
           </AnimatePresence>
         </main>
       </div>
+
+      {/* Mobile Bottom Navigation & More Hub */}
+      <MobileNav />
 
       {/* Global Modals & Overlays */}
       <GlobalSearchModal />

@@ -40,7 +40,13 @@ import {
   StaggerContainer,
   StaggerItem,
 } from '../common/MotionPrimitives';
-import { ConfirmDeleteDialog, LessonModal, ModuleIconView, StatusLabel } from './LearningShared';
+import {
+  ConfirmDeleteDialog,
+  DARK_SWATCH_HEXES,
+  LessonModal,
+  ModuleIconView,
+  StatusLabel,
+} from './LearningShared';
 import { LessonTasksTab } from './LessonTasksTab';
 import { LessonResourcesTab } from './LessonResourcesTab';
 
@@ -84,22 +90,11 @@ export const ModuleDetailPage: React.FC<{
   );
 
   const stats = useMemo(() => computeModuleStats(orderedLessons), [orderedLessons]);
+  const moduleLevelTasks = useMemo(() => tasks.filter(t => !t.lessonId), [tasks]);
+  const lessonLevelTasks = useMemo(() => tasks.filter(t => Boolean(t.lessonId)), [tasks]);
+  const moduleLevelResources = useMemo(() => resources.filter(r => !r.lessonId), [resources]);
 
-  const moduleLevelTasks = useMemo(
-    () => tasks.filter(t => !t.lessonId),
-    [tasks]
-  );
-  const lessonLevelTasks = useMemo(
-    () => tasks.filter(t => Boolean(t.lessonId)),
-    [tasks]
-  );
-  const moduleLevelResources = useMemo(
-    () => resources.filter(r => !r.lessonId),
-    [resources]
-  );
-
-  const isDarkBg =
-    module.color === '#3B2418' || module.color === '#4D3021' || module.color === '#1E5A99';
+  const isDarkBg = DARK_SWATCH_HEXES.has(module.color.toUpperCase());
 
   const handleModuleStatusChange = async (nextStatus: LearningStatus) => {
     if (nextStatus === module.status) return;
@@ -160,7 +155,6 @@ export const ModuleDetailPage: React.FC<{
 
   const persistLessonOrder = async (reordered: LearningLesson[]) => {
     const orderedIds = reordered.map(l => l.id);
-    // Optimistically update local order
     const reindexedMap = new Map<string, number>();
     orderedIds.forEach((id, idx) => reindexedMap.set(id, idx));
 
@@ -219,25 +213,25 @@ export const ModuleDetailPage: React.FC<{
   };
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto pb-16">
+    <div className="space-y-6 max-w-7xl mx-auto pb-8">
       {/* Breadcrumb & Back */}
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <nav className="flex items-center gap-1.5 text-xs text-[#6E5648]" aria-label="Breadcrumb">
+        <nav className="flex items-center gap-1.5 text-xs text-ink-muted" aria-label="Breadcrumb">
           <button
             type="button"
             onClick={onBackToDashboard}
-            className="hover:text-[#3B2418] font-medium transition-colors"
+            className="hover:text-ink font-medium transition-colors"
           >
             Learning
           </button>
           <span aria-hidden="true">/</span>
-          <span className="font-bold text-[#3B2418] truncate max-w-[300px]">{module.title}</span>
+          <span className="font-semibold text-ink truncate max-w-[260px]">{module.title}</span>
         </nav>
 
         <button
           type="button"
           onClick={onBackToDashboard}
-          className="btn-press inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#FAF5ED] hover:bg-[#EAE0D0] border border-[#D6C6B2] text-xs font-semibold text-[#3B2418]"
+          className="btn-press inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-surface hover:bg-surface-warm border border-line text-xs font-medium text-ink"
         >
           <ArrowLeft className="w-3.5 h-3.5" />
           <span>All Modules</span>
@@ -245,31 +239,33 @@ export const ModuleDetailPage: React.FC<{
       </div>
 
       {/* Module Hero Summary Card */}
-      <div className="p-6 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] shadow-xs space-y-5">
+      <div className="p-5 sm:p-6 rounded-2xl bg-surface border border-line space-y-5">
         <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-4">
           <div className="flex items-start gap-4 min-w-0">
             <div
-              className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 border border-[#3B2418]/15 shadow-xs"
+              className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 border border-black/10"
               style={{ backgroundColor: module.color }}
             >
               <ModuleIconView
                 icon={module.icon}
-                className={`w-6 h-6 ${isDarkBg ? 'text-[#F2E8DA]' : 'text-[#3B2418]'}`}
+                className={`w-6 h-6 ${isDarkBg ? 'text-[#F7F1E8]' : 'text-[#2B1F18]'}`}
               />
             </div>
 
-            <div className="min-w-0 space-y-1.5">
+            <div className="min-w-0 space-y-1">
               <div className="flex flex-wrap items-center gap-2">
                 <StatusLabel status={module.status} compact />
-                <span className="text-[11px] font-mono text-[#6E5648] tabular-nums">
+                <span aria-hidden="true" className="text-ink-muted">·</span>
+                <span className="text-xs font-mono text-ink-muted tabular-nums">
                   {stats.completed}/{stats.total} lessons completed
                 </span>
               </div>
-              <h1 className="text-xl md:text-2xl font-bold text-[#3B2418] tracking-tight">
+              <h1 className="text-xl md:text-2xl font-bold text-ink tracking-tight">
                 {module.title}
               </h1>
-              <p className="text-xs text-[#6E5648] leading-relaxed max-w-3xl">
-                {module.description || 'Organize lectures, notes, study files, and practical labs for this module.'}
+              <p className="text-xs text-ink-muted leading-relaxed max-w-3xl">
+                {module.description ||
+                  'Organize lectures, notes, study files, and practical labs for this module.'}
               </p>
             </div>
           </div>
@@ -278,7 +274,7 @@ export const ModuleDetailPage: React.FC<{
             <select
               value={module.status}
               onChange={e => void handleModuleStatusChange(e.target.value as LearningStatus)}
-              className="px-3 py-2 rounded-xl bg-[#F2E8DA] border border-[#D6C6B2] text-xs font-semibold text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
+              className="px-3 py-2 rounded-xl bg-canvas border border-line text-xs font-medium text-ink focus:ring-2 focus:ring-accent focus:outline-hidden"
               aria-label="Module status"
             >
               <option value="not_started">Not Started</option>
@@ -289,7 +285,7 @@ export const ModuleDetailPage: React.FC<{
             <button
               type="button"
               onClick={() => onEditModule(module)}
-              className="btn-press p-2 rounded-xl bg-[#F2E8DA] hover:bg-[#EAE0D0] border border-[#D6C6B2] text-[#3B2418]"
+              className="btn-press p-2 rounded-xl bg-canvas hover:bg-surface-warm border border-line text-ink"
               title="Edit module"
               aria-label="Edit module"
             >
@@ -299,7 +295,7 @@ export const ModuleDetailPage: React.FC<{
             <button
               type="button"
               onClick={() => onDeleteModule(module)}
-              className="btn-press p-2 rounded-xl bg-[#F2E8DA] hover:bg-[#B84A44]/10 border border-[#D6C6B2] text-[#6E5648] hover:text-[#B84A44]"
+              className="btn-press p-2 rounded-xl bg-canvas hover:bg-danger/10 border border-line text-ink-muted hover:text-danger"
               title="Delete module"
               aria-label="Delete module"
             >
@@ -312,53 +308,53 @@ export const ModuleDetailPage: React.FC<{
                 setEditingLesson(null);
                 setLessonModalOpen(true);
               }}
-              className="btn-press group inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#8EC5FF] hover:bg-[#73B6FC] text-[#3B2418] border border-[#3B2418]/15 font-bold text-xs shadow-xs whitespace-nowrap"
+              className="btn-press group inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs whitespace-nowrap"
             >
-              <Plus className="w-4 h-4 stroke-[2.5] transition-transform duration-200 group-hover:rotate-90" />
+              <Plus className="w-4 h-4 stroke-[2.25] transition-transform duration-200 group-hover:rotate-90" />
               <span>Add Lesson</span>
             </button>
           </div>
         </div>
 
         {/* 4 Module KPI Metrics */}
-        <StaggerContainer className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2 border-t border-[#D6C6B2]">
-          <div className="p-3.5 rounded-xl bg-[#F2E8DA] border border-[#D6C6B2]">
-            <span className="text-[10px] font-mono uppercase text-[#6E5648]">Total Lessons</span>
-            <div className="font-mono text-2xl font-bold text-[#3B2418] tabular-nums mt-0.5">
+        <StaggerContainer className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4 border-t border-line">
+          <div className="p-3.5 rounded-xl bg-surface-warm/50 border border-line">
+            <span className="text-[11px] font-mono uppercase text-ink-muted">Total Lessons</span>
+            <div className="font-mono text-2xl font-bold text-ink tabular-nums mt-0.5">
               <AnimatedNumber value={stats.total} />
             </div>
           </div>
-          <div className="p-3.5 rounded-xl bg-[#F2E8DA] border border-[#D6C6B2]">
-            <span className="text-[10px] font-mono uppercase text-[#6E5648]">Completed</span>
-            <div className="font-mono text-2xl font-bold text-[#3E7B52] tabular-nums mt-0.5">
+          <div className="p-3.5 rounded-xl bg-surface-warm/50 border border-line">
+            <span className="text-[11px] font-mono uppercase text-ink-muted">Completed</span>
+            <div className="font-mono text-2xl font-bold text-success tabular-nums mt-0.5">
               <AnimatedNumber value={stats.completed} />
             </div>
           </div>
-          <div className="p-3.5 rounded-xl bg-[#F2E8DA] border border-[#D6C6B2]">
-            <span className="text-[10px] font-mono uppercase text-[#6E5648]">Remaining</span>
-            <div className="font-mono text-2xl font-bold text-[#1E5A99] tabular-nums mt-0.5">
+          <div className="p-3.5 rounded-xl bg-surface-warm/50 border border-line">
+            <span className="text-[11px] font-mono uppercase text-ink-muted">Remaining</span>
+            <div className="font-mono text-2xl font-bold text-accent tabular-nums mt-0.5">
               <AnimatedNumber value={stats.remaining} />
             </div>
           </div>
-          <div className="p-3.5 rounded-xl bg-[#F2E8DA] border border-[#D6C6B2] flex flex-col justify-between">
+          <div className="p-3.5 rounded-xl bg-surface-warm/50 border border-line flex flex-col justify-between">
             <div className="flex items-center justify-between gap-2">
-              <span className="text-[10px] font-mono uppercase text-[#6E5648]">Module Progress</span>
-              <span className="font-mono text-sm font-bold text-[#1E5A99] tabular-nums">
+              <span className="text-[11px] font-mono uppercase text-ink-muted">Progress</span>
+              <span className="font-mono text-sm font-bold text-accent tabular-nums">
                 {stats.progressPct}%
               </span>
             </div>
             <div className="mt-2">
               <AnimatedProgressBar
                 percentage={stats.progressPct}
-                trackClassName="w-full h-2 rounded-full bg-[#EAE0D0] overflow-hidden"
-                fillClassName="h-full bg-[#3E7B52] rounded-full"
+                trackClassName="w-full h-1.5 rounded-full bg-surface-inset overflow-hidden"
+                fillClassName="h-full bg-success rounded-full"
               />
             </div>
           </div>
         </StaggerContainer>
 
         {/* Sub-Tabs */}
-        <div className="flex flex-wrap items-center gap-1.5 pt-2 border-t border-[#D6C6B2]">
+        <div className="flex flex-wrap items-center gap-1.5 pt-3 border-t border-line">
           {([
             { id: 'lessons', label: 'Lessons', count: orderedLessons.length, Icon: BookOpen },
             { id: 'tasks', label: 'Tasks & Assignments', count: tasks.length, Icon: CheckSquare },
@@ -371,28 +367,22 @@ export const ModuleDetailPage: React.FC<{
                 key={tab.id}
                 type="button"
                 onClick={() => setSubTab(tab.id)}
-                className={`relative z-10 inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs transition-colors whitespace-nowrap ${
+                className={`relative z-10 inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs transition-colors whitespace-nowrap ${
                   isActive
-                    ? 'text-[#3B2418] font-bold'
-                    : 'text-[#6E5648] hover:text-[#3B2418] font-medium hover:bg-[#F2E8DA]'
+                    ? 'text-accent-ink font-semibold'
+                    : 'text-ink-muted hover:text-ink font-medium hover:bg-surface-warm'
                 }`}
               >
                 {isActive && (
                   <motion.span
                     layoutId="module-detail-tab-pill"
                     transition={{ duration: prefersReduced ? 0.01 : 0.2, ease: MOMENTUM_EASE }}
-                    className="absolute inset-0 bg-[#8EC5FF] rounded-xl shadow-xs -z-10 border border-[#3B2418]/10"
+                    className="absolute inset-0 bg-accent rounded-xl -z-10"
                   />
                 )}
                 <Icon className="w-3.5 h-3.5" />
                 <span>{tab.label}</span>
-                <span
-                  className={`font-mono text-[10px] px-1.5 py-0.2 rounded-md tabular-nums ${
-                    isActive ? 'bg-[#3B2418] text-[#8EC5FF]' : 'bg-[#EAE0D0] text-[#3B2418]'
-                  }`}
-                >
-                  {tab.count}
-                </span>
+                <span className="font-mono text-[11px] opacity-80 tabular-nums">{tab.count}</span>
               </button>
             );
           })}
@@ -411,11 +401,11 @@ export const ModuleDetailPage: React.FC<{
           {subTab === 'lessons' && (
             <div className="space-y-3">
               {orderedLessons.length === 0 ? (
-                <div className="p-12 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] text-center space-y-3">
-                  <BookOpen className="w-9 h-9 text-[#1E5A99] mx-auto opacity-75" />
+                <div className="p-10 rounded-2xl bg-surface border border-line text-center space-y-3">
+                  <BookOpen className="w-9 h-9 text-accent mx-auto opacity-75" />
                   <div className="space-y-1">
-                    <h3 className="text-sm font-bold text-[#3B2418]">No lessons in this module yet</h3>
-                    <p className="text-xs text-[#6E5648] max-w-md mx-auto">
+                    <h3 className="text-sm font-semibold text-ink">No lessons in this module yet</h3>
+                    <p className="text-xs text-ink-muted max-w-md mx-auto">
                       Add structured lessons with instructor details, lecture dates, rich-text notes, resources, and practical exercises.
                     </p>
                   </div>
@@ -425,16 +415,16 @@ export const ModuleDetailPage: React.FC<{
                       setEditingLesson(null);
                       setLessonModalOpen(true);
                     }}
-                    className="btn-press inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#8EC5FF] hover:bg-[#73B6FC] text-[#3B2418] border border-[#3B2418]/15 font-bold text-xs shadow-xs"
+                    className="btn-press inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs"
                   >
-                    <Plus className="w-4 h-4 stroke-[2.5]" />
+                    <Plus className="w-4 h-4 stroke-[2.25]" />
                     <span>Add First Lesson</span>
                   </button>
                 </div>
               ) : (
                 <>
-                  <div className="flex items-center justify-between px-1 text-[11px] text-[#6E5648]">
-                    <span>Drag lessons or use the arrow buttons to reorder the module syllabus.</span>
+                  <div className="flex items-center justify-between px-1 text-xs text-ink-muted">
+                    <span>Drag lessons or use arrows to reorder the module syllabus.</span>
                     <span className="font-mono tabular-nums">{orderedLessons.length} lessons</span>
                   </div>
 
@@ -475,49 +465,50 @@ export const ModuleDetailPage: React.FC<{
                               setDraggedLessonId(null);
                               setDragOverLessonId(null);
                             }}
-                            onClick={() => onOpenLesson(lesson.id)}
-                            className={`p-4 rounded-xl border transition-all cursor-pointer flex flex-col sm:flex-row sm:items-center justify-between gap-3 card-hover ${
+                            className={`p-4 rounded-2xl border transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3 card-hover ${
                               isDragTarget
-                                ? 'bg-[#8EC5FF]/20 border-[#1E5A99]'
+                                ? 'bg-accent/15 border-accent'
                                 : isDone
-                                ? 'bg-[#EAE0D0]/65 border-[#D6C6B2]'
-                                : 'bg-[#FAF5ED] border-[#D6C6B2] hover:border-[#8EC5FF]'
+                                ? 'bg-surface/70 border-line opacity-80'
+                                : 'bg-surface border-line hover:border-accent/60'
                             }`}
                           >
-                            <div className="flex items-start sm:items-center gap-3 min-w-0">
+                            <div className="flex items-start sm:items-center gap-3 min-w-0 flex-1">
                               <span
-                                className="text-[#6E5648] hover:text-[#3B2418] cursor-grab active:cursor-grabbing shrink-0 hidden sm:inline-flex"
+                                className="text-ink-muted hover:text-ink cursor-grab active:cursor-grabbing shrink-0 hidden sm:inline-flex"
                                 title="Drag to reorder"
-                                onClick={e => e.stopPropagation()}
                               >
                                 <GripVertical className="w-4 h-4" />
                               </span>
 
-                              <div onClick={e => e.stopPropagation()} className="shrink-0">
-                                <AnimatedCheckButton
-                                  checked={isDone}
-                                  size="md"
-                                  onClick={() => void handleToggleLessonCompleted(lesson)}
-                                />
-                              </div>
+                              <AnimatedCheckButton
+                                checked={isDone}
+                                size="md"
+                                onClick={() => void handleToggleLessonCompleted(lesson)}
+                                ariaLabel={isDone ? `Mark "${lesson.title}" incomplete` : `Complete "${lesson.title}"`}
+                              />
 
-                              <span className="font-mono text-xs font-bold text-[#1E5A99] tabular-nums shrink-0 w-6">
+                              <span className="font-mono text-xs font-bold text-accent tabular-nums shrink-0 w-6">
                                 {String(idx + 1).padStart(2, '0')}
                               </span>
 
-                              <div className="min-w-0 space-y-1">
+                              <button
+                                type="button"
+                                onClick={() => onOpenLesson(lesson.id)}
+                                className="min-w-0 flex-1 text-left space-y-1"
+                              >
                                 <div className="flex flex-wrap items-center gap-2">
-                                  <h3
-                                    className={`text-sm font-bold truncate ${
-                                      isDone ? 'line-through text-[#6E5648]' : 'text-[#3B2418]'
+                                  <span
+                                    className={`text-sm font-semibold truncate ${
+                                      isDone ? 'line-through text-ink-muted' : 'text-ink'
                                     }`}
                                   >
                                     {lesson.title}
-                                  </h3>
+                                  </span>
                                   <StatusLabel status={lesson.status} compact />
                                 </div>
 
-                                <div className="flex flex-wrap items-center gap-x-2.5 gap-y-0.5 text-[11px] text-[#6E5648]">
+                                <div className="flex flex-wrap items-center gap-x-2.5 gap-y-0.5 text-[11px] text-ink-muted">
                                   {lesson.teacherName && (
                                     <span className="inline-flex items-center gap-1">
                                       <User className="w-3 h-3" />
@@ -536,32 +527,29 @@ export const ModuleDetailPage: React.FC<{
                                   </span>
                                   <span aria-hidden="true">·</span>
                                   <span className="inline-flex items-center gap-1 font-mono tabular-nums">
-                                    <StickyNote className="w-3 h-3 text-[#1E5A99]" />
+                                    <StickyNote className="w-3 h-3 text-accent" />
                                     {lessonNotesCount} note{lessonNotesCount === 1 ? '' : 's'}
                                   </span>
                                   <span className="inline-flex items-center gap-1 font-mono tabular-nums">
-                                    <FolderOpen className="w-3 h-3 text-[#1E5A99]" />
+                                    <FolderOpen className="w-3 h-3 text-accent" />
                                     {lessonResCount} file{lessonResCount === 1 ? '' : 's'}
                                   </span>
                                   <span className="inline-flex items-center gap-1 font-mono tabular-nums">
-                                    <CheckSquare className="w-3 h-3 text-[#1E5A99]" />
+                                    <CheckSquare className="w-3 h-3 text-accent" />
                                     {lessonTasksCount} task{lessonTasksCount === 1 ? '' : 's'}
                                   </span>
                                 </div>
-                              </div>
+                              </button>
                             </div>
 
-                            <div
-                              className="flex items-center gap-1 shrink-0 self-end sm:self-center"
-                              onClick={e => e.stopPropagation()}
-                            >
+                            <div className="flex items-center gap-1 shrink-0 self-end sm:self-center">
                               <button
                                 type="button"
                                 disabled={idx === 0}
                                 onClick={() => handleMoveLesson(lesson.id, -1)}
-                                className="btn-press p-1.5 rounded-lg text-[#6E5648] hover:text-[#3B2418] hover:bg-[#EAE0D0] disabled:opacity-30"
+                                className="btn-press p-1.5 rounded-lg text-ink-muted hover:text-ink hover:bg-surface-warm disabled:opacity-30"
                                 title="Move up"
-                                aria-label="Move lesson up"
+                                aria-label={`Move "${lesson.title}" up`}
                               >
                                 <ArrowUp className="w-3.5 h-3.5" />
                               </button>
@@ -569,9 +557,9 @@ export const ModuleDetailPage: React.FC<{
                                 type="button"
                                 disabled={idx === orderedLessons.length - 1}
                                 onClick={() => handleMoveLesson(lesson.id, 1)}
-                                className="btn-press p-1.5 rounded-lg text-[#6E5648] hover:text-[#3B2418] hover:bg-[#EAE0D0] disabled:opacity-30"
+                                className="btn-press p-1.5 rounded-lg text-ink-muted hover:text-ink hover:bg-surface-warm disabled:opacity-30"
                                 title="Move down"
-                                aria-label="Move lesson down"
+                                aria-label={`Move "${lesson.title}" down`}
                               >
                                 <ArrowDown className="w-3.5 h-3.5" />
                               </button>
@@ -581,25 +569,25 @@ export const ModuleDetailPage: React.FC<{
                                   setEditingLesson(lesson);
                                   setLessonModalOpen(true);
                                 }}
-                                className="btn-press p-1.5 rounded-lg text-[#6E5648] hover:text-[#3B2418] hover:bg-[#EAE0D0]"
+                                className="btn-press p-1.5 rounded-lg text-ink-muted hover:text-ink hover:bg-surface-warm"
                                 title="Edit lesson"
-                                aria-label="Edit lesson"
+                                aria-label={`Edit "${lesson.title}"`}
                               >
                                 <Edit3 className="w-3.5 h-3.5" />
                               </button>
                               <button
                                 type="button"
                                 onClick={() => setDeleteLessonTarget(lesson)}
-                                className="btn-press p-1.5 rounded-lg text-[#6E5648] hover:text-[#B84A44] hover:bg-[#EAE0D0]"
+                                className="btn-press p-1.5 rounded-lg text-ink-muted hover:text-danger hover:bg-surface-warm"
                                 title="Delete lesson"
-                                aria-label="Delete lesson"
+                                aria-label={`Delete "${lesson.title}"`}
                               >
                                 <Trash2 className="w-3.5 h-3.5" />
                               </button>
                               <button
                                 type="button"
                                 onClick={() => onOpenLesson(lesson.id)}
-                                className="btn-press ml-1 inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-[#F2E8DA] hover:bg-[#8EC5FF]/35 border border-[#D6C6B2] text-xs font-semibold text-[#3B2418]"
+                                className="btn-press ml-1 inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-surface-warm hover:bg-accent hover:text-accent-ink border border-line text-xs font-semibold text-ink transition-colors"
                               >
                                 <span>Open</span>
                                 <ChevronRight className="w-3.5 h-3.5" />
@@ -625,37 +613,38 @@ export const ModuleDetailPage: React.FC<{
               />
 
               {lessonLevelTasks.length > 0 && (
-                <div className="p-5 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] space-y-3">
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-xs font-bold uppercase tracking-wider text-[#3B2418]">
+                <div className="p-5 rounded-2xl bg-surface border border-line space-y-3">
+                  <div className="flex items-center justify-between gap-2">
+                    <h3 className="text-xs font-semibold uppercase tracking-wider text-ink">
                       Lesson-Specific Tasks & Exercises ({lessonLevelTasks.length})
                     </h3>
-                    <span className="text-[11px] text-[#6E5648]">
-                      Click a task row to jump into its lesson workspace
+                    <span className="text-[11px] text-ink-muted">
+                      Select a task to open its lesson
                     </span>
                   </div>
-                  <div className="space-y-2">
+                  <div className="divide-y divide-line border-t border-line">
                     {lessonLevelTasks.map(t => {
                       const parentLesson = orderedLessons.find(l => l.id === t.lessonId);
                       const isDone = t.status === 'completed';
                       return (
-                        <div
+                        <button
                           key={t.id}
+                          type="button"
                           onClick={() => {
                             if (t.lessonId) onOpenLesson(t.lessonId);
                           }}
-                          className="p-3 rounded-xl bg-[#F2E8DA] border border-[#D6C6B2] hover:border-[#8EC5FF] cursor-pointer flex items-center justify-between gap-3"
+                          className="w-full py-3 flex items-center justify-between gap-3 text-left hover:bg-surface-warm/40 px-2 rounded-lg transition-colors"
                         >
                           <div className="min-w-0 space-y-0.5">
                             <div
                               className={`text-xs font-semibold truncate ${
-                                isDone ? 'line-through text-[#6E5648]' : 'text-[#3B2418]'
+                                isDone ? 'line-through text-ink-muted' : 'text-ink'
                               }`}
                             >
                               {t.title}
                             </div>
-                            <div className="text-[11px] text-[#6E5648] flex flex-wrap items-center gap-1.5">
-                              <span className="text-[#1E5A99] font-medium">
+                            <div className="text-[11px] text-ink-muted flex flex-wrap items-center gap-1.5">
+                              <span className="text-accent font-medium">
                                 {LEARNING_TASK_KIND_LABELS[t.taskKind]}
                               </span>
                               {parentLesson && (
@@ -672,8 +661,8 @@ export const ModuleDetailPage: React.FC<{
                               )}
                             </div>
                           </div>
-                          <ChevronRight className="w-4 h-4 text-[#6E5648] shrink-0" />
-                        </div>
+                          <ChevronRight className="w-4 h-4 text-ink-muted shrink-0" />
+                        </button>
                       );
                     })}
                   </div>
@@ -693,7 +682,6 @@ export const ModuleDetailPage: React.FC<{
         </motion.div>
       </AnimatePresence>
 
-      {/* Add / Edit Lesson Modal */}
       <LessonModal
         isOpen={lessonModalOpen}
         onClose={() => {
@@ -704,7 +692,6 @@ export const ModuleDetailPage: React.FC<{
         onSubmit={handleSaveLesson}
       />
 
-      {/* Confirm Delete Lesson */}
       <ConfirmDeleteDialog
         isOpen={Boolean(deleteLessonTarget)}
         title="Delete Lesson"

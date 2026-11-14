@@ -27,7 +27,7 @@ import type {
 import { learningApi } from '../../lib/learningApi';
 import { useApp } from '../../lib/context';
 import { MOMENTUM_EASE } from '../common/MotionPrimitives';
-import { ModuleIconView, StatusLabel } from './LearningShared';
+import { DARK_SWATCH_HEXES, ModuleIconView, StatusLabel } from './LearningShared';
 import { LessonNotesTab } from './LessonNotesTab';
 import { LessonResourcesTab } from './LessonResourcesTab';
 import { LessonTasksTab } from './LessonTasksTab';
@@ -66,7 +66,6 @@ export const LessonWorkspace: React.FC<{
   const [updatingStatus, setUpdatingStatus] = useState(false);
   const markedOpenedRef = useRef<string | null>(null);
 
-  // Record lesson open in SQLite for Recently Opened Lessons tracking
   useEffect(() => {
     if (markedOpenedRef.current === lesson.id) return;
     markedOpenedRef.current = lesson.id;
@@ -125,18 +124,17 @@ export const LessonWorkspace: React.FC<{
     { id: 'info', label: 'Lesson Info', Icon: Info },
   ];
 
-  const isDarkBg =
-    module.color === '#3B2418' || module.color === '#4D3021' || module.color === '#1E5A99';
+  const isDarkBg = DARK_SWATCH_HEXES.has(module.color.toUpperCase());
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-16">
       {/* Breadcrumb & Quick Lesson Stepping */}
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <nav className="flex flex-wrap items-center gap-1.5 text-xs text-[#6E5648]" aria-label="Breadcrumb">
+        <nav className="flex flex-wrap items-center gap-1.5 text-xs text-ink-muted" aria-label="Breadcrumb">
           <button
             type="button"
             onClick={onBackToDashboard}
-            className="hover:text-[#3B2418] font-medium transition-colors"
+            className="hover:text-ink font-medium transition-colors"
           >
             Learning
           </button>
@@ -144,7 +142,7 @@ export const LessonWorkspace: React.FC<{
           <button
             type="button"
             onClick={onBackToModule}
-            className="inline-flex items-center gap-1.5 hover:text-[#3B2418] font-medium transition-colors max-w-[200px] truncate"
+            className="inline-flex items-center gap-1.5 hover:text-ink font-medium transition-colors max-w-[200px] truncate"
           >
             <span
               className="w-2 h-2 rounded-full shrink-0"
@@ -153,14 +151,14 @@ export const LessonWorkspace: React.FC<{
             <span className="truncate">{module.title}</span>
           </button>
           <span aria-hidden="true">/</span>
-          <span className="font-bold text-[#3B2418] truncate max-w-[260px]">{lesson.title}</span>
+          <span className="font-semibold text-ink truncate max-w-[260px]">{lesson.title}</span>
         </nav>
 
         <div className="flex items-center gap-1.5 shrink-0">
           <button
             type="button"
             onClick={onBackToModule}
-            className="btn-press inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#FAF5ED] hover:bg-[#EAE0D0] border border-[#D6C6B2] text-xs font-semibold text-[#3B2418]"
+            className="btn-press inline-flex items-center gap-1.5 px-3 py-1.5 min-h-[38px] sm:min-h-0 rounded-xl bg-surface hover:bg-surface-warm border border-line text-xs font-semibold text-ink whitespace-nowrap"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             <span>Back to Module</span>
@@ -170,7 +168,7 @@ export const LessonWorkspace: React.FC<{
               type="button"
               onClick={() => onSelectLesson(prevLesson.id)}
               title={`Previous: ${prevLesson.title}`}
-              className="btn-press p-1.5 rounded-lg bg-[#FAF5ED] hover:bg-[#EAE0D0] border border-[#D6C6B2] text-[#3B2418]"
+              className="btn-press p-2 rounded-xl bg-surface hover:bg-surface-warm border border-line text-ink"
               aria-label="Previous lesson"
             >
               <ChevronLeft className="w-4 h-4" />
@@ -181,7 +179,7 @@ export const LessonWorkspace: React.FC<{
               type="button"
               onClick={() => onSelectLesson(nextLesson.id)}
               title={`Next: ${nextLesson.title}`}
-              className="btn-press p-1.5 rounded-lg bg-[#FAF5ED] hover:bg-[#EAE0D0] border border-[#D6C6B2] text-[#3B2418]"
+              className="btn-press p-2 rounded-xl bg-surface hover:bg-surface-warm border border-line text-ink"
               aria-label="Next lesson"
             >
               <ChevronRight className="w-4 h-4" />
@@ -191,57 +189,55 @@ export const LessonWorkspace: React.FC<{
       </div>
 
       {/* Lesson Workspace Header */}
-      <div className="p-6 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] shadow-xs space-y-5">
+      <div className="p-5 sm:p-6 rounded-2xl bg-surface border border-line space-y-5">
         <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-4">
           <div className="flex items-start gap-3.5 min-w-0">
             <div
-              className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0 border border-[#3B2418]/15 shadow-xs"
+              className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0 border border-line"
               style={{ backgroundColor: module.color }}
             >
               <ModuleIconView
                 icon={module.icon}
-                className={`w-5 h-5 ${isDarkBg ? 'text-[#F2E8DA]' : 'text-[#3B2418]'}`}
+                className={`w-5 h-5 ${isDarkBg ? 'text-[#F7F1E8]' : 'text-[#2B1F18]'}`}
               />
             </div>
 
             <div className="min-w-0 space-y-1.5">
               <div className="flex flex-wrap items-center gap-2">
-                <span className="text-[11px] font-semibold text-[#1E5A99]">
-                  {module.title}
-                </span>
-                <span className="text-[#D6C6B2]" aria-hidden="true">·</span>
+                <span className="text-[11px] font-semibold text-accent">{module.title}</span>
+                <span className="text-line-strong" aria-hidden="true">·</span>
                 <StatusLabel status={lesson.status} compact />
               </div>
 
-              <h1 className="text-xl md:text-2xl font-bold text-[#3B2418] tracking-tight leading-snug">
+              <h1 className="text-xl md:text-2xl font-bold text-ink tracking-tight leading-snug">
                 {lesson.title}
               </h1>
 
               {lesson.description && (
-                <p className="text-xs text-[#6E5648] leading-relaxed max-w-3xl">
+                <p className="text-xs text-ink-muted leading-relaxed max-w-3xl">
                   {lesson.description}
                 </p>
               )}
 
-              <div className="flex flex-wrap items-center gap-x-3 gap-y-1 pt-1 text-[11px] text-[#6E5648]">
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-1 pt-1 text-[11px] text-ink-muted">
                 {lesson.teacherName && (
-                  <span className="inline-flex items-center gap-1 font-medium text-[#3B2418]">
-                    <User className="w-3 h-3 text-[#1E5A99]" />
+                  <span className="inline-flex items-center gap-1 font-medium text-ink">
+                    <User className="w-3 h-3 text-accent" />
                     {lesson.teacherName}
                   </span>
                 )}
                 {lesson.lessonDate && (
                   <span className="inline-flex items-center gap-1 font-mono tabular-nums">
-                    <Calendar className="w-3 h-3 text-[#6E5648]" />
+                    <Calendar className="w-3 h-3 text-ink-muted" />
                     {lesson.lessonDate}
                   </span>
                 )}
                 <span className="inline-flex items-center gap-1 font-mono tabular-nums">
-                  <Clock className="w-3 h-3 text-[#6E5648]" />
+                  <Clock className="w-3 h-3 text-ink-muted" />
                   {lesson.studyDurationMinutes}m estimated
                 </span>
                 <span className="inline-flex items-center gap-1 font-mono tabular-nums">
-                  <FileText className="w-3 h-3 text-[#6E5648]" />
+                  <FileText className="w-3 h-3 text-ink-muted" />
                   Updated {new Date(lesson.updatedAt).toLocaleDateString()}
                 </span>
               </div>
@@ -254,7 +250,7 @@ export const LessonWorkspace: React.FC<{
               value={lesson.status}
               disabled={updatingStatus}
               onChange={e => void handleStatusChange(e.target.value as LearningStatus)}
-              className="px-3 py-2 rounded-xl bg-[#F2E8DA] border border-[#D6C6B2] text-xs font-semibold text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
+              className="px-3 py-2 min-h-[40px] sm:min-h-0 rounded-xl bg-canvas border border-line text-xs font-semibold text-ink focus:ring-2 focus:ring-accent focus:outline-hidden"
               aria-label="Lesson completion status"
             >
               <option value="not_started">Not Started</option>
@@ -271,7 +267,7 @@ export const LessonWorkspace: React.FC<{
                 });
                 setIsFocusTimerOpen(true);
               }}
-              className="btn-press inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#8EC5FF] hover:bg-[#73B6FC] text-[#3B2418] border border-[#3B2418]/15 text-xs font-bold shadow-xs whitespace-nowrap"
+              className="btn-press inline-flex items-center gap-1.5 px-3.5 py-2 min-h-[40px] sm:min-h-0 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink text-xs font-semibold whitespace-nowrap"
             >
               <Play className="w-3.5 h-3.5 fill-current" />
               <span>Study Timer</span>
@@ -280,7 +276,7 @@ export const LessonWorkspace: React.FC<{
             <button
               type="button"
               onClick={() => onEditLesson(lesson)}
-              className="btn-press p-2 rounded-xl bg-[#F2E8DA] hover:bg-[#EAE0D0] border border-[#D6C6B2] text-[#3B2418]"
+              className="btn-press p-2 rounded-xl bg-canvas hover:bg-surface-warm border border-line text-ink"
               title="Edit lesson details"
               aria-label="Edit lesson details"
             >
@@ -290,7 +286,7 @@ export const LessonWorkspace: React.FC<{
             <button
               type="button"
               onClick={() => onDeleteLesson(lesson)}
-              className="btn-press p-2 rounded-xl bg-[#F2E8DA] hover:bg-[#B84A44]/10 border border-[#D6C6B2] text-[#6E5648] hover:text-[#B84A44]"
+              className="btn-press p-2 rounded-xl bg-canvas hover:bg-danger/10 border border-line text-ink-muted hover:text-danger"
               title="Delete lesson"
               aria-label="Delete lesson"
             >
@@ -300,7 +296,7 @@ export const LessonWorkspace: React.FC<{
         </div>
 
         {/* Workspace 4-Tab Bar */}
-        <div className="flex flex-wrap items-center gap-1.5 pt-4 border-t border-[#D6C6B2]">
+        <div className="flex flex-wrap items-center gap-1.5 pt-4 border-t border-line">
           {tabs.map(tab => {
             const isActive = activeTab === tab.id;
             const Icon = tab.Icon;
@@ -309,25 +305,25 @@ export const LessonWorkspace: React.FC<{
                 key={tab.id}
                 type="button"
                 onClick={() => setActiveTab(tab.id)}
-                className={`relative z-10 inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs transition-colors whitespace-nowrap ${
+                className={`relative z-10 inline-flex items-center gap-2 px-3.5 py-2 min-h-[40px] sm:min-h-0 rounded-xl text-xs transition-colors whitespace-nowrap shrink-0 ${
                   isActive
-                    ? 'text-[#3B2418] font-bold'
-                    : 'text-[#6E5648] hover:text-[#3B2418] font-medium hover:bg-[#F2E8DA]'
+                    ? 'text-accent-ink font-semibold'
+                    : 'text-ink-muted hover:text-ink font-medium hover:bg-surface-warm'
                 }`}
               >
                 {isActive && (
                   <motion.span
                     layoutId="lesson-workspace-tab-pill"
                     transition={{ duration: prefersReduced ? 0.01 : 0.2, ease: MOMENTUM_EASE }}
-                    className="absolute inset-0 bg-[#8EC5FF] rounded-xl shadow-xs -z-10 border border-[#3B2418]/10"
+                    className="absolute inset-0 bg-accent rounded-xl -z-10"
                   />
                 )}
                 <Icon className="w-3.5 h-3.5" />
                 <span>{tab.label}</span>
                 {typeof tab.count === 'number' && (
                   <span
-                    className={`font-mono text-[10px] px-1.5 py-0.2 rounded-md tabular-nums ${
-                      isActive ? 'bg-[#3B2418] text-[#8EC5FF]' : 'bg-[#EAE0D0] text-[#3B2418]'
+                    className={`font-mono text-[10px] px-1.5 py-0.5 rounded-md tabular-nums ${
+                      isActive ? 'bg-brand text-brand-ink' : 'bg-surface-inset text-ink'
                     }`}
                   >
                     {tab.count}

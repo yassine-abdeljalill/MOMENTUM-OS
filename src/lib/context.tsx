@@ -189,6 +189,8 @@ interface AppContextType {
   markAllNotificationsRead: () => void;
 
   // Profile & System
+  resolvedTheme: 'light' | 'dark';
+  toggleTheme: () => void;
   updateProfile: (updates: Partial<UserProfile>) => void;
   updatePreferences: (updates: Partial<UserPreferences>) => void;
   resetToDemoData: () => void;
@@ -413,6 +415,41 @@ export function AppProvider({ children }: { children: ReactNode }) {
     pausedAccumulatedMs: 0,
     sessionType: 'focus',
   });
+
+  // Theme Resolution & DOM Sync
+  const [systemPrefersDark, setSystemPrefersDark] = useState<boolean>(() => {
+    if (typeof window === 'undefined' || !window.matchMedia) return false;
+    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+  });
+
+  useEffect(() => {
+    if (typeof window === 'undefined' || !window.matchMedia) return;
+    const mq = window.matchMedia('(prefers-color-scheme: dark)');
+    const handler = (e: MediaQueryListEvent) => setSystemPrefersDark(e.matches);
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, []);
+
+  const themePreference = state.preferences?.theme || 'light';
+  const resolvedTheme: 'light' | 'dark' =
+    themePreference === 'system'
+      ? systemPrefersDark
+        ? 'dark'
+        : 'light'
+      : themePreference === 'dark'
+      ? 'dark'
+      : 'light';
+
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+    const root = document.documentElement;
+    root.classList.toggle('dark', resolvedTheme === 'dark');
+    root.style.colorScheme = resolvedTheme;
+    const metaTheme = document.querySelector('meta[name="theme-color"]');
+    if (metaTheme) {
+      metaTheme.setAttribute('content', resolvedTheme === 'dark' ? '#252A2E' : '#64432B');
+    }
+  }, [resolvedTheme]);
 
   // Persist state changes
   useEffect(() => {
@@ -1226,6 +1263,16 @@ export function AppProvider({ children }: { children: ReactNode }) {
     }));
   }, []);
 
+  const toggleTheme = useCallback(() => {
+    setState(prev => ({
+      ...prev,
+      preferences: {
+        ...prev.preferences,
+        theme: resolvedTheme === 'dark' ? 'light' : 'dark',
+      },
+    }));
+  }, [resolvedTheme]);
+
   const resetToDemoData = useCallback(() => {
     const seed = getDefaultState();
     setState(seed);
@@ -1369,6 +1416,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
         markNotificationRead,
         markAllNotificationsRead,
 
+        resolvedTheme,
+        toggleTheme,
         updateProfile,
         updatePreferences,
         resetToDemoData,

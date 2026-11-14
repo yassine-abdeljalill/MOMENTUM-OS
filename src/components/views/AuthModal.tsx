@@ -40,14 +40,13 @@ export const AuthModal: React.FC = () => {
   const [successMsg, setSuccessMsg] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // Password strength check
   const getPasswordStrength = (pass: string) => {
     let score = 0;
     if (pass.length >= 8) score++;
     if (/[A-Z]/.test(pass)) score++;
     if (/[0-9]/.test(pass)) score++;
     if (/[^A-Za-z0-9]/.test(pass)) score++;
-    return score; // 0 to 4
+    return score;
   };
 
   const passwordScore = getPasswordStrength(password);
@@ -122,35 +121,37 @@ export const AuthModal: React.FC = () => {
     }, 500);
   };
 
+  const inputCls =
+    'w-full pl-9 pr-3 py-2 rounded-xl bg-surface-warm/70 border border-line text-ink text-xs focus:border-accent focus:ring-2 focus:ring-accent/30 focus:outline-hidden';
+
   return (
     <ModalShell
       isOpen={isAuthModalOpen}
       onClose={() => setIsAuthModalOpen(false)}
       maxWidthClass="max-w-md"
-      backdropClassName="bg-[#3B2418]/70 backdrop-blur-sm"
-      panelClassName="bg-[#FAF5ED] border border-[#D6C6B2] rounded-2xl shadow-2xl overflow-hidden flex flex-col"
     >
       {/* Header */}
-      <div className="flex items-center justify-between px-6 py-4 border-b border-[#5A3927] bg-[#3B2418]">
+      <div className="flex items-center justify-between px-6 py-4 border-b border-line bg-brand text-brand-ink">
         <div className="flex items-center gap-2.5">
           <img
             src="/brand-logo.png"
             alt="MOMENTUM logo"
             className="w-6 h-6 rounded-md object-contain shrink-0"
           />
-          <h2 className="font-semibold text-sm text-[#F2E8DA] uppercase tracking-wider font-mono">
+          <h2 className="font-semibold text-sm uppercase tracking-wider font-mono">
             {mode === 'profile'
               ? 'Account & Profile'
               : mode === 'login'
               ? 'Sign In to MOMENTUM'
               : mode === 'signup'
-              ? 'Create MOMENTUM Account'
+              ? 'Create Account'
               : 'Reset Password'}
           </h2>
         </div>
         <button
+          type="button"
           onClick={() => setIsAuthModalOpen(false)}
-          className="p-1 rounded-lg text-[#D8C7B4] hover:text-[#F2E8DA] hover:bg-[#4D3021] btn-press"
+          className="p-1.5 rounded-lg text-brand-ink/75 hover:text-brand-ink hover:bg-white/10 btn-press"
           aria-label="Close dialog"
         >
           <X className="w-4 h-4" />
@@ -166,7 +167,7 @@ export const AuthModal: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -4 }}
               transition={{ duration: prefersReduced ? 0.01 : 0.15 }}
-              className="mb-4 p-3 rounded-lg bg-[#B84A44]/15 border border-[#B84A44]/40 flex items-center gap-2 text-xs text-[#9E3530]"
+              className="mb-4 p-3 rounded-xl bg-danger/12 border border-danger/35 flex items-center gap-2 text-xs text-danger"
             >
               <AlertCircle className="w-4 h-4 shrink-0" />
               <span>{error}</span>
@@ -181,7 +182,7 @@ export const AuthModal: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -4 }}
               transition={{ duration: prefersReduced ? 0.01 : 0.15 }}
-              className="mb-4 p-3 rounded-lg bg-[#3E7B52]/15 border border-[#3E7B52]/40 flex items-center gap-2 text-xs text-[#2D6240]"
+              className="mb-4 p-3 rounded-xl bg-success/12 border border-success/35 flex items-center gap-2 text-xs text-success"
             >
               <Check className="w-4 h-4 shrink-0" />
               <span>{successMsg}</span>
@@ -197,303 +198,305 @@ export const AuthModal: React.FC = () => {
             exit={prefersReduced ? { opacity: 0 } : { opacity: 0, y: -4 }}
             transition={{ duration: prefersReduced ? 0.01 : 0.15, ease: MOMENTUM_EASE }}
           >
+            {mode === 'profile' && (() => {
+              const isRegistered = Boolean(authUser && !authUser.isWorkspace);
+              const displayName = isRegistered ? authUser!.fullName : state.profile.fullName;
+              const displayEmail = isRegistered ? authUser!.email : state.profile.email;
 
-          {mode === 'profile' && (() => {
-            const isRegistered = Boolean(authUser && !authUser.isWorkspace);
-            const displayName = isRegistered ? authUser!.fullName : state.profile.fullName;
-            const displayEmail = isRegistered ? authUser!.email : state.profile.email;
-
-            return (
-            <div className="space-y-5">
-              <div className="flex items-center gap-3 p-3 rounded-xl bg-[#F2E8DA] border border-[#D6C6B2]">
-                <div className="w-12 h-12 rounded-full bg-[#3B2418] border-2 border-[#8EC5FF] flex items-center justify-center text-lg font-bold text-[#F2E8DA]">
-                  {displayName.charAt(0)}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <h3 className="text-sm font-semibold text-[#3B2418] truncate">
-                    {displayName}
-                  </h3>
-                  <p className="text-xs text-[#6E5648] truncate">
-                    {displayEmail}
-                  </p>
-                  <div className="flex items-center gap-2 mt-1">
-                    <span
-                      className={`text-[10px] font-mono font-semibold px-2 py-0.5 rounded border ${
-                        isRegistered
-                          ? 'bg-[#3E7B52]/15 text-[#2D6240] border-[#3E7B52]/40'
-                          : 'bg-[#8EC5FF]/50 text-[#3B2418] border-[#8EC5FF]'
-                      }`}
-                    >
-                      {isRegistered ? 'Authenticated Account' : authUser ? 'Active Workspace Session' : 'Signed Out'}
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="space-y-2 text-xs text-[#6E5648]">
-                <div className="flex justify-between py-1 border-b border-[#D6C6B2]">
-                  <span>Timezone</span>
-                  <span className="font-mono text-[#3B2418] font-medium">{state.profile.timezone}</span>
-                </div>
-                <div className="flex justify-between py-1 border-b border-[#D6C6B2]">
-                  <span>Language</span>
-                  <span className="text-[#3B2418] font-medium">{state.profile.preferredLanguage}</span>
-                </div>
-                <div className="flex justify-between py-1 border-b border-[#D6C6B2]">
-                  <span>Daily Commitment</span>
-                  <span className="font-mono text-[#1E5A99] font-semibold">
-                    {state.profile.dailyAvailabilityHours} hours/day
-                  </span>
-                </div>
-              </div>
-
-              <div className="pt-2 flex flex-col gap-2">
-                <button
-                  onClick={() => {
-                    setError('');
-                    setSuccessMsg('');
-                    setMode('login');
-                  }}
-                  className="w-full py-2 px-3 rounded-lg bg-[#8EC5FF] hover:bg-[#73B6FC] text-xs font-bold text-[#3B2418] border border-[#3B2418]/15 btn-press flex items-center justify-center gap-2"
-                >
-                  <KeyRound className="w-3.5 h-3.5" />
-                  <span>{isRegistered ? 'Switch Account' : 'Sign In / Create Account'}</span>
-                </button>
-                {authUser && (
-                  <button
-                    onClick={async () => {
-                      await logoutAuth();
-                      showToast('Signed out securely.', 'info');
-                      setIsAuthModalOpen(false);
-                    }}
-                    className="w-full py-2 px-3 rounded-lg bg-[#B84A44]/10 hover:bg-[#B84A44]/20 text-xs font-medium text-[#9E3530] border border-[#B84A44]/30 btn-press flex items-center justify-center gap-2"
-                  >
-                    <LogOut className="w-3.5 h-3.5" />
-                    <span>Sign Out</span>
-                  </button>
-                )}
-              </div>
-            </div>
-            );
-          })()}
-
-          {mode === 'login' && (
-            <form onSubmit={handleLogin} className="space-y-4">
-              <div>
-                <label className="block text-xs font-medium text-[#6E5648] mb-1">Email</label>
-                <div className="relative">
-                  <Mail className="w-4 h-4 text-[#6E5648] absolute left-3 top-2.5" />
-                  <input
-                    type="email"
-                    required
-                    value={email}
-                    onChange={e => setEmail(e.target.value)}
-                    placeholder="user@example.com"
-                    className="w-full pl-9 pr-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-[#3B2418] text-xs focus:border-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <div className="flex items-center justify-between mb-1">
-                  <label className="text-xs font-medium text-[#6E5648]">Password</label>
-                  <button
-                    type="button"
-                    onClick={() => setMode('forgot')}
-                    className="text-[11px] text-[#1E5A99] hover:underline font-medium"
-                  >
-                    Forgot?
-                  </button>
-                </div>
-                <div className="relative">
-                  <Lock className="w-4 h-4 text-[#6E5648] absolute left-3 top-2.5" />
-                  <input
-                    type={showPassword ? 'text' : 'password'}
-                    required
-                    value={password}
-                    onChange={e => setPassword(e.target.value)}
-                    placeholder="••••••••"
-                    className="w-full pl-9 pr-9 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-[#3B2418] text-xs focus:border-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-2.5 text-[#6E5648] hover:text-[#3B2418]"
-                  >
-                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                  </button>
-                </div>
-              </div>
-
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full py-2.5 rounded-lg bg-[#8EC5FF] hover:bg-[#73B6FC] text-[#3B2418] border border-[#3B2418]/15 font-bold text-xs shadow-md btn-press disabled:opacity-60 flex items-center justify-center gap-2"
-              >
-                {loading && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
-                <span>{loading ? 'Authenticating...' : 'Sign In'}</span>
-              </button>
-
-              <div className="flex items-center justify-between pt-3 text-xs text-[#6E5648] border-t border-[#D6C6B2]">
-                <button
-                  type="button"
-                  onClick={() => setMode('profile')}
-                  className="hover:text-[#3B2418]"
-                >
-                  ← Back to Profile
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setMode('signup')}
-                  className="text-[#1E5A99] hover:underline font-medium"
-                >
-                  Don&apos;t have an account? Sign Up
-                </button>
-              </div>
-            </form>
-          )}
-
-          {mode === 'signup' && (
-            <form onSubmit={handleSignUp} className="space-y-4">
-              <div>
-                <label className="block text-xs font-medium text-[#6E5648] mb-1">Full Name</label>
-                <div className="relative">
-                  <User className="w-4 h-4 text-[#6E5648] absolute left-3 top-2.5" />
-                  <input
-                    type="text"
-                    required
-                    value={name}
-                    onChange={e => setName(e.target.value)}
-                    placeholder="Jane Doe"
-                    className="w-full pl-9 pr-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-[#3B2418] text-xs focus:border-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-medium text-[#6E5648] mb-1">Email</label>
-                <div className="relative">
-                  <Mail className="w-4 h-4 text-[#6E5648] absolute left-3 top-2.5" />
-                  <input
-                    type="email"
-                    required
-                    value={email}
-                    onChange={e => setEmail(e.target.value)}
-                    placeholder="jane@example.com"
-                    className="w-full pl-9 pr-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-[#3B2418] text-xs focus:border-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-medium text-[#6E5648] mb-1">Password</label>
-                <div className="relative">
-                  <Lock className="w-4 h-4 text-[#6E5648] absolute left-3 top-2.5" />
-                  <input
-                    type={showPassword ? 'text' : 'password'}
-                    required
-                    value={password}
-                    onChange={e => setPassword(e.target.value)}
-                    placeholder="Min. 8 characters"
-                    className="w-full pl-9 pr-9 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-[#3B2418] text-xs focus:border-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-2.5 text-[#6E5648] hover:text-[#3B2418]"
-                  >
-                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                  </button>
-                </div>
-                {/* Password strength indicators */}
-                {password && (
-                  <div className="mt-2 space-y-1">
-                    <div className="flex gap-1 h-1">
-                      {[1, 2, 3, 4].map(idx => (
-                        <div
-                          key={idx}
-                          className={`flex-1 rounded-full ${
-                            passwordScore >= idx
-                              ? passwordScore <= 2
-                                ? 'bg-[#8EC5FF]'
-                                : 'bg-[#3E7B52]'
-                              : 'bg-[#D6C6B2]'
-                          }`}
-                        />
-                      ))}
+              return (
+                <div className="space-y-5">
+                  <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-surface-warm/70 border border-line">
+                    <div className="w-12 h-12 rounded-full bg-brand border-2 border-accent flex items-center justify-center text-lg font-bold text-brand-ink shrink-0">
+                      {displayName.charAt(0).toUpperCase()}
                     </div>
-                    <span className="text-[10px] text-[#6E5648]">
-                      {passwordScore <= 1
-                        ? 'Weak password'
-                        : passwordScore <= 3
-                        ? 'Moderate strength'
-                        : 'Strong password'}
-                    </span>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-sm font-bold text-ink truncate font-heading">
+                        {displayName}
+                      </h3>
+                      <p className="text-xs text-ink-muted truncate">{displayEmail}</p>
+                      <div className="flex items-center gap-2 mt-1">
+                        <span
+                          className={`text-[10px] font-mono font-semibold px-2 py-0.5 rounded-md border ${
+                            isRegistered
+                              ? 'bg-success/12 text-success border-success/35'
+                              : 'bg-accent/18 text-brand dark:text-accent border-accent/40'
+                          }`}
+                        >
+                          {isRegistered
+                            ? 'Authenticated Account'
+                            : authUser
+                            ? 'Active Workspace Session'
+                            : 'Signed Out'}
+                        </span>
+                      </div>
+                    </div>
                   </div>
-                )}
-              </div>
 
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full py-2.5 rounded-lg bg-[#8EC5FF] hover:bg-[#73B6FC] text-[#3B2418] border border-[#3B2418]/15 font-bold text-xs shadow-md btn-press disabled:opacity-60 flex items-center justify-center gap-2"
-              >
-                {loading && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
-                <span>{loading ? 'Creating...' : 'Register Account'}</span>
-              </button>
+                  <div className="space-y-2 text-xs text-ink-muted">
+                    <div className="flex justify-between py-1.5 border-b border-line">
+                      <span>Timezone</span>
+                      <span className="font-mono text-ink font-medium">{state.profile.timezone}</span>
+                    </div>
+                    <div className="flex justify-between py-1.5 border-b border-line">
+                      <span>Language</span>
+                      <span className="text-ink font-medium">{state.profile.preferredLanguage}</span>
+                    </div>
+                    <div className="flex justify-between py-1.5 border-b border-line">
+                      <span>Daily Commitment</span>
+                      <span className="font-mono text-accent font-semibold tabular-nums">
+                        {state.profile.dailyAvailabilityHours} hours/day
+                      </span>
+                    </div>
+                  </div>
 
-              <div className="flex items-center justify-between pt-3 text-xs text-[#6E5648] border-t border-[#D6C6B2]">
-                <button
-                  type="button"
-                  onClick={() => setMode('login')}
-                  className="text-[#1E5A99] hover:underline font-medium"
-                >
-                  Already have an account? Sign In
-                </button>
-              </div>
-            </form>
-          )}
-
-          {mode === 'forgot' && (
-            <form onSubmit={handleForgot} className="space-y-4">
-              <p className="text-xs text-[#6E5648]">
-                Enter your registered email address and we will generate a secure reset link.
-              </p>
-              <div>
-                <label className="block text-xs font-medium text-[#6E5648] mb-1">Email</label>
-                <div className="relative">
-                  <Mail className="w-4 h-4 text-[#6E5648] absolute left-3 top-2.5" />
-                  <input
-                    type="email"
-                    required
-                    value={email}
-                    onChange={e => setEmail(e.target.value)}
-                    placeholder="user@example.com"
-                    className="w-full pl-9 pr-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-[#3B2418] text-xs focus:border-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
-                  />
+                  <div className="pt-2 flex flex-col gap-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setError('');
+                        setSuccessMsg('');
+                        setMode('login');
+                      }}
+                      className="w-full py-2.5 px-3 rounded-xl bg-accent hover:bg-accent-hover text-xs font-bold text-accent-ink btn-press flex items-center justify-center gap-2"
+                    >
+                      <KeyRound className="w-3.5 h-3.5" />
+                      <span>{isRegistered ? 'Switch Account' : 'Sign In / Create Account'}</span>
+                    </button>
+                    {authUser && (
+                      <button
+                        type="button"
+                        onClick={async () => {
+                          await logoutAuth();
+                          showToast('Signed out securely.', 'info');
+                          setIsAuthModalOpen(false);
+                        }}
+                        className="w-full py-2.5 px-3 rounded-xl bg-danger/10 hover:bg-danger/20 text-xs font-semibold text-danger border border-danger/30 btn-press flex items-center justify-center gap-2"
+                      >
+                        <LogOut className="w-3.5 h-3.5" />
+                        <span>Sign Out</span>
+                      </button>
+                    )}
+                  </div>
                 </div>
-              </div>
+              );
+            })()}
 
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full py-2.5 rounded-lg bg-[#8EC5FF] hover:bg-[#73B6FC] text-[#3B2418] border border-[#3B2418]/15 font-bold text-xs shadow-md btn-press disabled:opacity-60 flex items-center justify-center gap-2"
-              >
-                {loading && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
-                <span>{loading ? 'Sending...' : 'Send Reset Link'}</span>
-              </button>
+            {mode === 'login' && (
+              <form onSubmit={handleLogin} className="space-y-4">
+                <div>
+                  <label className="block text-xs font-medium text-ink-muted mb-1">Email</label>
+                  <div className="relative">
+                    <Mail className="w-4 h-4 text-ink-muted absolute left-3 top-2.5" />
+                    <input
+                      type="email"
+                      required
+                      value={email}
+                      onChange={e => setEmail(e.target.value)}
+                      placeholder="user@example.com"
+                      className={inputCls}
+                    />
+                  </div>
+                </div>
 
-              <div className="pt-2 text-center">
+                <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="text-xs font-medium text-ink-muted">Password</label>
+                    <button
+                      type="button"
+                      onClick={() => setMode('forgot')}
+                      className="text-[11px] text-accent hover:underline font-medium"
+                    >
+                      Forgot?
+                    </button>
+                  </div>
+                  <div className="relative">
+                    <Lock className="w-4 h-4 text-ink-muted absolute left-3 top-2.5" />
+                    <input
+                      type={showPassword ? 'text' : 'password'}
+                      required
+                      value={password}
+                      onChange={e => setPassword(e.target.value)}
+                      placeholder="••••••••"
+                      className={`${inputCls} pr-9`}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-2.5 text-ink-muted hover:text-ink"
+                    >
+                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
+                </div>
+
                 <button
-                  type="button"
-                  onClick={() => setMode('login')}
-                  className="text-xs text-[#6E5648] hover:text-[#3B2418]"
+                  type="submit"
+                  disabled={loading}
+                  className="w-full py-2.5 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-bold text-xs shadow-sm btn-press disabled:opacity-60 flex items-center justify-center gap-2"
                 >
-                  ← Back to Sign In
+                  {loading && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
+                  <span>{loading ? 'Authenticating...' : 'Sign In'}</span>
                 </button>
-              </div>
-            </form>
-          )}
+
+                <div className="flex items-center justify-between pt-3 text-xs text-ink-muted border-t border-line">
+                  <button
+                    type="button"
+                    onClick={() => setMode('profile')}
+                    className="hover:text-ink"
+                  >
+                    ← Back to Profile
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setMode('signup')}
+                    className="text-accent hover:underline font-medium"
+                  >
+                    Don&apos;t have an account? Sign Up
+                  </button>
+                </div>
+              </form>
+            )}
+
+            {mode === 'signup' && (
+              <form onSubmit={handleSignUp} className="space-y-4">
+                <div>
+                  <label className="block text-xs font-medium text-ink-muted mb-1">Full Name</label>
+                  <div className="relative">
+                    <User className="w-4 h-4 text-ink-muted absolute left-3 top-2.5" />
+                    <input
+                      type="text"
+                      required
+                      value={name}
+                      onChange={e => setName(e.target.value)}
+                      placeholder="Jane Doe"
+                      className={inputCls}
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-medium text-ink-muted mb-1">Email</label>
+                  <div className="relative">
+                    <Mail className="w-4 h-4 text-ink-muted absolute left-3 top-2.5" />
+                    <input
+                      type="email"
+                      required
+                      value={email}
+                      onChange={e => setEmail(e.target.value)}
+                      placeholder="jane@example.com"
+                      className={inputCls}
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-medium text-ink-muted mb-1">Password</label>
+                  <div className="relative">
+                    <Lock className="w-4 h-4 text-ink-muted absolute left-3 top-2.5" />
+                    <input
+                      type={showPassword ? 'text' : 'password'}
+                      required
+                      value={password}
+                      onChange={e => setPassword(e.target.value)}
+                      placeholder="Min. 8 characters"
+                      className={`${inputCls} pr-9`}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-2.5 text-ink-muted hover:text-ink"
+                    >
+                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
+                  {password && (
+                    <div className="mt-2 space-y-1">
+                      <div className="flex gap-1 h-1">
+                        {[1, 2, 3, 4].map(idx => (
+                          <div
+                            key={idx}
+                            className={`flex-1 rounded-full ${
+                              passwordScore >= idx
+                                ? passwordScore <= 2
+                                  ? 'bg-accent'
+                                  : 'bg-success'
+                                : 'bg-surface-inset'
+                            }`}
+                          />
+                        ))}
+                      </div>
+                      <span className="text-[10px] text-ink-muted">
+                        {passwordScore <= 1
+                          ? 'Weak password'
+                          : passwordScore <= 3
+                          ? 'Moderate strength'
+                          : 'Strong password'}
+                      </span>
+                    </div>
+                  )}
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full py-2.5 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-bold text-xs shadow-sm btn-press disabled:opacity-60 flex items-center justify-center gap-2"
+                >
+                  {loading && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
+                  <span>{loading ? 'Creating...' : 'Register Account'}</span>
+                </button>
+
+                <div className="flex items-center justify-between pt-3 text-xs text-ink-muted border-t border-line">
+                  <button
+                    type="button"
+                    onClick={() => setMode('login')}
+                    className="text-accent hover:underline font-medium"
+                  >
+                    Already have an account? Sign In
+                  </button>
+                </div>
+              </form>
+            )}
+
+            {mode === 'forgot' && (
+              <form onSubmit={handleForgot} className="space-y-4">
+                <p className="text-xs text-ink-muted">
+                  Enter your registered email address and we will generate a secure reset link.
+                </p>
+                <div>
+                  <label className="block text-xs font-medium text-ink-muted mb-1">Email</label>
+                  <div className="relative">
+                    <Mail className="w-4 h-4 text-ink-muted absolute left-3 top-2.5" />
+                    <input
+                      type="email"
+                      required
+                      value={email}
+                      onChange={e => setEmail(e.target.value)}
+                      placeholder="user@example.com"
+                      className={inputCls}
+                    />
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full py-2.5 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-bold text-xs shadow-sm btn-press disabled:opacity-60 flex items-center justify-center gap-2"
+                >
+                  {loading && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
+                  <span>{loading ? 'Sending...' : 'Send Reset Link'}</span>
+                </button>
+
+                <div className="pt-2 text-center">
+                  <button
+                    type="button"
+                    onClick={() => setMode('login')}
+                    className="text-xs text-ink-muted hover:text-ink"
+                  >
+                    ← Back to Sign In
+                  </button>
+                </div>
+              </form>
+            )}
           </motion.div>
         </AnimatePresence>
       </div>

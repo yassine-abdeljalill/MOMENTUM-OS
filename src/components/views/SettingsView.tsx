@@ -1,30 +1,27 @@
 import React, { useState } from 'react';
 import {
-  Settings,
   User,
-  Shield,
   Palette,
   Sliders,
-  Bell,
   Database,
   Download,
   Upload,
-  RefreshCw,
-  Trash2,
   Check,
   Compass,
-  Key,
-  ExternalLink,
   AlertTriangle,
+  Sun,
+  Moon,
+  Monitor,
 } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useApp } from '../../lib/context';
-import { exportStateToJson, exportTasksToCsv, exportGoalsToCsv } from '../../lib/storage';
+import { exportStateToJson } from '../../lib/storage';
 import { MOMENTUM_EASE } from '../common/MotionPrimitives';
 
 export const SettingsView: React.FC = () => {
   const {
     state,
+    resolvedTheme,
     updateProfile,
     updatePreferences,
     resetToDemoData,
@@ -38,7 +35,6 @@ export const SettingsView: React.FC = () => {
   const [successToast, setSuccessToast] = useState('');
   const [showClearConfirm, setShowClearConfirm] = useState(false);
 
-  // Profile Form state
   const [name, setName] = useState(state.profile.fullName);
   const [email, setEmail] = useState(state.profile.email);
   const [timezone, setTimezone] = useState(state.profile.timezone);
@@ -94,18 +90,26 @@ export const SettingsView: React.FC = () => {
     reader.readAsText(file);
   };
 
+  const paletteSwatches = [
+    { name: 'Warm Cream', hex: '#F7F1E8', bg: 'bg-[#F7F1E8] text-[#2B1F18] border-[#DDD0BE]' },
+    { name: 'Espresso Brown', hex: '#64432B', bg: 'bg-[#64432B] text-[#F7F1E8] border-[#785337]' },
+    { name: 'Warm Ochre', hex: '#D2925B', bg: 'bg-[#D2925B] text-[#2B1F18] border-[#C27F46]' },
+    { name: 'Charcoal Slate', hex: '#333C44', bg: 'bg-[#333C44] text-[#F7F1E8] border-[#404952]' },
+    { name: 'Sage Olive', hex: '#868A7A', bg: 'bg-[#868A7A] text-[#F7F1E8] border-[#75796A]' },
+    { name: 'Slate Canvas', hex: '#252A2E', bg: 'bg-[#252A2E] text-[#F7F1E8] border-[#404952]' },
+  ];
+
   return (
     <div className="space-y-6 max-w-5xl mx-auto pb-16">
       {/* Header */}
-      <div className="p-6 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] shadow-xs">
-        <h1 className="text-xl md:text-2xl font-bold text-[#3B2418] tracking-tight">
+      <div className="p-6 rounded-2xl bg-surface border border-line">
+        <h1 className="text-xl md:text-2xl font-bold text-ink tracking-tight">
           Settings & System Controls
         </h1>
-        <p className="text-xs text-[#6E5648] mt-1">
-          Customize your Life OS profile, aesthetics, data backups, and integrations.
+        <p className="text-xs text-ink-muted mt-1">
+          Customize your Life OS profile, Light/Dark theme, data backups, and integrations.
         </p>
 
-        {/* Success Alert */}
         <AnimatePresence>
           {successToast && (
             <motion.div
@@ -115,7 +119,7 @@ export const SettingsView: React.FC = () => {
               transition={{ duration: 0.2, ease: MOMENTUM_EASE }}
               className="overflow-hidden"
             >
-              <div className="p-3 rounded-lg bg-[#3E7B52]/15 border border-[#3E7B52]/40 text-xs font-medium text-[#2D6240] flex items-center gap-2">
+              <div className="p-3 rounded-xl bg-success/15 border border-success/40 text-xs font-medium text-success flex items-center gap-2">
                 <Check className="w-4 h-4" />
                 <span>{successToast}</span>
               </div>
@@ -125,7 +129,7 @@ export const SettingsView: React.FC = () => {
       </div>
 
       {/* Settings Navigation Tabs */}
-      <div className="flex flex-wrap gap-1 bg-[#FAF5ED] p-1.5 rounded-xl border border-[#D6C6B2] shadow-xs text-xs">
+      <div className="flex flex-wrap gap-1 bg-surface p-1.5 rounded-xl border border-line text-xs">
         {(
           [
             { id: 'profile', label: 'Profile & Vision', icon: User },
@@ -139,16 +143,17 @@ export const SettingsView: React.FC = () => {
           return (
             <button
               key={tab.id}
+              type="button"
               onClick={() => setActiveTab(tab.id)}
-              className={`relative flex items-center gap-1.5 px-4 py-2 rounded-lg font-semibold transition-colors ${
-                isActive ? 'text-[#3B2418]' : 'text-[#6E5648] hover:text-[#3B2418]'
+              className={`relative flex items-center gap-1.5 px-4 py-2 rounded-lg font-semibold transition-colors whitespace-nowrap ${
+                isActive ? 'text-accent-ink' : 'text-ink-muted hover:text-ink'
               }`}
             >
               {isActive && (
                 <motion.span
                   layoutId="settings-tab-pill"
                   transition={{ type: 'spring', stiffness: 420, damping: 32 }}
-                  className="absolute inset-0 rounded-lg bg-[#8EC5FF] shadow-xs"
+                  className="absolute inset-0 rounded-lg bg-accent"
                 />
               )}
               <Icon className="w-3.5 h-3.5 relative z-10" />
@@ -169,327 +174,369 @@ export const SettingsView: React.FC = () => {
             exit={{ opacity: 0, y: -6 }}
             transition={{ duration: 0.2, ease: MOMENTUM_EASE }}
             onSubmit={handleSaveProfile}
-            className="p-6 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] shadow-xs space-y-5"
+            className="p-6 rounded-2xl bg-surface border border-line space-y-5"
           >
-            <h2 className="text-sm font-bold uppercase tracking-wider text-[#3B2418]">
+            <h2 className="text-sm font-bold uppercase tracking-wider text-ink">
               Personal Identity & Vision Statement
             </h2>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs font-semibold text-[#6E5648] mb-1">Full Name</label>
-              <input
-                type="text"
-                value={name}
-                onChange={e => setName(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-semibold text-[#6E5648] mb-1">Email</label>
-              <input
-                type="email"
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs font-semibold text-[#6E5648] mb-1">Timezone</label>
-              <input
-                type="text"
-                value={timezone}
-                onChange={e => setTimezone(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-semibold text-[#6E5648] mb-1">
-                Daily Availability Commitment (Hours)
-              </label>
-              <input
-                type="number"
-                step="0.5"
-                min="1"
-                max="12"
-                value={hours}
-                onChange={e => setHours(parseFloat(e.target.value))}
-                className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-xs font-semibold text-[#6E5648] mb-1">
-              Personal Vision Statement (&ldquo;Track who you are becoming&rdquo;)
-            </label>
-            <textarea
-              rows={3}
-              value={vision}
-              onChange={e => setVision(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden leading-relaxed"
-            />
-          </div>
-
-          <div className="flex items-center justify-between pt-3 border-t border-[#D6C6B2]">
-            <button
-              type="button"
-              onClick={() => setIsOnboardingOpen(true)}
-              className="btn-press text-xs font-semibold text-[#1E5A99] hover:underline"
-            >
-              Relaunch Onboarding Setup
-            </button>
-            <button
-              type="submit"
-              className="btn-press px-5 py-2 rounded-lg bg-[#8EC5FF] hover:bg-[#73B6FC] text-[#3B2418] border border-[#3B2418]/15 font-bold text-xs shadow-xs transition-all"
-            >
-              Save Profile
-            </button>
-          </div>
-        </motion.form>
-      )}
-
-      {/* Tab 2: Appearance & Preferences */}
-      {activeTab === 'appearance' && (
-        <motion.div
-          key="settings-appearance"
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -6 }}
-          transition={{ duration: 0.2, ease: MOMENTUM_EASE }}
-          className="p-6 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] shadow-xs space-y-6"
-        >
-          <h2 className="text-sm font-bold uppercase tracking-wider text-[#3B2418]">
-            Visual Identity & Palette Tokens
-          </h2>
-
-          <div className="space-y-3">
-            <span className="text-xs font-semibold text-[#6E5648] block">
-              Official MOMENTUM Palette (Active Theme Tokens):
-            </span>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              <div className="card-hover p-3 rounded-xl bg-[#F2E8DA] text-[#3B2418] text-xs font-mono space-y-1 border border-[#D6C6B2]">
-                <span className="font-bold block">Main Cream</span>
-                <span className="text-[11px] opacity-80">#F2E8DA</span>
-              </div>
-              <div className="card-hover p-3 rounded-xl bg-[#3B2418] text-[#F2E8DA] text-xs font-mono space-y-1 border border-[#5A3927]">
-                <span className="font-bold block">Espresso</span>
-                <span className="text-[11px] opacity-80">#3B2418</span>
-              </div>
-              <div className="card-hover p-3 rounded-xl bg-[#8EC5FF] text-[#3B2418] text-xs font-mono space-y-1 border border-[#3B2418]/15">
-                <span className="font-bold block">Detail Sky</span>
-                <span className="text-[11px] opacity-90">#8EC5FF</span>
-              </div>
-              <div className="card-hover p-3 rounded-xl bg-[#FAF5ED] text-[#3B2418] text-xs font-mono space-y-1 border border-[#D6C6B2]">
-                <span className="font-bold block">Elevated Cream</span>
-                <span className="text-[11px] opacity-80">#FAF5ED</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-3 border-t border-[#D6C6B2]">
-            <div>
-              <label className="block text-xs font-semibold text-[#6E5648] mb-1">Start of Week</label>
-              <select
-                value={state.preferences.startOfWeek}
-                onChange={e => updatePreferences({ startOfWeek: e.target.value as any })}
-                className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
-              >
-                <option value="monday">Monday (ISO Standard)</option>
-                <option value="sunday">Sunday</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-xs font-semibold text-[#6E5648] mb-1">Time Format</label>
-              <select
-                value={state.preferences.timeFormat}
-                onChange={e => updatePreferences({ timeFormat: e.target.value as any })}
-                className="w-full px-3 py-2 rounded-lg bg-[#F2E8DA] border border-[#D6C6B2] text-xs text-[#3B2418] focus:ring-2 focus:ring-[#8EC5FF] focus:outline-hidden"
-              >
-                <option value="24h">24-hour (14:00)</option>
-                <option value="12h">12-hour (2:00 PM)</option>
-              </select>
-            </div>
-          </div>
-        </motion.div>
-      )}
-
-      {/* Tab 3: Supabase & Notion Integrations */}
-      {activeTab === 'integrations' && (
-        <motion.div
-          key="settings-integrations"
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -6 }}
-          transition={{ duration: 0.2, ease: MOMENTUM_EASE }}
-          className="p-6 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] shadow-xs space-y-6"
-        >
-          <div className="space-y-1">
-            <h2 className="text-sm font-bold uppercase tracking-wider text-[#3B2418]">
-              External Integration Architecture
-            </h2>
-            <p className="text-xs text-[#6E5648]">
-              Connect remote PostgreSQL via Supabase or bidirectional sync with your Notion workspace.
-            </p>
-          </div>
-
-          {/* Supabase Card */}
-          <div className="card-hover p-5 rounded-xl bg-[#F2E8DA] border border-[#D6C6B2] space-y-3">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Database className="w-4 h-4 text-[#3E7B52]" />
-                <h3 className="text-sm font-bold text-[#3B2418]">Supabase PostgreSQL & Auth</h3>
-              </div>
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#3B2418] text-[#8EC5FF]">
-                Client Ready (Using Offline Storage)
-              </span>
-            </div>
-            <p className="text-xs text-[#6E5648] leading-relaxed">
-              To connect your live Supabase cloud project, configure <code className="text-[#1E5A99] font-semibold">VITE_SUPABASE_URL</code> and <code className="text-[#1E5A99] font-semibold">VITE_SUPABASE_ANON_KEY</code> in your environment. The complete PostgreSQL migration script with all 30 normalized tables and RLS security policies is stored at <code className="text-[#3B2418]">supabase/migrations/20261109000000_momentum_core.sql</code>.
-            </p>
-          </div>
-
-          {/* Notion Card */}
-          <div className="card-hover p-5 rounded-xl bg-[#F2E8DA] border border-[#D6C6B2] space-y-3">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Compass className="w-4 h-4 text-[#1E5A99]" />
-                <h3 className="text-sm font-bold text-[#3B2418]">Notion Life OS Sync</h3>
-              </div>
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#FAF5ED] border border-[#D6C6B2] text-[#6E5648]">
-                Modular API Layer
-              </span>
-            </div>
-            <p className="text-xs text-[#6E5648] leading-relaxed">
-              MOMENTUM can optionally synchronize tasks, milestones, and notes with an external Notion Life OS database using Notion&apos;s official REST API and server-side secret tokens. MOMENTUM operates completely independently when Notion is disconnected.
-            </p>
-          </div>
-        </motion.div>
-      )}
-
-      {/* Tab 4: Data & Backups */}
-      {activeTab === 'data' && (
-        <motion.div
-          key="settings-data"
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -6 }}
-          transition={{ duration: 0.2, ease: MOMENTUM_EASE }}
-          className="p-6 rounded-2xl bg-[#FAF5ED] border border-[#D6C6B2] shadow-xs space-y-6"
-        >
-          <div className="space-y-1">
-            <h2 className="text-sm font-bold uppercase tracking-wider text-[#3B2418]">
-              Data Privacy & Local Storage
-            </h2>
-            <p className="text-xs text-[#6E5648]">
-              You own your data completely. Export full JSON snapshots, reload demo data, or clear the local sandbox.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="card-hover p-4 rounded-xl bg-[#F2E8DA] border border-[#D6C6B2] space-y-3">
-              <h3 className="text-xs font-bold text-[#3B2418] flex items-center gap-2">
-                <Download className="w-4 h-4 text-[#1E5A99]" />
-                <span>Export Backups</span>
-              </h3>
-              <p className="text-xs text-[#6E5648]">
-                Download your complete profile, goals, habits, workouts, and journal entries in JSON format.
-              </p>
-              <button
-                onClick={handleExportJson}
-                className="btn-press w-full py-2 rounded-lg bg-[#8EC5FF] text-[#3B2418] border border-[#3B2418]/15 font-bold text-xs hover:bg-[#73B6FC] shadow-xs transition-colors"
-              >
-                Download Full JSON Backup
-              </button>
-            </div>
-
-            <div className="card-hover p-4 rounded-xl bg-[#F2E8DA] border border-[#D6C6B2] space-y-3">
-              <h3 className="text-xs font-bold text-[#3B2418] flex items-center gap-2">
-                <Upload className="w-4 h-4 text-[#6E5648]" />
-                <span>Restore Backup</span>
-              </h3>
-              <p className="text-xs text-[#6E5648]">
-                Import a previous MOMENTUM JSON state file to restore all your data.
-              </p>
-              <label className="btn-press w-full py-2 rounded-lg bg-[#FAF5ED] border border-[#D6C6B2] text-[#3B2418] font-semibold text-xs hover:bg-[#EAE0D0] cursor-pointer flex items-center justify-center transition-colors">
-                <span>Select JSON File</span>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-semibold text-ink-muted mb-1">Full Name</label>
                 <input
-                  type="file"
-                  accept=".json"
-                  onChange={handleImportJson}
-                  className="hidden"
+                  type="text"
+                  value={name}
+                  onChange={e => setName(e.target.value)}
+                  className="w-full px-3 py-2 rounded-xl bg-canvas border border-line text-xs text-ink focus:ring-2 focus:ring-accent focus:outline-hidden"
                 />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-ink-muted mb-1">Email</label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  className="w-full px-3 py-2 rounded-xl bg-canvas border border-line text-xs text-ink focus:ring-2 focus:ring-accent focus:outline-hidden"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-semibold text-ink-muted mb-1">Timezone</label>
+                <input
+                  type="text"
+                  value={timezone}
+                  onChange={e => setTimezone(e.target.value)}
+                  className="w-full px-3 py-2 rounded-xl bg-canvas border border-line text-xs text-ink focus:ring-2 focus:ring-accent focus:outline-hidden"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-ink-muted mb-1">
+                  Daily Availability Commitment (Hours)
+                </label>
+                <input
+                  type="number"
+                  step="0.5"
+                  min="1"
+                  max="12"
+                  value={hours}
+                  onChange={e => setHours(parseFloat(e.target.value))}
+                  className="w-full px-3 py-2 rounded-xl bg-canvas border border-line text-xs font-mono text-ink focus:ring-2 focus:ring-accent focus:outline-hidden"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-ink-muted mb-1">
+                Personal Vision Statement (&ldquo;Track who you are becoming&rdquo;)
               </label>
+              <textarea
+                rows={3}
+                value={vision}
+                onChange={e => setVision(e.target.value)}
+                className="w-full px-3 py-2 rounded-xl bg-canvas border border-line text-xs text-ink focus:ring-2 focus:ring-accent focus:outline-hidden leading-relaxed"
+              />
             </div>
-          </div>
 
-          {/* Reset & Wipe Options */}
-          <div className="p-4 rounded-xl bg-[#F2E8DA] border border-[#B84A44]/40 space-y-3">
-            <h3 className="text-xs font-bold text-[#9E3530] flex items-center gap-2">
-              <AlertTriangle className="w-4 h-4 text-[#B84A44]" />
-              <span>Danger Zone: Demo & Local Reset</span>
-            </h3>
-
-            <div className="flex flex-wrap gap-3">
+            <div className="flex items-center justify-between pt-3 border-t border-line">
               <button
-                onClick={() => {
-                  resetToDemoData();
-                  notify('Reset to realistic demonstration data.', 'info');
-                }}
-                className="btn-press px-4 py-2 rounded-lg bg-[#3B2418] hover:bg-[#4D3021] text-xs font-semibold text-[#F2E8DA] border border-[#5A3927] transition-colors"
+                type="button"
+                onClick={() => setIsOnboardingOpen(true)}
+                className="btn-press text-xs font-semibold text-accent hover:underline"
               >
-                Reload Realistic Sample/Demo Data
+                Relaunch Onboarding Setup
               </button>
-
-              <AnimatePresence mode="wait">
-                {!showClearConfirm ? (
-                  <motion.button
-                    key="clear-trigger"
-                    initial={{ opacity: 0, scale: 0.96 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.96 }}
-                    transition={{ duration: 0.15 }}
-                    onClick={() => setShowClearConfirm(true)}
-                    className="btn-press px-4 py-2 rounded-lg bg-[#B84A44]/15 hover:bg-[#B84A44]/25 text-xs font-semibold text-[#9E3530] border border-[#B84A44]/40 transition-colors"
-                  >
-                    Clear All Data (Blank Slate)
-                  </motion.button>
-                ) : (
-                  <motion.div
-                    key="clear-confirm"
-                    initial={{ opacity: 0, x: -6 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -6 }}
-                    transition={{ duration: 0.18, ease: MOMENTUM_EASE }}
-                    className="flex items-center gap-2"
-                  >
-                    <span className="text-xs font-semibold text-[#9E3530]">Are you sure?</span>
-                    <button
-                      onClick={() => {
-                        clearAllData();
-                        setShowClearConfirm(false);
-                        notify('All local data cleared.', 'info');
-                      }}
-                      className="btn-press px-3 py-1.5 rounded-lg bg-[#B84A44] text-[#FAF5ED] text-xs font-bold"
-                    >
-                      Yes, Wipe Data
-                    </button>
-                    <button
-                      onClick={() => setShowClearConfirm(false)}
-                      className="btn-press px-3 py-1.5 rounded-lg bg-[#FAF5ED] border border-[#D6C6B2] text-xs text-[#6E5648] hover:text-[#3B2418]"
-                    >
-                      Cancel
-                    </button>
-                  </motion.div>
-                )}
-              </AnimatePresence>
+              <button
+                type="submit"
+                className="btn-press px-5 py-2 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs transition-all"
+              >
+                Save Profile
+              </button>
             </div>
-          </div>
-        </motion.div>
-      )}
+          </motion.form>
+        )}
+
+        {/* Tab 2: Appearance & Preferences */}
+        {activeTab === 'appearance' && (
+          <motion.div
+            key="settings-appearance"
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -6 }}
+            transition={{ duration: 0.2, ease: MOMENTUM_EASE }}
+            className="p-6 rounded-2xl bg-surface border border-line space-y-6"
+          >
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h2 className="text-sm font-bold uppercase tracking-wider text-ink">
+                  Appearance Mode & Theme
+                </h2>
+                <p className="text-xs text-ink-muted mt-0.5">
+                  Active resolved mode:{' '}
+                  <span className="font-mono font-semibold text-accent uppercase">{resolvedTheme}</span>
+                </p>
+              </div>
+
+              <div
+                className="inline-flex bg-canvas p-1 rounded-xl border border-line text-xs gap-1"
+                role="group"
+                aria-label="Color theme mode"
+              >
+                {(
+                  [
+                    { id: 'light', label: 'Light', Icon: Sun },
+                    { id: 'dark', label: 'Dark', Icon: Moon },
+                    { id: 'system', label: 'System', Icon: Monitor },
+                  ] as const
+                ).map(opt => {
+                  const selected = state.preferences.theme === opt.id;
+                  const Icon = opt.Icon;
+                  return (
+                    <button
+                      key={opt.id}
+                      type="button"
+                      onClick={() => {
+                        updatePreferences({ theme: opt.id });
+                        notify(`Theme set to ${opt.label} mode.`);
+                      }}
+                      className={`btn-press flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-semibold transition-colors whitespace-nowrap ${
+                        selected
+                          ? 'bg-accent text-accent-ink'
+                          : 'text-ink-muted hover:text-ink'
+                      }`}
+                    >
+                      <Icon className="w-3.5 h-3.5" />
+                      <span>{opt.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="space-y-3 pt-4 border-t border-line">
+              <span className="text-xs font-semibold text-ink-muted block">
+                Official MOMENTUM Palette Tokens:
+              </span>
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+                {paletteSwatches.map(swatch => (
+                  <div
+                    key={swatch.hex}
+                    className={`card-hover p-3 rounded-xl text-xs font-mono space-y-1 border ${swatch.bg}`}
+                  >
+                    <span className="font-bold block truncate">{swatch.name}</span>
+                    <span className="text-[11px] opacity-85">{swatch.hex}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-line">
+              <div>
+                <label className="block text-xs font-semibold text-ink-muted mb-1">Start of Week</label>
+                <select
+                  value={state.preferences.startOfWeek}
+                  onChange={e => updatePreferences({ startOfWeek: e.target.value as any })}
+                  className="w-full px-3 py-2 rounded-xl bg-canvas border border-line text-xs text-ink focus:ring-2 focus:ring-accent focus:outline-hidden"
+                >
+                  <option value="monday">Monday (ISO Standard)</option>
+                  <option value="sunday">Sunday</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-ink-muted mb-1">Time Format</label>
+                <select
+                  value={state.preferences.timeFormat}
+                  onChange={e => updatePreferences({ timeFormat: e.target.value as any })}
+                  className="w-full px-3 py-2 rounded-xl bg-canvas border border-line text-xs text-ink focus:ring-2 focus:ring-accent focus:outline-hidden"
+                >
+                  <option value="24h">24-hour (14:00)</option>
+                  <option value="12h">12-hour (2:00 PM)</option>
+                </select>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
+        {/* Tab 3: Supabase & Notion Integrations */}
+        {activeTab === 'integrations' && (
+          <motion.div
+            key="settings-integrations"
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -6 }}
+            transition={{ duration: 0.2, ease: MOMENTUM_EASE }}
+            className="p-6 rounded-2xl bg-surface border border-line space-y-6"
+          >
+            <div className="space-y-1">
+              <h2 className="text-sm font-bold uppercase tracking-wider text-ink">
+                External Integration Architecture
+              </h2>
+              <p className="text-xs text-ink-muted">
+                Connect remote PostgreSQL via Supabase or bidirectional sync with your Notion workspace.
+              </p>
+            </div>
+
+            <div className="card-hover p-5 rounded-xl bg-canvas border border-line space-y-3">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <div className="flex items-center gap-2">
+                  <Database className="w-4 h-4 text-success" />
+                  <h3 className="text-sm font-bold text-ink">Supabase PostgreSQL & Auth</h3>
+                </div>
+                <span className="text-[11px] font-mono text-accent">
+                  Client Ready (Offline Storage Active)
+                </span>
+              </div>
+              <p className="text-xs text-ink-muted leading-relaxed">
+                To connect your live Supabase cloud project, configure{' '}
+                <code className="text-accent font-semibold">VITE_SUPABASE_URL</code> and{' '}
+                <code className="text-accent font-semibold">VITE_SUPABASE_ANON_KEY</code> in your environment. The
+                complete PostgreSQL migration script with all 30 normalized tables and RLS security policies is stored at{' '}
+                <code className="text-ink">supabase/migrations/20261109000000_momentum_core.sql</code>.
+              </p>
+            </div>
+
+            <div className="card-hover p-5 rounded-xl bg-canvas border border-line space-y-3">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <div className="flex items-center gap-2">
+                  <Compass className="w-4 h-4 text-accent" />
+                  <h3 className="text-sm font-bold text-ink">Notion Life OS Sync</h3>
+                </div>
+                <span className="text-[11px] font-mono text-ink-muted">Modular API Layer</span>
+              </div>
+              <p className="text-xs text-ink-muted leading-relaxed">
+                MOMENTUM can optionally synchronize tasks, milestones, and notes with an external Notion Life OS database
+                using Notion&apos;s official REST API and server-side secret tokens. MOMENTUM operates completely
+                independently when Notion is disconnected.
+              </p>
+            </div>
+          </motion.div>
+        )}
+
+        {/* Tab 4: Data & Backups */}
+        {activeTab === 'data' && (
+          <motion.div
+            key="settings-data"
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -6 }}
+            transition={{ duration: 0.2, ease: MOMENTUM_EASE }}
+            className="p-6 rounded-2xl bg-surface border border-line space-y-6"
+          >
+            <div className="space-y-1">
+              <h2 className="text-sm font-bold uppercase tracking-wider text-ink">
+                Data Privacy & Local Storage
+              </h2>
+              <p className="text-xs text-ink-muted">
+                You own your data completely. Export full JSON snapshots, reload demo data, or clear the local sandbox.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="card-hover p-4 rounded-xl bg-canvas border border-line space-y-3">
+                <h3 className="text-xs font-bold text-ink flex items-center gap-2">
+                  <Download className="w-4 h-4 text-accent" />
+                  <span>Export Backups</span>
+                </h3>
+                <p className="text-xs text-ink-muted">
+                  Download your complete profile, goals, habits, workouts, and journal entries in JSON format.
+                </p>
+                <button
+                  type="button"
+                  onClick={handleExportJson}
+                  className="btn-press w-full py-2 rounded-xl bg-accent text-accent-ink font-semibold text-xs hover:bg-accent-hover transition-colors"
+                >
+                  Download Full JSON Backup
+                </button>
+              </div>
+
+              <div className="card-hover p-4 rounded-xl bg-canvas border border-line space-y-3">
+                <h3 className="text-xs font-bold text-ink flex items-center gap-2">
+                  <Upload className="w-4 h-4 text-ink-muted" />
+                  <span>Restore Backup</span>
+                </h3>
+                <p className="text-xs text-ink-muted">
+                  Import a previous MOMENTUM JSON state file to restore all your data.
+                </p>
+                <label className="btn-press w-full py-2 rounded-xl bg-surface border border-line text-ink font-semibold text-xs hover:bg-surface-warm cursor-pointer flex items-center justify-center transition-colors">
+                  <span>Select JSON File</span>
+                  <input
+                    type="file"
+                    accept=".json"
+                    onChange={handleImportJson}
+                    className="hidden"
+                  />
+                </label>
+              </div>
+            </div>
+
+            <div className="p-4 rounded-xl bg-canvas border border-danger/40 space-y-3">
+              <h3 className="text-xs font-bold text-danger flex items-center gap-2">
+                <AlertTriangle className="w-4 h-4" />
+                <span>Danger Zone: Demo & Local Reset</span>
+              </h3>
+
+              <div className="flex flex-wrap gap-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    resetToDemoData();
+                    notify('Reset to realistic demonstration data.', 'info');
+                  }}
+                  className="btn-press px-4 py-2 rounded-xl bg-brand hover:bg-brand-hover text-xs font-semibold text-brand-ink transition-colors"
+                >
+                  Reload Realistic Sample/Demo Data
+                </button>
+
+                <AnimatePresence mode="wait">
+                  {!showClearConfirm ? (
+                    <motion.button
+                      key="clear-trigger"
+                      type="button"
+                      initial={{ opacity: 0, scale: 0.96 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.96 }}
+                      transition={{ duration: 0.15 }}
+                      onClick={() => setShowClearConfirm(true)}
+                      className="btn-press px-4 py-2 rounded-xl bg-danger/15 hover:bg-danger/25 text-xs font-semibold text-danger border border-danger/40 transition-colors"
+                    >
+                      Clear All Data (Blank Slate)
+                    </motion.button>
+                  ) : (
+                    <motion.div
+                      key="clear-confirm"
+                      initial={{ opacity: 0, x: -6 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -6 }}
+                      transition={{ duration: 0.18, ease: MOMENTUM_EASE }}
+                      className="flex items-center gap-2"
+                    >
+                      <span className="text-xs font-semibold text-danger">Are you sure?</span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          clearAllData();
+                          setShowClearConfirm(false);
+                          notify('All local data cleared.', 'info');
+                        }}
+                        className="btn-press px-3 py-1.5 rounded-xl bg-danger text-white text-xs font-bold"
+                      >
+                        Yes, Wipe Data
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setShowClearConfirm(false)}
+                        className="btn-press px-3 py-1.5 rounded-xl bg-surface border border-line text-xs text-ink-muted hover:text-ink"
+                      >
+                        Cancel
+                      </button>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            </div>
+          </motion.div>
+        )}
       </AnimatePresence>
     </div>
   );

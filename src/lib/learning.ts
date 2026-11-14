@@ -10,14 +10,14 @@ import type {
 import type { Task, TaskStatus } from '../types';
 
 export const MODULE_COLOR_PALETTE = [
-  { hex: '#8EC5FF', label: 'Sky Blue' },
-  { hex: '#3B2418', label: 'Espresso' },
-  { hex: '#1E5A99', label: 'Cobalt' },
+  { hex: '#D2925B', label: 'Warm Amber' },
+  { hex: '#64432B', label: 'Warm Brown' },
+  { hex: '#333C44', label: 'Deep Charcoal' },
+  { hex: '#868A7A', label: 'Muted Sage' },
   { hex: '#3E7B52', label: 'Forest' },
-  { hex: '#A36116', label: 'Amber' },
-  { hex: '#6E5648', label: 'Cocoa' },
+  { hex: '#B87222', label: 'Ochre' },
   { hex: '#B84A44', label: 'Terracotta' },
-  { hex: '#4D3021', label: 'Roast' },
+  { hex: '#7D5A44', label: 'Walnut' },
 ] as const;
 
 export const LEARNING_STATUS_META: Record<
@@ -26,15 +26,15 @@ export const LEARNING_STATUS_META: Record<
 > = {
   not_started: {
     label: 'Not Started',
-    badgeClass: 'text-[#6E5648] bg-[#EAE0D0] border-[#D6C6B2]',
+    badgeClass: 'text-ink-muted bg-surface-inset border-line',
   },
   in_progress: {
     label: 'In Progress',
-    badgeClass: 'text-[#1E5A99] bg-[#8EC5FF]/25 border-[#8EC5FF]',
+    badgeClass: 'text-brand dark:text-accent bg-accent/18 border-accent/45',
   },
   completed: {
     label: 'Completed',
-    badgeClass: 'text-[#3E7B52] bg-[#3E7B52]/12 border-[#3E7B52]/40',
+    badgeClass: 'text-success bg-success/12 border-success/40',
   },
 };
 
@@ -44,15 +44,15 @@ export const LEARNING_TASK_STATUS_META: Record<
 > = {
   todo: {
     label: 'To Do',
-    badgeClass: 'text-[#6E5648] bg-[#EAE0D0] border-[#D6C6B2]',
+    badgeClass: 'text-ink-muted bg-surface-inset border-line',
   },
   in_progress: {
     label: 'In Progress',
-    badgeClass: 'text-[#1E5A99] bg-[#8EC5FF]/25 border-[#8EC5FF]',
+    badgeClass: 'text-brand dark:text-accent bg-accent/18 border-accent/45',
   },
   completed: {
     label: 'Completed',
-    badgeClass: 'text-[#3E7B52] bg-[#3E7B52]/12 border-[#3E7B52]/40',
+    badgeClass: 'text-success bg-success/12 border-success/40',
   },
 };
 
