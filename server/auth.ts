@@ -173,25 +173,25 @@ export function requireAuth(req: AuthedRequest, res: Response, next: NextFunctio
 }
 
 const DEFAULT_EXPENSE_CATEGORIES = [
-  { name: 'Food', color: '#A36116' },
-  { name: 'Transport', color: '#1E5A99' },
-  { name: 'Education', color: '#8EC5FF' },
-  { name: 'Shopping', color: '#6E5648' },
-  { name: 'Health', color: '#3E7B52' },
+  { name: 'Food', color: '#D2925B' },
+  { name: 'Transport', color: '#5B7C99' },
+  { name: 'Education', color: '#9ECCFD' },
+  { name: 'Shopping', color: '#E09B4B' },
+  { name: 'Health', color: '#5EA675' },
   { name: 'Entertainment', color: '#73B6FC' },
-  { name: 'Bills', color: '#B84A44' },
-  { name: 'Housing', color: '#3B2418' },
-  { name: 'Technology', color: '#4D3021' },
-  { name: 'Other', color: '#8A7364' },
+  { name: 'Bills', color: '#DF6B64' },
+  { name: 'Housing', color: '#868A7A' },
+  { name: 'Technology', color: '#A8B0BA' },
+  { name: 'Other', color: '#6E7368' },
 ];
 
 const DEFAULT_INCOME_CATEGORIES = [
-  { name: 'Salary', color: '#3E7B52' },
-  { name: 'Freelance', color: '#1E5A99' },
-  { name: 'Scholarship / Stipend', color: '#8EC5FF' },
-  { name: 'Investments', color: '#2D6240' },
-  { name: 'Gift', color: '#A36116' },
-  { name: 'Other Income', color: '#6E5648' },
+  { name: 'Salary', color: '#5EA675' },
+  { name: 'Freelance', color: '#5B7C99' },
+  { name: 'Scholarship / Stipend', color: '#9ECCFD' },
+  { name: 'Investments', color: '#D2925B' },
+  { name: 'Gift', color: '#E09B4B' },
+  { name: 'Other Income', color: '#868A7A' },
 ];
 
 export function initializeUserFinanceDefaults(userId: string): void {

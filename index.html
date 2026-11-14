@@ -5,35 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>MOMENTUM — Personal Life Operating System</title>
     <meta name="description" content="Your life. Your goals. Your progress. A cohesive Personal Life Operating System that helps you transform long-term ambitions into daily actions." />
-    <meta name="theme-color" content="#252A2E" />
+    <meta name="theme-color" content="#1A1A1D" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="MOMENTUM" />
     <script>
       (function () {
-        try {
-          var raw = localStorage.getItem('momentum_life_os_state_v1');
-          var theme = 'light';
-          if (raw) {
-            var parsed = JSON.parse(raw);
-            if (parsed && parsed.preferences && parsed.preferences.theme) {
-              theme = parsed.preferences.theme;
-            }
-          }
-          var isDark =
-            theme === 'dark' ||
-            (theme === 'system' &&
-              window.matchMedia &&
-              window.matchMedia('(prefers-color-scheme: dark)').matches);
-          var bg = isDark ? '#252A2E' : '#F7F1E8';
-          var root = document.documentElement;
-          root.classList.toggle('dark', isDark);
-          root.style.colorScheme = isDark ? 'dark' : 'light';
-          root.style.backgroundColor = bg;
-          var metaTheme = document.querySelector('meta[name="theme-color"]');
-          if (metaTheme) metaTheme.setAttribute('content', bg);
-        } catch (e) {}
+        var bg = '#1A1A1D';
+        var root = document.documentElement;
+        root.classList.add('dark');
+        root.style.colorScheme = 'dark';
+        root.style.backgroundColor = bg;
+        var metaTheme = document.querySelector('meta[name="theme-color"]');
+        if (metaTheme) metaTheme.setAttribute('content', bg);
       })();
     </script>
     <link rel="icon" href="/favicon.ico" sizes="any" />

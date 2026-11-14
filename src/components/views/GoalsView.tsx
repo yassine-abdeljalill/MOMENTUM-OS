@@ -103,14 +103,14 @@ export const GoalsView: React.FC = () => {
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-8">
       {/* Vision Statement Banner */}
-      <section className="p-5 sm:p-6 rounded-2xl bg-brand dark:bg-surface-warm border border-line-strong/30 dark:border-line space-y-2 shadow-sm">
+      <section className="p-5 sm:p-6 rounded-2xl bg-surface border border-line space-y-2 shadow-sm">
         <div className="flex items-center gap-2">
-          <Compass className="w-4 h-4 text-accent" />
-          <span className="text-xs font-mono font-semibold uppercase tracking-wider text-accent">
+          <Compass className="w-4 h-4 text-brand-blue" />
+          <span className="text-xs font-mono font-semibold uppercase tracking-wider text-brand-blue">
             Long-Term Vision
           </span>
         </div>
-        <p className="font-serif text-sm sm:text-base text-brand-ink dark:text-ink italic max-w-3xl leading-relaxed">
+        <p className="font-serif text-sm sm:text-base text-ink italic max-w-3xl leading-relaxed">
           &ldquo;{state.profile.visionStatement || "Don't just track what you do. Track who you're becoming."}&rdquo;
         </p>
       </section>
@@ -159,7 +159,7 @@ export const GoalsView: React.FC = () => {
           <button
             type="button"
             onClick={() => setShowNewGoalModal(true)}
-            className="btn-press group flex items-center gap-1.5 px-4 py-2 min-h-[40px] rounded-xl bg-brand hover:bg-brand-hover text-brand-ink font-semibold text-xs transition-colors whitespace-nowrap shrink-0"
+            className="btn-press group flex items-center gap-1.5 px-4 py-2 min-h-[40px] rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs transition-colors whitespace-nowrap shrink-0"
           >
             <Plus className="w-4 h-4 stroke-[2.25] transition-transform duration-200 group-hover:rotate-90" />
             <span>New Goal</span>
@@ -531,15 +531,15 @@ export const GoalsView: React.FC = () => {
         onClose={() => setShowNewGoalModal(false)}
         maxWidthClass="max-w-lg"
       >
-        <div className="flex items-center justify-between px-5 sm:px-6 py-4 border-b border-line bg-brand dark:bg-surface-warm">
+        <div className="flex items-center justify-between px-5 sm:px-6 py-4 border-b border-line bg-surface-warm">
           <div className="flex items-center gap-2">
             <Target className="w-4 h-4 text-accent" />
-            <h3 className="text-sm font-semibold text-brand-ink dark:text-ink">Create New Goal</h3>
+            <h3 className="text-sm font-semibold text-ink">Create New Goal</h3>
           </div>
           <button
             type="button"
             onClick={() => setShowNewGoalModal(false)}
-            className="p-1.5 rounded-lg text-brand-ink/80 dark:text-ink-muted hover:text-brand-ink dark:hover:text-ink transition-colors"
+            className="p-1.5 rounded-lg text-ink-muted hover:text-ink transition-colors"
             aria-label="Close goal modal"
           >
             <X className="w-4 h-4" />

@@ -491,12 +491,14 @@ export const LessonNotesTab: React.FC<{
                   }}
                   className={`p-3.5 rounded-xl border cursor-pointer transition-colors group space-y-1.5 ${
                     isSelected
-                      ? 'bg-brand border-brand text-brand-ink'
-                      : 'bg-surface border-line text-ink hover:border-accent'
+                      ? 'bg-surface-warm border-accent text-ink'
+                      : 'bg-surface border-line text-ink hover:border-accent/60'
                   }`}
                 >
                   <div className="flex items-start justify-between gap-2">
-                    <span className="text-xs font-bold truncate">{note.title}</span>
+                    <span className={`text-xs font-bold truncate ${isSelected ? 'text-accent' : 'text-ink'}`}>
+                      {note.title}
+                    </span>
                     <div className="flex items-center gap-1 shrink-0">
                       <button
                         type="button"
@@ -507,8 +509,6 @@ export const LessonNotesTab: React.FC<{
                         className={`p-1 rounded transition-colors ${
                           note.isPinned
                             ? 'text-accent'
-                            : isSelected
-                            ? 'text-brand-ink/70 hover:text-accent'
                             : 'text-ink-muted hover:text-accent'
                         }`}
                         title={note.isPinned ? 'Unpin note' : 'Pin note'}
@@ -522,11 +522,7 @@ export const LessonNotesTab: React.FC<{
                           e.stopPropagation();
                           setDeleteCandidate(note);
                         }}
-                        className={`p-1 rounded transition-colors ${
-                          isSelected
-                            ? 'text-brand-ink/70 hover:text-brand-ink'
-                            : 'text-ink-muted hover:text-danger'
-                        }`}
+                        className="p-1 rounded transition-colors text-ink-muted hover:text-danger"
                         title="Delete note"
                         aria-label="Delete note"
                       >
@@ -534,16 +530,12 @@ export const LessonNotesTab: React.FC<{
                       </button>
                     </div>
                   </div>
-                  <p
-                    className={`text-[11px] line-clamp-2 leading-relaxed ${
-                      isSelected ? 'text-brand-ink/80' : 'text-ink-muted'
-                    }`}
-                  >
+                  <p className="text-[11px] line-clamp-2 leading-relaxed text-ink-muted">
                     {note.plainText || 'Empty note — click to start writing...'}
                   </p>
                   <div
                     className={`text-[10px] font-mono tabular-nums ${
-                      isSelected ? 'text-accent' : 'text-ink-muted'
+                      isSelected ? 'text-brand-blue' : 'text-ink-muted'
                     }`}
                   >
                     Updated {new Date(note.updatedAt).toLocaleDateString()}

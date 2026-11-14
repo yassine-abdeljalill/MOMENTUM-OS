@@ -416,36 +416,14 @@ export function AppProvider({ children }: { children: ReactNode }) {
     sessionType: 'focus',
   });
 
-  // Theme Resolution & DOM Sync
-  const [systemPrefersDark, setSystemPrefersDark] = useState<boolean>(() => {
-    if (typeof window === 'undefined' || !window.matchMedia) return false;
-    return window.matchMedia('(prefers-color-scheme: dark)').matches;
-  });
-
-  useEffect(() => {
-    if (typeof window === 'undefined' || !window.matchMedia) return;
-    const mq = window.matchMedia('(prefers-color-scheme: dark)');
-    const handler = (e: MediaQueryListEvent) => setSystemPrefersDark(e.matches);
-    mq.addEventListener('change', handler);
-    return () => mq.removeEventListener('change', handler);
-  }, []);
-
-  const themePreference = state.preferences?.theme || 'light';
-  const resolvedTheme: 'light' | 'dark' =
-    themePreference === 'system'
-      ? systemPrefersDark
-        ? 'dark'
-        : 'light'
-      : themePreference === 'dark'
-      ? 'dark'
-      : 'light';
+  const resolvedTheme: 'light' | 'dark' = 'dark';
 
   useEffect(() => {
     if (typeof document === 'undefined') return;
     const root = document.documentElement;
-    const bg = resolvedTheme === 'dark' ? '#252A2E' : '#F7F1E8';
-    root.classList.toggle('dark', resolvedTheme === 'dark');
-    root.style.colorScheme = resolvedTheme;
+    const bg = '#1A1A1D';
+    root.classList.add('dark');
+    root.style.colorScheme = 'dark';
     root.style.backgroundColor = bg;
     if (document.body) {
       document.body.style.backgroundColor = bg;
@@ -454,7 +432,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     if (metaTheme) {
       metaTheme.setAttribute('content', bg);
     }
-  }, [resolvedTheme]);
+  }, []);
 
   // Persist state changes
   useEffect(() => {

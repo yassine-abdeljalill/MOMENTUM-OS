@@ -70,7 +70,7 @@ export const AnalyticsView: React.FC = () => {
     {
       label: 'Academic & Study',
       minutes: totalStudyMinutes,
-      color: 'bg-brand',
+      color: 'bg-brand-blue',
     },
     {
       label: 'Physical Training',
@@ -233,7 +233,7 @@ export const AnalyticsView: React.FC = () => {
       <div className="p-6 rounded-2xl bg-surface border border-line space-y-4">
         <div className="flex items-center justify-between pb-3 border-b border-line">
           <div className="flex items-center gap-2">
-            <BarChart3 className="w-4 h-4 text-accent" />
+            <BarChart3 className="w-4 h-4 text-brand-blue" />
             <h3 className="text-sm font-bold uppercase tracking-wider text-ink">
               Invested Effort Across Domains ({dateRange} window)
             </h3>
@@ -307,7 +307,7 @@ export const AnalyticsView: React.FC = () => {
           className="card-hover p-6 rounded-2xl bg-surface border border-line space-y-4"
         >
           <div className="flex items-center gap-2 pb-3 border-b border-line">
-            <BookOpen className="w-4 h-4 text-accent" />
+            <BookOpen className="w-4 h-4 text-brand-blue" />
             <h3 className="text-sm font-bold uppercase tracking-wider text-ink">
               Knowledge & Course Progress
             </h3>

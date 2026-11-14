@@ -55,9 +55,9 @@ export const NotificationsDrawer: React.FC = () => {
       side="right"
     >
       {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b border-line bg-brand text-brand-ink">
+      <div className="flex items-center justify-between p-4 border-b border-line bg-surface-warm text-ink">
         <div className="flex items-center gap-2">
-          <Bell className="w-4 h-4 text-accent" />
+          <Bell className="w-4 h-4 text-brand-blue" />
           <h2 className="font-semibold text-sm font-heading">Notifications</h2>
           {unreadCount > 0 && (
             <span className="px-1.5 py-0.5 text-[10px] font-mono rounded-md bg-accent text-accent-ink font-bold tabular-nums">
@@ -73,7 +73,7 @@ export const NotificationsDrawer: React.FC = () => {
                 markAllNotificationsRead();
                 showToast('All notifications marked as read.', 'info');
               }}
-              className="text-[11px] text-brand-ink/75 hover:text-accent transition-colors btn-press"
+              className="text-[11px] text-ink-muted hover:text-accent transition-colors btn-press"
             >
               Mark all read
             </button>
@@ -81,7 +81,7 @@ export const NotificationsDrawer: React.FC = () => {
           <button
             type="button"
             onClick={() => setIsNotificationsOpen(false)}
-            className="p-1.5 rounded-lg text-brand-ink/75 hover:text-brand-ink hover:bg-white/10 btn-press"
+            className="p-1.5 rounded-lg text-ink-muted hover:text-ink hover:bg-surface-hover btn-press"
             aria-label="Close notifications"
           >
             <X className="w-4 h-4" />

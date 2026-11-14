@@ -131,7 +131,7 @@ export const AuthModal: React.FC = () => {
       maxWidthClass="max-w-md"
     >
       {/* Header */}
-      <div className="flex items-center justify-between px-6 py-4 border-b border-line bg-brand text-brand-ink">
+      <div className="flex items-center justify-between px-6 py-4 border-b border-line bg-surface-warm text-ink">
         <div className="flex items-center gap-2.5">
           <img
             src="/brand-logo.png"
@@ -151,7 +151,7 @@ export const AuthModal: React.FC = () => {
         <button
           type="button"
           onClick={() => setIsAuthModalOpen(false)}
-          className="p-1.5 rounded-lg text-brand-ink/75 hover:text-brand-ink hover:bg-white/10 btn-press"
+          className="p-1.5 rounded-lg text-ink-muted hover:text-ink hover:bg-surface-hover btn-press"
           aria-label="Close dialog"
         >
           <X className="w-4 h-4" />
@@ -206,7 +206,7 @@ export const AuthModal: React.FC = () => {
               return (
                 <div className="space-y-5">
                   <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-surface-warm/70 border border-line">
-                    <div className="w-12 h-12 rounded-full bg-brand border-2 border-accent flex items-center justify-center text-lg font-bold text-brand-ink shrink-0">
+                    <div className="w-12 h-12 rounded-full bg-surface-inset border-2 border-brand-blue flex items-center justify-center text-lg font-bold text-ink shrink-0">
                       {displayName.charAt(0).toUpperCase()}
                     </div>
                     <div className="flex-1 min-w-0">
@@ -219,7 +219,7 @@ export const AuthModal: React.FC = () => {
                           className={`text-[10px] font-mono font-semibold px-2 py-0.5 rounded-md border ${
                             isRegistered
                               ? 'bg-success/12 text-success border-success/35'
-                              : 'bg-accent/18 text-brand dark:text-accent border-accent/40'
+                              : 'bg-brand-blue/15 text-brand-blue border-brand-blue/35'
                           }`}
                         >
                           {isRegistered

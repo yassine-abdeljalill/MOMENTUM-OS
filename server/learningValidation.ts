@@ -27,7 +27,7 @@ export const LEARNING_TASK_PRIORITIES = ['low', 'medium', 'high', 'urgent'] as c
 export const moduleCreateSchema = z.object({
   title: z.string().trim().min(1, 'Module title is required.').max(140),
   description: z.string().trim().max(2000).optional().default(''),
-  color: z.string().trim().regex(hexColorRegex, 'Invalid hex color.').optional().default('#8EC5FF'),
+  color: z.string().trim().regex(hexColorRegex, 'Invalid hex color.').optional().default('#9ECCFD'),
   icon: z.enum(LEARNING_MODULE_ICONS).optional().default('book'),
   status: z.enum(LEARNING_STATUSES).optional().default('not_started'),
 });

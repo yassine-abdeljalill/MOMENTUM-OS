@@ -163,7 +163,7 @@ export const ProjectsView: React.FC = () => {
           <button
             type="button"
             onClick={() => setShowNewProjectModal(true)}
-            className="btn-press group flex items-center gap-1.5 px-4 py-2 min-h-[40px] rounded-xl bg-brand hover:bg-brand-hover text-brand-ink font-semibold text-xs transition-colors whitespace-nowrap shrink-0"
+            className="btn-press group flex items-center gap-1.5 px-4 py-2 min-h-[40px] rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs transition-colors whitespace-nowrap shrink-0"
           >
             <Plus className="w-4 h-4 stroke-[2.25] transition-transform duration-200 group-hover:rotate-90" />
             <span>New Project</span>
@@ -285,9 +285,9 @@ export const ProjectsView: React.FC = () => {
                 </div>
 
                 {/* Progress Summary */}
-                <div className="p-4 rounded-xl bg-brand dark:bg-surface-warm border border-line-strong/30 dark:border-line flex items-center justify-between text-brand-ink dark:text-ink">
+                <div className="p-4 rounded-xl bg-surface-warm border border-line flex items-center justify-between text-ink">
                   <div>
-                    <span className="text-xs uppercase tracking-wider text-brand-ink/75 dark:text-ink-muted block">
+                    <span className="text-xs uppercase tracking-wider text-ink-muted block">
                       Execution Progress
                     </span>
                     <AnimatedNumber
@@ -296,7 +296,7 @@ export const ProjectsView: React.FC = () => {
                       className="text-xl font-bold font-mono text-accent tabular-nums"
                     />
                   </div>
-                  <div className="text-right text-xs text-brand-ink/80 dark:text-ink-muted font-mono tabular-nums">
+                  <div className="text-right text-xs text-ink-muted font-mono tabular-nums">
                     <div>{linkedTasks.length} linked tasks</div>
                     <div>{currentProject.milestones?.length || 0} milestones</div>
                   </div>
@@ -417,15 +417,15 @@ export const ProjectsView: React.FC = () => {
         onClose={() => setShowNewProjectModal(false)}
         maxWidthClass="max-w-lg"
       >
-        <div className="flex items-center justify-between px-5 sm:px-6 py-4 border-b border-line bg-brand dark:bg-surface-warm">
+        <div className="flex items-center justify-between px-5 sm:px-6 py-4 border-b border-line bg-surface-warm">
           <div className="flex items-center gap-2">
-            <FolderGit2 className="w-4 h-4 text-accent" />
-            <h3 className="text-sm font-semibold text-brand-ink dark:text-ink">Create Project</h3>
+            <FolderGit2 className="w-4 h-4 text-brand-blue" />
+            <h3 className="text-sm font-semibold text-ink">Create Project</h3>
           </div>
           <button
             type="button"
             onClick={() => setShowNewProjectModal(false)}
-            className="p-1.5 rounded-lg text-brand-ink/80 dark:text-ink-muted hover:text-brand-ink dark:hover:text-ink transition-colors"
+            className="p-1.5 rounded-lg text-ink-muted hover:text-ink transition-colors"
             aria-label="Close project modal"
           >
             <X className="w-4 h-4" />

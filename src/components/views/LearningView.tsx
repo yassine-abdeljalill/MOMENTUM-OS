@@ -380,7 +380,7 @@ export const LearningView: React.FC = () => {
     return (
       <div className="max-w-2xl mx-auto py-16">
         <div className="p-8 rounded-2xl bg-surface border border-line text-center space-y-4">
-          <div className="w-12 h-12 rounded-2xl bg-brand text-accent flex items-center justify-center mx-auto">
+          <div className="w-12 h-12 rounded-2xl bg-surface-warm border border-line text-brand-blue flex items-center justify-center mx-auto">
             <GraduationCap className="w-6 h-6" />
           </div>
           <div className="space-y-1">
@@ -575,7 +575,7 @@ export const LearningView: React.FC = () => {
                 setEditingModule(null);
                 setModuleModalOpen(true);
               }}
-              className="btn-press group inline-flex items-center gap-1.5 px-4 py-2 min-h-[40px] rounded-xl bg-brand hover:bg-brand-hover text-brand-ink font-semibold text-xs whitespace-nowrap"
+              className="btn-press group inline-flex items-center gap-1.5 px-4 py-2 min-h-[40px] rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs whitespace-nowrap"
             >
               <Plus className="w-4 h-4 stroke-[2.25] transition-transform duration-200 group-hover:rotate-90" />
               <span>New Module</span>
@@ -593,7 +593,7 @@ export const LearningView: React.FC = () => {
                   onClick={() => setStatusFilter(st)}
                   className={`px-3 py-1.5 rounded-xl text-xs font-medium border transition-colors whitespace-nowrap ${
                     statusFilter === st
-                      ? 'bg-brand text-brand-ink border-brand'
+                      ? 'bg-accent text-accent-ink border-accent font-semibold'
                       : 'bg-canvas text-ink-muted border-line hover:text-ink'
                   }`}
                 >
@@ -693,7 +693,7 @@ export const LearningView: React.FC = () => {
 
               {modules.length === 0 ? (
                 <div className="p-10 rounded-2xl bg-surface border border-line text-center space-y-4">
-                  <div className="w-12 h-12 rounded-2xl bg-brand text-accent flex items-center justify-center mx-auto">
+                  <div className="w-12 h-12 rounded-2xl bg-surface-warm border border-line text-brand-blue flex items-center justify-center mx-auto">
                     <GraduationCap className="w-6 h-6" />
                   </div>
                   <div className="space-y-1">
@@ -790,7 +790,7 @@ export const LearningView: React.FC = () => {
                               >
                                 <ModuleIconView
                                   icon={mod.icon}
-                                  className={`w-5 h-5 ${isDarkBg ? 'text-[#F7F1E8]' : 'text-[#2B1F18]'}`}
+                                  className={`w-5 h-5 ${isDarkBg ? 'text-[#F5F1E9]' : 'text-[#1A1A1D]'}`}
                                 />
                               </div>
                               <div className="min-w-0">

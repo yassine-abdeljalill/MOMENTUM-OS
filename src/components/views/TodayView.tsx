@@ -162,9 +162,9 @@ export const TodayView: React.FC = () => {
         <button
           type="button"
           onClick={() => setShowReflectionModal(true)}
-          className="btn-press self-start sm:self-auto flex items-center gap-1.5 px-4 py-2.5 min-h-[44px] sm:min-h-0 rounded-xl bg-brand hover:bg-brand-hover text-brand-ink text-xs font-semibold transition-colors whitespace-nowrap shrink-0"
+          className="btn-press self-start sm:self-auto flex items-center gap-1.5 px-4 py-2.5 min-h-[44px] sm:min-h-0 rounded-xl bg-surface-warm hover:bg-surface-hover border border-line text-ink text-xs font-semibold transition-colors whitespace-nowrap shrink-0"
         >
-          <BookOpen className="w-3.5 h-3.5 text-accent" />
+          <BookOpen className="w-3.5 h-3.5 text-brand-blue" />
           <span>Daily Reflection</span>
         </button>
       </div>
@@ -187,7 +187,7 @@ export const TodayView: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setIsQuickAddOpen(true)}
-                className="text-xs text-brand dark:text-accent hover:underline flex items-center gap-1 font-medium whitespace-nowrap shrink-0 min-h-[36px]"
+                className="text-xs text-brand-blue hover:underline flex items-center gap-1 font-medium whitespace-nowrap shrink-0 min-h-[36px]"
               >
                 <Plus className="w-3.5 h-3.5" />
                 <span>New Priority</span>
@@ -351,7 +351,7 @@ export const TodayView: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setIsQuickAddOpen(true)}
-                className="text-xs text-brand dark:text-accent font-medium hover:underline whitespace-nowrap shrink-0"
+                className="text-xs text-brand-blue font-medium hover:underline whitespace-nowrap shrink-0"
               >
                 + Add Task
               </button>
@@ -421,7 +421,7 @@ export const TodayView: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setShowAddActivityForm(!showAddActivityForm)}
-                className="text-xs text-brand dark:text-accent font-medium hover:underline whitespace-nowrap"
+                className="text-xs text-brand-blue font-medium hover:underline whitespace-nowrap"
               >
                 {showAddActivityForm ? 'Cancel' : '+ Block Time'}
               </button>
@@ -572,17 +572,17 @@ export const TodayView: React.FC = () => {
         onClose={() => setShowReflectionModal(false)}
         maxWidthClass="max-w-lg"
       >
-        <div className="flex items-center justify-between px-5 sm:px-6 py-4 border-b border-line bg-brand dark:bg-surface-warm">
+        <div className="flex items-center justify-between px-5 sm:px-6 py-4 border-b border-line bg-surface-warm">
           <div className="flex items-center gap-2">
-            <BookOpen className="w-4 h-4 text-accent" />
-            <h3 className="text-sm font-semibold text-brand-ink dark:text-ink">
+            <BookOpen className="w-4 h-4 text-brand-blue" />
+            <h3 className="text-sm font-semibold text-ink">
               End of Day Reflection
             </h3>
           </div>
           <button
             type="button"
             onClick={() => setShowReflectionModal(false)}
-            className="p-1.5 rounded-lg text-brand-ink/80 dark:text-ink-muted hover:text-brand-ink dark:hover:text-ink transition-colors"
+            className="p-1.5 rounded-lg text-ink-muted hover:text-ink transition-colors"
             aria-label="Close reflection modal"
           >
             <X className="w-4 h-4" />

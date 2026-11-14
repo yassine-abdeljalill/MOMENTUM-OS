@@ -10,14 +10,14 @@ import type {
 import type { Task, TaskStatus } from '../types';
 
 export const MODULE_COLOR_PALETTE = [
-  { hex: '#D2925B', label: 'Warm Amber' },
-  { hex: '#64432B', label: 'Warm Brown' },
-  { hex: '#333C44', label: 'Deep Charcoal' },
+  { hex: '#D2925B', label: 'Warm Beige' },
+  { hex: '#9ECCFD', label: 'MOMENTUM Blue' },
   { hex: '#868A7A', label: 'Muted Sage' },
-  { hex: '#3E7B52', label: 'Forest' },
-  { hex: '#B87222', label: 'Ochre' },
-  { hex: '#B84A44', label: 'Terracotta' },
-  { hex: '#7D5A44', label: 'Walnut' },
+  { hex: '#2A2A2F', label: 'Elevated Charcoal' },
+  { hex: '#5EA675', label: 'Forest' },
+  { hex: '#E09B4B', label: 'Amber' },
+  { hex: '#DF6B64', label: 'Terracotta' },
+  { hex: '#5B7C99', label: 'Slate Blue' },
 ] as const;
 
 export const LEARNING_STATUS_META: Record<
@@ -30,7 +30,7 @@ export const LEARNING_STATUS_META: Record<
   },
   in_progress: {
     label: 'In Progress',
-    badgeClass: 'text-brand dark:text-accent bg-accent/18 border-accent/45',
+    badgeClass: 'text-brand-blue bg-brand-blue/14 border-brand-blue/40',
   },
   completed: {
     label: 'Completed',
@@ -48,7 +48,7 @@ export const LEARNING_TASK_STATUS_META: Record<
   },
   in_progress: {
     label: 'In Progress',
-    badgeClass: 'text-brand dark:text-accent bg-accent/18 border-accent/45',
+    badgeClass: 'text-brand-blue bg-brand-blue/14 border-brand-blue/40',
   },
   completed: {
     label: 'Completed',

@@ -128,10 +128,10 @@ export const OverviewView: React.FC = () => {
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-8">
       {/* Welcome Hero Banner */}
-      <section className="relative overflow-hidden rounded-2xl bg-brand dark:bg-surface-warm border border-line-strong/30 dark:border-line p-5 sm:p-7 shadow-sm">
+      <section className="relative overflow-hidden rounded-2xl bg-surface border border-line p-5 sm:p-7 shadow-sm">
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-5">
           <div className="space-y-1.5 min-w-0">
-            <p className="text-xs font-mono tracking-wide text-accent tabular-nums">
+            <p className="text-xs font-mono tracking-wide text-brand-blue tabular-nums">
               {new Date().toLocaleDateString(undefined, {
                 weekday: 'long',
                 month: 'long',
@@ -139,10 +139,10 @@ export const OverviewView: React.FC = () => {
                 year: 'numeric',
               })}
             </p>
-            <h1 className="text-2xl sm:text-3xl font-bold text-brand-ink dark:text-ink tracking-tight text-balance">
+            <h1 className="text-2xl sm:text-3xl font-bold text-ink tracking-tight text-balance">
               {getGreeting()}, {state.profile.fullName.split(' ')[0]}.
             </h1>
-            <p className="text-sm text-brand-ink/80 dark:text-ink-muted max-w-xl leading-relaxed">
+            <p className="text-sm text-ink-muted max-w-xl leading-relaxed">
               &ldquo;Don&apos;t just track what you do. Track who you&apos;re becoming.&rdquo; Focus on your 3 core priorities today.
             </p>
           </div>
@@ -160,21 +160,21 @@ export const OverviewView: React.FC = () => {
             <button
               type="button"
               onClick={() => setIsFocusTimerOpen(true)}
-              className="btn-press flex items-center gap-1.5 px-3.5 py-2.5 min-h-[44px] sm:min-h-0 rounded-xl bg-white/10 hover:bg-white/15 dark:bg-surface dark:hover:bg-surface-hover text-brand-ink dark:text-ink border border-white/15 dark:border-line text-xs font-medium whitespace-nowrap shrink-0"
+              className="btn-press flex items-center gap-1.5 px-3.5 py-2.5 min-h-[44px] sm:min-h-0 rounded-xl bg-surface-warm hover:bg-surface-hover text-ink border border-line text-xs font-medium whitespace-nowrap shrink-0"
             >
-              <Timer className="w-4 h-4 text-accent" />
+              <Timer className="w-4 h-4 text-brand-blue" />
               <span>Focus Timer</span>
             </button>
             <div className="relative">
               <button
                 type="button"
                 onClick={() => setShowSettingsPopover(!showSettingsPopover)}
-                className="btn-press flex items-center justify-center w-10 h-10 min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0 sm:w-9 sm:h-9 rounded-xl bg-white/10 hover:bg-white/15 dark:bg-surface dark:hover:bg-surface-hover text-brand-ink dark:text-ink border border-white/15 dark:border-line transition-colors"
+                className="btn-press flex items-center justify-center w-10 h-10 min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0 sm:w-9 sm:h-9 rounded-xl bg-surface-warm hover:bg-surface-hover text-ink border border-line transition-colors"
                 title="Configure Dashboard Widgets"
                 aria-label="Configure dashboard widgets"
                 aria-expanded={showSettingsPopover}
               >
-                <Settings2 className="w-4 h-4 text-accent" />
+                <Settings2 className="w-4 h-4 text-brand-blue" />
               </button>
               <AnimatePresence>
                 {showSettingsPopover && (
@@ -193,7 +193,7 @@ export const OverviewView: React.FC = () => {
                         type="checkbox"
                         checked={showWeeklyChart}
                         onChange={e => setShowWeeklyChart(e.target.checked)}
-                        className="rounded accent-brand dark:accent-accent"
+                        className="rounded accent-accent"
                       />
                       Weekly Activity
                     </label>
@@ -202,7 +202,7 @@ export const OverviewView: React.FC = () => {
                         type="checkbox"
                         checked={showGoalsWidget}
                         onChange={e => setShowGoalsWidget(e.target.checked)}
-                        className="rounded accent-brand dark:accent-accent"
+                        className="rounded accent-accent"
                       />
                       Active Goals
                     </label>
@@ -211,7 +211,7 @@ export const OverviewView: React.FC = () => {
                         type="checkbox"
                         checked={showHabitsWidget}
                         onChange={e => setShowHabitsWidget(e.target.checked)}
-                        className="rounded accent-brand dark:accent-accent"
+                        className="rounded accent-accent"
                       />
                       Daily Habits
                     </label>
@@ -288,7 +288,7 @@ export const OverviewView: React.FC = () => {
         <StaggerItem className="p-4 sm:p-5 rounded-2xl bg-surface border border-line flex flex-col justify-between card-hover">
           <div className="flex items-center justify-between gap-2">
             <span className="text-xs font-medium text-ink-muted">Focus Time</span>
-            <div className="p-1.5 rounded-lg bg-brand/10 dark:bg-accent/15 text-brand dark:text-accent">
+            <div className="p-1.5 rounded-lg bg-brand-blue/15 text-brand-blue">
               <Timer className="w-4 h-4" />
             </div>
           </div>
@@ -325,7 +325,7 @@ export const OverviewView: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setCurrentView('today')}
-                className="text-xs text-brand dark:text-accent font-medium hover:underline flex items-center gap-1 whitespace-nowrap shrink-0 min-h-[36px]"
+                className="text-xs text-brand-blue font-medium hover:underline flex items-center gap-1 whitespace-nowrap shrink-0 min-h-[36px]"
               >
                 <span>Manage Today</span>
                 <ChevronRight className="w-3.5 h-3.5" />
@@ -450,7 +450,7 @@ export const OverviewView: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setCurrentView('analytics')}
-                    className="text-xs text-brand dark:text-accent font-medium hover:underline flex items-center gap-1 whitespace-nowrap"
+                    className="text-xs text-brand-blue font-medium hover:underline flex items-center gap-1 whitespace-nowrap"
                   >
                     <span>Analytics</span>
                     <ArrowUpRight className="w-3.5 h-3.5" />
@@ -471,7 +471,7 @@ export const OverviewView: React.FC = () => {
                           className={`w-full rounded-t-md transition-colors duration-200 ${
                             day.isToday
                               ? 'bg-accent'
-                              : 'bg-brand/70 dark:bg-sage/75 group-hover:bg-brand dark:group-hover:bg-accent'
+                              : 'bg-brand-blue/65 group-hover:bg-brand-blue'
                           }`}
                           initial={prefersReduced ? { height: `${day.heightPct}%` } : { height: '0%' }}
                           whileInView={{ height: `${day.heightPct}%` }}
@@ -517,7 +517,7 @@ export const OverviewView: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setCurrentView('goals')}
-                    className="text-xs text-brand dark:text-accent font-medium hover:underline whitespace-nowrap"
+                    className="text-xs text-brand-blue font-medium hover:underline whitespace-nowrap"
                   >
                     View All
                   </button>
@@ -540,7 +540,7 @@ export const OverviewView: React.FC = () => {
                           className="w-full text-left p-3.5 rounded-xl bg-surface-warm/60 hover:bg-surface-warm border border-line transition-colors space-y-2 group"
                         >
                           <div className="flex items-start justify-between gap-2">
-                            <span className="text-xs font-semibold text-ink group-hover:text-brand dark:group-hover:text-accent truncate transition-colors">
+                            <span className="text-xs font-semibold text-ink group-hover:text-accent truncate transition-colors">
                               {goal.title}
                             </span>
                             <span className="text-xs font-mono font-semibold text-accent shrink-0 tabular-nums">
@@ -582,7 +582,7 @@ export const OverviewView: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setCurrentView('habits')}
-                    className="text-xs text-brand dark:text-accent font-medium hover:underline whitespace-nowrap"
+                    className="text-xs text-brand-blue font-medium hover:underline whitespace-nowrap"
                   >
                     Habit Hub
                   </button>
@@ -631,13 +631,13 @@ export const OverviewView: React.FC = () => {
             <section className="p-5 sm:p-6 rounded-2xl bg-surface border border-line space-y-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <FolderGit2 className="w-4 h-4 text-brand dark:text-accent" />
+                  <FolderGit2 className="w-4 h-4 text-brand-blue" />
                   <h2 className="text-sm font-semibold text-ink">Active Projects</h2>
                 </div>
                 <button
                   type="button"
                   onClick={() => setCurrentView('projects')}
-                  className="text-xs text-brand dark:text-accent font-medium hover:underline whitespace-nowrap"
+                  className="text-xs text-brand-blue font-medium hover:underline whitespace-nowrap"
                 >
                   All Projects
                 </button>
@@ -653,7 +653,7 @@ export const OverviewView: React.FC = () => {
                     }}
                     className="w-full py-2.5 first:pt-3 last:pb-1 flex items-center justify-between gap-2 text-left group min-h-[44px]"
                   >
-                    <span className="text-xs font-medium text-ink group-hover:text-brand dark:group-hover:text-accent truncate transition-colors">
+                    <span className="text-xs font-medium text-ink group-hover:text-accent truncate transition-colors">
                       {project.name}
                     </span>
                     <span className="text-[11px] font-mono text-ink-muted capitalize shrink-0">

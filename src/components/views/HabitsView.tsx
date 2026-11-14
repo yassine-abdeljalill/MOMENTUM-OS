@@ -82,15 +82,15 @@ export const HabitsView: React.FC = () => {
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-16">
       {/* Philosophy banner */}
-      <div className="p-6 rounded-2xl bg-brand dark:bg-surface-warm border border-line flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="p-6 rounded-2xl bg-surface border border-line flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-accent" />
-            <span className="text-xs font-mono font-bold uppercase tracking-wider text-accent">
+            <Sparkles className="w-4 h-4 text-brand-blue" />
+            <span className="text-xs font-mono font-bold uppercase tracking-wider text-brand-blue">
               Sustainable Consistency Engine
             </span>
           </div>
-          <p className="text-xs text-brand-ink/90 dark:text-ink-muted max-w-2xl leading-relaxed">
+          <p className="text-xs text-ink-muted max-w-2xl leading-relaxed">
             Habits compound quietly over months. Missing a single day is a normal part of life, not a failure.
             Use the &ldquo;Skip with reason&rdquo; feature to preserve your momentum without guilt.
           </p>
@@ -274,15 +274,15 @@ export const HabitsView: React.FC = () => {
         onClose={() => setShowNewHabitModal(false)}
         maxWidthClass="max-w-lg"
       >
-        <div className="flex items-center justify-between px-6 py-4 border-b border-line bg-brand dark:bg-surface-warm">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-line bg-surface-warm">
           <div className="flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-accent" />
-            <h3 className="text-sm font-bold text-brand-ink dark:text-ink">Establish New Habit</h3>
+            <Sparkles className="w-4 h-4 text-brand-blue" />
+            <h3 className="text-sm font-bold text-ink">Establish New Habit</h3>
           </div>
           <button
             type="button"
             onClick={() => setShowNewHabitModal(false)}
-            className="text-brand-ink/80 dark:text-ink-muted hover:text-brand-ink dark:hover:text-ink transition-colors"
+            className="text-ink-muted hover:text-ink transition-colors"
             aria-label="Close modal"
           >
             <X className="w-4 h-4" />
@@ -366,12 +366,12 @@ export const HabitsView: React.FC = () => {
         onClose={() => setShowSkipModal(null)}
         maxWidthClass="max-w-sm"
       >
-        <div className="px-5 py-3.5 border-b border-line bg-brand dark:bg-surface-warm flex items-center justify-between">
-          <span className="text-xs font-bold text-brand-ink dark:text-ink">Skip Day with Reason</span>
+        <div className="px-5 py-3.5 border-b border-line bg-surface-warm flex items-center justify-between">
+          <span className="text-xs font-bold text-ink">Skip Day with Reason</span>
           <button
             type="button"
             onClick={() => setShowSkipModal(null)}
-            className="text-brand-ink/80 dark:text-ink-muted hover:text-brand-ink dark:hover:text-ink transition-colors"
+            className="text-ink-muted hover:text-ink transition-colors"
             aria-label="Close modal"
           >
             <X className="w-4 h-4" />

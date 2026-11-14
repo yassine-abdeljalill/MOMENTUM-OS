@@ -35,7 +35,7 @@ export const initialProfile: UserProfile = {
 };
 
 export const initialPreferences: UserPreferences = {
-  theme: 'light',
+  theme: 'dark',
   accentColor: '#D2925B',
   startOfWeek: 'monday',
   timeFormat: '24h',
@@ -166,7 +166,7 @@ export const initialProjects: Project[] = [
     userId: 'usr_demo_01',
     name: 'Personal Portfolio Website & Tech Lab',
     description: 'High-performance interactive portfolio featuring interactive 3D demos, technical write-ups, and open-source contributions.',
-    color: '#64432B',
+    color: '#9ECCFD',
     status: 'active',
     priority: 'high',
     category: 'career',
@@ -186,7 +186,7 @@ export const initialProjects: Project[] = [
     userId: 'usr_demo_01',
     name: 'DevSecOps Automated Pipeline Sandbox',
     description: 'Containerized CI/CD workflow incorporating SonarQube, Trivy container scanning, and HashiCorp Vault secrets management.',
-    color: '#333C44',
+    color: '#868A7A',
     status: 'planning',
     priority: 'medium',
     category: 'career',
@@ -347,7 +347,7 @@ export const initialHabits: Habit[] = [
     frequency: 'weekdays',
     targetCountPerDay: 1,
     startDate: '2026-01-01',
-    color: '#64432B',
+    color: '#9ECCFD',
     active: true,
     createdAt: '2026-01-01T00:00:00Z',
   },

@@ -31,7 +31,7 @@ export const StartupSplashScreen: React.FC<StartupSplashScreenProps> = ({
                   transition: { duration: 0.36, ease: MOMENTUM_EASE },
                 }
           }
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-[#F2E8DA] text-[#3B2418] select-none overflow-hidden"
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-[#1A1A1D] text-[#F5F1E9] select-none overflow-hidden"
           style={{
             paddingTop: 'env(safe-area-inset-top)',
             paddingBottom: 'env(safe-area-inset-bottom)',
@@ -39,7 +39,7 @@ export const StartupSplashScreen: React.FC<StartupSplashScreenProps> = ({
             paddingRight: 'env(safe-area-inset-right)',
           }}
         >
-          {/* Subtle warm radial cream depth — calm, organic, no glow/neon */}
+          {/* Subtle charcoal radial depth — calm, grounded, no neon */}
           <motion.div
             aria-hidden="true"
             initial={{ opacity: 0 }}
@@ -48,7 +48,7 @@ export const StartupSplashScreen: React.FC<StartupSplashScreenProps> = ({
             className="pointer-events-none absolute inset-0"
             style={{
               background:
-                'radial-gradient(circle at 50% 45%, rgba(250, 245, 237, 0.92) 0%, rgba(242, 232, 218, 0.45) 48%, rgba(234, 224, 208, 0.4) 100%)',
+                'radial-gradient(circle at 50% 45%, rgba(42, 42, 47, 0.45) 0%, rgba(26, 26, 29, 0.92) 55%, rgba(26, 26, 29, 1) 100%)',
             }}
           />
 
@@ -61,7 +61,7 @@ export const StartupSplashScreen: React.FC<StartupSplashScreenProps> = ({
                 duration: prefersReduced ? 0.12 : 0.44,
                 ease: MOMENTUM_EASE,
               }}
-              className="mb-6 rounded-[22px] shadow-[0_18px_40px_-14px_rgba(59,36,24,0.28)]"
+              className="mb-6 rounded-[22px] p-1 bg-[#242428] border border-[#393940] shadow-[0_18px_40px_-14px_rgba(0,0,0,0.6)]"
             >
               <img
                 src="/brand-logo.png"
@@ -69,7 +69,7 @@ export const StartupSplashScreen: React.FC<StartupSplashScreenProps> = ({
                 width={96}
                 height={96}
                 referrerPolicy="no-referrer"
-                className="w-20 h-20 sm:w-24 sm:h-24 rounded-[22px] object-contain block"
+                className="w-20 h-20 sm:w-24 sm:h-24 rounded-[20px] object-contain block"
               />
             </motion.div>
 
@@ -82,7 +82,7 @@ export const StartupSplashScreen: React.FC<StartupSplashScreenProps> = ({
                 delay: prefersReduced ? 0 : 0.14,
                 ease: MOMENTUM_EASE,
               }}
-              className="text-2xl sm:text-[28px] font-bold tracking-[0.16em] text-[#3B2418] pl-[0.16em]"
+              className="text-2xl sm:text-[28px] font-bold tracking-[0.16em] text-[#F5F1E9] pl-[0.16em]"
             >
               MOMENTUM
             </motion.h1>
@@ -96,12 +96,12 @@ export const StartupSplashScreen: React.FC<StartupSplashScreenProps> = ({
                 delay: prefersReduced ? 0 : 0.23,
                 ease: MOMENTUM_EASE,
               }}
-              className="mt-1.5 font-mono text-[11px] sm:text-xs font-semibold uppercase tracking-[0.26em] text-[#6E5648] pl-[0.26em]"
+              className="mt-1.5 font-mono text-[11px] sm:text-xs font-semibold uppercase tracking-[0.26em] text-[#9ECCFD] pl-[0.26em]"
             >
               LIFE OPERATING SYSTEM
             </motion.p>
 
-            {/* Step 5: Calm, compositor-only sky-blue loading indicator */}
+            {/* Step 5: Calm, compositor-only MOMENTUM blue loading indicator */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -112,12 +112,12 @@ export const StartupSplashScreen: React.FC<StartupSplashScreenProps> = ({
               }}
               className="mt-8 w-44 sm:w-52"
             >
-              <div className="relative h-[3px] w-full overflow-hidden rounded-full bg-[#D6C6B2]/75">
+              <div className="relative h-[3px] w-full overflow-hidden rounded-full bg-[#313137]">
                 {prefersReduced ? (
-                  <div className="h-full w-full rounded-full bg-[#8EC5FF]" />
+                  <div className="h-full w-full rounded-full bg-[#9ECCFD]" />
                 ) : (
                   <motion.div
-                    className="h-full w-1/2 rounded-full bg-[#8EC5FF]"
+                    className="h-full w-1/2 rounded-full bg-[#9ECCFD]"
                     style={{ willChange: 'transform' }}
                     initial={{ x: '-100%', scaleX: 0.75 }}
                     animate={{
@@ -145,7 +145,7 @@ export const StartupSplashScreen: React.FC<StartupSplashScreenProps> = ({
                 delay: prefersReduced ? 0 : 0.36,
                 ease: 'easeOut',
               }}
-              className="mt-3.5 text-xs font-medium tracking-wide text-[#6E5648]"
+              className="mt-3.5 text-xs font-medium tracking-wide text-[#868A7A]"
             >
               {statusMessage}
             </motion.p>

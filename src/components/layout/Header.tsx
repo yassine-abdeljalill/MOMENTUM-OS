@@ -7,8 +7,6 @@ import {
   ChevronRight,
   Play,
   Pause,
-  Sun,
-  Moon,
 } from 'lucide-react';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { useApp } from '../../lib/context';
@@ -28,8 +26,6 @@ export const Header: React.FC = () => {
     focusTimer,
     pauseFocusTimer,
     resumeFocusTimer,
-    resolvedTheme,
-    toggleTheme,
   } = useApp();
 
   const prefersReduced = useReducedMotion();
@@ -62,10 +58,10 @@ export const Header: React.FC = () => {
     authUser && !authUser.isWorkspace ? authUser.fullName : state.profile.fullName;
 
   return (
-    <header className="mobile-safe-header sticky top-0 z-20 shrink-0 bg-surface/95 dark:bg-[#252A2E] backdrop-blur-md border-b border-line dark:border-[#868A7A]/20 pt-[env(safe-area-inset-top)] select-none">
+    <header className="sticky top-0 z-20 shrink-0 bg-[#1A1A1D]/95 backdrop-blur-md border-b border-[#393940] pt-[env(safe-area-inset-top)] select-none">
       <div className="h-[52px] md:h-[60px] px-3 sm:px-4 md:px-7 flex items-center justify-between gap-2 min-w-0">
         {/* Left: Mobile Brand Mark + Title / Desktop Breadcrumb */}
-        <div className="flex items-center gap-1.5 sm:gap-2.5 min-w-0 shrink">
+        <div className="flex items-center gap-2 sm:gap-2.5 min-w-0 shrink">
           <img
             src="/brand-logo.png"
             alt="MOMENTUM"
@@ -83,7 +79,7 @@ export const Header: React.FC = () => {
               <div className="hidden md:flex items-center gap-1.5 text-[11px] text-ink-muted">
                 <span className="font-mono font-semibold text-ink-muted">MOMENTUM</span>
                 <ChevronRight className="w-3 h-3 text-ink-muted/60" />
-                <span className="font-semibold text-accent capitalize">
+                <span className="font-semibold text-brand-blue capitalize">
                   {currentMeta.title}
                 </span>
               </div>
@@ -101,7 +97,7 @@ export const Header: React.FC = () => {
 
         {/* Right Controls */}
         <div className="flex items-center gap-1 sm:gap-1.5 md:gap-2 min-w-0 overflow-x-auto no-scrollbar py-1 -my-1 shrink-0 max-w-[66vw] sm:max-w-none">
-          {/* Global Focus Timer Pill */}
+          {/* Global Focus Timer */}
           <AnimatePresence mode="wait" initial={false}>
             {focusTimer.isActive ? (
               <motion.div
@@ -110,16 +106,16 @@ export const Header: React.FC = () => {
                 animate={{ opacity: 1, scale: 1 }}
                 exit={prefersReduced ? { opacity: 0 } : { opacity: 0, scale: 0.94 }}
                 transition={{ duration: prefersReduced ? 0.01 : 0.16, ease: MOMENTUM_EASE }}
-                className="h-[30px] min-[360px]:h-8 flex items-center gap-1 px-2 rounded-[10px] sm:rounded-full bg-charcoal dark:bg-[#333C44] border border-accent/60 text-[#F7F1E8] text-[11px] font-mono shrink-0"
+                className="h-[30px] min-[360px]:h-8 flex items-center gap-1 px-2 rounded-[10px] sm:rounded-full bg-[#242428] border border-brand-blue/60 text-ink text-[11px] font-mono shrink-0"
               >
                 <button
                   type="button"
                   onClick={() => setIsFocusTimerOpen(true)}
-                  className="flex items-center gap-1 hover:text-accent transition-colors btn-press tabular-nums"
+                  className="flex items-center gap-1 hover:text-brand-blue transition-colors btn-press tabular-nums"
                   title="Open Focus Timer"
                 >
                   <Timer
-                    className={`w-3.5 h-3.5 text-accent ${
+                    className={`w-3.5 h-3.5 text-brand-blue ${
                       !focusTimer.isPaused && !prefersReduced ? 'animate-pulse' : ''
                     }`}
                   />
@@ -128,7 +124,7 @@ export const Header: React.FC = () => {
                 <button
                   type="button"
                   onClick={focusTimer.isPaused ? resumeFocusTimer : pauseFocusTimer}
-                  className="p-0.5 rounded text-[#F7F1E8]/80 hover:text-accent transition-colors btn-press"
+                  className="p-0.5 rounded text-ink-muted hover:text-brand-blue transition-colors btn-press"
                   aria-label={focusTimer.isPaused ? 'Resume focus timer' : 'Pause focus timer'}
                 >
                   {focusTimer.isPaused ? (
@@ -147,11 +143,11 @@ export const Header: React.FC = () => {
                 exit={prefersReduced ? { opacity: 0 } : { opacity: 0, scale: 0.95 }}
                 transition={{ duration: prefersReduced ? 0.01 : 0.14 }}
                 onClick={() => setIsFocusTimerOpen(true)}
-                className="h-[30px] w-[30px] min-[360px]:h-8 min-[360px]:w-8 sm:w-auto sm:px-2.5 rounded-[10px] sm:rounded-xl bg-surface-warm/75 dark:bg-[#333C44] hover:bg-surface-inset dark:hover:bg-[#3B444D] text-ink border border-line dark:border-[#868A7A]/25 text-xs font-medium btn-press flex items-center justify-center gap-1.5 whitespace-nowrap shrink-0"
+                className="h-[30px] w-[30px] min-[360px]:h-8 min-[360px]:w-8 sm:w-auto sm:px-2.5 rounded-[10px] sm:rounded-xl bg-[#242428] hover:bg-[#2A2A2F] text-ink border border-[#393940] text-xs font-medium btn-press flex items-center justify-center gap-1.5 whitespace-nowrap shrink-0"
                 title="Focus Timer"
                 aria-label="Open Focus Timer"
               >
-                <Timer className="w-3.5 h-3.5 text-accent" />
+                <Timer className="w-3.5 h-3.5 text-brand-blue" />
                 <span className="hidden sm:inline">Focus</span>
               </motion.button>
             )}
@@ -161,13 +157,13 @@ export const Header: React.FC = () => {
           <button
             type="button"
             onClick={() => setIsSearchOpen(true)}
-            className="h-[30px] w-[30px] min-[360px]:h-8 min-[360px]:w-8 md:w-auto md:px-3 rounded-[10px] md:rounded-xl bg-surface-warm/75 dark:bg-[#333C44] hover:bg-surface-inset dark:hover:bg-[#3B444D] text-ink-muted hover:text-ink border border-line dark:border-[#868A7A]/25 text-xs font-medium btn-press flex items-center justify-center gap-2 whitespace-nowrap shrink-0"
+            className="h-[30px] w-[30px] min-[360px]:h-8 min-[360px]:w-8 md:w-auto md:px-3 rounded-[10px] md:rounded-xl bg-[#242428] hover:bg-[#2A2A2F] text-ink-muted hover:text-ink border border-[#393940] text-xs font-medium btn-press flex items-center justify-center gap-2 whitespace-nowrap shrink-0"
             title="Search anything (Cmd+K)"
             aria-label="Search workspace"
           >
             <Search className="w-3.5 h-3.5 text-ink" />
             <span className="hidden md:inline">Search...</span>
-            <kbd className="hidden md:inline-block px-1.5 py-0.2 text-[10px] font-mono rounded bg-surface text-ink-muted border border-line">
+            <kbd className="hidden md:inline-block px-1.5 py-0.2 text-[10px] font-mono rounded bg-[#1A1A1D] text-ink-muted border border-[#393940]">
               ⌘K
             </kbd>
           </button>
@@ -182,31 +178,16 @@ export const Header: React.FC = () => {
           >
             <Plus className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[2.5] transition-transform duration-150 group-hover:rotate-90" />
             <span className="hidden sm:inline">Add</span>
-            <kbd className="hidden lg:inline-block px-1 py-0.2 text-[9px] font-mono rounded bg-black/10 text-accent-ink">
+            <kbd className="hidden lg:inline-block px-1 py-0.2 text-[9px] font-mono rounded bg-black/15 text-accent-ink">
               ⌘N
             </kbd>
-          </button>
-
-          {/* Theme Switcher */}
-          <button
-            type="button"
-            onClick={toggleTheme}
-            className="h-[30px] w-[30px] min-[360px]:h-8 min-[360px]:w-8 rounded-[10px] sm:rounded-xl bg-surface-warm/75 dark:bg-[#333C44] hover:bg-surface-inset dark:hover:bg-[#3B444D] text-ink border border-line dark:border-[#868A7A]/25 btn-press flex items-center justify-center shrink-0"
-            aria-label={resolvedTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-            title={resolvedTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-          >
-            {resolvedTheme === 'dark' ? (
-              <Sun className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-accent" />
-            ) : (
-              <Moon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-brand" />
-            )}
           </button>
 
           {/* Notification Bell */}
           <button
             type="button"
             onClick={() => setIsNotificationsOpen(true)}
-            className="h-[30px] w-[30px] min-[360px]:h-8 min-[360px]:w-8 rounded-[10px] sm:rounded-xl bg-surface-warm/75 dark:bg-[#333C44] hover:bg-surface-inset dark:hover:bg-[#3B444D] text-ink border border-line dark:border-[#868A7A]/25 relative btn-press group flex items-center justify-center shrink-0"
+            className="h-[30px] w-[30px] min-[360px]:h-8 min-[360px]:w-8 rounded-[10px] sm:rounded-xl bg-[#242428] hover:bg-[#2A2A2F] text-ink border border-[#393940] relative btn-press group flex items-center justify-center shrink-0"
             aria-label="Notifications"
             title="Notifications"
           >
@@ -218,7 +199,7 @@ export const Header: React.FC = () => {
                   animate={{ scale: 1 }}
                   exit={{ scale: 0 }}
                   transition={{ duration: prefersReduced ? 0.01 : 0.16, ease: MOMENTUM_EASE }}
-                  className="absolute -top-0.5 -right-0.5 min-w-[14px] h-[14px] px-0.5 rounded-full bg-accent text-accent-ink border border-surface dark:border-[#252A2E] font-mono text-[8px] font-bold flex items-center justify-center tabular-nums leading-none"
+                  className="absolute -top-0.5 -right-0.5 min-w-[14px] h-[14px] px-0.5 rounded-full bg-accent text-accent-ink border border-[#1A1A1D] font-mono text-[8px] font-bold flex items-center justify-center tabular-nums leading-none"
                 >
                   {unreadNotificationsCount}
                 </motion.span>
@@ -230,7 +211,7 @@ export const Header: React.FC = () => {
           <button
             type="button"
             onClick={() => setIsAuthModalOpen(true)}
-            className="h-[30px] w-[30px] min-[360px]:h-8 min-[360px]:w-8 rounded-full bg-brand border-[1.5px] border-accent flex items-center justify-center text-[11px] sm:text-xs font-bold text-brand-ink hover:bg-brand-hover btn-press shrink-0"
+            className="h-[30px] w-[30px] min-[360px]:h-8 min-[360px]:w-8 rounded-full bg-[#2A2A2F] border-[1.5px] border-brand-blue/70 flex items-center justify-center text-[11px] sm:text-xs font-bold text-ink hover:border-brand-blue btn-press shrink-0"
             title="Account profile"
             aria-label="Open account profile"
           >

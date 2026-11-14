@@ -195,7 +195,7 @@ export const CalendarView: React.FC = () => {
           <button
             type="button"
             onClick={() => setShowAddEventModal(true)}
-            className="btn-press group flex items-center gap-1.5 px-4 py-2 min-h-[40px] rounded-xl bg-brand hover:bg-brand-hover text-brand-ink font-semibold text-xs transition-colors whitespace-nowrap shrink-0"
+            className="btn-press group flex items-center gap-1.5 px-4 py-2 min-h-[40px] rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs transition-colors whitespace-nowrap shrink-0"
           >
             <Plus className="w-4 h-4 stroke-[2.25] transition-transform duration-200 group-hover:rotate-90" />
             <span>Schedule Activity</span>
@@ -288,19 +288,19 @@ export const CalendarView: React.FC = () => {
                         aria-pressed={isSelected}
                         className={`h-14 sm:h-20 rounded-xl p-1.5 flex flex-col justify-between border text-left transition-all duration-150 ${
                           isSelected
-                            ? 'bg-brand text-brand-ink border-brand shadow-xs'
+                            ? 'bg-accent/20 text-ink border-accent ring-1 ring-accent shadow-xs'
                             : isToday
-                            ? 'bg-accent/15 border-accent text-ink'
-                            : 'bg-surface-warm/50 border-line text-ink hover:border-accent/60'
+                            ? 'bg-brand-blue/12 border-brand-blue text-ink'
+                            : 'bg-surface-warm/50 border-line text-ink hover:border-brand-blue/60'
                         }`}
                       >
                         <div className="flex items-center justify-between w-full">
                           <span
                             className={`text-xs font-mono font-semibold tabular-nums ${
                               isSelected
-                                ? 'text-brand-ink'
-                                : isToday
                                 ? 'text-accent'
+                                : isToday
+                                ? 'text-brand-blue'
                                 : 'text-ink'
                             }`}
                           >
@@ -309,7 +309,7 @@ export const CalendarView: React.FC = () => {
                           {totalItems > 0 && (
                             <span
                               className={`text-[10px] font-mono tabular-nums ${
-                                isSelected ? 'text-brand-ink/85' : 'text-ink-muted'
+                                isSelected ? 'text-ink' : 'text-ink-muted'
                               }`}
                             >
                               {totalItems}
@@ -323,7 +323,7 @@ export const CalendarView: React.FC = () => {
                               key={t.id}
                               className={`text-[10px] truncate px-1 rounded ${
                                 isSelected
-                                  ? 'bg-white/15 text-brand-ink'
+                                  ? 'bg-accent/25 text-ink'
                                   : 'bg-accent/20 text-ink'
                               }`}
                             >
@@ -335,8 +335,8 @@ export const CalendarView: React.FC = () => {
                               key={l.id}
                               className={`text-[10px] truncate px-1 rounded ${
                                 isSelected
-                                  ? 'bg-white/10 text-accent'
-                                  : 'bg-surface-inset text-ink'
+                                  ? 'bg-brand-blue/20 text-brand-blue'
+                                  : 'bg-brand-blue/15 text-brand-blue'
                               }`}
                             >
                               {l.title}
@@ -347,7 +347,7 @@ export const CalendarView: React.FC = () => {
                               key={w.id}
                               className={`text-[10px] truncate px-1 rounded flex items-center gap-1 ${
                                 isSelected
-                                  ? 'bg-white/10 text-brand-ink/90'
+                                  ? 'bg-surface-inset text-ink'
                                   : 'bg-surface-inset text-ink-muted'
                               }`}
                             >
@@ -572,7 +572,7 @@ export const CalendarView: React.FC = () => {
             <button
               type="button"
               onClick={() => setShowAddEventModal(true)}
-              className="btn-press text-xs font-semibold text-brand dark:text-accent hover:underline"
+              className="btn-press text-xs font-semibold text-brand-blue hover:underline"
             >
               + Add Block
             </button>
@@ -718,12 +718,12 @@ export const CalendarView: React.FC = () => {
         onClose={() => setShowAddEventModal(false)}
         maxWidthClass="max-w-sm"
       >
-        <div className="px-5 py-3.5 border-b border-line bg-brand dark:bg-surface-warm flex items-center justify-between">
-          <span className="text-xs font-semibold text-brand-ink dark:text-ink">Schedule Block</span>
+        <div className="px-5 py-3.5 border-b border-line bg-surface-warm flex items-center justify-between">
+          <span className="text-xs font-semibold text-ink">Schedule Block</span>
           <button
             type="button"
             onClick={() => setShowAddEventModal(false)}
-            className="p-1 rounded-lg text-brand-ink/80 dark:text-ink-muted hover:text-brand-ink dark:hover:text-ink transition-colors"
+            className="p-1 rounded-lg text-ink-muted hover:text-ink transition-colors"
             aria-label="Close schedule modal"
           >
             <X className="w-4 h-4" />

@@ -75,7 +75,7 @@ export const IntroSplash: React.FC = () => {
               initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.35, delay: 0.22, ease: MOMENTUM_EASE }}
-              className="mt-1.5 text-xs font-medium tracking-wide text-accent uppercase"
+              className="mt-1.5 text-xs font-medium tracking-wide text-brand-blue uppercase"
             >
               Personal Life Operating System
             </motion.p>
@@ -86,7 +86,7 @@ export const IntroSplash: React.FC = () => {
                 initial={{ width: '0%' }}
                 animate={{ width: '100%' }}
                 transition={{ duration: 1.05, delay: 0.12, ease: MOMENTUM_EASE }}
-                className="h-full bg-gradient-to-r from-brand via-accent to-accent rounded-full"
+                className="h-full bg-gradient-to-r from-brand-blue via-accent to-accent rounded-full"
               />
             </div>
 

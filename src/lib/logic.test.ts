@@ -69,7 +69,7 @@ test('calculateProjectProgress tracks tasks and milestones', () => {
     userId: 'u-1',
     name: 'MOMENTUM Platform',
     description: 'Life OS web app',
-    color: '#8EC5FF',
+    color: '#9ECCFD',
     status: 'active',
     priority: 'urgent',
     category: 'career',
@@ -140,7 +140,7 @@ test('calculateHabitStreak computes streak and honors skipped days', () => {
     frequency: 'daily',
     targetCountPerDay: 1,
     startDate: '2026-11-01',
-    color: '#3B2418',
+    color: '#D2925B',
     active: true,
     createdAt: '2026-11-01',
   };

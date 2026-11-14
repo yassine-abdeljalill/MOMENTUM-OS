@@ -133,7 +133,7 @@ export const FocusTimerModal: React.FC = () => {
           particleCount: 36,
           spread: 55,
           origin: { y: 0.55 },
-          colors: ['#D2925B', '#F7F1E8', '#3E7B52'],
+          colors: ['#D2925B', '#9ECCFD', '#F5F1E9'],
         });
       } catch {
         // Ignore confetti errors
@@ -157,19 +157,19 @@ export const FocusTimerModal: React.FC = () => {
       onClose={() => setIsFocusTimerOpen(false)}
       fullscreen={isFullscreen}
       maxWidthClass="max-w-xl"
-      panelClassName={`bg-charcoal text-[#F7F1E8] border border-line/30 shadow-2xl flex flex-col overflow-hidden transition-all duration-200 ${
+      panelClassName={`bg-canvas text-ink border border-line shadow-2xl flex flex-col overflow-hidden transition-all duration-200 ${
         isFullscreen ? 'rounded-none border-0' : 'rounded-t-2xl sm:rounded-2xl'
       }`}
     >
       {/* Top bar */}
-      <div className="flex items-center justify-between px-6 py-4 border-b border-white/10 bg-black/20">
+      <div className="flex items-center justify-between px-6 py-4 border-b border-line bg-surface">
         <div className="flex items-center gap-2 min-w-0">
-          <Timer className="w-5 h-5 text-accent shrink-0" />
-          <h2 className="font-semibold text-sm text-[#F7F1E8] tracking-wide truncate font-heading">
+          <Timer className="w-5 h-5 text-brand-blue shrink-0" />
+          <h2 className="font-semibold text-sm text-ink tracking-wide truncate font-heading">
             {focusTimer.sessionType === 'focus' ? 'Deep Work Focus Timer' : 'Restorative Break'}
           </h2>
           {focusTimer.linkedTaskTitle && (
-            <span className="hidden sm:inline-block text-xs px-2 py-0.5 rounded-md bg-accent/20 text-accent border border-accent/35 truncate max-w-[200px]">
+            <span className="hidden sm:inline-block text-xs px-2 py-0.5 rounded-md bg-brand-blue/15 text-brand-blue border border-brand-blue/35 truncate max-w-[200px]">
               {focusTimer.linkedTaskTitle}
             </span>
           )}
@@ -179,7 +179,7 @@ export const FocusTimerModal: React.FC = () => {
           <button
             type="button"
             onClick={() => setSoundEnabled(!soundEnabled)}
-            className="p-1.5 rounded-lg text-[#D8C9B8] hover:text-[#F7F1E8] hover:bg-white/10 btn-press"
+            className="p-1.5 rounded-lg text-ink-muted hover:text-ink hover:bg-surface-warm btn-press"
             title={soundEnabled ? 'Mute chime' : 'Enable chime'}
           >
             {soundEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
@@ -187,7 +187,7 @@ export const FocusTimerModal: React.FC = () => {
           <button
             type="button"
             onClick={() => setIsFullscreen(!isFullscreen)}
-            className="p-1.5 rounded-lg text-[#D8C9B8] hover:text-[#F7F1E8] hover:bg-white/10 btn-press"
+            className="p-1.5 rounded-lg text-ink-muted hover:text-ink hover:bg-surface-warm btn-press"
             title={isFullscreen ? 'Exit Fullscreen' : 'Fullscreen Focus Mode'}
           >
             {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
@@ -195,7 +195,7 @@ export const FocusTimerModal: React.FC = () => {
           <button
             type="button"
             onClick={() => setIsFocusTimerOpen(false)}
-            className="p-1.5 rounded-lg text-[#D8C9B8] hover:text-[#F7F1E8] hover:bg-white/10 btn-press"
+            className="p-1.5 rounded-lg text-ink-muted hover:text-ink hover:bg-surface-warm btn-press"
             aria-label="Close timer"
           >
             <X className="w-4 h-4" />
@@ -259,14 +259,14 @@ export const FocusTimerModal: React.FC = () => {
                   className="flex flex-col items-center text-center px-4"
                 >
                   <CheckCircle2 className="w-12 h-12 text-success mb-2" />
-                  <span className="text-sm font-bold text-[#F7F1E8]">Focus Recorded</span>
+                  <span className="text-sm font-bold text-ink">Focus Recorded</span>
                 </motion.div>
               ) : (
                 <motion.span
                   key="timer-digits"
                   initial={{ opacity: 0.8 }}
                   animate={{ opacity: 1 }}
-                  className="font-mono text-5xl sm:text-6xl font-extrabold text-[#F7F1E8] tracking-tight tabular-nums"
+                  className="font-mono text-5xl sm:text-6xl font-extrabold text-ink tracking-tight tabular-nums"
                 >
                   {timeFormatted}
                 </motion.span>
@@ -323,7 +323,7 @@ export const FocusTimerModal: React.FC = () => {
                 <button
                   type="button"
                   onClick={resetFocusTimer}
-                  className="p-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-[#F7F1E8] border border-white/15 btn-press"
+                  className="p-2.5 rounded-xl bg-surface-warm hover:bg-surface-hover text-ink border border-line btn-press"
                   title="Reset Timer"
                 >
                   <RotateCcw className="w-4 h-4" />
@@ -331,7 +331,7 @@ export const FocusTimerModal: React.FC = () => {
                 <button
                   type="button"
                   onClick={handleFinish}
-                  className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-success/25 hover:bg-success/35 text-[#F7F1E8] border border-success/50 font-semibold text-xs btn-press"
+                  className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-success/20 hover:bg-success/30 text-ink border border-success/50 font-semibold text-xs btn-press"
                   title="Complete session and record focus time"
                 >
                   <CheckCircle2 className="w-4 h-4 text-success" />

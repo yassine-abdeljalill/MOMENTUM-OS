@@ -44,8 +44,8 @@ export const FinanceSavingsTab: React.FC<Props> = ({
     <div className="space-y-6">
       {/* Summary Header */}
       <StaggerContainer className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <StaggerItem className="card-hover p-4 rounded-2xl bg-brand dark:bg-surface-warm text-brand-ink dark:text-ink border border-line">
-          <span className="text-[10px] font-mono uppercase tracking-wider text-brand-ink/80 dark:text-ink-muted">
+        <StaggerItem className="card-hover p-4 rounded-2xl bg-surface-warm text-ink border border-line">
+          <span className="text-[10px] font-mono uppercase tracking-wider text-ink-muted">
             Total Saved
           </span>
           <div className="mt-1.5 font-mono text-xl font-extrabold text-accent tabular-nums">
@@ -234,9 +234,9 @@ export const FinanceSavingsTab: React.FC<Props> = ({
                     <button
                       type="button"
                       onClick={() => onContributeGoal(goal)}
-                      className="btn-press min-h-[38px] flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-brand hover:bg-brand-hover dark:bg-accent dark:hover:bg-accent-hover text-brand-ink dark:text-accent-ink text-xs font-semibold whitespace-nowrap shrink-0"
+                      className="btn-press min-h-[38px] flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink text-xs font-semibold whitespace-nowrap shrink-0"
                     >
-                      <TrendingUp className="w-3.5 h-3.5 text-accent dark:text-accent-ink" />
+                      <TrendingUp className="w-3.5 h-3.5 text-accent-ink" />
                       <span>Add Contribution</span>
                     </button>
                   </div>

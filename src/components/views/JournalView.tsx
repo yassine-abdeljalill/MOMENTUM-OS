@@ -136,37 +136,29 @@ export const JournalView: React.FC = () => {
                     onClick={() => setSelectedEntry(entry)}
                     className={`w-full text-left card-hover p-4 rounded-2xl border transition-colors space-y-2 ${
                       isSelected
-                        ? 'bg-brand border-brand text-brand-ink'
-                        : 'bg-surface border-line hover:border-accent text-ink'
+                        ? 'bg-surface-warm border-accent text-ink'
+                        : 'bg-surface border-line hover:border-accent/60 text-ink'
                     }`}
                   >
                     <div className="flex items-start justify-between gap-2">
-                      <h3 className={`text-sm font-semibold truncate ${isSelected ? 'text-brand-ink' : 'text-ink'}`}>
+                      <h3 className={`text-sm font-semibold truncate ${isSelected ? 'text-accent' : 'text-ink'}`}>
                         {entry.title}
                       </h3>
-                      <span
-                        className={`font-mono text-[10px] shrink-0 tabular-nums ${
-                          isSelected ? 'text-brand-ink/80' : 'text-ink-muted'
-                        }`}
-                      >
+                      <span className="font-mono text-[10px] shrink-0 tabular-nums text-ink-muted">
                         {entry.date}
                       </span>
                     </div>
 
-                    <p
-                      className={`text-xs line-clamp-2 leading-relaxed ${
-                        isSelected ? 'text-brand-ink/80' : 'text-ink-muted'
-                      }`}
-                    >
+                    <p className="text-xs line-clamp-2 leading-relaxed text-ink-muted">
                       {entry.content}
                     </p>
 
                     <div className="flex items-center gap-2 pt-1 text-[10px] font-mono uppercase">
-                      <span className={isSelected ? 'text-accent' : 'text-ink-muted'}>
+                      <span className={isSelected ? 'text-brand-blue' : 'text-ink-muted'}>
                         {entry.category.replace('_', ' ')}
                       </span>
                       {entry.mood && (
-                        <span className={isSelected ? 'text-brand-ink/80' : 'text-accent'}>
+                        <span className="text-accent">
                           · Mood: {entry.mood}
                         </span>
                       )}
@@ -266,15 +258,15 @@ export const JournalView: React.FC = () => {
         onClose={() => setShowNewEntryModal(false)}
         maxWidthClass="max-w-xl"
       >
-        <div className="flex items-center justify-between px-6 py-4 border-b border-line bg-brand dark:bg-surface-warm">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-line bg-surface-warm">
           <div className="flex items-center gap-2">
-            <BookOpen className="w-4 h-4 text-accent" />
-            <h3 className="text-sm font-bold text-brand-ink dark:text-ink">New Journal Entry</h3>
+            <BookOpen className="w-4 h-4 text-brand-blue" />
+            <h3 className="text-sm font-bold text-ink">New Journal Entry</h3>
           </div>
           <button
             type="button"
             onClick={() => setShowNewEntryModal(false)}
-            className="text-brand-ink/80 dark:text-ink-muted hover:text-brand-ink dark:hover:text-ink transition-colors"
+            className="text-ink-muted hover:text-ink transition-colors"
             aria-label="Close modal"
           >
             <X className="w-4 h-4" />

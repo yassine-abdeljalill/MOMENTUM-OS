@@ -320,15 +320,15 @@ export const FitnessView: React.FC = () => {
         maxWidthClass="max-w-xl"
         panelClassName="bg-surface border border-line rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[85vh]"
       >
-        <div className="flex items-center justify-between px-6 py-4 border-b border-line bg-brand dark:bg-surface-warm">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-line bg-surface-warm">
           <div className="flex items-center gap-2">
-            <Dumbbell className="w-4 h-4 text-accent" />
-            <h3 className="text-sm font-bold text-brand-ink dark:text-ink">Log Training Session</h3>
+            <Dumbbell className="w-4 h-4 text-brand-blue" />
+            <h3 className="text-sm font-bold text-ink">Log Training Session</h3>
           </div>
           <button
             type="button"
             onClick={() => setShowLogModal(false)}
-            className="text-brand-ink/80 dark:text-ink-muted hover:text-brand-ink dark:hover:text-ink transition-colors"
+            className="text-ink-muted hover:text-ink transition-colors"
             aria-label="Close modal"
           >
             <X className="w-4 h-4" />

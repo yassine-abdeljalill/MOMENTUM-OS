@@ -306,7 +306,7 @@ export const LessonResourcesTab: React.FC<{
       >
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-start gap-3">
-            <div className="w-10 h-10 rounded-xl bg-brand text-brand-ink flex items-center justify-center shrink-0">
+            <div className="w-10 h-10 rounded-xl bg-surface-warm border border-line text-brand-blue flex items-center justify-center shrink-0">
               <Upload className="w-5 h-5" />
             </div>
             <div className="space-y-1">
@@ -404,7 +404,7 @@ export const LessonResourcesTab: React.FC<{
             onClick={() => setSelectedFolder('all')}
             className={`px-3 py-1.5 rounded-xl text-xs font-medium border transition-colors whitespace-nowrap ${
               selectedFolder === 'all'
-                ? 'bg-brand text-brand-ink border-brand'
+                ? 'bg-accent text-accent-ink border-accent font-semibold'
                 : 'bg-surface text-ink-muted border-line hover:text-ink'
             }`}
           >
@@ -420,7 +420,7 @@ export const LessonResourcesTab: React.FC<{
                 onClick={() => setSelectedFolder(f)}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium border transition-colors whitespace-nowrap ${
                   selectedFolder === f
-                    ? 'bg-brand text-brand-ink border-brand'
+                    ? 'bg-accent text-accent-ink border-accent font-semibold'
                     : 'bg-surface text-ink-muted border-line hover:text-ink'
                 }`}
               >
@@ -560,12 +560,12 @@ export const LessonResourcesTab: React.FC<{
 
       {/* Add External Link Modal */}
       <ModalShell isOpen={linkModalOpen} onClose={() => setLinkModalOpen(false)} maxWidthClass="max-w-md">
-        <div className="px-5 py-4 border-b border-line bg-brand dark:bg-surface-warm flex items-center justify-between">
-          <span className="text-xs font-bold text-brand-ink dark:text-ink">Add External Resource Link</span>
+        <div className="px-5 py-4 border-b border-line bg-surface-warm flex items-center justify-between">
+          <span className="text-xs font-bold text-ink">Add External Resource Link</span>
           <button
             type="button"
             onClick={() => setLinkModalOpen(false)}
-            className="text-brand-ink/80 dark:text-ink-muted hover:text-brand-ink dark:hover:text-ink"
+            className="text-ink-muted hover:text-ink"
             aria-label="Close modal"
           >
             <X className="w-4 h-4" />
@@ -636,12 +636,12 @@ export const LessonResourcesTab: React.FC<{
 
       {/* Edit / Rename Resource Modal */}
       <ModalShell isOpen={Boolean(editingResource)} onClose={() => setEditingResource(null)} maxWidthClass="max-w-md">
-        <div className="px-5 py-4 border-b border-line bg-brand dark:bg-surface-warm flex items-center justify-between">
-          <span className="text-xs font-bold text-brand-ink dark:text-ink">Edit Resource</span>
+        <div className="px-5 py-4 border-b border-line bg-surface-warm flex items-center justify-between">
+          <span className="text-xs font-bold text-ink">Edit Resource</span>
           <button
             type="button"
             onClick={() => setEditingResource(null)}
-            className="text-brand-ink/80 dark:text-ink-muted hover:text-brand-ink dark:hover:text-ink"
+            className="text-ink-muted hover:text-ink"
             aria-label="Close modal"
           >
             <X className="w-4 h-4" />
@@ -717,12 +717,12 @@ export const LessonResourcesTab: React.FC<{
       >
         {previewResource && (
           <>
-            <div className="px-5 py-3.5 border-b border-line bg-brand dark:bg-surface-warm flex items-center justify-between gap-3 shrink-0">
+            <div className="px-5 py-3.5 border-b border-line bg-surface-warm flex items-center justify-between gap-3 shrink-0">
               <div className="min-w-0">
-                <h3 className="text-sm font-bold text-brand-ink dark:text-ink truncate">
+                <h3 className="text-sm font-bold text-ink truncate">
                   {previewResource.title}
                 </h3>
-                <span className="text-[11px] font-mono text-accent tabular-nums">
+                <span className="text-[11px] font-mono text-brand-blue tabular-nums">
                   {previewResource.originalFilename} · {formatFileSize(previewResource.fileSize)}
                 </span>
               </div>
@@ -738,7 +738,7 @@ export const LessonResourcesTab: React.FC<{
                 <button
                   type="button"
                   onClick={handleClosePreview}
-                  className="p-1.5 rounded-lg text-brand-ink/80 dark:text-ink-muted hover:text-brand-ink dark:hover:text-ink"
+                  className="p-1.5 rounded-lg text-ink-muted hover:text-ink"
                   aria-label="Close preview"
                 >
                   <X className="w-4 h-4" />
@@ -773,7 +773,7 @@ export const LessonResourcesTab: React.FC<{
                 />
               )}
               {!previewLoading && !previewError && previewText !== null && (
-                <pre className="w-full max-h-[70vh] overflow-auto p-4 rounded-xl bg-[#1B1F23] text-[#F7F1E8] font-mono text-xs leading-relaxed border border-line">
+                <pre className="w-full max-h-[70vh] overflow-auto p-4 rounded-xl bg-[#141417] text-[#F5F1E9] font-mono text-xs leading-relaxed border border-line">
                   {previewText}
                 </pre>
               )}

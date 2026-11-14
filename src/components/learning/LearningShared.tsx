@@ -25,15 +25,13 @@ import { LEARNING_STATUS_META, MODULE_COLOR_PALETTE } from '../../lib/learning';
 import { ModalShell } from '../common/MotionPrimitives';
 
 export const DARK_SWATCH_HEXES = new Set([
-  '#64432B',
-  '#333C44',
+  '#1A1A1D',
+  '#242428',
+  '#2A2A2F',
+  '#5B7C99',
   '#3E7B52',
   '#B84A44',
   '#4F6652',
-  '#7D5A44',
-  '#3B2418',
-  '#4D3021',
-  '#1E5A99',
 ]);
 
 export const MODULE_ICON_OPTIONS: { id: LearningModuleIcon; label: string; Icon: React.ElementType }[] = [
@@ -139,7 +137,7 @@ export const ModuleModal: React.FC<{
 
   return (
     <ModalShell isOpen={isOpen} onClose={onClose} maxWidthClass="max-w-lg">
-      <div className="flex items-center justify-between px-5 sm:px-6 py-4 border-b border-line bg-brand dark:bg-surface-warm">
+      <div className="flex items-center justify-between px-5 sm:px-6 py-4 border-b border-line bg-surface-warm">
         <div className="flex items-center gap-2.5">
           <div
             className="w-7 h-7 rounded-lg flex items-center justify-center border border-white/20"
@@ -147,17 +145,17 @@ export const ModuleModal: React.FC<{
           >
             <ModuleIconView
               icon={icon}
-              className={`w-4 h-4 ${isDarkSwatch ? 'text-[#F7F1E8]' : 'text-[#2B1F18]'}`}
+              className={`w-4 h-4 ${isDarkSwatch ? 'text-[#F5F1E9]' : 'text-[#1A1A1D]'}`}
             />
           </div>
-          <h3 className="text-sm font-semibold text-brand-ink dark:text-ink">
+          <h3 className="text-sm font-semibold text-ink">
             {editingModule ? 'Edit Module' : 'Create Learning Module'}
           </h3>
         </div>
         <button
           type="button"
           onClick={onClose}
-          className="p-1.5 rounded-lg text-brand-ink/80 dark:text-ink-muted hover:text-brand-ink dark:hover:text-ink transition-colors"
+          className="p-1.5 rounded-lg text-ink-muted hover:text-ink transition-colors"
           aria-label="Close modal"
         >
           <X className="w-4 h-4" />
@@ -351,14 +349,14 @@ export const LessonModal: React.FC<{
 
   return (
     <ModalShell isOpen={isOpen} onClose={onClose} maxWidthClass="max-w-xl">
-      <div className="flex items-center justify-between px-5 sm:px-6 py-4 border-b border-line bg-brand dark:bg-surface-warm shrink-0">
-        <h3 className="text-sm font-semibold text-brand-ink dark:text-ink">
+      <div className="flex items-center justify-between px-5 sm:px-6 py-4 border-b border-line bg-surface-warm shrink-0">
+        <h3 className="text-sm font-semibold text-ink">
           {editingLesson ? 'Edit Lesson' : 'Add Lesson'}
         </h3>
         <button
           type="button"
           onClick={onClose}
-          className="p-1.5 rounded-lg text-brand-ink/80 dark:text-ink-muted hover:text-brand-ink dark:hover:text-ink"
+          className="p-1.5 rounded-lg text-ink-muted hover:text-ink"
           aria-label="Close modal"
         >
           <X className="w-4 h-4" />
@@ -537,15 +535,15 @@ export const ConfirmDeleteDialog: React.FC<{
 }) => {
   return (
     <ModalShell isOpen={isOpen} onClose={onCancel} maxWidthClass="max-w-md">
-      <div className="px-5 py-4 border-b border-line bg-brand dark:bg-surface-warm flex items-center justify-between">
+      <div className="px-5 py-4 border-b border-line bg-surface-warm flex items-center justify-between">
         <div className="flex items-center gap-2">
           <AlertTriangle className="w-4 h-4 text-accent" />
-          <h3 className="text-sm font-semibold text-brand-ink dark:text-ink">{title}</h3>
+          <h3 className="text-sm font-semibold text-ink">{title}</h3>
         </div>
         <button
           type="button"
           onClick={onCancel}
-          className="p-1.5 rounded-lg text-brand-ink/80 dark:text-ink-muted hover:text-brand-ink dark:hover:text-ink"
+          className="p-1.5 rounded-lg text-ink-muted hover:text-ink"
           aria-label="Close confirmation"
         >
           <X className="w-4 h-4" />

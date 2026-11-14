@@ -27,23 +27,25 @@ export const ToastContainer: React.FC = () => {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={prefersReduced ? { opacity: 0 } : { opacity: 0, y: 8, scale: 0.96 }}
               transition={{ duration: prefersReduced ? 0.01 : 0.2, ease: MOMENTUM_EASE }}
-              className={`pointer-events-auto flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl shadow-lg border text-xs font-medium bg-charcoal text-[#F7F1E8] ${
+              className={`pointer-events-auto flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl shadow-lg border text-xs font-medium bg-surface-warm text-ink ${
                 isError
                   ? 'border-danger'
+                  : isInfo
+                  ? 'border-brand-blue/50'
                   : 'border-accent/55'
               }`}
             >
               {isError ? (
                 <AlertCircle className="w-4 h-4 text-danger shrink-0" />
               ) : isInfo ? (
-                <Info className="w-4 h-4 text-accent shrink-0" />
+                <Info className="w-4 h-4 text-brand-blue shrink-0" />
               ) : (
                 <CheckCircle2 className="w-4 h-4 text-accent shrink-0" />
               )}
               <span className="flex-1 leading-snug">{toast.message}</span>
               <button
                 onClick={() => dismissToast(toast.id)}
-                className="p-0.5 rounded text-[#D8C9B8] hover:text-white transition-colors shrink-0"
+                className="p-0.5 rounded text-ink-muted hover:text-ink transition-colors shrink-0"
                 aria-label="Dismiss notification"
               >
                 <X className="w-3.5 h-3.5" />

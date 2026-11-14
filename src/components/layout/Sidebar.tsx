@@ -2,8 +2,6 @@ import React, { useState } from 'react';
 import {
   Settings,
   ChevronLeft,
-  Sun,
-  Moon,
 } from 'lucide-react';
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { useApp, NavigationTab } from '../../lib/context';
@@ -18,8 +16,6 @@ export const Sidebar: React.FC = () => {
     state,
     authUser,
     setIsAuthModalOpen,
-    resolvedTheme,
-    toggleTheme,
   } = useApp();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const prefersReduced = useReducedMotion();
@@ -61,7 +57,7 @@ export const Sidebar: React.FC = () => {
                 <span className="font-bold text-sm tracking-[0.14em] text-sidebar-ink uppercase font-heading">
                   MOMENTUM
                 </span>
-                <span className="text-[10px] text-accent font-medium tracking-tight">
+                <span className="text-[10px] text-brand-blue font-medium tracking-tight">
                   Personal Life OS
                 </span>
               </motion.div>
@@ -107,7 +103,7 @@ export const Sidebar: React.FC = () => {
             transition={{ duration: prefersReduced ? 0.01 : 0.18, ease: MOMENTUM_EASE }}
             className="mx-3 overflow-hidden shrink-0"
           >
-            <div className="px-3 py-2 rounded-xl bg-sidebar-surface/80 border border-sidebar-border text-[11px] text-sidebar-muted font-serif italic leading-snug">
+            <div className="px-3 py-2 rounded-xl bg-sidebar-surface border border-sidebar-border text-[11px] text-sidebar-muted font-serif italic leading-snug">
               &ldquo;Don&apos;t just track what you do. Track who you&apos;re becoming.&rdquo;
             </div>
           </motion.div>
@@ -119,12 +115,12 @@ export const Sidebar: React.FC = () => {
         {NAV_GROUPS.map(group => (
           <div key={group.id} className="space-y-1">
             {!isCollapsed ? (
-              <div className="px-2.5 pb-0.5 flex items-center justify-between text-[10px] font-mono uppercase tracking-[0.14em] text-sidebar-muted/75">
+              <div className="px-2.5 pb-0.5 flex items-center justify-between text-[10px] font-mono uppercase tracking-[0.14em] text-sidebar-muted">
                 <span>{group.label}</span>
-                <span className="tabular-nums opacity-70">{group.items.length}</span>
+                <span className="tabular-nums opacity-75">{group.items.length}</span>
               </div>
             ) : (
-              <div className="mx-3 border-t border-sidebar-border/60 my-1" />
+              <div className="mx-3 border-t border-sidebar-border/80 my-1" />
             )}
 
             <div className="space-y-0.5">
@@ -141,7 +137,7 @@ export const Sidebar: React.FC = () => {
                     className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs transition-colors duration-150 group relative btn-press ${
                       isActive
                         ? 'text-accent-ink font-semibold'
-                        : 'text-sidebar-ink/85 hover:text-sidebar-ink hover:bg-sidebar-surface/75 font-medium'
+                        : 'text-sidebar-ink/85 hover:text-sidebar-ink hover:bg-sidebar-surface font-medium'
                     }`}
                     title={isCollapsed ? item.label : undefined}
                   >
@@ -162,7 +158,7 @@ export const Sidebar: React.FC = () => {
                       className={`w-4 h-4 shrink-0 relative z-10 transition-transform duration-150 ${
                         isActive
                           ? 'text-accent-ink scale-105'
-                          : 'text-accent/90 group-hover:text-accent group-hover:translate-x-0.5'
+                          : 'text-ink-muted group-hover:text-brand-blue group-hover:translate-x-0.5'
                       }`}
                     />
 
@@ -176,8 +172,8 @@ export const Sidebar: React.FC = () => {
                       <span
                         className={`px-1.5 py-0.5 text-[10px] rounded-md font-mono font-bold tabular-nums relative z-10 transition-colors ${
                           isActive
-                            ? 'bg-charcoal text-[#F7F1E8]'
-                            : 'bg-sidebar-surface text-accent border border-accent/30'
+                            ? 'bg-[#1A1A1D] text-accent'
+                            : 'bg-[#1A1A1D] text-brand-blue border border-brand-blue/30'
                         }`}
                       >
                         {badgeCount}
@@ -185,7 +181,7 @@ export const Sidebar: React.FC = () => {
                     )}
 
                     {isCollapsed && (
-                      <div className="absolute left-full ml-2 px-2.5 py-1 rounded-lg bg-charcoal text-[#F7F1E8] text-xs shadow-lg whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-150 z-50 border border-accent/40">
+                      <div className="absolute left-full ml-2 px-2.5 py-1 rounded-lg bg-[#1A1A1D] text-ink text-xs shadow-lg whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-150 z-50 border border-brand-blue/40">
                         {item.label}
                         {badgeCount !== null && ` (${badgeCount})`}
                       </div>
@@ -202,28 +198,6 @@ export const Sidebar: React.FC = () => {
       <div className="p-2.5 border-t border-sidebar-border space-y-1 shrink-0 bg-sidebar">
         <PWAInstallButton compact={isCollapsed} />
 
-        {/* Theme Quick Switch */}
-        <button
-          type="button"
-          onClick={toggleTheme}
-          className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium text-sidebar-ink/85 hover:text-sidebar-ink hover:bg-sidebar-surface/75 transition-colors btn-press ${
-            isCollapsed ? 'justify-center px-2' : ''
-          }`}
-          title={resolvedTheme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-          aria-label={resolvedTheme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-        >
-          {resolvedTheme === 'dark' ? (
-            <Sun className="w-4 h-4 text-accent shrink-0" />
-          ) : (
-            <Moon className="w-4 h-4 text-accent shrink-0" />
-          )}
-          {!isCollapsed && (
-            <span className="flex-1 text-left truncate">
-              {resolvedTheme === 'dark' ? 'Light Mode' : 'Dark Mode'}
-            </span>
-          )}
-        </button>
-
         {/* Settings */}
         <button
           type="button"
@@ -231,7 +205,7 @@ export const Sidebar: React.FC = () => {
           className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium transition-colors duration-150 group relative btn-press ${
             currentView === 'settings'
               ? 'text-accent-ink font-semibold'
-              : 'text-sidebar-ink/85 hover:text-sidebar-ink hover:bg-sidebar-surface/75'
+              : 'text-sidebar-ink/85 hover:text-sidebar-ink hover:bg-sidebar-surface'
           } ${isCollapsed ? 'justify-center px-2' : ''}`}
           title={isCollapsed ? 'Settings' : undefined}
         >
@@ -251,7 +225,7 @@ export const Sidebar: React.FC = () => {
             className={`w-4 h-4 shrink-0 relative z-10 transition-transform duration-200 ${
               currentView === 'settings'
                 ? 'text-accent-ink'
-                : 'text-accent/90 group-hover:text-accent group-hover:rotate-45'
+                : 'text-ink-muted group-hover:text-brand-blue group-hover:rotate-45'
             }`}
           />
           {!isCollapsed && <span className="flex-1 text-left relative z-10">Settings</span>}
@@ -261,12 +235,12 @@ export const Sidebar: React.FC = () => {
         <button
           type="button"
           onClick={() => setIsAuthModalOpen(true)}
-          className={`w-full mt-1 pt-2 border-t border-sidebar-border flex items-center gap-2.5 px-2 py-1.5 rounded-xl hover:bg-sidebar-surface/80 transition-colors btn-press text-left ${
+          className={`w-full mt-1 pt-2 border-t border-sidebar-border flex items-center gap-2.5 px-2 py-1.5 rounded-xl hover:bg-sidebar-surface transition-colors btn-press text-left ${
             isCollapsed ? 'justify-center' : ''
           }`}
           title={displayName}
         >
-          <div className="w-7 h-7 rounded-full bg-accent/20 border border-accent/60 flex items-center justify-center text-xs font-bold text-accent shrink-0">
+          <div className="w-7 h-7 rounded-full bg-brand-blue/15 border border-brand-blue/50 flex items-center justify-center text-xs font-bold text-brand-blue shrink-0">
             {displayName.charAt(0).toUpperCase()}
           </div>
           {!isCollapsed && (

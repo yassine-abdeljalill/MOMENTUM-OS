@@ -99,7 +99,7 @@ export const OnboardingModal: React.FC = () => {
       maxWidthClass="max-w-xl"
     >
       {/* Progress Bar & Header */}
-      <div className="bg-brand text-brand-ink px-6 pt-5 pb-4 border-b border-line">
+      <div className="bg-surface-warm text-ink px-6 pt-5 pb-4 border-b border-line">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
             <img
@@ -112,20 +112,20 @@ export const OnboardingModal: React.FC = () => {
             </span>
           </div>
           <div className="flex items-center gap-3">
-            <span className="text-xs font-mono text-accent font-semibold tabular-nums">
+            <span className="text-xs font-mono text-brand-blue font-semibold tabular-nums">
               Step {step} of 7
             </span>
             <button
               type="button"
               onClick={handleSkip}
-              className="text-xs text-brand-ink/75 hover:text-brand-ink transition-colors btn-press"
+              className="text-xs text-ink-muted hover:text-ink transition-colors btn-press"
             >
               Skip for now
             </button>
           </div>
         </div>
 
-        <div className="w-full bg-black/25 h-1.5 rounded-full overflow-hidden">
+        <div className="w-full bg-surface-inset h-1.5 rounded-full overflow-hidden">
           <motion.div
             className="bg-accent h-full rounded-full"
             animate={{ width: `${(step / 7) * 100}%` }}
@@ -159,7 +159,7 @@ export const OnboardingModal: React.FC = () => {
                   Your personal Life Operating System designed to help you transform long-term ambitions
                   into disciplined daily actions.
                 </p>
-                <div className="p-4 rounded-xl bg-brand border border-line text-xs text-accent font-serif italic max-w-sm mx-auto">
+                <div className="p-4 rounded-xl bg-surface-warm border border-line text-xs text-accent font-serif italic max-w-sm mx-auto">
                   &ldquo;Don&apos;t just track what you do. Track who you&apos;re becoming.&rdquo;
                 </div>
               </div>

@@ -285,9 +285,9 @@ export function getPriorityColor(priority: Priority): { bg: string; text: string
     case 'urgent':
       return { bg: 'bg-danger/12', text: 'text-danger', border: 'border-danger/35' };
     case 'high':
-      return { bg: 'bg-accent/18', text: 'text-brand dark:text-accent', border: 'border-accent/45' };
+      return { bg: 'bg-accent/18', text: 'text-accent', border: 'border-accent/45' };
     case 'medium':
-      return { bg: 'bg-surface-inset', text: 'text-ink', border: 'border-line' };
+      return { bg: 'bg-brand-blue/14', text: 'text-brand-blue', border: 'border-brand-blue/35' };
     case 'low':
     default:
       return { bg: 'bg-surface-inset/60', text: 'text-ink-muted', border: 'border-line' };

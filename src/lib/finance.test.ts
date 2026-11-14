@@ -118,8 +118,8 @@ test('computeBudgetProgress flags healthy, warning, and exceeded states', () => 
 
 test('computeCategoryBreakdown ranks top spending categories', () => {
   const cats: FinanceCategory[] = [
-    { id: 'c1', userId: 'u1', name: 'Housing', type: 'expense', color: '#3B2418', isDefault: true, createdAt: '' },
-    { id: 'c2', userId: 'u1', name: 'Food', type: 'expense', color: '#A36116', isDefault: true, createdAt: '' },
+    { id: 'c1', userId: 'u1', name: 'Housing', type: 'expense', color: '#D2925B', isDefault: true, createdAt: '' },
+    { id: 'c2', userId: 'u1', name: 'Food', type: 'expense', color: '#9ECCFD', isDefault: true, createdAt: '' },
   ];
   const breakdown = computeCategoryBreakdown(sampleTxs, cats, '2026-11-01', '2026-11-30');
   assert.strictEqual(breakdown.length, 2);

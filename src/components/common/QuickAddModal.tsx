@@ -186,7 +186,7 @@ export const QuickAddModal: React.FC = () => {
       maxWidthClass="max-w-lg"
     >
       {/* Header */}
-      <div className="flex items-center justify-between px-5 py-3.5 border-b border-line bg-brand text-brand-ink">
+      <div className="flex items-center justify-between px-5 py-3.5 border-b border-line bg-surface-warm text-ink">
         <div className="flex items-center gap-2">
           <Plus className="w-4 h-4 text-accent" />
           <h2 className="font-semibold text-sm font-heading">Quick Create</h2>
@@ -194,7 +194,7 @@ export const QuickAddModal: React.FC = () => {
         <button
           type="button"
           onClick={() => setIsQuickAddOpen(false)}
-          className="p-1.5 rounded-lg text-brand-ink/75 hover:text-brand-ink hover:bg-white/10 btn-press"
+          className="p-1.5 rounded-lg text-ink-muted hover:text-ink hover:bg-surface-hover btn-press"
           aria-label="Close dialog"
         >
           <X className="w-4 h-4" />
@@ -340,7 +340,7 @@ export const QuickAddModal: React.FC = () => {
                     id="quick-daily-prio"
                     checked={taskIsDailyPriority}
                     onChange={e => setTaskIsDailyPriority(e.target.checked)}
-                    className="rounded border-line accent-brand focus:ring-0"
+                    className="rounded border-line accent-accent focus:ring-0"
                   />
                   <label htmlFor="quick-daily-prio" className="text-xs text-ink font-medium cursor-pointer">
                     Mark as one of Today&apos;s Core Priorities

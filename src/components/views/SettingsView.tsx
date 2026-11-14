@@ -9,9 +9,7 @@ import {
   Check,
   Compass,
   AlertTriangle,
-  Sun,
-  Moon,
-  Monitor,
+  Sparkles,
 } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useApp } from '../../lib/context';
@@ -21,7 +19,6 @@ import { MOMENTUM_EASE } from '../common/MotionPrimitives';
 export const SettingsView: React.FC = () => {
   const {
     state,
-    resolvedTheme,
     updateProfile,
     updatePreferences,
     resetToDemoData,
@@ -91,12 +88,12 @@ export const SettingsView: React.FC = () => {
   };
 
   const paletteSwatches = [
-    { name: 'Warm Cream', hex: '#F7F1E8', bg: 'bg-[#F7F1E8] text-[#2B1F18] border-[#DDD0BE]' },
-    { name: 'Espresso Brown', hex: '#64432B', bg: 'bg-[#64432B] text-[#F7F1E8] border-[#785337]' },
-    { name: 'Warm Ochre', hex: '#D2925B', bg: 'bg-[#D2925B] text-[#2B1F18] border-[#C27F46]' },
-    { name: 'Charcoal Slate', hex: '#333C44', bg: 'bg-[#333C44] text-[#F7F1E8] border-[#404952]' },
-    { name: 'Sage Olive', hex: '#868A7A', bg: 'bg-[#868A7A] text-[#F7F1E8] border-[#75796A]' },
-    { name: 'Slate Canvas', hex: '#252A2E', bg: 'bg-[#252A2E] text-[#F7F1E8] border-[#404952]' },
+    { name: 'Primary Canvas', hex: '#1A1A1D', bg: 'bg-[#1A1A1D] text-[#F5F1E9] border-[#393940]' },
+    { name: 'Elevated Surface', hex: '#242428', bg: 'bg-[#242428] text-[#F5F1E9] border-[#393940]' },
+    { name: 'Secondary Card', hex: '#2A2A2F', bg: 'bg-[#2A2A2F] text-[#F5F1E9] border-[#393940]' },
+    { name: 'Warm Beige', hex: '#D2925B', bg: 'bg-[#D2925B] text-[#1A1A1D] border-[#DF9F68]' },
+    { name: 'MOMENTUM Blue', hex: '#9ECCFD', bg: 'bg-[#9ECCFD] text-[#1A1A1D] border-[#B4D7FE]' },
+    { name: 'Muted Sage', hex: '#868A7A', bg: 'bg-[#868A7A] text-[#F5F1E9] border-[#393940]' },
   ];
 
   return (
@@ -107,7 +104,7 @@ export const SettingsView: React.FC = () => {
           Settings & System Controls
         </h1>
         <p className="text-xs text-ink-muted mt-1">
-          Customize your Life OS profile, Light/Dark theme, data backups, and integrations.
+          Customize your Life OS profile, color system overview, data backups, and integrations.
         </p>
 
         <AnimatePresence>
@@ -270,48 +267,17 @@ export const SettingsView: React.FC = () => {
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
                 <h2 className="text-sm font-bold uppercase tracking-wider text-ink">
-                  Appearance Mode & Theme
+                  Official Dark Color System
                 </h2>
                 <p className="text-xs text-ink-muted mt-0.5">
-                  Active resolved mode:{' '}
-                  <span className="font-mono font-semibold text-accent uppercase">{resolvedTheme}</span>
+                  Deep obsidian canvas (`#1A1A1D`) paired with warm beige (`#D2925B`) and MOMENTUM blue (`#9ECCFD`) accents.
                 </p>
               </div>
 
-              <div
-                className="inline-flex bg-canvas p-1 rounded-xl border border-line text-xs gap-1"
-                role="group"
-                aria-label="Color theme mode"
-              >
-                {(
-                  [
-                    { id: 'light', label: 'Light', Icon: Sun },
-                    { id: 'dark', label: 'Dark', Icon: Moon },
-                    { id: 'system', label: 'System', Icon: Monitor },
-                  ] as const
-                ).map(opt => {
-                  const selected = state.preferences.theme === opt.id;
-                  const Icon = opt.Icon;
-                  return (
-                    <button
-                      key={opt.id}
-                      type="button"
-                      onClick={() => {
-                        updatePreferences({ theme: opt.id });
-                        notify(`Theme set to ${opt.label} mode.`);
-                      }}
-                      className={`btn-press flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-semibold transition-colors whitespace-nowrap ${
-                        selected
-                          ? 'bg-accent text-accent-ink'
-                          : 'text-ink-muted hover:text-ink'
-                      }`}
-                    >
-                      <Icon className="w-3.5 h-3.5" />
-                      <span>{opt.label}</span>
-                    </button>
-                  );
-                })}
-              </div>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-brand-blue/14 border border-brand-blue/35 text-xs font-mono font-semibold text-brand-blue">
+                <Sparkles className="w-3.5 h-3.5" />
+                Official Palette Active
+              </span>
             </div>
 
             <div className="space-y-3 pt-4 border-t border-line">
@@ -483,7 +449,7 @@ export const SettingsView: React.FC = () => {
                     resetToDemoData();
                     notify('Reset to realistic demonstration data.', 'info');
                   }}
-                  className="btn-press px-4 py-2 rounded-xl bg-brand hover:bg-brand-hover text-xs font-semibold text-brand-ink transition-colors"
+                  className="btn-press px-4 py-2 rounded-xl bg-surface-warm hover:bg-surface-hover border border-line text-xs font-semibold text-ink transition-colors"
                 >
                   Reload Realistic Sample/Demo Data
                 </button>

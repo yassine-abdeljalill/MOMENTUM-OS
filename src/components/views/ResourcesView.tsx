@@ -221,12 +221,12 @@ export const ResourcesView: React.FC = () => {
         onClose={() => setShowAddModal(false)}
         maxWidthClass="max-w-md"
       >
-        <div className="px-5 py-4 border-b border-line bg-brand dark:bg-surface-warm flex items-center justify-between">
-          <span className="text-xs font-bold text-brand-ink dark:text-ink">Save to Resource Vault</span>
+        <div className="px-5 py-4 border-b border-line bg-surface-warm flex items-center justify-between">
+          <span className="text-xs font-bold text-ink">Save to Resource Vault</span>
           <button
             type="button"
             onClick={() => setShowAddModal(false)}
-            className="text-brand-ink/80 dark:text-ink-muted hover:text-brand-ink dark:hover:text-ink transition-colors"
+            className="text-ink-muted hover:text-ink transition-colors"
             aria-label="Close modal"
           >
             <X className="w-4 h-4" />

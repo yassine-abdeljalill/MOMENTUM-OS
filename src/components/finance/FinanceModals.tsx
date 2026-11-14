@@ -36,8 +36,8 @@ export const ConfirmDeleteModal: React.FC<{
   onClose: () => void;
 }> = ({ isOpen, title, description, loading, onConfirm, onClose }) => (
   <ModalShell isOpen={isOpen} onClose={onClose} maxWidthClass="max-w-sm">
-    <div className="px-5 py-3.5 border-b border-line bg-brand dark:bg-surface-warm flex items-center justify-between">
-      <div className="flex items-center gap-2 text-brand-ink dark:text-ink">
+    <div className="px-5 py-3.5 border-b border-line bg-surface-warm flex items-center justify-between">
+      <div className="flex items-center gap-2 text-ink">
         <AlertTriangle className="w-4 h-4 text-accent" />
         <h3 className="text-xs font-bold uppercase tracking-wider">{title}</h3>
       </div>
@@ -45,7 +45,7 @@ export const ConfirmDeleteModal: React.FC<{
         type="button"
         onClick={onClose}
         aria-label="Close modal"
-        className="text-brand-ink/80 dark:text-ink-muted hover:text-brand-ink dark:hover:text-ink btn-press"
+        className="text-ink-muted hover:text-ink btn-press"
       >
         <X className="w-4 h-4" />
       </button>
@@ -180,15 +180,15 @@ export const TransactionModal: React.FC<{
 
   return (
     <ModalShell isOpen={isOpen} onClose={onClose} maxWidthClass="max-w-md">
-      <div className="px-5 py-3.5 border-b border-line bg-brand dark:bg-surface-warm flex items-center justify-between">
-        <span className="text-xs font-bold uppercase tracking-wider text-brand-ink dark:text-ink">
+      <div className="px-5 py-3.5 border-b border-line bg-surface-warm flex items-center justify-between">
+        <span className="text-xs font-bold uppercase tracking-wider text-ink">
           {editing ? 'Edit Transaction' : 'Record Transaction'}
         </span>
         <button
           type="button"
           onClick={onClose}
           aria-label="Close modal"
-          className="text-brand-ink/80 dark:text-ink-muted hover:text-brand-ink dark:hover:text-ink btn-press"
+          className="text-ink-muted hover:text-ink btn-press"
         >
           <X className="w-4 h-4" />
         </button>
@@ -371,12 +371,12 @@ export const TransactionModal: React.FC<{
 // 3. Custom Categories Manager Modal
 const CATEGORY_COLORS = [
   '#D2925B',
-  '#64432B',
-  '#333C44',
+  '#9ECCFD',
   '#868A7A',
-  '#3E7B52',
-  '#B87222',
-  '#B84A44',
+  '#5B7C99',
+  '#5EA675',
+  '#E09B4B',
+  '#DF6B64',
 ];
 
 export const CategoryManagerModal: React.FC<{
@@ -411,10 +411,10 @@ export const CategoryManagerModal: React.FC<{
 
   return (
     <ModalShell isOpen={isOpen} onClose={onClose} maxWidthClass="max-w-md">
-      <div className="px-5 py-3.5 border-b border-line bg-brand dark:bg-surface-warm flex items-center justify-between">
+      <div className="px-5 py-3.5 border-b border-line bg-surface-warm flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Tag className="w-4 h-4 text-accent" />
-          <span className="text-xs font-bold uppercase tracking-wider text-brand-ink dark:text-ink">
+          <Tag className="w-4 h-4 text-brand-blue" />
+          <span className="text-xs font-bold uppercase tracking-wider text-ink">
             Manage Categories
           </span>
         </div>
@@ -422,7 +422,7 @@ export const CategoryManagerModal: React.FC<{
           type="button"
           onClick={onClose}
           aria-label="Close modal"
-          className="text-brand-ink/80 dark:text-ink-muted hover:text-brand-ink dark:hover:text-ink btn-press"
+          className="text-ink-muted hover:text-ink btn-press"
         >
           <X className="w-4 h-4" />
         </button>
@@ -591,15 +591,15 @@ export const BudgetModal: React.FC<{
 
   return (
     <ModalShell isOpen={isOpen} onClose={onClose} maxWidthClass="max-w-md">
-      <div className="px-5 py-3.5 border-b border-line bg-brand dark:bg-surface-warm flex items-center justify-between">
-        <span className="text-xs font-bold uppercase tracking-wider text-brand-ink dark:text-ink">
+      <div className="px-5 py-3.5 border-b border-line bg-surface-warm flex items-center justify-between">
+        <span className="text-xs font-bold uppercase tracking-wider text-ink">
           {editing ? 'Edit Monthly Budget' : 'Create Monthly Budget'}
         </span>
         <button
           type="button"
           onClick={onClose}
           aria-label="Close modal"
-          className="text-brand-ink/80 dark:text-ink-muted hover:text-brand-ink dark:hover:text-ink btn-press"
+          className="text-ink-muted hover:text-ink btn-press"
         >
           <X className="w-4 h-4" />
         </button>
@@ -792,10 +792,10 @@ export const SavingsGoalModal: React.FC<{
 
   return (
     <ModalShell isOpen={isOpen} onClose={onClose} maxWidthClass="max-w-md">
-      <div className="px-5 py-3.5 border-b border-line bg-brand dark:bg-surface-warm flex items-center justify-between">
+      <div className="px-5 py-3.5 border-b border-line bg-surface-warm flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <PiggyBank className="w-4 h-4 text-accent" />
-          <span className="text-xs font-bold uppercase tracking-wider text-brand-ink dark:text-ink">
+          <PiggyBank className="w-4 h-4 text-brand-blue" />
+          <span className="text-xs font-bold uppercase tracking-wider text-ink">
             {editing ? 'Edit Savings Goal' : 'Create Savings Goal'}
           </span>
         </div>
@@ -803,7 +803,7 @@ export const SavingsGoalModal: React.FC<{
           type="button"
           onClick={onClose}
           aria-label="Close modal"
-          className="text-brand-ink/80 dark:text-ink-muted hover:text-brand-ink dark:hover:text-ink btn-press"
+          className="text-ink-muted hover:text-ink btn-press"
         >
           <X className="w-4 h-4" />
         </button>
@@ -1001,10 +1001,10 @@ export const ContributionModal: React.FC<{
 
   return (
     <ModalShell isOpen={Boolean(goal)} onClose={onClose} maxWidthClass="max-w-sm">
-      <div className="px-5 py-3.5 border-b border-line bg-brand dark:bg-surface-warm flex items-center justify-between">
+      <div className="px-5 py-3.5 border-b border-line bg-surface-warm flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <TrendingUp className="w-4 h-4 text-accent" />
-          <span className="text-xs font-bold uppercase tracking-wider text-brand-ink dark:text-ink">
+          <TrendingUp className="w-4 h-4 text-brand-blue" />
+          <span className="text-xs font-bold uppercase tracking-wider text-ink">
             Add Contribution
           </span>
         </div>
@@ -1012,7 +1012,7 @@ export const ContributionModal: React.FC<{
           type="button"
           onClick={onClose}
           aria-label="Close modal"
-          className="text-brand-ink/80 dark:text-ink-muted hover:text-brand-ink dark:hover:text-ink btn-press"
+          className="text-ink-muted hover:text-ink btn-press"
         >
           <X className="w-4 h-4" />
         </button>
@@ -1097,7 +1097,7 @@ export const ContributionModal: React.FC<{
               type="checkbox"
               checked={alsoRecordExpense}
               onChange={e => setAlsoRecordExpense(e.target.checked)}
-              className="rounded accent-brand dark:accent-accent"
+              className="rounded accent-accent"
             />
             <span>Also log as an outflow transaction from balance</span>
           </label>
@@ -1227,10 +1227,10 @@ export const RecurringModal: React.FC<{
 
   return (
     <ModalShell isOpen={isOpen} onClose={onClose} maxWidthClass="max-w-md">
-      <div className="px-5 py-3.5 border-b border-line bg-brand dark:bg-surface-warm flex items-center justify-between">
+      <div className="px-5 py-3.5 border-b border-line bg-surface-warm flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <CalendarClock className="w-4 h-4 text-accent" />
-          <span className="text-xs font-bold uppercase tracking-wider text-brand-ink dark:text-ink">
+          <CalendarClock className="w-4 h-4 text-brand-blue" />
+          <span className="text-xs font-bold uppercase tracking-wider text-ink">
             {editing ? 'Edit Recurring Item' : 'New Recurring Payment / Income'}
           </span>
         </div>
@@ -1238,7 +1238,7 @@ export const RecurringModal: React.FC<{
           type="button"
           onClick={onClose}
           aria-label="Close modal"
-          className="text-brand-ink/80 dark:text-ink-muted hover:text-brand-ink dark:hover:text-ink btn-press"
+          className="text-ink-muted hover:text-ink btn-press"
         >
           <X className="w-4 h-4" />
         </button>
@@ -1398,7 +1398,7 @@ export const RecurringModal: React.FC<{
               type="checkbox"
               checked={active}
               onChange={e => setActive(e.target.checked)}
-              className="rounded accent-brand dark:accent-accent"
+              className="rounded accent-accent"
             />
             <span>Schedule active</span>
           </label>

@@ -174,14 +174,14 @@ export const TasksView: React.FC = () => {
                   type="button"
                   onClick={() => setFilterTab(tab)}
                   className={`relative z-10 px-3 py-1.5 rounded-lg font-semibold capitalize transition-colors whitespace-nowrap shrink-0 ${
-                    isActive ? 'text-brand-ink dark:text-ink' : 'text-ink-muted hover:text-ink'
+                    isActive ? 'text-ink' : 'text-ink-muted hover:text-ink'
                   }`}
                 >
                   {isActive && (
                     <motion.span
                       layoutId="tasks-filter-tab-pill"
                       transition={{ duration: prefersReduced ? 0.01 : 0.2, ease: MOMENTUM_EASE }}
-                      className="absolute inset-0 bg-brand dark:bg-surface-inset rounded-lg -z-10"
+                      className="absolute inset-0 bg-surface-inset border border-line rounded-lg -z-10"
                     />
                   )}
                   {tab}
@@ -498,15 +498,15 @@ export const TasksView: React.FC = () => {
       >
         {activeEditingTask && (
           <>
-            <div className="flex items-center justify-between px-5 sm:px-6 py-4 border-b border-line bg-brand dark:bg-surface-warm">
+            <div className="flex items-center justify-between px-5 sm:px-6 py-4 border-b border-line bg-surface-warm">
               <div className="flex items-center gap-2">
-                <Edit3 className="w-4 h-4 text-accent" />
-                <h3 className="text-sm font-semibold text-brand-ink dark:text-ink">Task Details</h3>
+                <Edit3 className="w-4 h-4 text-brand-blue" />
+                <h3 className="text-sm font-semibold text-ink">Task Details</h3>
               </div>
               <button
                 type="button"
                 onClick={() => setEditingTask(null)}
-                className="p-1.5 rounded-lg text-brand-ink/80 dark:text-ink-muted hover:text-brand-ink dark:hover:text-ink transition-colors"
+                className="p-1.5 rounded-lg text-ink-muted hover:text-ink transition-colors"
                 aria-label="Close task details"
               >
                 <X className="w-4 h-4" />

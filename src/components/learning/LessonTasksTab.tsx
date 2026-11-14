@@ -258,7 +258,7 @@ export const LessonTasksTab: React.FC<{
         />
         <button
           type="submit"
-          className="btn-press px-3.5 py-1.5 rounded-xl bg-brand text-brand-ink text-xs font-semibold hover:bg-brand-hover"
+          className="btn-press px-3.5 py-1.5 rounded-xl bg-accent text-accent-ink text-xs font-semibold hover:bg-accent-hover"
         >
           Add
         </button>
@@ -274,7 +274,7 @@ export const LessonTasksTab: React.FC<{
               onClick={() => setStatusFilter(st)}
               className={`px-3 py-1.5 rounded-xl text-xs font-medium border transition-colors whitespace-nowrap ${
                 statusFilter === st
-                  ? 'bg-brand text-brand-ink border-brand'
+                  ? 'bg-accent text-accent-ink border-accent font-semibold'
                   : 'bg-surface text-ink-muted border-line hover:text-ink'
               }`}
             >
@@ -402,14 +402,14 @@ export const LessonTasksTab: React.FC<{
 
       {/* Create / Edit Task Modal */}
       <ModalShell isOpen={showCreateModal} onClose={() => setShowCreateModal(false)} maxWidthClass="max-w-lg">
-        <div className="px-6 py-4 border-b border-line bg-brand dark:bg-surface-warm flex items-center justify-between">
-          <h3 className="text-sm font-bold text-brand-ink dark:text-ink">
+        <div className="px-6 py-4 border-b border-line bg-surface-warm flex items-center justify-between">
+          <h3 className="text-sm font-bold text-ink">
             {editingTask ? 'Edit Learning Task' : 'New Task / Exercise'}
           </h3>
           <button
             type="button"
             onClick={() => setShowCreateModal(false)}
-            className="text-brand-ink/80 dark:text-ink-muted hover:text-brand-ink dark:hover:text-ink"
+            className="text-ink-muted hover:text-ink"
             aria-label="Close modal"
           >
             <X className="w-4 h-4" />

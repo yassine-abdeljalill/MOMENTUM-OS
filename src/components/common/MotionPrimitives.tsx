@@ -46,7 +46,7 @@ export const ModalShell: React.FC<{
   panelClassName = 'bg-surface border border-line text-ink rounded-t-2xl sm:rounded-2xl shadow-2xl overflow-hidden',
   alignTop = false,
   fullscreen = false,
-  backdropClassName = 'bg-charcoal/65 dark:bg-black/70 backdrop-blur-xs',
+  backdropClassName = 'bg-black/70 backdrop-blur-xs',
 }) => {
   const prefersReduced = useReducedMotion();
 
@@ -125,7 +125,7 @@ export const DrawerShell: React.FC<{
           onClick={onClose}
           className={`fixed inset-0 z-50 flex ${
             side === 'right' ? 'justify-end' : 'justify-start'
-          } bg-charcoal/55 dark:bg-black/65 backdrop-blur-xs`}
+          } bg-black/65 backdrop-blur-xs`}
         >
           <motion.div
             initial={prefersReduced ? { opacity: 0 } : { x: initialX }}

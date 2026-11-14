@@ -78,12 +78,12 @@ export const FinanceOverviewTab: React.FC<Props> = ({
     <div className="space-y-6">
       {/* 5 KPI Cards */}
       <StaggerContainer className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-        <StaggerItem className="card-hover p-4 rounded-2xl bg-brand dark:bg-surface-warm text-brand-ink dark:text-ink border border-line flex flex-col justify-between">
+        <StaggerItem className="card-hover p-4 rounded-2xl bg-surface-warm text-ink border border-line flex flex-col justify-between">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] font-mono uppercase tracking-wider text-brand-ink/80 dark:text-ink-muted">
+            <span className="text-[10px] font-mono uppercase tracking-wider text-ink-muted">
               Available Balance
             </span>
-            <Wallet className="w-4 h-4 text-accent" />
+            <Wallet className="w-4 h-4 text-brand-blue" />
           </div>
           <div className="my-2 font-mono text-xl xl:text-2xl font-bold truncate tabular-nums">
             <AnimatedNumber value={summary.totalBalance} formatter={v => formatCurrency(v, currency)} />
@@ -208,8 +208,8 @@ export const FinanceOverviewTab: React.FC<Props> = ({
                     className="flex-1 flex flex-col items-center h-full justify-end relative group cursor-pointer"
                   >
                     {isHovered && (
-                      <div className="absolute -top-2 z-20 px-2.5 py-1.5 rounded-lg bg-brand dark:bg-charcoal text-brand-ink text-[10px] font-mono shadow-lg whitespace-nowrap pointer-events-none border border-line tabular-nums">
-                        <div className="text-accent font-bold">{pt.label}</div>
+                      <div className="absolute -top-2 z-20 px-2.5 py-1.5 rounded-lg bg-surface-warm text-ink text-[10px] font-mono shadow-lg whitespace-nowrap pointer-events-none border border-line tabular-nums">
+                        <div className="text-brand-blue font-bold">{pt.label}</div>
                         <div>In: {formatCurrency(pt.income, currency)}</div>
                         <div>Out: {formatCurrency(pt.expenses, currency)}</div>
                       </div>

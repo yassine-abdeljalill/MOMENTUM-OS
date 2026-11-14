@@ -233,21 +233,21 @@ export const GlobalSearchModal: React.FC = () => {
       panelClassName="bg-surface border border-line rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[75dvh]"
     >
       {/* Search Input Bar */}
-      <div className="flex items-center px-4 py-3.5 border-b border-line gap-3 bg-brand text-brand-ink">
-        <Search className="w-5 h-5 text-accent shrink-0" />
+      <div className="flex items-center px-4 py-3.5 border-b border-line gap-3 bg-surface-warm text-ink">
+        <Search className="w-5 h-5 text-brand-blue shrink-0" />
         <input
           ref={inputRef}
           type="text"
           value={query}
           onChange={e => setQuery(e.target.value)}
           placeholder="Search tasks, goals, projects, courses, notes, habits..."
-          className="flex-1 bg-transparent border-0 text-[#F7F1E8] placeholder-[#F7F1E8]/60 focus:outline-hidden text-sm"
+          className="flex-1 bg-transparent border-0 text-ink placeholder-ink-muted focus:outline-hidden text-sm"
         />
         {query && (
           <button
             type="button"
             onClick={() => setQuery('')}
-            className="p-1 text-[#F7F1E8]/75 hover:text-[#F7F1E8] btn-press"
+            className="p-1 text-ink-muted hover:text-ink btn-press"
             aria-label="Clear search"
           >
             <X className="w-4 h-4" />
@@ -256,7 +256,7 @@ export const GlobalSearchModal: React.FC = () => {
         <button
           type="button"
           onClick={() => setIsSearchOpen(false)}
-          className="px-2 py-1 text-xs text-[#F7F1E8] hover:text-accent bg-white/10 rounded-lg border border-white/15 btn-press"
+          className="px-2 py-1 text-xs text-ink-muted hover:text-accent bg-surface rounded-lg border border-line btn-press"
         >
           ESC
         </button>
@@ -301,7 +301,7 @@ export const GlobalSearchModal: React.FC = () => {
                 className="w-full flex items-center justify-between p-3 rounded-xl hover:bg-surface-warm/70 transition-colors group text-left btn-press"
               >
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className="p-2 rounded-xl bg-brand text-accent shrink-0 transition-transform duration-150 group-hover:scale-105">
+                  <div className="p-2 rounded-xl bg-surface-warm border border-line text-brand-blue shrink-0 transition-transform duration-150 group-hover:scale-105">
                     <Icon className="w-4 h-4" />
                   </div>
                   <div className="flex flex-col min-w-0">
@@ -314,7 +314,7 @@ export const GlobalSearchModal: React.FC = () => {
                   </div>
                 </div>
                 <div className="flex items-center gap-2 shrink-0 ml-3">
-                  <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded-md bg-accent/18 text-brand dark:text-accent border border-accent/40 font-semibold">
+                  <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded-md bg-accent/18 text-accent border border-accent/40 font-semibold">
                     {item.category}
                   </span>
                   <ArrowRight className="w-3.5 h-3.5 text-ink opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />

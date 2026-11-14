@@ -452,7 +452,7 @@ export const FinanceView: React.FC = () => {
   if (!authUser) {
     return (
       <div className="max-w-lg mx-auto my-12 p-8 rounded-2xl bg-surface border border-line text-center space-y-4">
-        <div className="w-12 h-12 rounded-xl bg-brand text-brand-ink flex items-center justify-center mx-auto">
+        <div className="w-12 h-12 rounded-xl bg-surface-warm border border-line text-brand-blue flex items-center justify-center mx-auto">
           <Wallet className="w-6 h-6" />
         </div>
         <div className="space-y-1.5">
