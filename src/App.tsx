@@ -75,7 +75,7 @@ const MainContent: React.FC = () => {
   };
 
   return (
-    <div className="flex h-dvh w-screen overflow-hidden bg-canvas text-ink">
+    <div className="flex h-dvh w-full overflow-hidden bg-canvas text-ink">
       {/* Animated Intro Splash (session-gated, bypassed with ?autostart=1) */}
       <IntroSplash />
 
@@ -88,7 +88,7 @@ const MainContent: React.FC = () => {
 
         <main
           ref={mainRef}
-          className="flex-1 overflow-y-auto px-4 pt-4 pb-24 md:p-7 bg-canvas"
+          className="flex-1 overflow-y-auto px-4 pt-4 pb-[calc(4.75rem+env(safe-area-inset-bottom))] md:p-7 bg-canvas"
         >
           <AnimatePresence mode="wait" initial={false}>
             <PageTransition viewKey={currentView}>

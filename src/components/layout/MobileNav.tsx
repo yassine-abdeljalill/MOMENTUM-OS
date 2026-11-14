@@ -48,9 +48,9 @@ export const MobileNav: React.FC = () => {
       {/* Fixed 5-Tab Bottom Navigation Bar (Mobile < md) */}
       <nav
         aria-label="Mobile bottom navigation"
-        className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-surface/95 backdrop-blur-md border-t border-line pb-[env(safe-area-inset-bottom)] shadow-[0_-4px_20px_-8px_rgba(43,31,24,0.14)]"
+        className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-surface/95 dark:bg-[#2D3439] backdrop-blur-md border-t border-line dark:border-[#868A7A]/20 pb-[env(safe-area-inset-bottom)] select-none"
       >
-        <div className="grid grid-cols-5 items-center h-15 px-1.5">
+        <div className="grid grid-cols-5 items-stretch h-16 px-1">
           {primaryItems.map(item => {
             const Icon = item.icon;
             const isActive = currentView === item.id && !moreOpen;
@@ -61,29 +61,38 @@ export const MobileNav: React.FC = () => {
                 key={item.id}
                 type="button"
                 onClick={() => handleSelect(item.id)}
-                className={`relative flex flex-col items-center justify-center gap-0.5 min-h-[44px] rounded-xl transition-colors btn-press ${
-                  isActive
-                    ? 'text-brand dark:text-accent font-bold'
-                    : 'text-ink-muted hover:text-ink font-medium'
-                }`}
+                className="relative flex flex-col items-center justify-center gap-1 h-full min-h-[44px] transition-colors btn-press focus-visible:outline-none"
                 aria-current={isActive ? 'page' : undefined}
               >
                 {isActive && (
                   <motion.span
                     layoutId="mobile-bottom-active-indicator"
                     transition={{ duration: prefersReduced ? 0.01 : 0.18, ease: MOMENTUM_EASE }}
-                    className="absolute top-1 w-8 h-0.5 rounded-full bg-accent"
+                    className="absolute top-0 w-7 h-[2px] rounded-full bg-[#D2925B]"
                   />
                 )}
                 <div className="relative flex items-center justify-center">
-                  <Icon className={`w-4.5 h-4.5 ${isActive ? 'text-accent' : ''}`} />
+                  <Icon
+                    className={`w-[22px] h-[22px] transition-colors ${
+                      isActive
+                        ? 'text-[#D2925B]'
+                        : 'text-ink-muted dark:text-[#868A7A]'
+                    }`}
+                    strokeWidth={isActive ? 2.15 : 1.75}
+                  />
                   {badgeCount !== null && (
-                    <span className="absolute -top-1.5 -right-2.5 min-w-[15px] h-[15px] px-1 rounded-full bg-accent text-accent-ink font-mono text-[9px] font-bold flex items-center justify-center tabular-nums">
+                    <span className="absolute -top-1 -right-2 min-w-[15px] h-[15px] px-1 rounded-full bg-[#D2925B] text-[#252A2E] font-mono text-[9px] font-bold flex items-center justify-center tabular-nums leading-none">
                       {badgeCount > 9 ? '9+' : badgeCount}
                     </span>
                   )}
                 </div>
-                <span className="text-[10px] leading-tight tracking-tight whitespace-nowrap">
+                <span
+                  className={`text-[11px] leading-[13px] tracking-tight whitespace-nowrap transition-colors ${
+                    isActive
+                      ? 'text-[#D2925B] font-semibold'
+                      : 'text-ink-muted dark:text-[#A5A69B] font-medium'
+                  }`}
+                >
                   {item.shortLabel || item.label}
                 </span>
               </button>
@@ -94,11 +103,7 @@ export const MobileNav: React.FC = () => {
           <button
             type="button"
             onClick={() => setMoreOpen(prev => !prev)}
-            className={`relative flex flex-col items-center justify-center gap-0.5 min-h-[44px] rounded-xl transition-colors btn-press ${
-              isMoreActive
-                ? 'text-brand dark:text-accent font-bold'
-                : 'text-ink-muted hover:text-ink font-medium'
-            }`}
+            className="relative flex flex-col items-center justify-center gap-1 h-full min-h-[44px] transition-colors btn-press focus-visible:outline-none"
             aria-expanded={moreOpen}
             aria-label="Open more modules menu"
           >
@@ -106,11 +111,24 @@ export const MobileNav: React.FC = () => {
               <motion.span
                 layoutId="mobile-bottom-active-indicator"
                 transition={{ duration: prefersReduced ? 0.01 : 0.18, ease: MOMENTUM_EASE }}
-                className="absolute top-1 w-8 h-0.5 rounded-full bg-accent"
+                className="absolute top-0 w-7 h-[2px] rounded-full bg-[#D2925B]"
               />
             )}
-            <Grid2x2 className={`w-4.5 h-4.5 ${isMoreActive ? 'text-accent' : ''}`} />
-            <span className="text-[10px] leading-tight tracking-tight whitespace-nowrap">
+            <Grid2x2
+              className={`w-[22px] h-[22px] transition-colors ${
+                isMoreActive
+                  ? 'text-[#D2925B]'
+                  : 'text-ink-muted dark:text-[#868A7A]'
+              }`}
+              strokeWidth={isMoreActive ? 2.15 : 1.75}
+            />
+            <span
+              className={`text-[11px] leading-[13px] tracking-tight whitespace-nowrap transition-colors ${
+                isMoreActive
+                  ? 'text-[#D2925B] font-semibold'
+                  : 'text-ink-muted dark:text-[#A5A69B] font-medium'
+              }`}
+            >
               More
             </span>
           </button>
@@ -134,7 +152,7 @@ export const MobileNav: React.FC = () => {
               exit={prefersReduced ? { opacity: 0 } : { y: '100%' }}
               transition={{ duration: prefersReduced ? 0.01 : 0.24, ease: MOMENTUM_EASE }}
               onClick={e => e.stopPropagation()}
-              className="w-full max-h-[85dvh] bg-surface border-t border-line rounded-t-3xl shadow-2xl flex flex-col overflow-hidden pb-[env(safe-area-inset-bottom)]"
+              className="w-full max-h-[85dvh] bg-surface dark:bg-[#2E353B] border-t border-line dark:border-[#868A7A]/20 rounded-t-3xl shadow-2xl flex flex-col overflow-hidden pb-[env(safe-area-inset-bottom)]"
             >
               {/* Drag Handle & Sheet Header */}
               <div className="pt-2.5 pb-3 px-5 border-b border-line flex items-center justify-between shrink-0">

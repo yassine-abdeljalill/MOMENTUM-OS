@@ -39,7 +39,7 @@ export const IntroSplash: React.FC = () => {
         <motion.div
           initial={{ opacity: 1 }}
           exit={{ opacity: 0, transition: { duration: 0.35, ease: MOMENTUM_EASE } }}
-          className="fixed inset-0 z-[100] bg-canvas flex flex-col items-center justify-center px-6 select-none"
+          className="fixed inset-0 z-[100] bg-canvas flex flex-col items-center justify-center px-6 pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] select-none"
           role="dialog"
           aria-label="Welcome to MOMENTUM"
         >

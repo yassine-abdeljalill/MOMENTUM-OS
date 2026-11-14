@@ -95,14 +95,46 @@
   --font-mono: 'JetBrains Mono', monospace;
 }
 
-html,
+html {
+  font-family: var(--font-sans);
+  background-color: var(--bg-canvas);
+  color: var(--text-ink);
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
 body {
   font-family: var(--font-sans);
   background-color: var(--bg-canvas);
   color: var(--text-ink);
+  min-height: 100%;
   margin: 0;
   padding: 0;
   overflow-x: hidden;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+@media all and (display-mode: standalone) {
+  html:not(.dark) .mobile-safe-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: env(safe-area-inset-top);
+    background-color: #252A2E;
+    pointer-events: none;
+  }
 }
 
 h1,

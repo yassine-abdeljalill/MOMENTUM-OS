@@ -443,11 +443,16 @@ export function AppProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (typeof document === 'undefined') return;
     const root = document.documentElement;
+    const bg = resolvedTheme === 'dark' ? '#252A2E' : '#F7F1E8';
     root.classList.toggle('dark', resolvedTheme === 'dark');
     root.style.colorScheme = resolvedTheme;
+    root.style.backgroundColor = bg;
+    if (document.body) {
+      document.body.style.backgroundColor = bg;
+    }
     const metaTheme = document.querySelector('meta[name="theme-color"]');
     if (metaTheme) {
-      metaTheme.setAttribute('content', resolvedTheme === 'dark' ? '#252A2E' : '#64432B');
+      metaTheme.setAttribute('content', bg);
     }
   }, [resolvedTheme]);
 
