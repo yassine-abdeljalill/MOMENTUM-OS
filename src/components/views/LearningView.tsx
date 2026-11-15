@@ -790,7 +790,7 @@ export const LearningView: React.FC = () => {
                               >
                                 <ModuleIconView
                                   icon={mod.icon}
-                                  className={`w-5 h-5 ${isDarkBg ? 'text-[#F2ECEB]' : 'text-[#211B24]'}`}
+                                  className={`w-5 h-5 ${isDarkBg ? 'text-[#F2EDE4]' : 'text-[#242629]'}`}
                                 />
                               </div>
                               <div className="min-w-0">

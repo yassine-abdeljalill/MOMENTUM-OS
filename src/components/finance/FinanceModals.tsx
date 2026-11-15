@@ -370,13 +370,13 @@ export const TransactionModal: React.FC<{
 
 // 3. Custom Categories Manager Modal
 const CATEGORY_COLORS = [
-  '#FF7048',
-  '#B8A9A8',
-  '#FFA185',
-  '#8D7D81',
-  '#D95835',
-  '#D8CCCB',
-  '#5A4D57',
+  '#397BFF',
+  '#D2C4AC',
+  '#91B7FF',
+  '#B8AC96',
+  '#2558C4',
+  '#DFD4BF',
+  '#4F545C',
 ];
 
 export const CategoryManagerModal: React.FC<{
@@ -388,7 +388,7 @@ export const CategoryManagerModal: React.FC<{
 }> = ({ isOpen, categories, onCreate, onDelete, onClose }) => {
   const [name, setName] = useState('');
   const [type, setType] = useState<'expense' | 'income'>('expense');
-  const [color, setColor] = useState('#FF7048');
+  const [color, setColor] = useState('#397BFF');
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
 

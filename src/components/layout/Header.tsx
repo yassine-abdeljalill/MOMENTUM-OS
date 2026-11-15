@@ -18,6 +18,7 @@ export const Header: React.FC = () => {
     currentView,
     state,
     authUser,
+    authChecked,
     setIsSearchOpen,
     setIsQuickAddOpen,
     setIsFocusTimerOpen,
@@ -54,11 +55,15 @@ export const Header: React.FC = () => {
     timerDisplay = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
   }
 
-  const displayName =
-    authUser && !authUser.isWorkspace ? authUser.fullName : state.profile.fullName;
+  const isSignedOut = authChecked && !authUser;
+  const displayName = isSignedOut
+    ? '?'
+    : authUser && !authUser.isWorkspace
+    ? authUser.fullName
+    : state.profile.fullName;
 
   return (
-    <header className="sticky top-0 z-20 shrink-0 bg-[#211B24]/95 backdrop-blur-md border-b border-[#B8A9A8]/22 pt-[env(safe-area-inset-top)] select-none">
+    <header className="sticky top-0 z-20 shrink-0 bg-[#242629]/82 backdrop-blur-xl border-b border-line pt-[env(safe-area-inset-top)] select-none glass-specular-rim">
       <div className="h-[52px] md:h-[60px] px-3 sm:px-4 md:px-7 flex items-center justify-between gap-2 min-w-0">
         {/* Left: Mobile Brand Mark + Title / Desktop Breadcrumb */}
         <div className="flex items-center gap-2 sm:gap-2.5 min-w-0 shrink">
@@ -106,7 +111,7 @@ export const Header: React.FC = () => {
                 animate={{ opacity: 1, scale: 1 }}
                 exit={prefersReduced ? { opacity: 0 } : { opacity: 0, scale: 0.94 }}
                 transition={{ duration: prefersReduced ? 0.01 : 0.16, ease: MOMENTUM_EASE }}
-                className="h-[30px] min-[360px]:h-8 flex items-center gap-1 px-2 rounded-[10px] sm:rounded-full bg-[#2B242E] border border-accent/60 text-ink text-[11px] font-mono shrink-0"
+                className="h-[30px] min-[360px]:h-8 flex items-center gap-1 px-2 rounded-[10px] sm:rounded-full glass-control border-accent/60 text-ink text-[11px] font-mono shrink-0"
               >
                 <button
                   type="button"
@@ -143,7 +148,7 @@ export const Header: React.FC = () => {
                 exit={prefersReduced ? { opacity: 0 } : { opacity: 0, scale: 0.95 }}
                 transition={{ duration: prefersReduced ? 0.01 : 0.14 }}
                 onClick={() => setIsFocusTimerOpen(true)}
-                className="h-[30px] w-[30px] min-[360px]:h-8 min-[360px]:w-8 sm:w-auto sm:px-2.5 rounded-[10px] sm:rounded-xl bg-[#2B242E] hover:bg-[#362D38] text-ink border border-[#B8A9A8]/22 text-xs font-medium btn-press flex items-center justify-center gap-1.5 whitespace-nowrap shrink-0"
+                className="h-[30px] w-[30px] min-[360px]:h-8 min-[360px]:w-8 sm:w-auto sm:px-2.5 rounded-[10px] sm:rounded-xl glass-control text-ink text-xs font-medium btn-press flex items-center justify-center gap-1.5 whitespace-nowrap shrink-0"
                 title="Focus Timer"
                 aria-label="Open Focus Timer"
               >
@@ -157,13 +162,13 @@ export const Header: React.FC = () => {
           <button
             type="button"
             onClick={() => setIsSearchOpen(true)}
-            className="h-[30px] w-[30px] min-[360px]:h-8 min-[360px]:w-8 md:w-auto md:px-3 rounded-[10px] md:rounded-xl bg-[#2B242E] hover:bg-[#362D38] text-ink-muted hover:text-ink border border-[#B8A9A8]/22 text-xs font-medium btn-press flex items-center justify-center gap-2 whitespace-nowrap shrink-0"
+            className="h-[30px] w-[30px] min-[360px]:h-8 min-[360px]:w-8 md:w-auto md:px-3 rounded-[10px] md:rounded-xl glass-control text-ink-muted hover:text-ink text-xs font-medium btn-press flex items-center justify-center gap-2 whitespace-nowrap shrink-0"
             title="Search anything (Cmd+K)"
             aria-label="Search workspace"
           >
             <Search className="w-3.5 h-3.5 text-ink" />
             <span className="hidden md:inline">Search...</span>
-            <kbd className="hidden md:inline-block px-1.5 py-0.2 text-[10px] font-mono rounded bg-[#211B24] text-ink-muted border border-[#B8A9A8]/22">
+            <kbd className="hidden md:inline-block px-1.5 py-0.2 text-[10px] font-mono rounded bg-canvas/80 text-ink-muted border border-line">
               ⌘K
             </kbd>
           </button>
@@ -187,7 +192,7 @@ export const Header: React.FC = () => {
           <button
             type="button"
             onClick={() => setIsNotificationsOpen(true)}
-            className="h-[30px] w-[30px] min-[360px]:h-8 min-[360px]:w-8 rounded-[10px] sm:rounded-xl bg-[#2B242E] hover:bg-[#362D38] text-ink border border-[#B8A9A8]/22 relative btn-press group flex items-center justify-center shrink-0"
+            className="h-[30px] w-[30px] min-[360px]:h-8 min-[360px]:w-8 rounded-[10px] sm:rounded-xl glass-control text-ink relative btn-press group flex items-center justify-center shrink-0"
             aria-label="Notifications"
             title="Notifications"
           >
@@ -199,7 +204,7 @@ export const Header: React.FC = () => {
                   animate={{ scale: 1 }}
                   exit={{ scale: 0 }}
                   transition={{ duration: prefersReduced ? 0.01 : 0.16, ease: MOMENTUM_EASE }}
-                  className="absolute -top-0.5 -right-0.5 min-w-[14px] h-[14px] px-0.5 rounded-full bg-accent text-accent-ink border border-[#211B24] font-mono text-[8px] font-bold flex items-center justify-center tabular-nums leading-none"
+                  className="absolute -top-0.5 -right-0.5 min-w-[14px] h-[14px] px-0.5 rounded-full bg-accent text-accent-ink border border-canvas font-mono text-[8px] font-bold flex items-center justify-center tabular-nums leading-none"
                 >
                   {unreadNotificationsCount}
                 </motion.span>
@@ -211,7 +216,7 @@ export const Header: React.FC = () => {
           <button
             type="button"
             onClick={() => setIsAuthModalOpen(true)}
-            className="h-[30px] w-[30px] min-[360px]:h-8 min-[360px]:w-8 rounded-full bg-[#362D38] border-[1.5px] border-stone/70 flex items-center justify-center text-[11px] sm:text-xs font-bold text-ink hover:border-accent btn-press shrink-0"
+            className="h-[30px] w-[30px] min-[360px]:h-8 min-[360px]:w-8 rounded-full glass-control border-[1.5px] border-stone/70 flex items-center justify-center text-[11px] sm:text-xs font-bold text-ink hover:border-accent btn-press shrink-0"
             title="Account profile"
             aria-label="Open account profile"
           >

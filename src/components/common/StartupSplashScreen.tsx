@@ -31,7 +31,7 @@ export const StartupSplashScreen: React.FC<StartupSplashScreenProps> = ({
                   transition: { duration: 0.36, ease: MOMENTUM_EASE },
                 }
           }
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-[#211B24] text-[#F2ECEB] select-none overflow-hidden"
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-[#242629] text-[#F2EDE4] select-none overflow-hidden"
           style={{
             paddingTop: 'env(safe-area-inset-top)',
             paddingBottom: 'env(safe-area-inset-bottom)',
@@ -48,7 +48,7 @@ export const StartupSplashScreen: React.FC<StartupSplashScreenProps> = ({
                 duration: prefersReduced ? 0.12 : 0.44,
                 ease: MOMENTUM_EASE,
               }}
-              className="mb-6 rounded-[22px] p-1 bg-[#2B242E] border border-[#B8A9A8]/25 shadow-[0_18px_40px_-14px_rgba(17,12,19,0.65)]"
+              className="mb-6 rounded-[22px] p-1 glass-regular"
             >
               <img
                 src="/brand-logo.png"
@@ -69,7 +69,7 @@ export const StartupSplashScreen: React.FC<StartupSplashScreenProps> = ({
                 delay: prefersReduced ? 0 : 0.14,
                 ease: MOMENTUM_EASE,
               }}
-              className="text-2xl sm:text-[28px] font-bold tracking-[0.16em] text-[#F2ECEB] pl-[0.16em]"
+              className="text-2xl sm:text-[28px] font-bold tracking-[0.16em] text-[#F2EDE4] pl-[0.16em]"
             >
               MOMENTUM
             </motion.h1>
@@ -83,12 +83,12 @@ export const StartupSplashScreen: React.FC<StartupSplashScreenProps> = ({
                 delay: prefersReduced ? 0 : 0.23,
                 ease: MOMENTUM_EASE,
               }}
-              className="mt-1.5 font-mono text-[11px] sm:text-xs font-semibold uppercase tracking-[0.26em] text-[#B8A9A8] pl-[0.26em]"
+              className="mt-1.5 font-mono text-[11px] sm:text-xs font-semibold uppercase tracking-[0.26em] text-[#D2C4AC] pl-[0.26em]"
             >
               LIFE OPERATING SYSTEM
             </motion.p>
 
-            {/* Step 5: Solar Tangerine loading indicator */}
+            {/* Step 5: Electric Blue loading indicator */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -99,12 +99,12 @@ export const StartupSplashScreen: React.FC<StartupSplashScreenProps> = ({
               }}
               className="mt-8 w-44 sm:w-52"
             >
-              <div className="relative h-[3px] w-full overflow-hidden rounded-full bg-[#362D38]">
+              <div className="relative h-[3px] w-full overflow-hidden rounded-full bg-[#33363B]">
                 {prefersReduced ? (
-                  <div className="h-full w-full rounded-full bg-[#FF7048]" />
+                  <div className="h-full w-full rounded-full bg-[#397BFF]" />
                 ) : (
                   <motion.div
-                    className="h-full w-1/2 rounded-full bg-[#FF7048]"
+                    className="h-full w-1/2 rounded-full bg-[#397BFF]"
                     style={{ willChange: 'transform' }}
                     initial={{ x: '-100%', scaleX: 0.75 }}
                     animate={{
@@ -132,7 +132,7 @@ export const StartupSplashScreen: React.FC<StartupSplashScreenProps> = ({
                 delay: prefersReduced ? 0 : 0.36,
                 ease: 'easeOut',
               }}
-              className="mt-3.5 text-xs font-medium tracking-wide text-[#B8A9A8]"
+              className="mt-3.5 text-xs font-medium tracking-wide text-[#D2C4AC]"
             >
               {statusMessage}
             </motion.p>

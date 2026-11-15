@@ -8,11 +8,13 @@ import {
   hashPassword,
   initializeUserFinanceDefaults,
   revokeSessionToken,
+  runConstantTimeDummyVerify,
   setSessionCookie,
   verifyPassword,
 } from '../auth.ts';
 import { getDb } from '../db.ts';
 import { loginSchema, signupSchema } from '../validation.ts';
+import type { Request, Response } from 'express';
 
 const router = Router();
 
@@ -25,7 +27,7 @@ function shouldUseSecureCookie(req: { secure?: boolean; headers: Record<string, 
   return false;
 }
 
-router.post('/signup', (req, res) => {
+function handleSignup(req: Request, res: Response) {
   const parsed = signupSchema.safeParse(req.body);
   if (!parsed.success) {
     res.status(400).json({
@@ -37,7 +39,9 @@ router.post('/signup', (req, res) => {
   const { email, password, fullName } = parsed.data;
   const db = getDb();
 
-  const existing = db.prepare('SELECT id FROM users WHERE email = ?').get(email) as { id: string } | undefined;
+  const existing = db
+    .prepare('SELECT id FROM users WHERE LOWER(email) = LOWER(?)')
+    .get(email) as { id: string } | undefined;
   if (existing) {
     res.status(409).json({ error: 'An account with this email already exists.' });
     return;
@@ -67,9 +71,9 @@ router.post('/signup', (req, res) => {
       createdAt: now,
     },
   });
-});
+}
 
-router.post('/login', (req, res) => {
+function handleLogin(req: Request, res: Response) {
   const parsed = loginSchema.safeParse(req.body);
   if (!parsed.success) {
     res.status(400).json({
@@ -85,7 +89,7 @@ router.post('/login', (req, res) => {
     .prepare(
       `SELECT id, email, full_name, password_hash, password_salt, is_workspace, created_at
        FROM users
-       WHERE email = ? AND is_workspace = 0`
+       WHERE LOWER(email) = LOWER(?) AND is_workspace = 0`
     )
     .get(email) as
     | {
@@ -99,7 +103,13 @@ router.post('/login', (req, res) => {
       }
     | undefined;
 
-  if (!row || !verifyPassword(password, row.password_hash, row.password_salt)) {
+  if (!row) {
+    runConstantTimeDummyVerify(password);
+    res.status(401).json({ error: 'Invalid email or password.' });
+    return;
+  }
+
+  if (!verifyPassword(password, row.password_hash, row.password_salt)) {
     res.status(401).json({ error: 'Invalid email or password.' });
     return;
   }
@@ -119,7 +129,12 @@ router.post('/login', (req, res) => {
       createdAt: row.created_at,
     },
   });
-});
+}
+
+router.post('/signup', handleSignup);
+router.post('/register', handleSignup);
+router.post('/login', handleLogin);
+router.post('/signin', handleLogin);
 
 router.post('/workspace-session', (req, res) => {
   const existingToken = extractSessionToken(req);

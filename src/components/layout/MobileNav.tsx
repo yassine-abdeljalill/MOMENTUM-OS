@@ -17,6 +17,7 @@ export const MobileNav: React.FC = () => {
     setCurrentView,
     state,
     authUser,
+    authChecked,
     setIsAuthModalOpen,
   } = useApp();
   const [moreOpen, setMoreOpen] = useState(false);
@@ -34,17 +35,24 @@ export const MobileNav: React.FC = () => {
     setMoreOpen(false);
   };
 
-  const displayName =
-    authUser && !authUser.isWorkspace ? authUser.fullName : state.profile.fullName;
-  const displayEmail =
-    authUser && !authUser.isWorkspace ? authUser.email : state.profile.email;
+  const isSignedOut = authChecked && !authUser;
+  const displayName = isSignedOut
+    ? 'Sign In'
+    : authUser && !authUser.isWorkspace
+    ? authUser.fullName
+    : state.profile.fullName;
+  const displayEmail = isSignedOut
+    ? 'Click to sign in or register'
+    : authUser && !authUser.isWorkspace
+    ? authUser.email
+    : state.profile.email;
 
   return (
     <>
       {/* Fixed 5-Tab Bottom Navigation Bar (Mobile < md) */}
       <nav
         aria-label="Mobile bottom navigation"
-        className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#27202A]/95 backdrop-blur-md border-t border-[#B8A9A8]/22 pb-[env(safe-area-inset-bottom)] select-none"
+        className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#1E2023]/88 backdrop-blur-xl border-t border-line pb-[env(safe-area-inset-bottom)] select-none glass-specular-rim"
       >
         <div className="grid grid-cols-5 items-stretch h-16 px-1">
           {primaryItems.map(item => {
@@ -64,18 +72,18 @@ export const MobileNav: React.FC = () => {
                   <motion.span
                     layoutId="mobile-bottom-active-indicator"
                     transition={{ duration: prefersReduced ? 0.01 : 0.18, ease: MOMENTUM_EASE }}
-                    className="absolute top-0 w-7 h-[2px] rounded-full bg-[#FF7048]"
+                    className="absolute top-0 w-7 h-[2px] rounded-full bg-[#397BFF]"
                   />
                 )}
                 <div className="relative flex items-center justify-center">
                   <Icon
                     className={`w-[22px] h-[22px] transition-colors ${
-                      isActive ? 'text-[#FF7048]' : 'text-[#B8A9A8]'
+                      isActive ? 'text-[#397BFF]' : 'text-[#D2C4AC]'
                     }`}
                     strokeWidth={isActive ? 2.15 : 1.75}
                   />
                   {badgeCount !== null && (
-                    <span className="absolute -top-1 -right-2 min-w-[15px] h-[15px] px-1 rounded-full bg-[#FF7048] text-[#211B24] font-mono text-[9px] font-bold flex items-center justify-center tabular-nums leading-none">
+                    <span className="absolute -top-1 -right-2 min-w-[15px] h-[15px] px-1 rounded-full bg-[#397BFF] text-white font-mono text-[9px] font-bold flex items-center justify-center tabular-nums leading-none">
                       {badgeCount > 9 ? '9+' : badgeCount}
                     </span>
                   )}
@@ -83,8 +91,8 @@ export const MobileNav: React.FC = () => {
                 <span
                   className={`text-[11px] leading-[13px] tracking-tight whitespace-nowrap transition-colors ${
                     isActive
-                      ? 'text-[#FF7048] font-semibold'
-                      : 'text-[#B8A9A8] font-medium'
+                      ? 'text-[#397BFF] font-semibold'
+                      : 'text-[#D2C4AC] font-medium'
                   }`}
                 >
                   {item.shortLabel || item.label}
@@ -105,20 +113,20 @@ export const MobileNav: React.FC = () => {
               <motion.span
                 layoutId="mobile-bottom-active-indicator"
                 transition={{ duration: prefersReduced ? 0.01 : 0.18, ease: MOMENTUM_EASE }}
-                className="absolute top-0 w-7 h-[2px] rounded-full bg-[#FF7048]"
+                className="absolute top-0 w-7 h-[2px] rounded-full bg-[#397BFF]"
               />
             )}
             <Grid2x2
               className={`w-[22px] h-[22px] transition-colors ${
-                isMoreActive ? 'text-[#FF7048]' : 'text-[#B8A9A8]'
+                isMoreActive ? 'text-[#397BFF]' : 'text-[#D2C4AC]'
               }`}
               strokeWidth={isMoreActive ? 2.15 : 1.75}
             />
             <span
               className={`text-[11px] leading-[13px] tracking-tight whitespace-nowrap transition-colors ${
                 isMoreActive
-                  ? 'text-[#FF7048] font-semibold'
-                  : 'text-[#B8A9A8] font-medium'
+                  ? 'text-[#397BFF] font-semibold'
+                  : 'text-[#D2C4AC] font-medium'
               }`}
             >
               More
@@ -144,10 +152,10 @@ export const MobileNav: React.FC = () => {
               exit={prefersReduced ? { opacity: 0 } : { y: '100%' }}
               transition={{ duration: prefersReduced ? 0.01 : 0.24, ease: MOMENTUM_EASE }}
               onClick={e => e.stopPropagation()}
-              className="w-full max-h-[85dvh] bg-[#2B242E] border-t border-[#B8A9A8]/25 rounded-t-3xl shadow-2xl flex flex-col overflow-hidden pb-[env(safe-area-inset-bottom)]"
+              className="w-full max-h-[85dvh] glass-elevated border-b-0 rounded-t-3xl flex flex-col overflow-hidden pb-[env(safe-area-inset-bottom)]"
             >
               {/* Drag Handle & Sheet Header */}
-              <div className="pt-2.5 pb-3 px-5 border-b border-[#B8A9A8]/22 flex items-center justify-between shrink-0">
+              <div className="pt-2.5 pb-3 px-5 border-b border-line flex items-center justify-between shrink-0">
                 <div className="flex items-center gap-2.5">
                   <img
                     src="/brand-logo.png"
@@ -164,7 +172,7 @@ export const MobileNav: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setMoreOpen(false)}
-                  className="p-2 rounded-xl bg-[#362D38] border border-[#B8A9A8]/22 text-ink-muted hover:text-ink btn-press min-h-[40px] min-w-[40px] flex items-center justify-center"
+                  className="p-2 rounded-xl glass-control text-ink-muted hover:text-ink btn-press min-h-[40px] min-w-[40px] flex items-center justify-center"
                   aria-label="Close workspace menu"
                 >
                   <X className="w-4 h-4" />
@@ -192,7 +200,7 @@ export const MobileNav: React.FC = () => {
                             className={`relative flex flex-col items-center justify-center gap-1.5 p-3 rounded-2xl border text-center transition-colors btn-press min-h-[72px] ${
                               active
                                 ? 'bg-accent/15 border-accent text-ink font-bold'
-                                : 'bg-[#362D38] border-[#B8A9A8]/22 text-ink hover:border-stone/60 font-medium'
+                                : 'glass-control text-ink font-medium'
                             }`}
                           >
                             {badgeCount !== null && (
@@ -216,7 +224,7 @@ export const MobileNav: React.FC = () => {
                 ))}
 
                 {/* System Actions */}
-                <div className="space-y-2 pt-2 border-t border-[#B8A9A8]/22">
+                <div className="space-y-2 pt-2 border-t border-line">
                   <div className="px-1 text-[10px] font-mono uppercase tracking-[0.14em] text-ink-muted">
                     System & Account
                   </div>
@@ -226,7 +234,7 @@ export const MobileNav: React.FC = () => {
                     className={`w-full flex items-center gap-2.5 px-3.5 py-3 rounded-xl border text-xs font-semibold btn-press min-h-[44px] ${
                       currentView === 'settings'
                         ? 'bg-accent text-accent-ink border-accent'
-                        : 'bg-[#362D38] border-[#B8A9A8]/22 text-ink hover:border-stone/60'
+                        : 'glass-control text-ink'
                     }`}
                   >
                     <Settings
@@ -245,7 +253,7 @@ export const MobileNav: React.FC = () => {
                       setMoreOpen(false);
                       setIsAuthModalOpen(true);
                     }}
-                    className="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl border border-[#B8A9A8]/22 bg-[#362D38] hover:bg-[#413743] text-left btn-press min-h-[48px]"
+                    className="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl glass-control text-left btn-press min-h-[48px]"
                   >
                     <div className="w-8 h-8 rounded-full bg-stone/18 border border-stone/50 text-stone flex items-center justify-center text-xs font-bold shrink-0">
                       {displayName.charAt(0).toUpperCase()}

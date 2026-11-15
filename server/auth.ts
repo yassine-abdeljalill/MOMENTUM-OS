@@ -38,17 +38,30 @@ function getSessionSecret(): string {
   return cachedSecret;
 }
 
+const SCRYPT_OPTIONS = { N: 16384, r: 8, p: 1 } as const;
+const DUMMY_SALT = '00112233445566778899aabbccddeeff';
+const DUMMY_HASH = '00'.repeat(64);
+
 export function hashPassword(password: string, salt?: string): { hash: string; salt: string } {
   const actualSalt = salt || crypto.randomBytes(16).toString('hex');
-  const derived = crypto.scryptSync(password, actualSalt, 64).toString('hex');
+  const derived = crypto.scryptSync(password, actualSalt, 64, SCRYPT_OPTIONS).toString('hex');
   return { hash: derived, salt: actualSalt };
 }
 
 export function verifyPassword(password: string, storedHash: string, salt: string): boolean {
-  const derived = crypto.scryptSync(password, salt, 64);
-  const storedBuf = Buffer.from(storedHash, 'hex');
-  if (derived.length !== storedBuf.length) return false;
-  return crypto.timingSafeEqual(derived, storedBuf);
+  if (!password || !storedHash || !salt) return false;
+  try {
+    const derived = crypto.scryptSync(password, salt, 64, SCRYPT_OPTIONS);
+    const storedBuf = Buffer.from(storedHash, 'hex');
+    if (derived.length !== storedBuf.length) return false;
+    return crypto.timingSafeEqual(derived, storedBuf);
+  } catch {
+    return false;
+  }
+}
+
+export function runConstantTimeDummyVerify(password: string): void {
+  verifyPassword(password || 'dummy', DUMMY_HASH, DUMMY_SALT);
 }
 
 function hashToken(rawToken: string): string {
@@ -173,25 +186,25 @@ export function requireAuth(req: AuthedRequest, res: Response, next: NextFunctio
 }
 
 const DEFAULT_EXPENSE_CATEGORIES = [
-  { name: 'Food', color: '#FF7048' },
-  { name: 'Transport', color: '#B8A9A8' },
-  { name: 'Education', color: '#FFA185' },
-  { name: 'Shopping', color: '#D8CCCB' },
-  { name: 'Health', color: '#D95835' },
-  { name: 'Entertainment', color: '#8D7D81' },
-  { name: 'Bills', color: '#FF8A68' },
-  { name: 'Housing', color: '#6E6167' },
-  { name: 'Technology', color: '#C7B9B8' },
-  { name: 'Other', color: '#51464F' },
+  { name: 'Food', color: '#397BFF' },
+  { name: 'Transport', color: '#D2C4AC' },
+  { name: 'Education', color: '#91B7FF' },
+  { name: 'Shopping', color: '#DFD4BF' },
+  { name: 'Health', color: '#2558C4' },
+  { name: 'Entertainment', color: '#B8AC96' },
+  { name: 'Bills', color: '#6BA0FF' },
+  { name: 'Housing', color: '#4F545C' },
+  { name: 'Technology', color: '#F2EDE4' },
+  { name: 'Other', color: '#33363B' },
 ];
 
 const DEFAULT_INCOME_CATEGORIES = [
-  { name: 'Salary', color: '#B8A9A8' },
-  { name: 'Freelance', color: '#FF7048' },
-  { name: 'Scholarship / Stipend', color: '#D8CCCB' },
-  { name: 'Investments', color: '#FFA185' },
-  { name: 'Gift', color: '#8D7D81' },
-  { name: 'Other Income', color: '#6E6167' },
+  { name: 'Salary', color: '#D2C4AC' },
+  { name: 'Freelance', color: '#397BFF' },
+  { name: 'Scholarship / Stipend', color: '#DFD4BF' },
+  { name: 'Investments', color: '#91B7FF' },
+  { name: 'Gift', color: '#B8AC96' },
+  { name: 'Other Income', color: '#4F545C' },
 ];
 
 export function initializeUserFinanceDefaults(userId: string): void {

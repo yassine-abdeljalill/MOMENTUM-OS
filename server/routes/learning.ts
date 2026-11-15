@@ -201,7 +201,7 @@ function mapModuleRow(row: any) {
     userId: row.user_id,
     title: row.title,
     description: row.description || '',
-    color: row.color || '#FF7048',
+    color: row.color || '#397BFF',
     icon: row.icon || 'book',
     status: row.status,
     sortOrder: Number(row.sort_order),

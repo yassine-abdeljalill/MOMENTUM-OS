@@ -74,12 +74,13 @@ export function getInitialState(): AppState {
         if (
           parsed.preferences?.accentColor === '#8EC5FF' ||
           parsed.preferences?.accentColor === '#D2925B' ||
+          parsed.preferences?.accentColor === '#FF7048' ||
           parsed.preferences?.theme !== 'dark'
         ) {
           parsed.preferences = {
             ...parsed.preferences,
             theme: 'dark',
-            accentColor: '#FF7048',
+            accentColor: '#397BFF',
           };
         }
         return parsed;

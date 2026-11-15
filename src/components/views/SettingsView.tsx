@@ -88,12 +88,12 @@ export const SettingsView: React.FC = () => {
   };
 
   const paletteSwatches = [
-    { name: 'Midnight Plum (60%)', hex: '#211B24', bg: 'bg-[#211B24] text-[#F2ECEB] border-[#B8A9A8]/35' },
-    { name: 'Dusty Stone (30%)', hex: '#B8A9A8', bg: 'bg-[#B8A9A8] text-[#211B24] border-[#C7B9B8]' },
-    { name: 'Solar Tangerine (10%)', hex: '#FF7048', bg: 'bg-[#FF7048] text-[#211B24] border-[#FF8765]' },
-    { name: 'Plum Surface', hex: '#2B242E', bg: 'bg-[#2B242E] text-[#F2ECEB] border-[#B8A9A8]/30' },
-    { name: 'Plum Elevated', hex: '#362D38', bg: 'bg-[#362D38] text-[#F2ECEB] border-[#B8A9A8]/30' },
-    { name: 'Stone Light Ink', hex: '#F2ECEB', bg: 'bg-[#F2ECEB] text-[#211B24] border-[#B8A9A8]' },
+    { name: 'Charcoal (60%)', hex: '#242629', bg: 'bg-[#242629] text-[#F2EDE4] border-[#D2C4AC]/30' },
+    { name: 'Warm Champagne (30%)', hex: '#D2C4AC', bg: 'bg-[#D2C4AC] text-[#242629] border-[#DFD4BF]' },
+    { name: 'Electric Blue (10%)', hex: '#397BFF', bg: 'bg-[#397BFF] text-white border-[#528CFF]' },
+    { name: 'Charcoal Surface', hex: '#2B2D31', bg: 'bg-[#2B2D31] text-[#F2EDE4] border-[#D2C4AC]/25' },
+    { name: 'Charcoal Elevated', hex: '#33363B', bg: 'bg-[#33363B] text-[#F2EDE4] border-[#D2C4AC]/25' },
+    { name: 'Champagne Ivory Ink', hex: '#F2EDE4', bg: 'bg-[#F2EDE4] text-[#242629] border-[#D2C4AC]' },
   ];
 
   return (
@@ -270,7 +270,7 @@ export const SettingsView: React.FC = () => {
                   Official 60–30–10 Color System
                 </h2>
                 <p className="text-xs text-ink-muted mt-0.5">
-                  Midnight Plum (#211B24) foundation, Dusty Stone (#B8A9A8) secondary surfaces, and Solar Tangerine (#FF7048) action accents.
+                  Charcoal (#242629) foundation, Warm Champagne (#D2C4AC) secondary surfaces, and Electric Blue (#397BFF) action accents.
                 </p>
               </div>
 
@@ -485,7 +485,7 @@ export const SettingsView: React.FC = () => {
                           setShowClearConfirm(false);
                           notify('All local data cleared.', 'info');
                         }}
-                        className="btn-press px-3 py-1.5 rounded-xl bg-danger text-accent-ink text-xs font-bold"
+                        className="btn-press px-3 py-1.5 rounded-xl bg-danger text-stone-ink text-xs font-bold"
                       >
                         Yes, Wipe Data
                       </button>

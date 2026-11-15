@@ -57,7 +57,7 @@ export const ProjectsView: React.FC = () => {
     const newP = addProject({
       name: name.trim(),
       description: description.trim(),
-      color: '#FF7048',
+      color: '#397BFF',
       status: 'active',
       priority,
       category,

@@ -10,14 +10,14 @@ import type {
 import type { Task, TaskStatus } from '../types';
 
 export const MODULE_COLOR_PALETTE = [
-  { hex: '#FF7048', label: 'Solar Tangerine' },
-  { hex: '#B8A9A8', label: 'Dusty Stone' },
-  { hex: '#211B24', label: 'Midnight Plum' },
-  { hex: '#362D38', label: 'Plum Stone' },
-  { hex: '#FF987A', label: 'Soft Tangerine' },
-  { hex: '#D95835', label: 'Deep Tangerine' },
-  { hex: '#8D7D81', label: 'Muted Stone' },
-  { hex: '#D8CCCB', label: 'Pale Stone' },
+  { hex: '#397BFF', label: 'Electric Blue' },
+  { hex: '#D2C4AC', label: 'Warm Champagne' },
+  { hex: '#242629', label: 'Charcoal' },
+  { hex: '#33363B', label: 'Charcoal Elevated' },
+  { hex: '#91B7FF', label: 'Soft Electric Blue' },
+  { hex: '#2558C4', label: 'Deep Electric Blue' },
+  { hex: '#B8AC96', label: 'Muted Champagne' },
+  { hex: '#DFD4BF', label: 'Pale Champagne' },
 ] as const;
 
 export const LEARNING_STATUS_META: Record<

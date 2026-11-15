@@ -43,10 +43,10 @@ export const ModalShell: React.FC<{
   onClose,
   children,
   maxWidthClass = 'max-w-lg',
-  panelClassName = 'bg-surface border border-line text-ink rounded-t-2xl sm:rounded-2xl shadow-2xl overflow-hidden',
+  panelClassName = 'glass-elevated text-ink rounded-t-2xl sm:rounded-2xl overflow-hidden',
   alignTop = false,
   fullscreen = false,
-  backdropClassName = 'bg-black/70 backdrop-blur-xs',
+  backdropClassName = 'bg-black/65 backdrop-blur-sm',
 }) => {
   const prefersReduced = useReducedMotion();
 
@@ -109,7 +109,7 @@ export const DrawerShell: React.FC<{
   onClose,
   side = 'right',
   children,
-  panelClassName = 'w-full max-w-sm h-full bg-surface border-l border-line text-ink shadow-2xl flex flex-col',
+  panelClassName = 'w-full max-w-sm h-full glass-elevated border-l border-line text-ink flex flex-col',
 }) => {
   const prefersReduced = useReducedMotion();
   const initialX = side === 'right' ? '100%' : '-100%';

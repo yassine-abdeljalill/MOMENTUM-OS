@@ -69,6 +69,50 @@ export interface ToastMessage {
   type: 'success' | 'error' | 'info';
 }
 
+export type AuthModalMode = 'login' | 'signup' | 'forgot' | 'profile';
+
+const VALID_NAV_TABS: ReadonlySet<string> = new Set([
+  'overview',
+  'today',
+  'tasks',
+  'calendar',
+  'goals',
+  'projects',
+  'learning',
+  'fitness',
+  'habits',
+  'finance',
+  'analytics',
+  'journal',
+  'resources',
+  'settings',
+]);
+
+function getInitialRouteState(): {
+  view: NavigationTab;
+  openAuth: boolean;
+  authMode: AuthModalMode;
+} {
+  if (typeof window === 'undefined') {
+    return { view: 'overview', openAuth: false, authMode: 'profile' };
+  }
+  const rawPath = window.location.pathname.replace(/\/+$/, '').toLowerCase();
+  if (rawPath === '/login' || rawPath === '/signin') {
+    return { view: 'overview', openAuth: true, authMode: 'login' };
+  }
+  if (rawPath === '/signup' || rawPath === '/register') {
+    return { view: 'overview', openAuth: true, authMode: 'signup' };
+  }
+  if (rawPath === '/dashboard') {
+    return { view: 'overview', openAuth: false, authMode: 'profile' };
+  }
+  const segment = rawPath.replace(/^\//, '');
+  if (VALID_NAV_TABS.has(segment)) {
+    return { view: segment as NavigationTab, openAuth: false, authMode: 'profile' };
+  }
+  return { view: 'overview', openAuth: false, authMode: 'profile' };
+}
+
 interface AppContextType {
   state: AppState;
   currentView: NavigationTab;
@@ -91,6 +135,8 @@ interface AppContextType {
   setIsNotificationsOpen: (open: boolean) => void;
   isAuthModalOpen: boolean;
   setIsAuthModalOpen: (open: boolean) => void;
+  authModalMode: AuthModalMode;
+  setAuthModalMode: (mode: AuthModalMode) => void;
   isOnboardingOpen: boolean;
   setIsOnboardingOpen: (open: boolean) => void;
 
@@ -202,8 +248,9 @@ interface AppContextType {
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export function AppProvider({ children }: { children: ReactNode }) {
+  const initialRoute = useRef(getInitialRouteState());
   const [state, setState] = useState<AppState>(getInitialState);
-  const [currentView, setCurrentView] = useState<NavigationTab>('overview');
+  const [currentView, setCurrentView] = useState<NavigationTab>(initialRoute.current.view);
   const [selectedGoalId, setSelectedGoalId] = useState<string | null>(null);
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
   const [selectedCourseId, setSelectedCourseId] = useState<string | null>(null);
@@ -213,7 +260,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isFocusTimerOpen, setIsFocusTimerOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
-  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(initialRoute.current.openAuth);
+  const [authModalMode, setAuthModalMode] = useState<AuthModalMode>(initialRoute.current.authMode);
   const [isOnboardingOpen, setIsOnboardingOpen] = useState(false);
 
   // Server Authentication Session
@@ -421,7 +469,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (typeof document === 'undefined') return;
     const root = document.documentElement;
-    const bg = '#211B24';
+    const bg = '#242629';
     root.classList.add('dark');
     root.style.colorScheme = 'dark';
     root.style.backgroundColor = bg;
@@ -1317,6 +1365,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
         setIsNotificationsOpen,
         isAuthModalOpen,
         setIsAuthModalOpen,
+        authModalMode,
+        setAuthModalMode,
         isOnboardingOpen,
         setIsOnboardingOpen,
 

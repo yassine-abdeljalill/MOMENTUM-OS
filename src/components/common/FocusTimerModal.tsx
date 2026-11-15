@@ -133,7 +133,7 @@ export const FocusTimerModal: React.FC = () => {
           particleCount: 36,
           spread: 55,
           origin: { y: 0.55 },
-          colors: ['#FF7048', '#B8A9A8', '#F2ECEB'],
+          colors: ['#397BFF', '#D2C4AC', '#F2EDE4'],
         });
       } catch {
         // Ignore confetti errors
@@ -157,12 +157,12 @@ export const FocusTimerModal: React.FC = () => {
       onClose={() => setIsFocusTimerOpen(false)}
       fullscreen={isFullscreen}
       maxWidthClass="max-w-xl"
-      panelClassName={`bg-canvas text-ink border border-line shadow-2xl flex flex-col overflow-hidden transition-all duration-200 ${
+      panelClassName={`glass-elevated text-ink flex flex-col overflow-hidden transition-all duration-200 ${
         isFullscreen ? 'rounded-none border-0' : 'rounded-t-2xl sm:rounded-2xl'
       }`}
     >
       {/* Top bar */}
-      <div className="flex items-center justify-between px-6 py-4 border-b border-line bg-surface">
+      <div className="flex items-center justify-between px-6 py-4 border-b border-line bg-surface-warm/50">
         <div className="flex items-center gap-2 min-w-0">
           <Timer className="w-5 h-5 text-accent shrink-0" />
           <h2 className="font-semibold text-sm text-ink tracking-wide truncate font-heading">
@@ -362,7 +362,7 @@ export const FocusTimerModal: React.FC = () => {
 
       {/* Presets & Link to Task */}
       {!isFullscreen && (
-        <div className="p-5 sm:p-6 border-t border-line bg-surface text-ink space-y-4">
+        <div className="p-5 sm:p-6 border-t border-line bg-surface-warm/40 text-ink space-y-4">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <span className="text-xs text-ink-muted font-medium">Presets:</span>
             <div className="flex flex-wrap gap-2">
@@ -397,7 +397,7 @@ export const FocusTimerModal: React.FC = () => {
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 min-w-0">
             <div className="flex items-center gap-1.5 text-xs text-ink-muted shrink-0 font-medium">
               <CheckSquare className="w-3.5 h-3.5 text-accent" />
               <span>Link Task:</span>
@@ -405,7 +405,7 @@ export const FocusTimerModal: React.FC = () => {
             <select
               value={selectedTaskId}
               onChange={e => handleTaskChange(e.target.value)}
-              className="flex-1 px-3 py-2 rounded-xl bg-surface-warm/70 border border-line text-ink text-xs focus:border-accent focus:ring-2 focus:ring-accent/30 focus:outline-hidden"
+              className="flex-1 min-w-0 w-full px-3 py-2 rounded-xl bg-surface-warm/70 border border-line text-ink text-xs focus:border-accent focus:ring-2 focus:ring-accent/30 focus:outline-hidden truncate"
             >
               <option value="">No task linked (general focus)</option>
               {state.tasks

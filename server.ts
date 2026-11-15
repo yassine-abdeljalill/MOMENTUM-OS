@@ -57,6 +57,11 @@ async function startServer() {
   app.use('/api/finance', financeRoutes);
   app.use('/api/learning', learningRoutes);
 
+  // Return structured JSON 404 for unknown API endpoints instead of falling through to SPA HTML
+  app.use('/api', (_req, res) => {
+    res.status(404).json({ error: 'API endpoint not found.' });
+  });
+
   // Error handler for malformed JSON or unexpected API errors
   app.use('/api', (err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
     if (err?.type === 'entity.parse.failed') {
@@ -96,7 +101,7 @@ async function startServer() {
   } else {
     const distDir = path.resolve(process.cwd(), 'dist');
     app.use(express.static(distDir));
-    app.get('/{*path}', (_req, res) => {
+    app.get('*', (_req, res) => {
       const indexFile = path.join(distDir, 'index.html');
       if (fs.existsSync(indexFile)) {
         res.sendFile(indexFile);

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   X,
   Lock,
@@ -13,16 +13,18 @@ import {
   Loader2,
 } from 'lucide-react';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
-import { useApp } from '../../lib/context';
+import { useApp, type AuthModalMode } from '../../lib/context';
 import { authApi } from '../../lib/financeApi';
 import { ModalShell, MOMENTUM_EASE } from '../common/MotionPrimitives';
-
-type AuthMode = 'login' | 'signup' | 'forgot' | 'profile';
 
 export const AuthModal: React.FC = () => {
   const {
     isAuthModalOpen,
     setIsAuthModalOpen,
+    authModalMode,
+    setAuthModalMode,
+    currentView,
+    setCurrentView,
     state,
     authUser,
     setAuthUser,
@@ -31,7 +33,7 @@ export const AuthModal: React.FC = () => {
   } = useApp();
 
   const prefersReduced = useReducedMotion();
-  const [mode, setMode] = useState<AuthMode>('profile');
+  const mode = authModalMode;
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
@@ -39,6 +41,25 @@ export const AuthModal: React.FC = () => {
   const [error, setError] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
   const [loading, setLoading] = useState(false);
+
+  const switchMode = (nextMode: AuthModalMode) => {
+    setError('');
+    setSuccessMsg('');
+    setAuthModalMode(nextMode);
+  };
+
+  useEffect(() => {
+    if (!isAuthModalOpen) return;
+    setError('');
+    setSuccessMsg('');
+    if (!authUser) {
+      if (authModalMode === 'profile') {
+        setAuthModalMode('login');
+      }
+    } else if (!authUser.isWorkspace && authModalMode === 'profile') {
+      setAuthModalMode('profile');
+    }
+  }, [isAuthModalOpen]);
 
   const getPasswordStrength = (pass: string) => {
     let score = 0;
@@ -51,25 +72,42 @@ export const AuthModal: React.FC = () => {
 
   const passwordScore = getPasswordStrength(password);
 
+  const finishAuthSuccess = (userName: string, toastMessage: string) => {
+    showToast(toastMessage || `Signed in as ${userName}`, 'success');
+    setPassword('');
+    setError('');
+    setSuccessMsg('');
+    if (typeof window !== 'undefined') {
+      const path = window.location.pathname.replace(/\/+$/, '').toLowerCase();
+      if (path === '/login' || path === '/signin' || path === '/signup' || path === '/register') {
+        window.history.replaceState(null, '', '/');
+      }
+    }
+    if (currentView !== 'finance' && currentView !== 'learning') {
+      setCurrentView('overview');
+    }
+    setIsAuthModalOpen(false);
+    setAuthModalMode('profile');
+  };
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    if (!email || !password) {
+    setSuccessMsg('');
+    const trimmedEmail = email.trim().toLowerCase();
+    if (!trimmedEmail || !password) {
       setError('Please provide your email and password.');
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) {
+      setError('Please enter a valid email address.');
       return;
     }
     setLoading(true);
     try {
-      const { user } = await authApi.login({ email, password });
+      const { user } = await authApi.login({ email: trimmedEmail, password });
       setAuthUser(user);
-      setSuccessMsg('Successfully signed in.');
-      showToast(`Signed in as ${user.fullName}`, 'success');
-      setPassword('');
-      setTimeout(() => {
-        setIsAuthModalOpen(false);
-        setSuccessMsg('');
-        setMode('profile');
-      }, 450);
+      finishAuthSuccess(user.fullName, `Signed in as ${user.fullName}`);
     } catch (err: any) {
       setError(err?.message || 'Unable to sign in.');
     } finally {
@@ -80,8 +118,19 @@ export const AuthModal: React.FC = () => {
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    if (!email || !password || !name) {
+    setSuccessMsg('');
+    const trimmedName = name.trim();
+    const trimmedEmail = email.trim().toLowerCase();
+    if (!trimmedEmail || !password || !trimmedName) {
       setError('All fields are required for registration.');
+      return;
+    }
+    if (trimmedName.length < 2) {
+      setError('Name must be at least 2 characters.');
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) {
+      setError('Please enter a valid email address.');
       return;
     }
     if (password.length < 8) {
@@ -90,16 +139,13 @@ export const AuthModal: React.FC = () => {
     }
     setLoading(true);
     try {
-      const { user } = await authApi.signup({ email, password, fullName: name });
+      const { user } = await authApi.signup({
+        email: trimmedEmail,
+        password,
+        fullName: trimmedName,
+      });
       setAuthUser(user);
-      setSuccessMsg('Account created and authenticated!');
-      showToast(`Welcome, ${user.fullName}`, 'success');
-      setPassword('');
-      setTimeout(() => {
-        setIsAuthModalOpen(false);
-        setSuccessMsg('');
-        setMode('profile');
-      }, 450);
+      finishAuthSuccess(user.fullName, `Welcome, ${user.fullName}`);
     } catch (err: any) {
       setError(err?.message || 'Unable to create account.');
     } finally {
@@ -110,15 +156,17 @@ export const AuthModal: React.FC = () => {
   const handleForgot = (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    if (!email) {
-      setError('Please enter your email address.');
+    setSuccessMsg('');
+    const trimmedEmail = email.trim();
+    if (!trimmedEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) {
+      setError('Please enter a valid email address.');
       return;
     }
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
-      setSuccessMsg('Password reset instructions sent to your email.');
-    }, 500);
+      setSuccessMsg('If an account exists for that email, password reset instructions have been sent.');
+    }, 350);
   };
 
   const inputCls =
@@ -131,7 +179,7 @@ export const AuthModal: React.FC = () => {
       maxWidthClass="max-w-md"
     >
       {/* Header */}
-      <div className="flex items-center justify-between px-6 py-4 border-b border-line bg-surface-warm text-ink">
+      <div className="flex items-center justify-between px-6 py-4 border-b border-line bg-surface-warm/50 text-ink">
         <div className="flex items-center gap-2.5">
           <img
             src="/brand-logo.png"
@@ -200,8 +248,17 @@ export const AuthModal: React.FC = () => {
           >
             {mode === 'profile' && (() => {
               const isRegistered = Boolean(authUser && !authUser.isWorkspace);
-              const displayName = isRegistered ? authUser!.fullName : state.profile.fullName;
-              const displayEmail = isRegistered ? authUser!.email : state.profile.email;
+              const isSignedOut = !authUser;
+              const displayName = isSignedOut
+                ? 'Signed Out'
+                : isRegistered
+                ? authUser!.fullName
+                : state.profile.fullName;
+              const displayEmail = isSignedOut
+                ? 'Sign in to sync your account'
+                : isRegistered
+                ? authUser!.email
+                : state.profile.email;
 
               return (
                 <div className="space-y-5">
@@ -252,11 +309,7 @@ export const AuthModal: React.FC = () => {
                   <div className="pt-2 flex flex-col gap-2">
                     <button
                       type="button"
-                      onClick={() => {
-                        setError('');
-                        setSuccessMsg('');
-                        setMode('login');
-                      }}
+                      onClick={() => switchMode('login')}
                       className="w-full py-2.5 px-3 rounded-xl bg-accent hover:bg-accent-hover text-xs font-bold text-accent-ink btn-press flex items-center justify-center gap-2"
                     >
                       <KeyRound className="w-3.5 h-3.5" />
@@ -267,6 +320,7 @@ export const AuthModal: React.FC = () => {
                         type="button"
                         onClick={async () => {
                           await logoutAuth();
+                          switchMode('login');
                           showToast('Signed out securely.', 'info');
                           setIsAuthModalOpen(false);
                         }}
@@ -282,7 +336,7 @@ export const AuthModal: React.FC = () => {
             })()}
 
             {mode === 'login' && (
-              <form onSubmit={handleLogin} className="space-y-4">
+              <form onSubmit={handleLogin} noValidate className="space-y-4">
                 <div>
                   <label className="block text-xs font-medium text-ink-muted mb-1">Email</label>
                   <div className="relative">
@@ -303,7 +357,7 @@ export const AuthModal: React.FC = () => {
                     <label className="text-xs font-medium text-ink-muted">Password</label>
                     <button
                       type="button"
-                      onClick={() => setMode('forgot')}
+                      onClick={() => switchMode('forgot')}
                       className="text-[11px] text-accent hover:underline font-medium"
                     >
                       Forgot?
@@ -322,6 +376,7 @@ export const AuthModal: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
+                      aria-label={showPassword ? 'Hide password' : 'Show password'}
                       className="absolute right-3 top-2.5 text-ink-muted hover:text-ink"
                     >
                       {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -341,14 +396,14 @@ export const AuthModal: React.FC = () => {
                 <div className="flex items-center justify-between pt-3 text-xs text-ink-muted border-t border-line">
                   <button
                     type="button"
-                    onClick={() => setMode('profile')}
+                    onClick={() => switchMode('profile')}
                     className="hover:text-ink"
                   >
                     ← Back to Profile
                   </button>
                   <button
                     type="button"
-                    onClick={() => setMode('signup')}
+                    onClick={() => switchMode('signup')}
                     className="text-accent hover:underline font-medium"
                   >
                     Don&apos;t have an account? Sign Up
@@ -358,7 +413,7 @@ export const AuthModal: React.FC = () => {
             )}
 
             {mode === 'signup' && (
-              <form onSubmit={handleSignUp} className="space-y-4">
+              <form onSubmit={handleSignUp} noValidate className="space-y-4">
                 <div>
                   <label className="block text-xs font-medium text-ink-muted mb-1">Full Name</label>
                   <div className="relative">
@@ -404,6 +459,7 @@ export const AuthModal: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
+                      aria-label={showPassword ? 'Hide password' : 'Show password'}
                       className="absolute right-3 top-2.5 text-ink-muted hover:text-ink"
                     >
                       {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -448,7 +504,7 @@ export const AuthModal: React.FC = () => {
                 <div className="flex items-center justify-between pt-3 text-xs text-ink-muted border-t border-line">
                   <button
                     type="button"
-                    onClick={() => setMode('login')}
+                    onClick={() => switchMode('login')}
                     className="text-accent hover:underline font-medium"
                   >
                     Already have an account? Sign In
@@ -458,7 +514,7 @@ export const AuthModal: React.FC = () => {
             )}
 
             {mode === 'forgot' && (
-              <form onSubmit={handleForgot} className="space-y-4">
+              <form onSubmit={handleForgot} noValidate className="space-y-4">
                 <p className="text-xs text-ink-muted">
                   Enter your registered email address and we will generate a secure reset link.
                 </p>
@@ -489,7 +545,7 @@ export const AuthModal: React.FC = () => {
                 <div className="pt-2 text-center">
                   <button
                     type="button"
-                    onClick={() => setMode('login')}
+                    onClick={() => switchMode('login')}
                     className="text-xs text-ink-muted hover:text-ink"
                   >
                     ← Back to Sign In

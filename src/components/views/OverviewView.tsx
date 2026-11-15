@@ -169,7 +169,7 @@ export const OverviewView: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setShowSettingsPopover(!showSettingsPopover)}
-                className="btn-press flex items-center justify-center w-10 h-10 min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0 sm:w-9 sm:h-9 rounded-xl bg-surface-warm hover:bg-surface-hover text-ink border border-line transition-colors"
+                className="btn-press flex items-center justify-center w-10 h-10 min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0 sm:w-9 sm:h-9 rounded-xl glass-control text-ink transition-colors"
                 title="Configure Dashboard Widgets"
                 aria-label="Configure dashboard widgets"
                 aria-expanded={showSettingsPopover}
@@ -183,7 +183,7 @@ export const OverviewView: React.FC = () => {
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     exit={prefersReduced ? { opacity: 0 } : { opacity: 0, scale: 0.96, y: -4 }}
                     transition={{ duration: prefersReduced ? 0.01 : 0.15, ease: MOMENTUM_EASE }}
-                    className="absolute right-0 mt-2 w-52 bg-surface border border-line rounded-xl shadow-xl p-3 z-30 space-y-2 text-xs origin-top-right"
+                    className="absolute right-0 mt-2 w-52 glass-elevated rounded-xl p-3 z-30 space-y-2 text-xs origin-top-right"
                   >
                     <span className="font-semibold text-ink block border-b border-line pb-1.5">
                       Toggle Widgets

@@ -123,7 +123,7 @@ export const QuickAddModal: React.FC = () => {
       frequency: habitFrequency,
       targetCountPerDay: 1,
       startDate: new Date().toISOString().split('T')[0],
-      color: '#FF7048',
+      color: '#397BFF',
       active: true,
     });
 
@@ -140,7 +140,7 @@ export const QuickAddModal: React.FC = () => {
       name: projectName.trim(),
       description: projectDescription.trim(),
       category: projectCategory,
-      color: '#FF7048',
+      color: '#397BFF',
       status: 'active',
       priority: 'high',
       startDate: new Date().toISOString().split('T')[0],
@@ -186,7 +186,7 @@ export const QuickAddModal: React.FC = () => {
       maxWidthClass="max-w-lg"
     >
       {/* Header */}
-      <div className="flex items-center justify-between px-5 py-3.5 border-b border-line bg-surface-warm text-ink">
+      <div className="flex items-center justify-between px-5 py-3.5 border-b border-line bg-surface-warm/60 text-ink">
         <div className="flex items-center gap-2">
           <Plus className="w-4 h-4 text-accent" />
           <h2 className="font-semibold text-sm font-heading">Quick Create</h2>
@@ -202,7 +202,7 @@ export const QuickAddModal: React.FC = () => {
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b border-line bg-surface-warm px-3 pt-2 gap-1 overflow-x-auto">
+      <div className="flex border-b border-line bg-surface-warm/40 px-3 pt-2 gap-1 overflow-x-auto">
         {[
           { id: 'task', label: 'Task', icon: CheckSquare },
           { id: 'goal', label: 'Goal', icon: Target },

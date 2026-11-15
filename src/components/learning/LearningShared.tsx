@@ -25,11 +25,11 @@ import { LEARNING_STATUS_META, MODULE_COLOR_PALETTE } from '../../lib/learning';
 import { ModalShell } from '../common/MotionPrimitives';
 
 export const DARK_SWATCH_HEXES = new Set([
-  '#211B24',
-  '#362D38',
-  '#5A4D57',
-  '#6E6167',
-  '#51464F',
+  '#242629',
+  '#33363B',
+  '#397BFF',
+  '#2558C4',
+  '#4F545C',
 ]);
 
 export const MODULE_ICON_OPTIONS: { id: LearningModuleIcon; label: string; Icon: React.ElementType }[] = [
@@ -90,7 +90,7 @@ export const ModuleModal: React.FC<{
 }> = ({ isOpen, onClose, editingModule, onSubmit }) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [color, setColor] = useState<string>('#FF7048');
+  const [color, setColor] = useState<string>('#397BFF');
   const [icon, setIcon] = useState<LearningModuleIcon>('book');
   const [status, setStatus] = useState<LearningStatus>('not_started');
   const [saving, setSaving] = useState(false);
@@ -100,7 +100,7 @@ export const ModuleModal: React.FC<{
     if (isOpen) {
       setTitle(editingModule?.title || '');
       setDescription(editingModule?.description || '');
-      setColor(editingModule?.color || '#FF7048');
+      setColor(editingModule?.color || '#397BFF');
       setIcon(editingModule?.icon || 'book');
       setStatus(editingModule?.status || 'not_started');
       setError('');
@@ -143,7 +143,7 @@ export const ModuleModal: React.FC<{
           >
             <ModuleIconView
               icon={icon}
-              className={`w-4 h-4 ${isDarkSwatch ? 'text-[#F2ECEB]' : 'text-[#211B24]'}`}
+              className={`w-4 h-4 ${isDarkSwatch ? 'text-[#F2EDE4]' : 'text-[#242629]'}`}
             />
           </div>
           <h3 className="text-sm font-semibold text-ink">

@@ -27,7 +27,7 @@ export const ToastContainer: React.FC = () => {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={prefersReduced ? { opacity: 0 } : { opacity: 0, y: 8, scale: 0.96 }}
               transition={{ duration: prefersReduced ? 0.01 : 0.2, ease: MOMENTUM_EASE }}
-              className={`pointer-events-auto flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl shadow-lg border text-xs font-medium bg-surface-warm text-ink ${
+              className={`pointer-events-auto flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl glass-elevated text-xs font-medium text-ink ${
                 isError
                   ? 'border-danger'
                   : isInfo

@@ -12,7 +12,7 @@ const TIER_CLASS: Record<GlassTier, string> = {
 
 /**
  * Reusable Liquid Glass container for floating navigation bars, toolbars, popovers, and control clusters.
- * Content cards should stay solid/subtle (#242428 / #2A2A2F) for maximum legibility.
+ * Content cards should stay solid/subtle (#2B2D31) for maximum legibility.
  */
 export const GlassSurface: React.FC<{
   tier?: GlassTier;

@@ -15,6 +15,7 @@ export const Sidebar: React.FC = () => {
     setCurrentView,
     state,
     authUser,
+    authChecked,
     setIsAuthModalOpen,
   } = useApp();
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -24,10 +25,17 @@ export const Sidebar: React.FC = () => {
     setCurrentView(view);
   };
 
-  const displayName =
-    authUser && !authUser.isWorkspace ? authUser.fullName : state.profile.fullName;
-  const displayEmail =
-    authUser && !authUser.isWorkspace ? authUser.email : state.profile.email;
+  const isSignedOut = authChecked && !authUser;
+  const displayName = isSignedOut
+    ? 'Sign In'
+    : authUser && !authUser.isWorkspace
+    ? authUser.fullName
+    : state.profile.fullName;
+  const displayEmail = isSignedOut
+    ? 'Click to sign in or register'
+    : authUser && !authUser.isWorkspace
+    ? authUser.email
+    : state.profile.email;
 
   return (
     <motion.aside
@@ -172,8 +180,8 @@ export const Sidebar: React.FC = () => {
                       <span
                         className={`px-1.5 py-0.5 text-[10px] rounded-md font-mono font-bold tabular-nums relative z-10 transition-colors ${
                           isActive
-                            ? 'bg-[#211B24] text-accent'
-                            : 'bg-[#211B24] text-stone border border-stone/35'
+                            ? 'bg-white/20 text-accent-ink'
+                            : 'bg-canvas text-stone border border-stone/35'
                         }`}
                       >
                         {badgeCount}
@@ -181,7 +189,7 @@ export const Sidebar: React.FC = () => {
                     )}
 
                     {isCollapsed && (
-                      <div className="absolute left-full ml-2 px-2.5 py-1 rounded-lg bg-[#211B24] text-ink text-xs shadow-lg whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-150 z-50 border border-stone/40">
+                      <div className="absolute left-full ml-2 px-2.5 py-1 rounded-lg bg-canvas text-ink text-xs shadow-lg whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-150 z-50 border border-stone/40">
                         {item.label}
                         {badgeCount !== null && ` (${badgeCount})`}
                       </div>

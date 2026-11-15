@@ -230,10 +230,10 @@ export const GlobalSearchModal: React.FC = () => {
       onClose={() => setIsSearchOpen(false)}
       alignTop
       maxWidthClass="max-w-2xl"
-      panelClassName="bg-surface border border-line rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[75dvh]"
+      panelClassName="glass-elevated rounded-2xl overflow-hidden flex flex-col max-h-[75dvh]"
     >
       {/* Search Input Bar */}
-      <div className="flex items-center px-4 py-3.5 border-b border-line gap-3 bg-surface-warm text-ink">
+      <div className="flex items-center px-4 py-3.5 border-b border-line gap-3 bg-surface-warm/50 text-ink">
         <Search className="w-5 h-5 text-stone shrink-0" />
         <input
           ref={inputRef}

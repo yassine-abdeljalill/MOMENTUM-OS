@@ -4,36 +4,36 @@
 
 :root,
 .dark {
-  --bg-canvas: #211B24;
-  --bg-surface: #2B242E;
-  --bg-surface-warm: #362D38;
-  --bg-surface-inset: #413743;
-  --bg-surface-hover: #4C414E;
-  --border-line: rgba(184, 169, 168, 0.22);
-  --border-strong: rgba(184, 169, 168, 0.42);
-  --text-ink: #F2ECEB;
-  --text-ink-muted: #B8A9A8;
-  --brand-primary: #362D38;
-  --brand-primary-hover: #413743;
-  --brand-primary-ink: #F2ECEB;
-  --brand-stone: #B8A9A8;
-  --brand-stone-hover: #C7B9B8;
-  --brand-stone-ink: #211B24;
-  --brand-accent: #FF7048;
-  --brand-accent-hover: #FF8765;
-  --brand-accent-ink: #211B24;
-  --brand-charcoal: #2B242E;
-  --brand-sage: #B8A9A8;
-  --status-success: #B8A9A8;
-  --status-warning: #FFA185;
-  --status-danger: #FF7048;
-  --sidebar-bg: #27202A;
-  --sidebar-surface: #362D38;
-  --sidebar-border: rgba(184, 169, 168, 0.22);
-  --sidebar-ink: #F2ECEB;
-  --sidebar-muted: #B8A9A8;
-  --code-bg: #18131B;
-  --code-ink: #F2ECEB;
+  --bg-canvas: #242629;
+  --bg-surface: #2B2D31;
+  --bg-surface-warm: #33363B;
+  --bg-surface-inset: #3D4147;
+  --bg-surface-hover: #474C54;
+  --border-line: rgba(210, 196, 172, 0.16);
+  --border-strong: rgba(210, 196, 172, 0.34);
+  --text-ink: #F2EDE4;
+  --text-ink-muted: #C2B59E;
+  --brand-primary: #33363B;
+  --brand-primary-hover: #3D4147;
+  --brand-primary-ink: #F2EDE4;
+  --brand-stone: #D2C4AC;
+  --brand-stone-hover: #DFD4BF;
+  --brand-stone-ink: #242629;
+  --brand-accent: #397BFF;
+  --brand-accent-hover: #528CFF;
+  --brand-accent-ink: #FFFFFF;
+  --brand-charcoal: #2B2D31;
+  --brand-sage: #D2C4AC;
+  --status-success: #D2C4AC;
+  --status-warning: #DFD4BF;
+  --status-danger: #6BA0FF;
+  --sidebar-bg: #1E2023;
+  --sidebar-surface: #2D3035;
+  --sidebar-border: rgba(210, 196, 172, 0.14);
+  --sidebar-ink: #F2EDE4;
+  --sidebar-muted: #C2B59E;
+  --code-bg: #1A1C1E;
+  --code-ink: #F2EDE4;
 }
 
 @theme inline {
@@ -127,11 +127,86 @@ h3,
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(184, 169, 168, 0.32);
+  background: rgba(210, 196, 172, 0.28);
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 112, 72, 0.78);
+  background: rgba(57, 123, 255, 0.78);
+}
+
+/* Liquid Glass Surface System (Charcoal #242629, Warm Champagne #D2C4AC, Electric Blue #397BFF) */
+.glass-ultra-thin {
+  background: rgba(36, 38, 41, 0.72);
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  border: 1px solid rgba(210, 196, 172, 0.16);
+}
+
+.glass-regular {
+  background: rgba(43, 45, 49, 0.8);
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  border: 1px solid rgba(210, 196, 172, 0.18);
+  box-shadow:
+    inset 0 1px 0 rgba(210, 196, 172, 0.1),
+    0 16px 36px -14px rgba(10, 11, 13, 0.55);
+}
+
+.glass-elevated {
+  background: rgba(43, 45, 49, 0.88);
+  backdrop-filter: blur(24px) saturate(145%);
+  -webkit-backdrop-filter: blur(24px) saturate(145%);
+  border: 1px solid rgba(210, 196, 172, 0.22);
+  box-shadow:
+    inset 0 1px 0 rgba(210, 196, 172, 0.14),
+    0 24px 48px -16px rgba(10, 11, 13, 0.65);
+}
+
+.glass-control {
+  background: rgba(51, 54, 59, 0.68);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(210, 196, 172, 0.18);
+  box-shadow: inset 0 1px 0 rgba(210, 196, 172, 0.08);
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease,
+    color 150ms ease,
+    transform 130ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-control:hover {
+  background: rgba(61, 65, 71, 0.84);
+  border-color: rgba(210, 196, 172, 0.32);
+}
+
+.glass-segmented {
+  background: rgba(30, 32, 35, 0.72);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(210, 196, 172, 0.16);
+  box-shadow: inset 0 1px 2px rgba(10, 11, 13, 0.35);
+}
+
+.glass-accent-pill {
+  background: #397BFF;
+  color: #FFFFFF;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    0 6px 18px -6px rgba(57, 123, 255, 0.52);
+  transition:
+    background-color 150ms ease,
+    box-shadow 150ms ease,
+    transform 130ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-accent-pill:hover {
+  background: #528CFF;
+}
+
+.glass-specular-rim {
+  box-shadow: inset 0 1px 0 rgba(210, 196, 172, 0.16);
 }
 
 /* Animation & Micro-Interaction Utilities */
@@ -192,7 +267,7 @@ h3,
 @media (hover: hover) {
   .card-hover:hover {
     transform: translateY(-2px);
-    box-shadow: 0 10px 24px -10px rgba(17, 12, 19, 0.55);
+    box-shadow: 0 10px 24px -10px rgba(10, 11, 13, 0.55);
   }
 }
 
