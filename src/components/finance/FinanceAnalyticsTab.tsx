@@ -15,7 +15,6 @@ import {
   StaggerContainer,
   StaggerItem,
 } from '../common/MotionPrimitives';
-import { GlassSegmentedControl } from '../common/LiquidGlass';
 import {
   computeBudgetProgress,
   computeCategoryBreakdown,
@@ -348,16 +347,22 @@ export const FinanceAnalyticsTab: React.FC<Props> = ({
               </h3>
             </div>
 
-            <GlassSegmentedControl
-              layoutId="finance-analytics-window-pill"
-              size="sm"
-              value={String(monthsWindow)}
-              onChange={id => setMonthsWindow(id === '12' ? 12 : 6)}
-              options={[
-                { id: '6', label: '6M' },
-                { id: '12', label: '12M' },
-              ]}
-            />
+            <div className="flex bg-canvas p-0.5 rounded-lg border border-line text-[11px]">
+              {([6, 12] as const).map(w => (
+                <button
+                  key={w}
+                  type="button"
+                  onClick={() => setMonthsWindow(w)}
+                  className={`px-2.5 py-0.5 rounded-md font-semibold btn-press ${
+                    monthsWindow === w
+                      ? 'bg-accent text-accent-ink'
+                      : 'text-ink-muted hover:text-ink'
+                  }`}
+                >
+                  {w}M
+                </button>
+              ))}
+            </div>
           </div>
 
           {monthlySeries.every(m => m.income === 0 && m.expenses === 0) ? (

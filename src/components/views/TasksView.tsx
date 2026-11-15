@@ -14,7 +14,6 @@ import { useApp } from '../../lib/context';
 import { Task, TaskStatus, Priority, LifeArea } from '../../types';
 import { getPriorityColor } from '../../lib/logic';
 import { ModalShell, AnimatedCheckButton, MOMENTUM_EASE } from '../common/MotionPrimitives';
-import { GlassSegmentedControl } from '../common/LiquidGlass';
 
 type TaskViewMode = 'board' | 'list';
 type QuickFilterTab = 'all' | 'today' | 'upcoming' | 'completed';
@@ -133,33 +132,63 @@ export const TasksView: React.FC = () => {
             </p>
           </div>
 
-          <GlassSegmentedControl
-            value={viewMode}
-            onChange={setViewMode}
-            layoutId="tasks-view-mode-pill"
-            size="sm"
-            className="self-start sm:self-auto"
-            options={[
-              { id: 'board', label: 'Board', icon: LayoutGrid },
-              { id: 'list', label: 'List', icon: List },
-            ]}
-          />
+          <div className="flex bg-surface-warm p-1 rounded-xl border border-line relative self-start sm:self-auto">
+            {(['board', 'list'] as const).map(mode => {
+              const isActive = viewMode === mode;
+              return (
+                <button
+                  key={mode}
+                  type="button"
+                  onClick={() => setViewMode(mode)}
+                  className={`relative z-10 px-3 py-1.5 min-h-[36px] rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors whitespace-nowrap ${
+                    isActive ? 'text-accent-ink' : 'text-ink-muted hover:text-ink'
+                  }`}
+                >
+                  {isActive && (
+                    <motion.span
+                      layoutId="tasks-view-mode-pill"
+                      transition={{ duration: prefersReduced ? 0.01 : 0.2, ease: MOMENTUM_EASE }}
+                      className="absolute inset-0 bg-accent rounded-lg -z-10"
+                    />
+                  )}
+                  {mode === 'board' ? (
+                    <LayoutGrid className="w-3.5 h-3.5" />
+                  ) : (
+                    <List className="w-3.5 h-3.5" />
+                  )}
+                  <span className="capitalize">{mode}</span>
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         {/* Filter Bar */}
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 pt-3 border-t border-line">
-          <GlassSegmentedControl
-            value={filterTab}
-            onChange={setFilterTab}
-            layoutId="tasks-filter-tab-pill"
-            size="sm"
-            options={[
-              { id: 'all', label: 'All' },
-              { id: 'today', label: 'Today' },
-              { id: 'upcoming', label: 'Upcoming' },
-              { id: 'completed', label: 'Completed' },
-            ]}
-          />
+          <div className="flex bg-surface-warm p-1 rounded-xl border border-line text-xs relative overflow-x-auto max-w-full">
+            {(['all', 'today', 'upcoming', 'completed'] as const).map(tab => {
+              const isActive = filterTab === tab;
+              return (
+                <button
+                  key={tab}
+                  type="button"
+                  onClick={() => setFilterTab(tab)}
+                  className={`relative z-10 px-3 py-1.5 rounded-lg font-semibold capitalize transition-colors whitespace-nowrap shrink-0 ${
+                    isActive ? 'text-ink' : 'text-ink-muted hover:text-ink'
+                  }`}
+                >
+                  {isActive && (
+                    <motion.span
+                      layoutId="tasks-filter-tab-pill"
+                      transition={{ duration: prefersReduced ? 0.01 : 0.2, ease: MOMENTUM_EASE }}
+                      className="absolute inset-0 bg-surface-inset border border-line rounded-lg -z-10"
+                    />
+                  )}
+                  {tab}
+                </button>
+              );
+            })}
+          </div>
 
           <div className="flex flex-wrap items-center gap-2">
             <div className="relative flex-1 sm:flex-initial min-w-[160px]">
@@ -250,7 +279,7 @@ export const TasksView: React.FC = () => {
           />
           <button
             type="submit"
-            className="btn-press glass-accent-pill px-4 py-1.5 min-h-[36px] rounded-xl text-accent-ink font-semibold text-xs transition-colors shrink-0"
+            className="btn-press px-4 py-1.5 min-h-[36px] rounded-lg bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs transition-colors shrink-0"
           >
             Add
           </button>
@@ -469,7 +498,7 @@ export const TasksView: React.FC = () => {
       >
         {activeEditingTask && (
           <>
-            <div className="flex items-center justify-between px-5 sm:px-6 py-4 border-b border-white/10 bg-white/[0.03]">
+            <div className="flex items-center justify-between px-5 sm:px-6 py-4 border-b border-line bg-surface-warm">
               <div className="flex items-center gap-2">
                 <Edit3 className="w-4 h-4 text-brand-blue" />
                 <h3 className="text-sm font-semibold text-ink">Task Details</h3>
@@ -477,7 +506,7 @@ export const TasksView: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setEditingTask(null)}
-                className="btn-press glass-control p-1.5 rounded-xl text-ink-muted hover:text-ink transition-colors"
+                className="p-1.5 rounded-lg text-ink-muted hover:text-ink transition-colors"
                 aria-label="Close task details"
               >
                 <X className="w-4 h-4" />
@@ -605,7 +634,7 @@ export const TasksView: React.FC = () => {
                   />
                   <button
                     type="submit"
-                    className="btn-press glass-accent-pill px-4 py-2 rounded-xl text-accent-ink font-semibold text-xs transition-colors"
+                    className="btn-press px-4 py-2 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs transition-colors"
                   >
                     Add
                   </button>
@@ -613,7 +642,7 @@ export const TasksView: React.FC = () => {
               </div>
             </div>
 
-            <div className="p-4 border-t border-white/10 bg-white/[0.03] flex items-center justify-between">
+            <div className="p-4 border-t border-line bg-surface-warm flex items-center justify-between">
               <button
                 type="button"
                 onClick={() => {
@@ -628,7 +657,7 @@ export const TasksView: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setEditingTask(null)}
-                className="btn-press glass-accent-pill px-4 py-2 rounded-xl text-accent-ink font-semibold text-xs transition-colors"
+                className="btn-press px-4 py-2 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs transition-colors"
               >
                 Done
               </button>

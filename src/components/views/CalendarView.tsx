@@ -21,7 +21,6 @@ import {
   formatHourSlot,
 } from '../../lib/calendar';
 import { ModalShell, MOMENTUM_EASE } from '../common/MotionPrimitives';
-import { GlassSegmentedControl } from '../common/LiquidGlass';
 
 type CalendarViewMode = 'month' | 'week' | 'day';
 
@@ -162,22 +161,41 @@ export const CalendarView: React.FC = () => {
 
         <div className="flex flex-wrap items-center gap-3">
           {/* Month | Week | Day Switcher */}
-          <GlassSegmentedControl
-            layoutId="calendar-view-mode-pill"
-            size="sm"
-            value={viewMode}
-            onChange={setViewMode}
-            options={[
-              { id: 'month', label: 'Month' },
-              { id: 'week', label: 'Week' },
-              { id: 'day', label: 'Day' },
-            ]}
-          />
+          <div
+            role="tablist"
+            aria-label="Calendar view mode"
+            className="flex bg-surface-warm p-1 rounded-xl border border-line text-xs relative"
+          >
+            {(['month', 'week', 'day'] as const).map(mode => {
+              const isActive = viewMode === mode;
+              return (
+                <button
+                  key={mode}
+                  type="button"
+                  role="tab"
+                  aria-selected={isActive}
+                  onClick={() => setViewMode(mode)}
+                  className={`relative z-10 px-3 py-1.5 min-h-[36px] rounded-lg capitalize transition-colors whitespace-nowrap ${
+                    isActive ? 'text-accent-ink font-semibold' : 'text-ink-muted hover:text-ink font-medium'
+                  }`}
+                >
+                  {isActive && (
+                    <motion.span
+                      layoutId="calendar-view-mode-pill"
+                      transition={{ duration: prefersReduced ? 0.01 : 0.2, ease: MOMENTUM_EASE }}
+                      className="absolute inset-0 bg-accent rounded-lg -z-10"
+                    />
+                  )}
+                  {mode}
+                </button>
+              );
+            })}
+          </div>
 
           <button
             type="button"
             onClick={() => setShowAddEventModal(true)}
-            className="btn-press group flex items-center gap-1.5 px-4 py-2 min-h-[40px] rounded-xl glass-accent-pill text-xs whitespace-nowrap shrink-0"
+            className="btn-press group flex items-center gap-1.5 px-4 py-2 min-h-[40px] rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs transition-colors whitespace-nowrap shrink-0"
           >
             <Plus className="w-4 h-4 stroke-[2.25] transition-transform duration-200 group-hover:rotate-90" />
             <span>Schedule Activity</span>
@@ -196,11 +214,11 @@ export const CalendarView: React.FC = () => {
           {/* Period Stepper */}
           <div className="flex items-center justify-between gap-2 pb-3 border-b border-line">
             <h2 className="text-sm sm:text-base font-bold text-ink truncate">{periodTitle}</h2>
-            <div className="flex items-center gap-1.5 shrink-0">
+            <div className="flex items-center gap-1 shrink-0">
               <button
                 type="button"
                 onClick={handlePrev}
-                className="btn-press glass-control p-2 rounded-xl text-ink-muted hover:text-ink transition-colors"
+                className="btn-press p-2 rounded-lg text-ink-muted hover:text-ink hover:bg-surface-warm transition-colors"
                 aria-label={`Previous ${viewMode}`}
               >
                 <ChevronLeft className="w-4 h-4" />
@@ -208,14 +226,14 @@ export const CalendarView: React.FC = () => {
               <button
                 type="button"
                 onClick={handleToday}
-                className="btn-press glass-control px-3 py-1.5 rounded-xl text-xs font-semibold text-accent transition-colors"
+                className="btn-press px-3 py-1.5 rounded-lg text-xs font-semibold text-accent hover:bg-surface-warm transition-colors"
               >
                 Today
               </button>
               <button
                 type="button"
                 onClick={handleNext}
-                className="btn-press glass-control p-2 rounded-xl text-ink-muted hover:text-ink transition-colors"
+                className="btn-press p-2 rounded-lg text-ink-muted hover:text-ink hover:bg-surface-warm transition-colors"
                 aria-label={`Next ${viewMode}`}
               >
                 <ChevronRight className="w-4 h-4" />
@@ -700,12 +718,12 @@ export const CalendarView: React.FC = () => {
         onClose={() => setShowAddEventModal(false)}
         maxWidthClass="max-w-sm"
       >
-        <div className="px-5 py-3.5 border-b border-white/10 bg-white/[0.03] flex items-center justify-between">
+        <div className="px-5 py-3.5 border-b border-line bg-surface-warm flex items-center justify-between">
           <span className="text-xs font-semibold text-ink">Schedule Block</span>
           <button
             type="button"
             onClick={() => setShowAddEventModal(false)}
-            className="btn-press glass-control p-1.5 rounded-xl text-ink-muted hover:text-ink transition-colors"
+            className="p-1 rounded-lg text-ink-muted hover:text-ink transition-colors"
             aria-label="Close schedule modal"
           >
             <X className="w-4 h-4" />
@@ -746,17 +764,17 @@ export const CalendarView: React.FC = () => {
             </div>
           </div>
 
-          <div className="flex justify-end gap-2 pt-3 border-t border-white/10">
+          <div className="flex justify-end gap-2 pt-2">
             <button
               type="button"
               onClick={() => setShowAddEventModal(false)}
-              className="btn-press px-3 py-1.5 rounded-xl text-xs font-medium text-ink-muted hover:text-ink"
+              className="btn-press px-3 py-1.5 text-xs font-medium text-ink-muted hover:text-ink"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="btn-press px-4 py-1.5 rounded-xl glass-accent-pill text-xs transition-colors"
+              className="btn-press px-4 py-1.5 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs transition-colors"
             >
               Save Event
             </button>
