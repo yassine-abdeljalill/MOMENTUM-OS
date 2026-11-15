@@ -57,7 +57,7 @@ export const Sidebar: React.FC = () => {
                 <span className="font-bold text-sm tracking-[0.14em] text-sidebar-ink uppercase font-heading">
                   MOMENTUM
                 </span>
-                <span className="text-[10px] text-brand-blue font-medium tracking-tight">
+                <span className="text-[10px] text-stone font-medium tracking-tight">
                   Personal Life OS
                 </span>
               </motion.div>
@@ -158,7 +158,7 @@ export const Sidebar: React.FC = () => {
                       className={`w-4 h-4 shrink-0 relative z-10 transition-transform duration-150 ${
                         isActive
                           ? 'text-accent-ink scale-105'
-                          : 'text-ink-muted group-hover:text-brand-blue group-hover:translate-x-0.5'
+                          : 'text-ink-muted group-hover:text-accent group-hover:translate-x-0.5'
                       }`}
                     />
 
@@ -172,8 +172,8 @@ export const Sidebar: React.FC = () => {
                       <span
                         className={`px-1.5 py-0.5 text-[10px] rounded-md font-mono font-bold tabular-nums relative z-10 transition-colors ${
                           isActive
-                            ? 'bg-[#1A1A1D] text-accent'
-                            : 'bg-[#1A1A1D] text-brand-blue border border-brand-blue/30'
+                            ? 'bg-[#211B24] text-accent'
+                            : 'bg-[#211B24] text-stone border border-stone/35'
                         }`}
                       >
                         {badgeCount}
@@ -181,7 +181,7 @@ export const Sidebar: React.FC = () => {
                     )}
 
                     {isCollapsed && (
-                      <div className="absolute left-full ml-2 px-2.5 py-1 rounded-lg bg-[#1A1A1D] text-ink text-xs shadow-lg whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-150 z-50 border border-brand-blue/40">
+                      <div className="absolute left-full ml-2 px-2.5 py-1 rounded-lg bg-[#211B24] text-ink text-xs shadow-lg whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-150 z-50 border border-stone/40">
                         {item.label}
                         {badgeCount !== null && ` (${badgeCount})`}
                       </div>
@@ -225,7 +225,7 @@ export const Sidebar: React.FC = () => {
             className={`w-4 h-4 shrink-0 relative z-10 transition-transform duration-200 ${
               currentView === 'settings'
                 ? 'text-accent-ink'
-                : 'text-ink-muted group-hover:text-brand-blue group-hover:rotate-45'
+                : 'text-ink-muted group-hover:text-accent group-hover:rotate-45'
             }`}
           />
           {!isCollapsed && <span className="flex-1 text-left relative z-10">Settings</span>}
@@ -240,7 +240,7 @@ export const Sidebar: React.FC = () => {
           }`}
           title={displayName}
         >
-          <div className="w-7 h-7 rounded-full bg-brand-blue/15 border border-brand-blue/50 flex items-center justify-center text-xs font-bold text-brand-blue shrink-0">
+          <div className="w-7 h-7 rounded-full bg-stone/18 border border-stone/50 flex items-center justify-center text-xs font-bold text-stone shrink-0">
             {displayName.charAt(0).toUpperCase()}
           </div>
           {!isCollapsed && (

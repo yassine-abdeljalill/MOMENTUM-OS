@@ -290,8 +290,8 @@ export const CalendarView: React.FC = () => {
                           isSelected
                             ? 'bg-accent/20 text-ink border-accent ring-1 ring-accent shadow-xs'
                             : isToday
-                            ? 'bg-brand-blue/12 border-brand-blue text-ink'
-                            : 'bg-surface-warm/50 border-line text-ink hover:border-brand-blue/60'
+                            ? 'bg-stone/12 border-stone text-ink'
+                            : 'bg-surface-warm/50 border-line text-ink hover:border-stone/60'
                         }`}
                       >
                         <div className="flex items-center justify-between w-full">
@@ -300,7 +300,7 @@ export const CalendarView: React.FC = () => {
                               isSelected
                                 ? 'text-accent'
                                 : isToday
-                                ? 'text-brand-blue'
+                                ? 'text-stone'
                                 : 'text-ink'
                             }`}
                           >
@@ -335,8 +335,8 @@ export const CalendarView: React.FC = () => {
                               key={l.id}
                               className={`text-[10px] truncate px-1 rounded ${
                                 isSelected
-                                  ? 'bg-brand-blue/20 text-brand-blue'
-                                  : 'bg-brand-blue/15 text-brand-blue'
+                                  ? 'bg-stone/20 text-stone'
+                                  : 'bg-stone/15 text-stone'
                               }`}
                             >
                               {l.title}
@@ -572,7 +572,7 @@ export const CalendarView: React.FC = () => {
             <button
               type="button"
               onClick={() => setShowAddEventModal(true)}
-              className="btn-press text-xs font-semibold text-brand-blue hover:underline"
+              className="btn-press text-xs font-semibold text-stone hover:underline"
             >
               + Add Block
             </button>

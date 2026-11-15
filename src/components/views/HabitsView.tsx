@@ -60,7 +60,7 @@ export const HabitsView: React.FC = () => {
       frequency,
       targetCountPerDay: 1,
       startDate: new Date().toISOString().split('T')[0],
-      color: '#D2925B',
+      color: '#FF7048',
       active: true,
     });
 
@@ -85,8 +85,8 @@ export const HabitsView: React.FC = () => {
       <div className="p-6 rounded-2xl bg-surface border border-line flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-brand-blue" />
-            <span className="text-xs font-mono font-bold uppercase tracking-wider text-brand-blue">
+            <Sparkles className="w-4 h-4 text-stone" />
+            <span className="text-xs font-mono font-bold uppercase tracking-wider text-stone">
               Sustainable Consistency Engine
             </span>
           </div>
@@ -188,7 +188,7 @@ export const HabitsView: React.FC = () => {
                               onClick={() => toggleHabitCompletion(habit.id, day.dateStr)}
                               className={`w-7 h-7 rounded-lg flex items-center justify-center transition-colors duration-200 ${
                                 isCompleted
-                                  ? 'bg-success text-white font-bold'
+                                  ? 'bg-stone text-stone-ink font-bold'
                                   : isSkipped
                                   ? 'bg-surface-inset text-ink-muted border border-line'
                                   : 'bg-surface hover:bg-accent/20 border border-line text-ink-muted'
@@ -276,7 +276,7 @@ export const HabitsView: React.FC = () => {
       >
         <div className="flex items-center justify-between px-6 py-4 border-b border-line bg-surface-warm">
           <div className="flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-brand-blue" />
+            <Sparkles className="w-4 h-4 text-stone" />
             <h3 className="text-sm font-bold text-ink">Establish New Habit</h3>
           </div>
           <button

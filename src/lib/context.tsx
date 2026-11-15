@@ -421,7 +421,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (typeof document === 'undefined') return;
     const root = document.documentElement;
-    const bg = '#1A1A1D';
+    const bg = '#211B24';
     root.classList.add('dark');
     root.style.colorScheme = 'dark';
     root.style.backgroundColor = bg;

@@ -198,7 +198,7 @@ export const LessonWorkspace: React.FC<{
             >
               <ModuleIconView
                 icon={module.icon}
-                className={`w-5 h-5 ${isDarkBg ? 'text-[#F5F1E9]' : 'text-[#1A1A1D]'}`}
+                className={`w-5 h-5 ${isDarkBg ? 'text-[#F2ECEB]' : 'text-[#211B24]'}`}
               />
             </div>
 

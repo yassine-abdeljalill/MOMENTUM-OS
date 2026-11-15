@@ -105,8 +105,8 @@ export const GoalsView: React.FC = () => {
       {/* Vision Statement Banner */}
       <section className="p-5 sm:p-6 rounded-2xl bg-surface border border-line space-y-2 shadow-sm">
         <div className="flex items-center gap-2">
-          <Compass className="w-4 h-4 text-brand-blue" />
-          <span className="text-xs font-mono font-semibold uppercase tracking-wider text-brand-blue">
+          <Compass className="w-4 h-4 text-stone" />
+          <span className="text-xs font-mono font-semibold uppercase tracking-wider text-stone">
             Long-Term Vision
           </span>
         </div>

@@ -57,7 +57,7 @@ export const NotificationsDrawer: React.FC = () => {
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b border-line bg-surface-warm text-ink">
         <div className="flex items-center gap-2">
-          <Bell className="w-4 h-4 text-brand-blue" />
+          <Bell className="w-4 h-4 text-stone" />
           <h2 className="font-semibold text-sm font-heading">Notifications</h2>
           {unreadCount > 0 && (
             <span className="px-1.5 py-0.5 text-[10px] font-mono rounded-md bg-accent text-accent-ink font-bold tabular-nums">

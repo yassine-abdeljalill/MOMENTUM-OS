@@ -10,14 +10,14 @@ import type {
 import type { Task, TaskStatus } from '../types';
 
 export const MODULE_COLOR_PALETTE = [
-  { hex: '#D2925B', label: 'Warm Beige' },
-  { hex: '#9ECCFD', label: 'MOMENTUM Blue' },
-  { hex: '#868A7A', label: 'Muted Sage' },
-  { hex: '#2A2A2F', label: 'Elevated Charcoal' },
-  { hex: '#5EA675', label: 'Forest' },
-  { hex: '#E09B4B', label: 'Amber' },
-  { hex: '#DF6B64', label: 'Terracotta' },
-  { hex: '#5B7C99', label: 'Slate Blue' },
+  { hex: '#FF7048', label: 'Solar Tangerine' },
+  { hex: '#B8A9A8', label: 'Dusty Stone' },
+  { hex: '#211B24', label: 'Midnight Plum' },
+  { hex: '#362D38', label: 'Plum Stone' },
+  { hex: '#FF987A', label: 'Soft Tangerine' },
+  { hex: '#D95835', label: 'Deep Tangerine' },
+  { hex: '#8D7D81', label: 'Muted Stone' },
+  { hex: '#D8CCCB', label: 'Pale Stone' },
 ] as const;
 
 export const LEARNING_STATUS_META: Record<
@@ -30,11 +30,11 @@ export const LEARNING_STATUS_META: Record<
   },
   in_progress: {
     label: 'In Progress',
-    badgeClass: 'text-brand-blue bg-brand-blue/14 border-brand-blue/40',
+    badgeClass: 'text-accent bg-accent/14 border-accent/40',
   },
   completed: {
     label: 'Completed',
-    badgeClass: 'text-success bg-success/12 border-success/40',
+    badgeClass: 'text-stone-ink bg-stone border-stone',
   },
 };
 
@@ -48,11 +48,11 @@ export const LEARNING_TASK_STATUS_META: Record<
   },
   in_progress: {
     label: 'In Progress',
-    badgeClass: 'text-brand-blue bg-brand-blue/14 border-brand-blue/40',
+    badgeClass: 'text-accent bg-accent/14 border-accent/40',
   },
   completed: {
     label: 'Completed',
-    badgeClass: 'text-success bg-success/12 border-success/40',
+    badgeClass: 'text-stone-ink bg-stone border-stone',
   },
 };
 

@@ -95,7 +95,7 @@ test('mapLearningTaskToAppTask preserves exact ID and attaches module/lesson met
     userId: 'u1',
     title: 'Applied Cryptography',
     description: '',
-    color: '#9ECCFD',
+    color: '#FF7048',
     icon: 'shield',
     status: 'in_progress',
     sortOrder: 0,

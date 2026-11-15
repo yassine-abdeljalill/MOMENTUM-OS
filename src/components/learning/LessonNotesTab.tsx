@@ -535,7 +535,7 @@ export const LessonNotesTab: React.FC<{
                   </p>
                   <div
                     className={`text-[10px] font-mono tabular-nums ${
-                      isSelected ? 'text-brand-blue' : 'text-ink-muted'
+                      isSelected ? 'text-stone' : 'text-ink-muted'
                     }`}
                   >
                     Updated {new Date(note.updatedAt).toLocaleDateString()}

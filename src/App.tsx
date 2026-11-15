@@ -76,19 +76,31 @@ const MainContent: React.FC = () => {
 
   return (
     <div className="flex h-dvh w-full overflow-hidden bg-canvas text-ink">
-      {/* Animated Intro Splash (session-gated, bypassed with ?autostart=1) */}
+      {/* Animated Liquid Glass Intro Splash (session-gated, bypassed with ?autostart=1) */}
       <IntroSplash />
 
-      {/* Desktop Grouped Sidebar */}
+      {/* Desktop Translucent Liquid Glass Sidebar */}
       <Sidebar />
 
-      {/* Main App Canvas */}
-      <div className="flex-1 flex flex-col min-w-0 h-full overflow-hidden">
+      {/* Main App Canvas with Floating Liquid Glass Header & Scroll-Under Layer */}
+      <div className="relative flex-1 min-w-0 h-full overflow-hidden bg-canvas">
+        {/* Ultra-subtle atmospheric radial light strictly using official blue & beige */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 z-0"
+          style={{
+            background:
+              'radial-gradient(ellipse 65% 45% at 15% 0%, rgba(158, 204, 253, 0.045) 0%, transparent 70%), radial-gradient(ellipse 55% 45% at 88% 8%, rgba(210, 146, 91, 0.04) 0%, transparent 70%)',
+          }}
+        />
+
+        {/* Floating Liquid Glass Top Toolbar */}
         <Header />
 
+        {/* Full-Height Scrollable Content Layer gliding behind floating glass controls */}
         <main
           ref={mainRef}
-          className="flex-1 overflow-y-auto px-4 pt-4 pb-[calc(4.75rem+env(safe-area-inset-bottom))] md:p-7 bg-canvas"
+          className="relative z-10 h-full w-full overflow-y-auto px-3.5 sm:px-5 md:px-7 pt-[calc(5.15rem+env(safe-area-inset-top))] md:pt-[5.75rem] pb-[calc(6.75rem+env(safe-area-inset-bottom))] md:pb-10"
         >
           <AnimatePresence mode="wait" initial={false}>
             <PageTransition viewKey={currentView}>
@@ -98,7 +110,7 @@ const MainContent: React.FC = () => {
         </main>
       </div>
 
-      {/* Mobile Bottom Navigation & More Hub */}
+      {/* Floating Mobile Liquid Glass Capsule & More Sheet */}
       <MobileNav />
 
       {/* Global Modals & Overlays */}

@@ -88,12 +88,12 @@ export const SettingsView: React.FC = () => {
   };
 
   const paletteSwatches = [
-    { name: 'Primary Canvas', hex: '#1A1A1D', bg: 'bg-[#1A1A1D] text-[#F5F1E9] border-[#393940]' },
-    { name: 'Elevated Surface', hex: '#242428', bg: 'bg-[#242428] text-[#F5F1E9] border-[#393940]' },
-    { name: 'Secondary Card', hex: '#2A2A2F', bg: 'bg-[#2A2A2F] text-[#F5F1E9] border-[#393940]' },
-    { name: 'Warm Beige', hex: '#D2925B', bg: 'bg-[#D2925B] text-[#1A1A1D] border-[#DF9F68]' },
-    { name: 'MOMENTUM Blue', hex: '#9ECCFD', bg: 'bg-[#9ECCFD] text-[#1A1A1D] border-[#B4D7FE]' },
-    { name: 'Muted Sage', hex: '#868A7A', bg: 'bg-[#868A7A] text-[#F5F1E9] border-[#393940]' },
+    { name: 'Midnight Plum (60%)', hex: '#211B24', bg: 'bg-[#211B24] text-[#F2ECEB] border-[#B8A9A8]/35' },
+    { name: 'Dusty Stone (30%)', hex: '#B8A9A8', bg: 'bg-[#B8A9A8] text-[#211B24] border-[#C7B9B8]' },
+    { name: 'Solar Tangerine (10%)', hex: '#FF7048', bg: 'bg-[#FF7048] text-[#211B24] border-[#FF8765]' },
+    { name: 'Plum Surface', hex: '#2B242E', bg: 'bg-[#2B242E] text-[#F2ECEB] border-[#B8A9A8]/30' },
+    { name: 'Plum Elevated', hex: '#362D38', bg: 'bg-[#362D38] text-[#F2ECEB] border-[#B8A9A8]/30' },
+    { name: 'Stone Light Ink', hex: '#F2ECEB', bg: 'bg-[#F2ECEB] text-[#211B24] border-[#B8A9A8]' },
   ];
 
   return (
@@ -267,14 +267,14 @@ export const SettingsView: React.FC = () => {
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
                 <h2 className="text-sm font-bold uppercase tracking-wider text-ink">
-                  Official Dark Color System
+                  Official 60–30–10 Color System
                 </h2>
                 <p className="text-xs text-ink-muted mt-0.5">
-                  Deep obsidian canvas (`#1A1A1D`) paired with warm beige (`#D2925B`) and MOMENTUM blue (`#9ECCFD`) accents.
+                  Midnight Plum (#211B24) foundation, Dusty Stone (#B8A9A8) secondary surfaces, and Solar Tangerine (#FF7048) action accents.
                 </p>
               </div>
 
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-brand-blue/14 border border-brand-blue/35 text-xs font-mono font-semibold text-brand-blue">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-stone/15 border border-stone/35 text-xs font-mono font-semibold text-stone">
                 <Sparkles className="w-3.5 h-3.5" />
                 Official Palette Active
               </span>
@@ -284,14 +284,14 @@ export const SettingsView: React.FC = () => {
               <span className="text-xs font-semibold text-ink-muted block">
                 Official MOMENTUM Palette Tokens:
               </span>
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                 {paletteSwatches.map(swatch => (
                   <div
                     key={swatch.hex}
-                    className={`card-hover p-3 rounded-xl text-xs font-mono space-y-1 border ${swatch.bg}`}
+                    className={`card-hover px-3.5 py-3 rounded-xl text-xs font-mono space-y-1 border ${swatch.bg}`}
                   >
-                    <span className="font-bold block truncate">{swatch.name}</span>
-                    <span className="text-[11px] opacity-85">{swatch.hex}</span>
+                    <span className="font-bold block">{swatch.name}</span>
+                    <span className="text-[11px] opacity-85 block">{swatch.hex}</span>
                   </div>
                 ))}
               </div>
@@ -485,7 +485,7 @@ export const SettingsView: React.FC = () => {
                           setShowClearConfirm(false);
                           notify('All local data cleared.', 'info');
                         }}
-                        className="btn-press px-3 py-1.5 rounded-xl bg-danger text-white text-xs font-bold"
+                        className="btn-press px-3 py-1.5 rounded-xl bg-danger text-accent-ink text-xs font-bold"
                       >
                         Yes, Wipe Data
                       </button>

@@ -241,7 +241,7 @@ export const FinanceAnalyticsTab: React.FC<Props> = ({
         >
           <div className="flex items-center justify-between pb-3 border-b border-line gap-2">
             <div className="flex items-center gap-2 min-w-0">
-              <PieChart className="w-4 h-4 text-brand-blue shrink-0" />
+              <PieChart className="w-4 h-4 text-stone shrink-0" />
               <h3 className="text-sm font-bold uppercase tracking-wider text-ink truncate">
                 Spending by Category ({rangeLabel})
               </h3>
@@ -383,7 +383,7 @@ export const FinanceAnalyticsTab: React.FC<Props> = ({
                 {savingsPath.points && (
                   <polyline
                     fill="none"
-                    stroke="var(--brand-blue)"
+                    stroke="var(--brand-accent)"
                     strokeWidth="3"
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -427,7 +427,7 @@ export const FinanceAnalyticsTab: React.FC<Props> = ({
         >
           <div className="flex items-center justify-between pb-3 border-b border-line">
             <div className="flex items-center gap-2">
-              <BarChart3 className="w-4 h-4 text-brand-blue" />
+              <BarChart3 className="w-4 h-4 text-stone" />
               <h3 className="text-sm font-bold uppercase tracking-wider text-ink">
                 Monthly Income vs. Expenses ({monthsWindow} Months)
               </h3>

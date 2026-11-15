@@ -234,7 +234,7 @@ export const GlobalSearchModal: React.FC = () => {
     >
       {/* Search Input Bar */}
       <div className="flex items-center px-4 py-3.5 border-b border-line gap-3 bg-surface-warm text-ink">
-        <Search className="w-5 h-5 text-brand-blue shrink-0" />
+        <Search className="w-5 h-5 text-stone shrink-0" />
         <input
           ref={inputRef}
           type="text"
@@ -301,7 +301,7 @@ export const GlobalSearchModal: React.FC = () => {
                 className="w-full flex items-center justify-between p-3 rounded-xl hover:bg-surface-warm/70 transition-colors group text-left btn-press"
               >
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className="p-2 rounded-xl bg-surface-warm border border-line text-brand-blue shrink-0 transition-transform duration-150 group-hover:scale-105">
+                  <div className="p-2 rounded-xl bg-surface-warm border border-line text-stone shrink-0 transition-transform duration-150 group-hover:scale-105">
                     <Icon className="w-4 h-4" />
                   </div>
                   <div className="flex flex-col min-w-0">

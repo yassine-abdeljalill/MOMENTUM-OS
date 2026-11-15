@@ -57,7 +57,7 @@ export const ProjectsView: React.FC = () => {
     const newP = addProject({
       name: name.trim(),
       description: description.trim(),
-      color: '#D2925B',
+      color: '#FF7048',
       status: 'active',
       priority,
       category,
@@ -419,7 +419,7 @@ export const ProjectsView: React.FC = () => {
       >
         <div className="flex items-center justify-between px-5 sm:px-6 py-4 border-b border-line bg-surface-warm">
           <div className="flex items-center gap-2">
-            <FolderGit2 className="w-4 h-4 text-brand-blue" />
+            <FolderGit2 className="w-4 h-4 text-stone" />
             <h3 className="text-sm font-semibold text-ink">Create Project</h3>
           </div>
           <button

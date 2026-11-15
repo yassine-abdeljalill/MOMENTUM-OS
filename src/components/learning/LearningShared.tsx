@@ -25,13 +25,11 @@ import { LEARNING_STATUS_META, MODULE_COLOR_PALETTE } from '../../lib/learning';
 import { ModalShell } from '../common/MotionPrimitives';
 
 export const DARK_SWATCH_HEXES = new Set([
-  '#1A1A1D',
-  '#242428',
-  '#2A2A2F',
-  '#5B7C99',
-  '#3E7B52',
-  '#B84A44',
-  '#4F6652',
+  '#211B24',
+  '#362D38',
+  '#5A4D57',
+  '#6E6167',
+  '#51464F',
 ]);
 
 export const MODULE_ICON_OPTIONS: { id: LearningModuleIcon; label: string; Icon: React.ElementType }[] = [
@@ -92,7 +90,7 @@ export const ModuleModal: React.FC<{
 }> = ({ isOpen, onClose, editingModule, onSubmit }) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [color, setColor] = useState<string>('#D2925B');
+  const [color, setColor] = useState<string>('#FF7048');
   const [icon, setIcon] = useState<LearningModuleIcon>('book');
   const [status, setStatus] = useState<LearningStatus>('not_started');
   const [saving, setSaving] = useState(false);
@@ -102,7 +100,7 @@ export const ModuleModal: React.FC<{
     if (isOpen) {
       setTitle(editingModule?.title || '');
       setDescription(editingModule?.description || '');
-      setColor(editingModule?.color || '#D2925B');
+      setColor(editingModule?.color || '#FF7048');
       setIcon(editingModule?.icon || 'book');
       setStatus(editingModule?.status || 'not_started');
       setError('');
@@ -145,7 +143,7 @@ export const ModuleModal: React.FC<{
           >
             <ModuleIconView
               icon={icon}
-              className={`w-4 h-4 ${isDarkSwatch ? 'text-[#F5F1E9]' : 'text-[#1A1A1D]'}`}
+              className={`w-4 h-4 ${isDarkSwatch ? 'text-[#F2ECEB]' : 'text-[#211B24]'}`}
             />
           </div>
           <h3 className="text-sm font-semibold text-ink">
@@ -564,7 +562,7 @@ export const ConfirmDeleteDialog: React.FC<{
             type="button"
             disabled={busy}
             onClick={onConfirm}
-            className="btn-press flex items-center gap-1.5 px-4 py-2 rounded-xl bg-danger hover:opacity-90 text-white font-semibold text-xs disabled:opacity-60"
+            className="btn-press flex items-center gap-1.5 px-4 py-2 rounded-xl bg-danger hover:opacity-90 text-accent-ink font-semibold text-xs disabled:opacity-60"
           >
             <Trash2 className="w-3.5 h-3.5" />
             <span>{busy ? 'Deleting...' : confirmLabel}</span>

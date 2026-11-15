@@ -133,7 +133,7 @@ export const FocusTimerModal: React.FC = () => {
           particleCount: 36,
           spread: 55,
           origin: { y: 0.55 },
-          colors: ['#D2925B', '#9ECCFD', '#F5F1E9'],
+          colors: ['#FF7048', '#B8A9A8', '#F2ECEB'],
         });
       } catch {
         // Ignore confetti errors
@@ -164,12 +164,12 @@ export const FocusTimerModal: React.FC = () => {
       {/* Top bar */}
       <div className="flex items-center justify-between px-6 py-4 border-b border-line bg-surface">
         <div className="flex items-center gap-2 min-w-0">
-          <Timer className="w-5 h-5 text-brand-blue shrink-0" />
+          <Timer className="w-5 h-5 text-accent shrink-0" />
           <h2 className="font-semibold text-sm text-ink tracking-wide truncate font-heading">
             {focusTimer.sessionType === 'focus' ? 'Deep Work Focus Timer' : 'Restorative Break'}
           </h2>
           {focusTimer.linkedTaskTitle && (
-            <span className="hidden sm:inline-block text-xs px-2 py-0.5 rounded-md bg-brand-blue/15 text-brand-blue border border-brand-blue/35 truncate max-w-[200px]">
+            <span className="hidden sm:inline-block text-xs px-2 py-0.5 rounded-md bg-stone/18 text-stone border border-stone/40 truncate max-w-[200px]">
               {focusTimer.linkedTaskTitle}
             </span>
           )}
@@ -225,7 +225,7 @@ export const FocusTimerModal: React.FC = () => {
               cx="120"
               cy="120"
               r={radius}
-              className="stroke-white/10"
+              className="stroke-stone/20"
               strokeWidth="8"
               fill="transparent"
             />
@@ -331,10 +331,10 @@ export const FocusTimerModal: React.FC = () => {
                 <button
                   type="button"
                   onClick={handleFinish}
-                  className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-success/20 hover:bg-success/30 text-ink border border-success/50 font-semibold text-xs btn-press"
+                  className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-stone hover:bg-stone-hover text-stone-ink border border-stone font-semibold text-xs btn-press"
                   title="Complete session and record focus time"
                 >
-                  <CheckCircle2 className="w-4 h-4 text-success" />
+                  <CheckCircle2 className="w-4 h-4 text-stone-ink" />
                   <span>Complete</span>
                 </button>
               </motion.div>

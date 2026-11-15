@@ -131,7 +131,7 @@ export const OverviewView: React.FC = () => {
       <section className="relative overflow-hidden rounded-2xl bg-surface border border-line p-5 sm:p-7 shadow-sm">
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-5">
           <div className="space-y-1.5 min-w-0">
-            <p className="text-xs font-mono tracking-wide text-brand-blue tabular-nums">
+            <p className="text-xs font-mono tracking-wide text-stone tabular-nums">
               {new Date().toLocaleDateString(undefined, {
                 weekday: 'long',
                 month: 'long',
@@ -160,9 +160,9 @@ export const OverviewView: React.FC = () => {
             <button
               type="button"
               onClick={() => setIsFocusTimerOpen(true)}
-              className="btn-press flex items-center gap-1.5 px-3.5 py-2.5 min-h-[44px] sm:min-h-0 rounded-xl bg-surface-warm hover:bg-surface-hover text-ink border border-line text-xs font-medium whitespace-nowrap shrink-0"
+              className="btn-press flex items-center gap-1.5 px-3.5 py-2.5 min-h-[44px] sm:min-h-0 rounded-xl bg-stone hover:bg-stone-hover text-stone-ink text-xs font-semibold whitespace-nowrap shrink-0"
             >
-              <Timer className="w-4 h-4 text-brand-blue" />
+              <Timer className="w-4 h-4 text-stone-ink" />
               <span>Focus Timer</span>
             </button>
             <div className="relative">
@@ -174,7 +174,7 @@ export const OverviewView: React.FC = () => {
                 aria-label="Configure dashboard widgets"
                 aria-expanded={showSettingsPopover}
               >
-                <Settings2 className="w-4 h-4 text-brand-blue" />
+                <Settings2 className="w-4 h-4 text-stone" />
               </button>
               <AnimatePresence>
                 {showSettingsPopover && (
@@ -288,7 +288,7 @@ export const OverviewView: React.FC = () => {
         <StaggerItem className="p-4 sm:p-5 rounded-2xl bg-surface border border-line flex flex-col justify-between card-hover">
           <div className="flex items-center justify-between gap-2">
             <span className="text-xs font-medium text-ink-muted">Focus Time</span>
-            <div className="p-1.5 rounded-lg bg-brand-blue/15 text-brand-blue">
+            <div className="p-1.5 rounded-lg bg-stone/15 text-stone">
               <Timer className="w-4 h-4" />
             </div>
           </div>
@@ -325,7 +325,7 @@ export const OverviewView: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setCurrentView('today')}
-                className="text-xs text-brand-blue font-medium hover:underline flex items-center gap-1 whitespace-nowrap shrink-0 min-h-[36px]"
+                className="text-xs text-stone font-medium hover:underline flex items-center gap-1 whitespace-nowrap shrink-0 min-h-[36px]"
               >
                 <span>Manage Today</span>
                 <ChevronRight className="w-3.5 h-3.5" />
@@ -450,7 +450,7 @@ export const OverviewView: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setCurrentView('analytics')}
-                    className="text-xs text-brand-blue font-medium hover:underline flex items-center gap-1 whitespace-nowrap"
+                    className="text-xs text-stone font-medium hover:underline flex items-center gap-1 whitespace-nowrap"
                   >
                     <span>Analytics</span>
                     <ArrowUpRight className="w-3.5 h-3.5" />
@@ -471,7 +471,7 @@ export const OverviewView: React.FC = () => {
                           className={`w-full rounded-t-md transition-colors duration-200 ${
                             day.isToday
                               ? 'bg-accent'
-                              : 'bg-brand-blue/65 group-hover:bg-brand-blue'
+                              : 'bg-stone/75 group-hover:bg-stone'
                           }`}
                           initial={prefersReduced ? { height: `${day.heightPct}%` } : { height: '0%' }}
                           whileInView={{ height: `${day.heightPct}%` }}
@@ -517,7 +517,7 @@ export const OverviewView: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setCurrentView('goals')}
-                    className="text-xs text-brand-blue font-medium hover:underline whitespace-nowrap"
+                    className="text-xs text-stone font-medium hover:underline whitespace-nowrap"
                   >
                     View All
                   </button>
@@ -582,7 +582,7 @@ export const OverviewView: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setCurrentView('habits')}
-                    className="text-xs text-brand-blue font-medium hover:underline whitespace-nowrap"
+                    className="text-xs text-stone font-medium hover:underline whitespace-nowrap"
                   >
                     Habit Hub
                   </button>
@@ -631,13 +631,13 @@ export const OverviewView: React.FC = () => {
             <section className="p-5 sm:p-6 rounded-2xl bg-surface border border-line space-y-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <FolderGit2 className="w-4 h-4 text-brand-blue" />
+                  <FolderGit2 className="w-4 h-4 text-stone" />
                   <h2 className="text-sm font-semibold text-ink">Active Projects</h2>
                 </div>
                 <button
                   type="button"
                   onClick={() => setCurrentView('projects')}
-                  className="text-xs text-brand-blue font-medium hover:underline whitespace-nowrap"
+                  className="text-xs text-stone font-medium hover:underline whitespace-nowrap"
                 >
                   All Projects
                 </button>

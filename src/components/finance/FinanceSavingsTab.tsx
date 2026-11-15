@@ -75,7 +75,7 @@ export const FinanceSavingsTab: React.FC<Props> = ({
           <button
             type="button"
             onClick={onAddGoal}
-            className="btn-press w-full h-full min-h-[44px] flex items-center justify-center gap-2 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs"
+            className="btn-press glass-accent-pill w-full h-full min-h-[44px] flex items-center justify-center gap-2 rounded-xl font-semibold text-xs"
           >
             <Plus className="w-4 h-4" />
             <span>New Savings Goal</span>
@@ -96,7 +96,7 @@ export const FinanceSavingsTab: React.FC<Props> = ({
           <button
             type="button"
             onClick={onAddGoal}
-            className="btn-press min-h-[44px] px-4 py-2 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs"
+            className="btn-press glass-accent-pill min-h-[44px] px-4 py-2 rounded-xl font-semibold text-xs"
           >
             + Create First Savings Goal
           </button>
@@ -234,7 +234,7 @@ export const FinanceSavingsTab: React.FC<Props> = ({
                     <button
                       type="button"
                       onClick={() => onContributeGoal(goal)}
-                      className="btn-press min-h-[38px] flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink text-xs font-semibold whitespace-nowrap shrink-0"
+                      className="btn-press glass-accent-pill min-h-[38px] flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap shrink-0"
                     >
                       <TrendingUp className="w-3.5 h-3.5 text-accent-ink" />
                       <span>Add Contribution</span>

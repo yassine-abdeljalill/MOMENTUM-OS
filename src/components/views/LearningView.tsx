@@ -380,7 +380,7 @@ export const LearningView: React.FC = () => {
     return (
       <div className="max-w-2xl mx-auto py-16">
         <div className="p-8 rounded-2xl bg-surface border border-line text-center space-y-4">
-          <div className="w-12 h-12 rounded-2xl bg-surface-warm border border-line text-brand-blue flex items-center justify-center mx-auto">
+          <div className="w-12 h-12 rounded-2xl bg-surface-warm border border-line text-stone flex items-center justify-center mx-auto">
             <GraduationCap className="w-6 h-6" />
           </div>
           <div className="space-y-1">
@@ -693,7 +693,7 @@ export const LearningView: React.FC = () => {
 
               {modules.length === 0 ? (
                 <div className="p-10 rounded-2xl bg-surface border border-line text-center space-y-4">
-                  <div className="w-12 h-12 rounded-2xl bg-surface-warm border border-line text-brand-blue flex items-center justify-center mx-auto">
+                  <div className="w-12 h-12 rounded-2xl bg-surface-warm border border-line text-stone flex items-center justify-center mx-auto">
                     <GraduationCap className="w-6 h-6" />
                   </div>
                   <div className="space-y-1">
@@ -790,7 +790,7 @@ export const LearningView: React.FC = () => {
                               >
                                 <ModuleIconView
                                   icon={mod.icon}
-                                  className={`w-5 h-5 ${isDarkBg ? 'text-[#F5F1E9]' : 'text-[#1A1A1D]'}`}
+                                  className={`w-5 h-5 ${isDarkBg ? 'text-[#F2ECEB]' : 'text-[#211B24]'}`}
                                 />
                               </div>
                               <div className="min-w-0">

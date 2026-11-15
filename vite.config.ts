@@ -24,8 +24,8 @@ export default defineConfig(() => {
           short_name: 'MOMENTUM',
           description:
             'Your life. Your goals. Your progress. A cohesive Personal Life Operating System.',
-          theme_color: '#1A1A1D',
-          background_color: '#1A1A1D',
+          theme_color: '#211B24',
+          background_color: '#211B24',
           display: 'standalone',
           orientation: 'portrait-primary',
           start_url: '/',

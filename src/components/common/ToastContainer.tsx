@@ -31,14 +31,14 @@ export const ToastContainer: React.FC = () => {
                 isError
                   ? 'border-danger'
                   : isInfo
-                  ? 'border-brand-blue/50'
+                  ? 'border-stone/50'
                   : 'border-accent/55'
               }`}
             >
               {isError ? (
                 <AlertCircle className="w-4 h-4 text-danger shrink-0" />
               ) : isInfo ? (
-                <Info className="w-4 h-4 text-brand-blue shrink-0" />
+                <Info className="w-4 h-4 text-stone shrink-0" />
               ) : (
                 <CheckCircle2 className="w-4 h-4 text-accent shrink-0" />
               )}

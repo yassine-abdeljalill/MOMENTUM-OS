@@ -70,12 +70,12 @@ export const AnalyticsView: React.FC = () => {
     {
       label: 'Academic & Study',
       minutes: totalStudyMinutes,
-      color: 'bg-brand-blue',
+      color: 'bg-stone',
     },
     {
       label: 'Physical Training',
       minutes: state.workoutSessions.reduce((acc, s) => acc + s.durationMinutes, 0),
-      color: 'bg-success',
+      color: 'bg-stone/60',
     },
   ];
   const maxDomainMinutes = Math.max(1, ...domainDistribution.map(d => d.minutes));
@@ -181,7 +181,7 @@ export const AnalyticsView: React.FC = () => {
           <AnimatedProgressBar
             percentage={taskCompletionRate}
             trackClassName="w-full bg-surface-inset h-1.5 rounded-full overflow-hidden"
-            fillClassName="bg-success h-full rounded-full"
+            fillClassName="bg-stone h-full rounded-full"
           />
         </StaggerItem>
 
@@ -233,7 +233,7 @@ export const AnalyticsView: React.FC = () => {
       <div className="p-6 rounded-2xl bg-surface border border-line space-y-4">
         <div className="flex items-center justify-between pb-3 border-b border-line">
           <div className="flex items-center gap-2">
-            <BarChart3 className="w-4 h-4 text-brand-blue" />
+            <BarChart3 className="w-4 h-4 text-stone" />
             <h3 className="text-sm font-bold uppercase tracking-wider text-ink">
               Invested Effort Across Domains ({dateRange} window)
             </h3>
@@ -307,7 +307,7 @@ export const AnalyticsView: React.FC = () => {
           className="card-hover p-6 rounded-2xl bg-surface border border-line space-y-4"
         >
           <div className="flex items-center gap-2 pb-3 border-b border-line">
-            <BookOpen className="w-4 h-4 text-brand-blue" />
+            <BookOpen className="w-4 h-4 text-stone" />
             <h3 className="text-sm font-bold uppercase tracking-wider text-ink">
               Knowledge & Course Progress
             </h3>

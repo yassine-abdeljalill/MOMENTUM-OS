@@ -189,7 +189,7 @@ export const FinanceRecurringTab: React.FC<Props> = ({
                           className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${
                             rec.type === 'income'
                               ? 'bg-success/15 text-success'
-                              : 'bg-surface-warm border border-line text-brand-blue'
+                              : 'bg-surface-warm border border-line text-stone'
                           }`}
                         >
                           {getKindIcon(rec.kind)}

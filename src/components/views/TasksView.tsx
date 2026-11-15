@@ -500,7 +500,7 @@ export const TasksView: React.FC = () => {
           <>
             <div className="flex items-center justify-between px-5 sm:px-6 py-4 border-b border-line bg-surface-warm">
               <div className="flex items-center gap-2">
-                <Edit3 className="w-4 h-4 text-brand-blue" />
+                <Edit3 className="w-4 h-4 text-stone" />
                 <h3 className="text-sm font-semibold text-ink">Task Details</h3>
               </div>
               <button

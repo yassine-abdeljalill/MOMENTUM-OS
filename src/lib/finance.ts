@@ -253,14 +253,14 @@ export interface CategoryBreakdownItem {
 }
 
 const FALLBACK_CHART_COLORS = [
-  '#D2925B',
-  '#9ECCFD',
-  '#868A7A',
-  '#5EA675',
-  '#E09B4B',
-  '#DF6B64',
-  '#5B7C99',
-  '#B4D7FE',
+  '#FF7048',
+  '#B8A9A8',
+  '#FFA185',
+  '#8D7D81',
+  '#D95835',
+  '#D8CCCB',
+  '#5A4D57',
+  '#F2ECEB',
 ];
 
 export function computeCategoryBreakdown(

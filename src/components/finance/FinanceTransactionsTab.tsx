@@ -93,7 +93,7 @@ export const FinanceTransactionsTab: React.FC<Props> = ({
             <button
               type="button"
               onClick={onManageCategories}
-              className="btn-press flex items-center gap-1.5 px-3 py-2 rounded-xl bg-canvas hover:bg-surface-warm border border-line text-xs font-semibold text-ink whitespace-nowrap"
+              className="btn-press glass-control flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold text-ink whitespace-nowrap"
             >
               <Tag className="w-3.5 h-3.5 text-accent" />
               <span>Categories</span>
@@ -101,7 +101,7 @@ export const FinanceTransactionsTab: React.FC<Props> = ({
             <button
               type="button"
               onClick={onExportCsv}
-              className="btn-press flex items-center gap-1.5 px-3 py-2 rounded-xl bg-canvas hover:bg-surface-warm border border-line text-xs font-semibold text-ink whitespace-nowrap"
+              className="btn-press glass-control flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold text-ink whitespace-nowrap"
             >
               <Download className="w-3.5 h-3.5 text-accent" />
               <span>CSV</span>
@@ -109,7 +109,7 @@ export const FinanceTransactionsTab: React.FC<Props> = ({
             <button
               type="button"
               onClick={onAdd}
-              className="btn-press flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs whitespace-nowrap"
+              className="btn-press glass-accent-pill flex items-center gap-1.5 px-3.5 py-2 rounded-xl font-semibold text-xs whitespace-nowrap"
             >
               <Plus className="w-3.5 h-3.5" />
               <span>Add Transaction</span>
@@ -191,7 +191,7 @@ export const FinanceTransactionsTab: React.FC<Props> = ({
             <button
               type="button"
               onClick={onAdd}
-              className="btn-press px-4 py-2 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs"
+              className="btn-press glass-accent-pill px-4 py-2 rounded-xl font-semibold text-xs"
             >
               + Add Your First Transaction
             </button>
@@ -330,7 +330,7 @@ export const FinanceTransactionsTab: React.FC<Props> = ({
                   <button
                     type="button"
                     onClick={() => onEdit(tx)}
-                    className="px-2.5 py-1 rounded-lg bg-canvas border border-line text-[11px] font-medium text-ink btn-press"
+                    className="glass-control px-2.5 py-1 rounded-lg text-[11px] font-medium text-ink btn-press"
                   >
                     Edit
                   </button>

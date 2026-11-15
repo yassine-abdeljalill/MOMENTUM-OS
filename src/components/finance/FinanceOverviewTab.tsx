@@ -83,7 +83,7 @@ export const FinanceOverviewTab: React.FC<Props> = ({
             <span className="text-[10px] font-mono uppercase tracking-wider text-ink-muted">
               Available Balance
             </span>
-            <Wallet className="w-4 h-4 text-brand-blue" />
+            <Wallet className="w-4 h-4 text-stone" />
           </div>
           <div className="my-2 font-mono text-xl xl:text-2xl font-bold truncate tabular-nums">
             <AnimatedNumber value={summary.totalBalance} formatter={v => formatCurrency(v, currency)} />
@@ -209,7 +209,7 @@ export const FinanceOverviewTab: React.FC<Props> = ({
                   >
                     {isHovered && (
                       <div className="absolute -top-2 z-20 px-2.5 py-1.5 rounded-lg bg-surface-warm text-ink text-[10px] font-mono shadow-lg whitespace-nowrap pointer-events-none border border-line tabular-nums">
-                        <div className="text-brand-blue font-bold">{pt.label}</div>
+                        <div className="text-stone font-bold">{pt.label}</div>
                         <div>In: {formatCurrency(pt.income, currency)}</div>
                         <div>Out: {formatCurrency(pt.expenses, currency)}</div>
                       </div>

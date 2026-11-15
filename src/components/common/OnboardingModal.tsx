@@ -112,7 +112,7 @@ export const OnboardingModal: React.FC = () => {
             </span>
           </div>
           <div className="flex items-center gap-3">
-            <span className="text-xs font-mono text-brand-blue font-semibold tabular-nums">
+            <span className="text-xs font-mono text-stone font-semibold tabular-nums">
               Step {step} of 7
             </span>
             <button

@@ -306,7 +306,7 @@ export const LessonResourcesTab: React.FC<{
       >
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-start gap-3">
-            <div className="w-10 h-10 rounded-xl bg-surface-warm border border-line text-brand-blue flex items-center justify-center shrink-0">
+            <div className="w-10 h-10 rounded-xl bg-surface-warm border border-line text-stone flex items-center justify-center shrink-0">
               <Upload className="w-5 h-5" />
             </div>
             <div className="space-y-1">
@@ -722,7 +722,7 @@ export const LessonResourcesTab: React.FC<{
                 <h3 className="text-sm font-bold text-ink truncate">
                   {previewResource.title}
                 </h3>
-                <span className="text-[11px] font-mono text-brand-blue tabular-nums">
+                <span className="text-[11px] font-mono text-stone tabular-nums">
                   {previewResource.originalFilename} · {formatFileSize(previewResource.fileSize)}
                 </span>
               </div>
@@ -773,7 +773,7 @@ export const LessonResourcesTab: React.FC<{
                 />
               )}
               {!previewLoading && !previewError && previewText !== null && (
-                <pre className="w-full max-h-[70vh] overflow-auto p-4 rounded-xl bg-[#141417] text-[#F5F1E9] font-mono text-xs leading-relaxed border border-line">
+                <pre className="w-full max-h-[70vh] overflow-auto p-4 rounded-xl bg-[#18131B] text-[#F2ECEB] font-mono text-xs leading-relaxed border border-line">
                   {previewText}
                 </pre>
               )}

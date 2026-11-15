@@ -51,7 +51,7 @@ export function getDb(): DatabaseSync {
       user_id TEXT NOT NULL,
       name TEXT NOT NULL,
       type TEXT NOT NULL CHECK (type IN ('income', 'expense', 'both')),
-      color TEXT NOT NULL DEFAULT '#9ECCFD',
+      color TEXT NOT NULL DEFAULT '#FF7048',
       is_default INTEGER NOT NULL DEFAULT 0,
       created_at TEXT NOT NULL,
       UNIQUE(user_id, name, type),
@@ -135,7 +135,7 @@ export function getDb(): DatabaseSync {
       user_id TEXT NOT NULL,
       title TEXT NOT NULL,
       description TEXT NOT NULL DEFAULT '',
-      color TEXT NOT NULL DEFAULT '#9ECCFD',
+      color TEXT NOT NULL DEFAULT '#FF7048',
       icon TEXT NOT NULL DEFAULT 'book',
       status TEXT NOT NULL DEFAULT 'not_started' CHECK (status IN ('not_started', 'in_progress', 'completed')),
       sort_order INTEGER NOT NULL DEFAULT 0,
@@ -253,6 +253,35 @@ export function getDb(): DatabaseSync {
   const userCols = db.prepare(`PRAGMA table_info(users)`).all() as { name: string }[];
   if (!userCols.some(c => c.name === 'is_workspace')) {
     db.exec(`ALTER TABLE users ADD COLUMN is_workspace INTEGER NOT NULL DEFAULT 0;`);
+  }
+
+  // Idempotent migration of legacy palette hexes to strict Midnight Plum / Dusty Stone / Solar Tangerine variations
+  const legacyColorMap: Record<string, string> = {
+    '#9ECCFD': '#B8A9A8',
+    '#8EC5FF': '#B8A9A8',
+    '#D2925B': '#FF7048',
+    '#5EA675': '#B8A9A8',
+    '#5B7C99': '#8D7D81',
+    '#E09B4B': '#FFA185',
+    '#73B6FC': '#D8CCCB',
+    '#DF6B64': '#D95835',
+    '#868A7A': '#6E6167',
+    '#A8B0BA': '#C7B9B8',
+    '#6E7368': '#51464F',
+    '#3B2418': '#211B24',
+    '#64432B': '#362D38',
+    '#1A1A1D': '#211B24',
+    '#242428': '#2B242E',
+    '#2A2A2F': '#362D38',
+    '#3E7B52': '#8D7D81',
+    '#B84A44': '#D95835',
+    '#4F6652': '#6E6167',
+  };
+  const updateFinCat = db.prepare(`UPDATE finance_categories SET color = ? WHERE UPPER(color) = UPPER(?)`);
+  const updateLearnMod = db.prepare(`UPDATE learning_modules SET color = ? WHERE UPPER(color) = UPPER(?)`);
+  for (const [oldHex, newHex] of Object.entries(legacyColorMap)) {
+    updateFinCat.run(newHex, oldHex);
+    updateLearnMod.run(newHex, oldHex);
   }
 
   dbInstance = db;

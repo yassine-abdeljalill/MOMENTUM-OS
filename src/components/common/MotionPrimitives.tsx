@@ -240,7 +240,7 @@ export const AnimatedCheckButton: React.FC<{
       type="button"
       onClick={onClick}
       whileTap={prefersReduced ? undefined : { scale: 0.85 }}
-      className={`text-ink-muted hover:text-success transition-colors shrink-0 relative flex items-center justify-center ${className}`}
+      className={`text-ink-muted hover:text-accent transition-colors shrink-0 relative flex items-center justify-center ${className}`}
       aria-label={ariaLabel || (checked ? 'Mark incomplete' : 'Mark completed')}
     >
       <AnimatePresence mode="wait" initial={false}>
@@ -253,7 +253,7 @@ export const AnimatedCheckButton: React.FC<{
             transition={{ duration: prefersReduced ? 0.01 : 0.18, ease: MOMENTUM_EASE }}
             className="flex items-center justify-center"
           >
-            <CheckCircle2 className={`${dim} text-success fill-success/15`} />
+            <CheckCircle2 className={`${dim} text-accent fill-accent/15`} />
           </motion.span>
         ) : (
           <motion.span

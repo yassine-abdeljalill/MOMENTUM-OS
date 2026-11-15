@@ -94,7 +94,7 @@ export const ResourcesView: React.FC = () => {
         <button
           type="button"
           onClick={() => setShowAddModal(true)}
-          className="btn-press flex items-center gap-1.5 px-4 py-2 min-h-[44px] sm:min-h-0 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs transition-all whitespace-nowrap shrink-0"
+          className="btn-press flex items-center gap-1.5 px-4 py-2 min-h-[44px] sm:min-h-0 rounded-xl glass-accent-pill text-xs transition-all whitespace-nowrap shrink-0"
         >
           <Plus className="w-4 h-4 stroke-[2.5]" />
           <span>Save Resource</span>
@@ -221,12 +221,12 @@ export const ResourcesView: React.FC = () => {
         onClose={() => setShowAddModal(false)}
         maxWidthClass="max-w-md"
       >
-        <div className="px-5 py-4 border-b border-line bg-surface-warm flex items-center justify-between">
+        <div className="px-5 py-4 border-b border-white/10 bg-white/[0.03] flex items-center justify-between">
           <span className="text-xs font-bold text-ink">Save to Resource Vault</span>
           <button
             type="button"
             onClick={() => setShowAddModal(false)}
-            className="text-ink-muted hover:text-ink transition-colors"
+            className="btn-press glass-control p-1.5 rounded-xl text-ink-muted hover:text-ink transition-colors"
             aria-label="Close modal"
           >
             <X className="w-4 h-4" />
@@ -300,17 +300,17 @@ export const ResourcesView: React.FC = () => {
             />
           </div>
 
-          <div className="flex justify-end gap-2 pt-2 border-t border-line">
+          <div className="flex justify-end gap-2 pt-3 border-t border-white/10">
             <button
               type="button"
               onClick={() => setShowAddModal(false)}
-              className="btn-press px-3 py-1.5 text-xs text-ink-muted hover:text-ink"
+              className="btn-press px-3 py-1.5 rounded-xl text-xs text-ink-muted hover:text-ink"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="btn-press px-4 py-1.5 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs"
+              className="btn-press px-4 py-1.5 rounded-xl glass-accent-pill text-xs"
             >
               Save
             </button>

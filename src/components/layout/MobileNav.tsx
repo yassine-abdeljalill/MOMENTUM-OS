@@ -44,7 +44,7 @@ export const MobileNav: React.FC = () => {
       {/* Fixed 5-Tab Bottom Navigation Bar (Mobile < md) */}
       <nav
         aria-label="Mobile bottom navigation"
-        className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#242428]/95 backdrop-blur-md border-t border-[#393940] pb-[env(safe-area-inset-bottom)] select-none"
+        className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#27202A]/95 backdrop-blur-md border-t border-[#B8A9A8]/22 pb-[env(safe-area-inset-bottom)] select-none"
       >
         <div className="grid grid-cols-5 items-stretch h-16 px-1">
           {primaryItems.map(item => {
@@ -64,18 +64,18 @@ export const MobileNav: React.FC = () => {
                   <motion.span
                     layoutId="mobile-bottom-active-indicator"
                     transition={{ duration: prefersReduced ? 0.01 : 0.18, ease: MOMENTUM_EASE }}
-                    className="absolute top-0 w-7 h-[2px] rounded-full bg-[#D2925B]"
+                    className="absolute top-0 w-7 h-[2px] rounded-full bg-[#FF7048]"
                   />
                 )}
                 <div className="relative flex items-center justify-center">
                   <Icon
                     className={`w-[22px] h-[22px] transition-colors ${
-                      isActive ? 'text-[#D2925B]' : 'text-[#868A7A]'
+                      isActive ? 'text-[#FF7048]' : 'text-[#B8A9A8]'
                     }`}
                     strokeWidth={isActive ? 2.15 : 1.75}
                   />
                   {badgeCount !== null && (
-                    <span className="absolute -top-1 -right-2 min-w-[15px] h-[15px] px-1 rounded-full bg-[#D2925B] text-[#1A1A1D] font-mono text-[9px] font-bold flex items-center justify-center tabular-nums leading-none">
+                    <span className="absolute -top-1 -right-2 min-w-[15px] h-[15px] px-1 rounded-full bg-[#FF7048] text-[#211B24] font-mono text-[9px] font-bold flex items-center justify-center tabular-nums leading-none">
                       {badgeCount > 9 ? '9+' : badgeCount}
                     </span>
                   )}
@@ -83,8 +83,8 @@ export const MobileNav: React.FC = () => {
                 <span
                   className={`text-[11px] leading-[13px] tracking-tight whitespace-nowrap transition-colors ${
                     isActive
-                      ? 'text-[#D2925B] font-semibold'
-                      : 'text-[#868A7A] font-medium'
+                      ? 'text-[#FF7048] font-semibold'
+                      : 'text-[#B8A9A8] font-medium'
                   }`}
                 >
                   {item.shortLabel || item.label}
@@ -105,20 +105,20 @@ export const MobileNav: React.FC = () => {
               <motion.span
                 layoutId="mobile-bottom-active-indicator"
                 transition={{ duration: prefersReduced ? 0.01 : 0.18, ease: MOMENTUM_EASE }}
-                className="absolute top-0 w-7 h-[2px] rounded-full bg-[#D2925B]"
+                className="absolute top-0 w-7 h-[2px] rounded-full bg-[#FF7048]"
               />
             )}
             <Grid2x2
               className={`w-[22px] h-[22px] transition-colors ${
-                isMoreActive ? 'text-[#D2925B]' : 'text-[#868A7A]'
+                isMoreActive ? 'text-[#FF7048]' : 'text-[#B8A9A8]'
               }`}
               strokeWidth={isMoreActive ? 2.15 : 1.75}
             />
             <span
               className={`text-[11px] leading-[13px] tracking-tight whitespace-nowrap transition-colors ${
                 isMoreActive
-                  ? 'text-[#D2925B] font-semibold'
-                  : 'text-[#868A7A] font-medium'
+                  ? 'text-[#FF7048] font-semibold'
+                  : 'text-[#B8A9A8] font-medium'
               }`}
             >
               More
@@ -144,10 +144,10 @@ export const MobileNav: React.FC = () => {
               exit={prefersReduced ? { opacity: 0 } : { y: '100%' }}
               transition={{ duration: prefersReduced ? 0.01 : 0.24, ease: MOMENTUM_EASE }}
               onClick={e => e.stopPropagation()}
-              className="w-full max-h-[85dvh] bg-[#242428] border-t border-[#393940] rounded-t-3xl shadow-2xl flex flex-col overflow-hidden pb-[env(safe-area-inset-bottom)]"
+              className="w-full max-h-[85dvh] bg-[#2B242E] border-t border-[#B8A9A8]/25 rounded-t-3xl shadow-2xl flex flex-col overflow-hidden pb-[env(safe-area-inset-bottom)]"
             >
               {/* Drag Handle & Sheet Header */}
-              <div className="pt-2.5 pb-3 px-5 border-b border-[#393940] flex items-center justify-between shrink-0">
+              <div className="pt-2.5 pb-3 px-5 border-b border-[#B8A9A8]/22 flex items-center justify-between shrink-0">
                 <div className="flex items-center gap-2.5">
                   <img
                     src="/brand-logo.png"
@@ -158,13 +158,13 @@ export const MobileNav: React.FC = () => {
                     <h2 className="text-sm font-bold text-ink font-heading leading-tight">
                       All Workspaces
                     </h2>
-                    <p className="text-[11px] text-brand-blue">MOMENTUM Life OS</p>
+                    <p className="text-[11px] text-stone">MOMENTUM Life OS</p>
                   </div>
                 </div>
                 <button
                   type="button"
                   onClick={() => setMoreOpen(false)}
-                  className="p-2 rounded-xl bg-[#2A2A2F] border border-[#393940] text-ink-muted hover:text-ink btn-press min-h-[40px] min-w-[40px] flex items-center justify-center"
+                  className="p-2 rounded-xl bg-[#362D38] border border-[#B8A9A8]/22 text-ink-muted hover:text-ink btn-press min-h-[40px] min-w-[40px] flex items-center justify-center"
                   aria-label="Close workspace menu"
                 >
                   <X className="w-4 h-4" />
@@ -192,17 +192,17 @@ export const MobileNav: React.FC = () => {
                             className={`relative flex flex-col items-center justify-center gap-1.5 p-3 rounded-2xl border text-center transition-colors btn-press min-h-[72px] ${
                               active
                                 ? 'bg-accent/15 border-accent text-ink font-bold'
-                                : 'bg-[#2A2A2F] border-[#393940] text-ink hover:border-brand-blue/50 font-medium'
+                                : 'bg-[#362D38] border-[#B8A9A8]/22 text-ink hover:border-stone/60 font-medium'
                             }`}
                           >
                             {badgeCount !== null && (
-                              <span className="absolute top-2 right-2 px-1.5 py-0.2 rounded-md bg-brand-blue text-brand-blue-ink font-mono text-[9px] font-bold tabular-nums">
+                              <span className="absolute top-2 right-2 px-1.5 py-0.2 rounded-md bg-stone text-stone-ink font-mono text-[9px] font-bold tabular-nums">
                                 {badgeCount}
                               </span>
                             )}
                             <Icon
                               className={`w-5 h-5 ${
-                                active ? 'text-accent' : 'text-brand-blue'
+                                active ? 'text-accent' : 'text-stone'
                               }`}
                             />
                             <span className="text-[11px] leading-tight truncate w-full">
@@ -216,7 +216,7 @@ export const MobileNav: React.FC = () => {
                 ))}
 
                 {/* System Actions */}
-                <div className="space-y-2 pt-2 border-t border-[#393940]">
+                <div className="space-y-2 pt-2 border-t border-[#B8A9A8]/22">
                   <div className="px-1 text-[10px] font-mono uppercase tracking-[0.14em] text-ink-muted">
                     System & Account
                   </div>
@@ -226,12 +226,12 @@ export const MobileNav: React.FC = () => {
                     className={`w-full flex items-center gap-2.5 px-3.5 py-3 rounded-xl border text-xs font-semibold btn-press min-h-[44px] ${
                       currentView === 'settings'
                         ? 'bg-accent text-accent-ink border-accent'
-                        : 'bg-[#2A2A2F] border-[#393940] text-ink hover:border-brand-blue/50'
+                        : 'bg-[#362D38] border-[#B8A9A8]/22 text-ink hover:border-stone/60'
                     }`}
                   >
                     <Settings
                       className={`w-4 h-4 shrink-0 ${
-                        currentView === 'settings' ? 'text-accent-ink' : 'text-brand-blue'
+                        currentView === 'settings' ? 'text-accent-ink' : 'text-stone'
                       }`}
                     />
                     <span>Settings & Preferences</span>
@@ -245,9 +245,9 @@ export const MobileNav: React.FC = () => {
                       setMoreOpen(false);
                       setIsAuthModalOpen(true);
                     }}
-                    className="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl border border-[#393940] bg-[#2A2A2F] hover:bg-[#313137] text-left btn-press min-h-[48px]"
+                    className="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl border border-[#B8A9A8]/22 bg-[#362D38] hover:bg-[#413743] text-left btn-press min-h-[48px]"
                   >
-                    <div className="w-8 h-8 rounded-full bg-brand-blue/15 border border-brand-blue/50 text-brand-blue flex items-center justify-center text-xs font-bold shrink-0">
+                    <div className="w-8 h-8 rounded-full bg-stone/18 border border-stone/50 text-stone flex items-center justify-center text-xs font-bold shrink-0">
                       {displayName.charAt(0).toUpperCase()}
                     </div>
                     <div className="min-w-0 flex-1">

@@ -71,11 +71,15 @@ export function getInitialState(): AppState {
     if (raw) {
       const parsed = JSON.parse(raw);
       if (parsed && parsed.profile && parsed.tasks) {
-        if (parsed.preferences?.accentColor === '#8EC5FF' || parsed.preferences?.theme !== 'dark') {
+        if (
+          parsed.preferences?.accentColor === '#8EC5FF' ||
+          parsed.preferences?.accentColor === '#D2925B' ||
+          parsed.preferences?.theme !== 'dark'
+        ) {
           parsed.preferences = {
             ...parsed.preferences,
             theme: 'dark',
-            accentColor: '#D2925B',
+            accentColor: '#FF7048',
           };
         }
         return parsed;

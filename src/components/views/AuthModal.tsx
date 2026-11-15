@@ -206,7 +206,7 @@ export const AuthModal: React.FC = () => {
               return (
                 <div className="space-y-5">
                   <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-surface-warm/70 border border-line">
-                    <div className="w-12 h-12 rounded-full bg-surface-inset border-2 border-brand-blue flex items-center justify-center text-lg font-bold text-ink shrink-0">
+                    <div className="w-12 h-12 rounded-full bg-surface-inset border-2 border-stone flex items-center justify-center text-lg font-bold text-ink shrink-0">
                       {displayName.charAt(0).toUpperCase()}
                     </div>
                     <div className="flex-1 min-w-0">
@@ -219,7 +219,7 @@ export const AuthModal: React.FC = () => {
                           className={`text-[10px] font-mono font-semibold px-2 py-0.5 rounded-md border ${
                             isRegistered
                               ? 'bg-success/12 text-success border-success/35'
-                              : 'bg-brand-blue/15 text-brand-blue border-brand-blue/35'
+                              : 'bg-stone/15 text-stone border-stone/35'
                           }`}
                         >
                           {isRegistered

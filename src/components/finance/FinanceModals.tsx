@@ -65,7 +65,7 @@ export const ConfirmDeleteModal: React.FC<{
           type="button"
           onClick={onConfirm}
           disabled={loading}
-          className="btn-press px-4 py-1.5 rounded-xl bg-danger hover:brightness-110 text-white font-semibold text-xs flex items-center gap-1.5 disabled:opacity-60"
+          className="btn-press px-4 py-1.5 rounded-xl bg-danger hover:bg-accent-hover text-accent-ink font-semibold text-xs flex items-center gap-1.5 disabled:opacity-60"
         >
           {loading && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
           <span>Confirm Delete</span>
@@ -207,7 +207,7 @@ export const TransactionModal: React.FC<{
             onClick={() => setType('expense')}
             className={`py-2 rounded-lg font-semibold flex items-center justify-center gap-1.5 transition-colors btn-press ${
               type === 'expense'
-                ? 'bg-danger text-white shadow-xs'
+                ? 'bg-accent text-accent-ink shadow-xs'
                 : 'text-ink-muted hover:text-ink'
             }`}
           >
@@ -219,7 +219,7 @@ export const TransactionModal: React.FC<{
             onClick={() => setType('income')}
             className={`py-2 rounded-lg font-semibold flex items-center justify-center gap-1.5 transition-colors btn-press ${
               type === 'income'
-                ? 'bg-success text-white shadow-xs'
+                ? 'bg-stone text-stone-ink shadow-xs'
                 : 'text-ink-muted hover:text-ink'
             }`}
           >
@@ -370,13 +370,13 @@ export const TransactionModal: React.FC<{
 
 // 3. Custom Categories Manager Modal
 const CATEGORY_COLORS = [
-  '#D2925B',
-  '#9ECCFD',
-  '#868A7A',
-  '#5B7C99',
-  '#5EA675',
-  '#E09B4B',
-  '#DF6B64',
+  '#FF7048',
+  '#B8A9A8',
+  '#FFA185',
+  '#8D7D81',
+  '#D95835',
+  '#D8CCCB',
+  '#5A4D57',
 ];
 
 export const CategoryManagerModal: React.FC<{
@@ -388,7 +388,7 @@ export const CategoryManagerModal: React.FC<{
 }> = ({ isOpen, categories, onCreate, onDelete, onClose }) => {
   const [name, setName] = useState('');
   const [type, setType] = useState<'expense' | 'income'>('expense');
-  const [color, setColor] = useState('#D2925B');
+  const [color, setColor] = useState('#FF7048');
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
 
@@ -413,7 +413,7 @@ export const CategoryManagerModal: React.FC<{
     <ModalShell isOpen={isOpen} onClose={onClose} maxWidthClass="max-w-md">
       <div className="px-5 py-3.5 border-b border-line bg-surface-warm flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Tag className="w-4 h-4 text-brand-blue" />
+          <Tag className="w-4 h-4 text-stone" />
           <span className="text-xs font-bold uppercase tracking-wider text-ink">
             Manage Categories
           </span>
@@ -794,7 +794,7 @@ export const SavingsGoalModal: React.FC<{
     <ModalShell isOpen={isOpen} onClose={onClose} maxWidthClass="max-w-md">
       <div className="px-5 py-3.5 border-b border-line bg-surface-warm flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <PiggyBank className="w-4 h-4 text-brand-blue" />
+          <PiggyBank className="w-4 h-4 text-stone" />
           <span className="text-xs font-bold uppercase tracking-wider text-ink">
             {editing ? 'Edit Savings Goal' : 'Create Savings Goal'}
           </span>
@@ -1003,7 +1003,7 @@ export const ContributionModal: React.FC<{
     <ModalShell isOpen={Boolean(goal)} onClose={onClose} maxWidthClass="max-w-sm">
       <div className="px-5 py-3.5 border-b border-line bg-surface-warm flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <TrendingUp className="w-4 h-4 text-brand-blue" />
+          <TrendingUp className="w-4 h-4 text-stone" />
           <span className="text-xs font-bold uppercase tracking-wider text-ink">
             Add Contribution
           </span>
@@ -1229,7 +1229,7 @@ export const RecurringModal: React.FC<{
     <ModalShell isOpen={isOpen} onClose={onClose} maxWidthClass="max-w-md">
       <div className="px-5 py-3.5 border-b border-line bg-surface-warm flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <CalendarClock className="w-4 h-4 text-brand-blue" />
+          <CalendarClock className="w-4 h-4 text-stone" />
           <span className="text-xs font-bold uppercase tracking-wider text-ink">
             {editing ? 'Edit Recurring Item' : 'New Recurring Payment / Income'}
           </span>

@@ -154,7 +154,7 @@ export const JournalView: React.FC = () => {
                     </p>
 
                     <div className="flex items-center gap-2 pt-1 text-[10px] font-mono uppercase">
-                      <span className={isSelected ? 'text-brand-blue' : 'text-ink-muted'}>
+                      <span className={isSelected ? 'text-stone' : 'text-ink-muted'}>
                         {entry.category.replace('_', ' ')}
                       </span>
                       {entry.mood && (
@@ -260,7 +260,7 @@ export const JournalView: React.FC = () => {
       >
         <div className="flex items-center justify-between px-6 py-4 border-b border-line bg-surface-warm">
           <div className="flex items-center gap-2">
-            <BookOpen className="w-4 h-4 text-brand-blue" />
+            <BookOpen className="w-4 h-4 text-stone" />
             <h3 className="text-sm font-bold text-ink">New Journal Entry</h3>
           </div>
           <button
