@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Settings,
   ChevronLeft,
@@ -18,8 +18,20 @@ export const Sidebar: React.FC = () => {
     authChecked,
     setIsAuthModalOpen,
   } = useApp();
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(() =>
+    typeof window !== 'undefined' ? window.innerWidth < 1024 : false
+  );
   const prefersReduced = useReducedMotion();
+
+  useEffect(() => {
+    if (typeof window === 'undefined' || !window.matchMedia) return;
+    const mq = window.matchMedia('(min-width: 1024px)');
+    const onChange = (e: MediaQueryListEvent) => {
+      setIsCollapsed(!e.matches);
+    };
+    mq.addEventListener('change', onChange);
+    return () => mq.removeEventListener('change', onChange);
+  }, []);
 
   const handleNavClick = (view: NavigationTab) => {
     setCurrentView(view);
@@ -40,35 +52,30 @@ export const Sidebar: React.FC = () => {
   return (
     <motion.aside
       initial={false}
-      animate={{ width: isCollapsed ? 68 : 252 }}
-      transition={{ duration: prefersReduced ? 0.01 : 0.22, ease: MOMENTUM_EASE }}
-      className="hidden md:flex flex-col shrink-0 bg-sidebar text-sidebar-ink h-dvh sticky top-0 z-30 border-r border-sidebar-border overflow-hidden select-none"
+      animate={{ width: isCollapsed ? 64 : 232 }}
+      transition={{ duration: prefersReduced ? 0.01 : 0.2, ease: MOMENTUM_EASE }}
+      className="hidden md:flex flex-col shrink-0 bg-sidebar text-sidebar-ink h-dvh sticky top-0 z-30 border-r border-sidebar-border overflow-x-hidden select-none"
       aria-label="Primary sidebar"
     >
       {/* Brand Header */}
-      <div className="h-15 flex items-center justify-between px-4 border-b border-sidebar-border shrink-0">
-        <div className={`flex items-center gap-3 min-w-0 ${isCollapsed ? 'mx-auto' : ''}`}>
+      <div className="h-14 flex items-center justify-between px-3.5 border-b border-sidebar-border shrink-0">
+        <div className={`flex items-center gap-2.5 min-w-0 ${isCollapsed ? 'mx-auto' : ''}`}>
           <img
             src="/brand-logo.png"
             alt="MOMENTUM logo"
-            className="w-8 h-8 rounded-lg object-contain shadow-md shrink-0"
+            className="w-7 h-7 rounded-lg object-contain shrink-0"
           />
           <AnimatePresence initial={false}>
             {!isCollapsed && (
-              <motion.div
+              <motion.span
                 initial={prefersReduced ? { opacity: 1 } : { opacity: 0, width: 0 }}
                 animate={{ opacity: 1, width: 'auto' }}
                 exit={prefersReduced ? { opacity: 0 } : { opacity: 0, width: 0 }}
                 transition={{ duration: prefersReduced ? 0.01 : 0.16, ease: MOMENTUM_EASE }}
-                className="flex flex-col overflow-hidden whitespace-nowrap"
+                className="font-semibold text-sm tracking-[0.14em] text-sidebar-ink uppercase font-heading overflow-hidden whitespace-nowrap"
               >
-                <span className="font-bold text-sm tracking-[0.14em] text-sidebar-ink uppercase font-heading">
-                  MOMENTUM
-                </span>
-                <span className="text-[10px] text-stone font-medium tracking-tight">
-                  Personal Life OS
-                </span>
-              </motion.div>
+                MOMENTUM
+              </motion.span>
             )}
           </AnimatePresence>
         </div>
@@ -101,34 +108,16 @@ export const Sidebar: React.FC = () => {
         </div>
       )}
 
-      {/* Philosophy Quote Banner */}
-      <AnimatePresence initial={false}>
-        {!isCollapsed && (
-          <motion.div
-            initial={prefersReduced ? { opacity: 1 } : { opacity: 0, height: 0, marginTop: 0 }}
-            animate={{ opacity: 1, height: 'auto', marginTop: 12 }}
-            exit={prefersReduced ? { opacity: 0 } : { opacity: 0, height: 0, marginTop: 0 }}
-            transition={{ duration: prefersReduced ? 0.01 : 0.18, ease: MOMENTUM_EASE }}
-            className="mx-3 overflow-hidden shrink-0"
-          >
-            <div className="px-3 py-2 rounded-xl bg-sidebar-surface border border-sidebar-border text-[11px] text-sidebar-muted font-serif italic leading-snug">
-              &ldquo;Don&apos;t just track what you do. Track who you&apos;re becoming.&rdquo;
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
       {/* Grouped Navigation Links */}
-      <nav className="flex-1 overflow-y-auto overflow-x-hidden px-2.5 py-3 space-y-4">
+      <nav className="flex-1 overflow-y-auto overflow-x-hidden px-2.5 py-4 space-y-5">
         {NAV_GROUPS.map(group => (
           <div key={group.id} className="space-y-1">
             {!isCollapsed ? (
-              <div className="px-2.5 pb-0.5 flex items-center justify-between text-[10px] font-mono uppercase tracking-[0.14em] text-sidebar-muted">
-                <span>{group.label}</span>
-                <span className="tabular-nums opacity-75">{group.items.length}</span>
+              <div className="px-3 pb-1 text-[11px] font-medium text-sidebar-muted/70">
+                {group.label}
               </div>
             ) : (
-              <div className="mx-3 border-t border-sidebar-border/80 my-1" />
+              <div className="mx-3 border-t border-sidebar-border my-1" />
             )}
 
             <div className="space-y-0.5">
@@ -142,7 +131,9 @@ export const Sidebar: React.FC = () => {
                     key={item.id}
                     type="button"
                     onClick={() => handleNavClick(item.id)}
-                    className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs transition-colors duration-150 group relative btn-press ${
+                    className={`w-full flex items-center gap-3 py-2 rounded-xl text-xs transition-colors duration-150 group relative btn-press ${
+                      isCollapsed ? 'justify-center px-2' : 'px-3'
+                    } ${
                       isActive
                         ? 'text-accent-ink font-semibold'
                         : 'text-sidebar-ink/85 hover:text-sidebar-ink hover:bg-sidebar-surface font-medium'
@@ -178,21 +169,12 @@ export const Sidebar: React.FC = () => {
 
                     {!isCollapsed && badgeCount !== null && (
                       <span
-                        className={`px-1.5 py-0.5 text-[10px] rounded-md font-mono font-bold tabular-nums relative z-10 transition-colors ${
-                          isActive
-                            ? 'bg-white/20 text-accent-ink'
-                            : 'bg-canvas text-stone border border-stone/35'
+                        className={`text-[11px] font-mono tabular-nums relative z-10 ${
+                          isActive ? 'text-accent-ink/85' : 'text-sidebar-muted'
                         }`}
                       >
                         {badgeCount}
                       </span>
-                    )}
-
-                    {isCollapsed && (
-                      <div className="absolute left-full ml-2 px-2.5 py-1 rounded-lg bg-canvas text-ink text-xs shadow-lg whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-150 z-50 border border-stone/40">
-                        {item.label}
-                        {badgeCount !== null && ` (${badgeCount})`}
-                      </div>
                     )}
                   </button>
                 );

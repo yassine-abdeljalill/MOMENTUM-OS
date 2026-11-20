@@ -118,8 +118,8 @@ export const ProjectsView: React.FC = () => {
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-8">
-      {/* Header Card */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 sm:p-6 rounded-2xl bg-surface border border-line">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-2">
         <div className="space-y-1">
           <h1 className="text-xl md:text-2xl font-bold text-ink tracking-tight">
             Projects & Initiatives
@@ -130,7 +130,7 @@ export const ProjectsView: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="flex bg-surface-warm p-1 rounded-xl border border-line relative">
+          <div className="flex bg-surface p-1 rounded-xl border border-line relative">
             {(['grid', 'list'] as const).map(mode => {
               const isActive = viewMode === mode;
               return (
@@ -191,8 +191,8 @@ export const ProjectsView: React.FC = () => {
                   onClick={() => setSelectedProjectId(proj.id)}
                   className={`w-full text-left ${viewMode === 'list' ? 'p-3' : 'p-4'} rounded-2xl border transition-all duration-200 space-y-2.5 card-hover ${
                     isSelected
-                      ? 'bg-surface border-accent ring-1 ring-accent shadow-sm'
-                      : 'bg-surface border-line hover:border-accent/60'
+                      ? 'bg-surface border-accent'
+                      : 'bg-surface border-line hover:border-line-strong'
                   }`}
                 >
                   <div className="flex items-start justify-between gap-2">
@@ -285,9 +285,9 @@ export const ProjectsView: React.FC = () => {
                 </div>
 
                 {/* Progress Summary */}
-                <div className="p-4 rounded-xl bg-surface-warm border border-line flex items-center justify-between text-ink">
+                <div className="pb-4 border-b border-line flex items-center justify-between text-ink">
                   <div>
-                    <span className="text-xs uppercase tracking-wider text-ink-muted block">
+                    <span className="text-xs font-medium text-ink-muted block">
                       Execution Progress
                     </span>
                     <AnimatedNumber

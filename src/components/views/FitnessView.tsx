@@ -86,7 +86,7 @@ export const FitnessView: React.FC = () => {
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-16">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 rounded-2xl bg-surface border border-line">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-2">
         <div className="space-y-1">
           <h1 className="text-xl md:text-2xl font-bold text-ink tracking-tight">
             Physical Vitality & Training
@@ -97,7 +97,7 @@ export const FitnessView: React.FC = () => {
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
-          <div className="flex bg-canvas p-1 rounded-xl border border-line text-xs relative">
+          <div className="flex bg-surface p-1 rounded-xl border border-line text-xs relative">
             {([
               { id: 'sessions', label: `Logged Workouts (${state.workoutSessions.length})` },
               { id: 'routines', label: `Routines (${state.workoutRoutines.length})` },
@@ -128,9 +128,9 @@ export const FitnessView: React.FC = () => {
           <button
             type="button"
             onClick={() => setShowLogModal(true)}
-            className="btn-press group flex items-center gap-1.5 px-4 py-2 min-h-[44px] sm:min-h-0 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs transition-all whitespace-nowrap shrink-0"
+            className="btn-press group flex items-center gap-1.5 px-4 py-2 min-h-[40px] rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs transition-all whitespace-nowrap shrink-0"
           >
-            <Plus className="w-4 h-4 stroke-[2.5] transition-transform duration-200 group-hover:rotate-90" />
+            <Plus className="w-4 h-4 stroke-[2.25] transition-transform duration-200 group-hover:rotate-90" />
             <span>Log Workout</span>
           </button>
         </div>
@@ -139,25 +139,25 @@ export const FitnessView: React.FC = () => {
       {/* Fitness Statistics */}
       <StaggerContainer className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         <StaggerItem className="p-4 rounded-2xl bg-surface border border-line card-hover">
-          <span className="text-[10px] font-mono uppercase tracking-wider text-ink-muted">Total Sessions</span>
+          <span className="text-xs font-medium text-ink-muted">Total Sessions</span>
           <div className="font-mono text-2xl font-bold text-ink mt-1 tabular-nums">
             <AnimatedNumber value={state.workoutSessions.length} />
           </div>
         </StaggerItem>
         <StaggerItem className="p-4 rounded-2xl bg-surface border border-line card-hover">
-          <span className="text-[10px] font-mono uppercase tracking-wider text-ink-muted">Cumulative Volume</span>
+          <span className="text-xs font-medium text-ink-muted">Cumulative Volume</span>
           <div className="font-mono text-2xl font-bold text-accent mt-1 tabular-nums">
             <AnimatedNumber value={totalVolumeKg} formatter={v => `${v.toLocaleString()} kg`} />
           </div>
         </StaggerItem>
         <StaggerItem className="p-4 rounded-2xl bg-surface border border-line card-hover">
-          <span className="text-[10px] font-mono uppercase tracking-wider text-ink-muted">Active Cadence</span>
+          <span className="text-xs font-medium text-ink-muted">Active Cadence</span>
           <div className="font-mono text-2xl font-bold text-success mt-1 tabular-nums">
             4x / week
           </div>
         </StaggerItem>
         <StaggerItem className="p-4 rounded-2xl bg-surface border border-line card-hover">
-          <span className="text-[10px] font-mono uppercase tracking-wider text-ink-muted">Bench Press PR</span>
+          <span className="text-xs font-medium text-ink-muted">Bench Press PR</span>
           <div className="font-mono text-2xl font-bold text-ink mt-1 tabular-nums">
             87.5 kg
           </div>
@@ -175,7 +175,7 @@ export const FitnessView: React.FC = () => {
             transition={{ duration: prefersReduced ? 0.01 : 0.16, ease: MOMENTUM_EASE }}
             className="space-y-4"
           >
-            <span className="text-xs font-bold uppercase tracking-wider text-ink-muted block px-1">
+            <span className="text-xs font-medium text-ink-muted block px-1">
               Recent Workout Sessions
             </span>
 
@@ -294,11 +294,11 @@ export const FitnessView: React.FC = () => {
                   <p className="text-xs text-ink-muted">{routine.description}</p>
                 )}
 
-                <div className="space-y-2">
+                <div className="divide-y divide-line border-t border-line">
                   {routine.exercises.map((ex, i) => (
                     <div
                       key={i}
-                      className="flex items-center justify-between p-2.5 rounded-xl bg-canvas border border-line text-xs"
+                      className="flex items-center justify-between py-2.5 text-xs"
                     >
                       <span className="font-medium text-ink">{ex.exerciseName}</span>
                       <span className="font-mono text-accent font-semibold tabular-nums">

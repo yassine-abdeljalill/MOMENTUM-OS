@@ -238,17 +238,17 @@ export const ModuleDetailPage: React.FC<{
         </button>
       </div>
 
-      {/* Module Hero Summary Card */}
-      <div className="p-5 sm:p-6 rounded-2xl bg-surface border border-line space-y-5">
+      {/* Module Hero Summary */}
+      <div className="space-y-5">
         <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-4">
           <div className="flex items-start gap-4 min-w-0">
             <div
-              className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 border border-black/10"
+              className="w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 border border-black/10"
               style={{ backgroundColor: module.color }}
             >
               <ModuleIconView
                 icon={module.icon}
-                className={`w-6 h-6 ${isDarkBg ? 'text-[#F2EDE4]' : 'text-[#242629]'}`}
+                className={`w-5 h-5 ${isDarkBg ? 'text-[#F2EDE4]' : 'text-[#242629]'}`}
               />
             </div>
 
@@ -274,7 +274,7 @@ export const ModuleDetailPage: React.FC<{
             <select
               value={module.status}
               onChange={e => void handleModuleStatusChange(e.target.value as LearningStatus)}
-              className="px-3 py-2 rounded-xl bg-canvas border border-line text-xs font-medium text-ink focus:ring-2 focus:ring-accent focus:outline-hidden"
+              className="px-3 py-2 rounded-xl bg-surface border border-line text-xs font-medium text-ink focus:ring-2 focus:ring-accent focus:outline-hidden"
               aria-label="Module status"
             >
               <option value="not_started">Not Started</option>
@@ -285,7 +285,7 @@ export const ModuleDetailPage: React.FC<{
             <button
               type="button"
               onClick={() => onEditModule(module)}
-              className="btn-press p-2 rounded-xl bg-canvas hover:bg-surface-warm border border-line text-ink"
+              className="btn-press p-2 rounded-xl bg-surface hover:bg-surface-warm border border-line text-ink"
               title="Edit module"
               aria-label="Edit module"
             >
@@ -295,7 +295,7 @@ export const ModuleDetailPage: React.FC<{
             <button
               type="button"
               onClick={() => onDeleteModule(module)}
-              className="btn-press p-2 rounded-xl bg-canvas hover:bg-danger/10 border border-line text-ink-muted hover:text-danger"
+              className="btn-press p-2 rounded-xl bg-surface hover:bg-danger/10 border border-line text-ink-muted hover:text-danger"
               title="Delete module"
               aria-label="Delete module"
             >
@@ -317,28 +317,28 @@ export const ModuleDetailPage: React.FC<{
         </div>
 
         {/* 4 Module KPI Metrics */}
-        <StaggerContainer className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4 border-t border-line">
-          <div className="p-3.5 rounded-xl bg-surface-warm/50 border border-line">
-            <span className="text-[11px] font-mono uppercase text-ink-muted">Total Lessons</span>
+        <StaggerContainer className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div className="p-4 rounded-2xl bg-surface border border-line">
+            <span className="text-xs font-medium text-ink-muted">Total Lessons</span>
             <div className="font-mono text-2xl font-bold text-ink tabular-nums mt-0.5">
               <AnimatedNumber value={stats.total} />
             </div>
           </div>
-          <div className="p-3.5 rounded-xl bg-surface-warm/50 border border-line">
-            <span className="text-[11px] font-mono uppercase text-ink-muted">Completed</span>
+          <div className="p-4 rounded-2xl bg-surface border border-line">
+            <span className="text-xs font-medium text-ink-muted">Completed</span>
             <div className="font-mono text-2xl font-bold text-success tabular-nums mt-0.5">
               <AnimatedNumber value={stats.completed} />
             </div>
           </div>
-          <div className="p-3.5 rounded-xl bg-surface-warm/50 border border-line">
-            <span className="text-[11px] font-mono uppercase text-ink-muted">Remaining</span>
+          <div className="p-4 rounded-2xl bg-surface border border-line">
+            <span className="text-xs font-medium text-ink-muted">Remaining</span>
             <div className="font-mono text-2xl font-bold text-accent tabular-nums mt-0.5">
               <AnimatedNumber value={stats.remaining} />
             </div>
           </div>
-          <div className="p-3.5 rounded-xl bg-surface-warm/50 border border-line flex flex-col justify-between">
+          <div className="p-4 rounded-2xl bg-surface border border-line flex flex-col justify-between">
             <div className="flex items-center justify-between gap-2">
-              <span className="text-[11px] font-mono uppercase text-ink-muted">Progress</span>
+              <span className="text-xs font-medium text-ink-muted">Progress</span>
               <span className="font-mono text-sm font-bold text-accent tabular-nums">
                 {stats.progressPct}%
               </span>
@@ -354,7 +354,7 @@ export const ModuleDetailPage: React.FC<{
         </StaggerContainer>
 
         {/* Sub-Tabs */}
-        <div className="flex flex-wrap items-center gap-1.5 pt-3 border-t border-line">
+        <div className="flex flex-wrap items-center gap-1.5 pt-1 border-b border-line pb-3">
           {([
             { id: 'lessons', label: 'Lessons', count: orderedLessons.length, Icon: BookOpen },
             { id: 'tasks', label: 'Tasks & Assignments', count: tasks.length, Icon: CheckSquare },
@@ -370,7 +370,7 @@ export const ModuleDetailPage: React.FC<{
                 className={`relative z-10 inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs transition-colors whitespace-nowrap ${
                   isActive
                     ? 'text-accent-ink font-semibold'
-                    : 'text-ink-muted hover:text-ink font-medium hover:bg-surface-warm'
+                    : 'text-ink-muted hover:text-ink font-medium hover:bg-surface'
                 }`}
               >
                 {isActive && (
@@ -615,7 +615,7 @@ export const ModuleDetailPage: React.FC<{
               {lessonLevelTasks.length > 0 && (
                 <div className="p-5 rounded-2xl bg-surface border border-line space-y-3">
                   <div className="flex items-center justify-between gap-2">
-                    <h3 className="text-xs font-semibold uppercase tracking-wider text-ink">
+                    <h3 className="text-sm font-semibold text-ink">
                       Lesson-Specific Tasks & Exercises ({lessonLevelTasks.length})
                     </h3>
                     <span className="text-[11px] text-ink-muted">

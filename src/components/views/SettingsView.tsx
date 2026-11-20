@@ -99,11 +99,11 @@ export const SettingsView: React.FC = () => {
   return (
     <div className="space-y-6 max-w-5xl mx-auto pb-16">
       {/* Header */}
-      <div className="p-6 rounded-2xl bg-surface border border-line">
+      <div className="space-y-1 pb-2">
         <h1 className="text-xl md:text-2xl font-bold text-ink tracking-tight">
           Settings & System Controls
         </h1>
-        <p className="text-xs text-ink-muted mt-1">
+        <p className="text-xs text-ink-muted">
           Customize your Life OS profile, color system overview, data backups, and integrations.
         </p>
 
@@ -173,7 +173,7 @@ export const SettingsView: React.FC = () => {
             onSubmit={handleSaveProfile}
             className="p-6 rounded-2xl bg-surface border border-line space-y-5"
           >
-            <h2 className="text-sm font-bold uppercase tracking-wider text-ink">
+            <h2 className="text-sm font-semibold text-ink">
               Personal Identity & Vision Statement
             </h2>
 
@@ -266,7 +266,7 @@ export const SettingsView: React.FC = () => {
           >
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
-                <h2 className="text-sm font-bold uppercase tracking-wider text-ink">
+                <h2 className="text-sm font-semibold text-ink">
                   Official 60–30–10 Color System
                 </h2>
                 <p className="text-xs text-ink-muted mt-0.5">
@@ -335,7 +335,7 @@ export const SettingsView: React.FC = () => {
             className="p-6 rounded-2xl bg-surface border border-line space-y-6"
           >
             <div className="space-y-1">
-              <h2 className="text-sm font-bold uppercase tracking-wider text-ink">
+              <h2 className="text-sm font-semibold text-ink">
                 External Integration Architecture
               </h2>
               <p className="text-xs text-ink-muted">
@@ -390,7 +390,7 @@ export const SettingsView: React.FC = () => {
             className="p-6 rounded-2xl bg-surface border border-line space-y-6"
           >
             <div className="space-y-1">
-              <h2 className="text-sm font-bold uppercase tracking-wider text-ink">
+              <h2 className="text-sm font-semibold text-ink">
                 Data Privacy & Local Storage
               </h2>
               <p className="text-xs text-ink-muted">

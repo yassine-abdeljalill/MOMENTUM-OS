@@ -149,7 +149,7 @@ export const CalendarView: React.FC = () => {
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-8">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-5 sm:p-6 rounded-2xl bg-surface border border-line">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-2">
         <div className="space-y-1">
           <h1 className="text-xl md:text-2xl font-bold text-ink tracking-tight">
             Integrated Master Calendar
@@ -164,7 +164,7 @@ export const CalendarView: React.FC = () => {
           <div
             role="tablist"
             aria-label="Calendar view mode"
-            className="flex bg-surface-warm p-1 rounded-xl border border-line text-xs relative"
+            className="flex bg-surface p-1 rounded-xl border border-line text-xs relative"
           >
             {(['month', 'week', 'day'] as const).map(mode => {
               const isActive = viewMode === mode;
@@ -562,7 +562,7 @@ export const CalendarView: React.FC = () => {
         <aside className="lg:col-span-4 p-5 sm:p-6 rounded-2xl bg-surface border border-line space-y-4">
           <div className="flex items-center justify-between pb-3 border-b border-line">
             <div>
-              <span className="text-[11px] font-mono uppercase text-accent font-semibold block">
+              <span className="text-xs font-medium text-accent block">
                 Selected Day
               </span>
               <h3 className="text-sm font-bold text-ink font-mono tabular-nums">

@@ -136,33 +136,26 @@ export const TodayView: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto pb-8">
-      {/* Top Header Card */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 sm:p-6 rounded-2xl bg-surface border border-line">
+    <div className="space-y-6 max-w-7xl mx-auto">
+      {/* Unboxed Header */}
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-1">
         <div className="space-y-1">
-          <div className="flex items-center gap-2 text-xs font-mono text-accent font-medium tabular-nums">
-            <Calendar className="w-3.5 h-3.5" />
-            <span>
-              {new Date().toLocaleDateString(undefined, {
-                weekday: 'long',
-                month: 'long',
-                day: 'numeric',
-                year: 'numeric',
-              })}
-            </span>
-          </div>
-          <h1 className="text-xl md:text-2xl font-bold text-ink tracking-tight">
-            Daily Execution Command Center
-          </h1>
-          <p className="text-xs text-ink-muted">
-            Commit to the Top 3 priorities first. Guard your deep focus blocks against trivial urgency.
+          <p className="text-xs text-ink-muted tabular-nums">
+            {new Date().toLocaleDateString(undefined, {
+              weekday: 'long',
+              month: 'long',
+              day: 'numeric',
+            })}
           </p>
+          <h2 className="text-2xl font-semibold text-ink tracking-tight">
+            Today&apos;s Focus
+          </h2>
         </div>
 
         <button
           type="button"
           onClick={() => setShowReflectionModal(true)}
-          className="btn-press self-start sm:self-auto flex items-center gap-1.5 px-4 py-2.5 min-h-[44px] sm:min-h-0 rounded-xl bg-surface-warm hover:bg-surface-hover border border-line text-ink text-xs font-semibold transition-colors whitespace-nowrap shrink-0"
+          className="btn-press self-start sm:self-auto flex items-center gap-1.5 px-3.5 py-2 min-h-[40px] sm:min-h-0 rounded-xl bg-surface hover:bg-surface-warm border border-line text-ink text-xs font-medium transition-colors whitespace-nowrap shrink-0"
         >
           <BookOpen className="w-3.5 h-3.5 text-stone" />
           <span>Daily Reflection</span>

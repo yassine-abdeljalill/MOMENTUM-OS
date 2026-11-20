@@ -80,39 +80,35 @@ export const HabitsView: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto pb-16">
-      {/* Philosophy banner */}
-      <div className="p-6 rounded-2xl bg-surface border border-line flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div className="space-y-6 max-w-7xl mx-auto">
+      {/* Unboxed Header */}
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div className="space-y-1">
-          <div className="flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-stone" />
-            <span className="text-xs font-mono font-bold uppercase tracking-wider text-stone">
-              Sustainable Consistency Engine
-            </span>
-          </div>
-          <p className="text-xs text-ink-muted max-w-2xl leading-relaxed">
-            Habits compound quietly over months. Missing a single day is a normal part of life, not a failure.
-            Use the &ldquo;Skip with reason&rdquo; feature to preserve your momentum without guilt.
+          <h2 className="text-2xl font-semibold text-ink tracking-tight">
+            Habits
+          </h2>
+          <p className="text-xs text-ink-muted">
+            Daily consistency over 14 days, with intentional skips when needed.
           </p>
         </div>
 
         <button
           type="button"
           onClick={() => setShowNewHabitModal(true)}
-          className="btn-press group flex items-center gap-1.5 px-4 py-2 min-h-[44px] sm:min-h-0 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs shrink-0 whitespace-nowrap"
+          className="btn-press group self-start sm:self-auto flex items-center gap-1.5 px-4 py-2 min-h-[40px] sm:min-h-0 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs shrink-0 whitespace-nowrap"
         >
-          <Plus className="w-4 h-4 stroke-[2.5] transition-transform duration-200 group-hover:rotate-90" />
+          <Plus className="w-4 h-4 stroke-[2.25]" />
           <span>New Habit</span>
         </button>
       </div>
 
       {/* Main Habits Table & Heatmap */}
-      <div className="p-5 sm:p-6 rounded-2xl bg-surface border border-line space-y-4">
+      <div className="p-5 sm:p-6 rounded-2xl bg-surface border border-line space-y-2">
         <div className="flex items-center justify-between pb-3 border-b border-line">
-          <h2 className="text-sm font-bold uppercase tracking-wider text-ink">
-            Active Habit Tracker ({state.habits.length})
-          </h2>
-          <span className="text-xs font-mono text-ink-muted tabular-nums">14-Day View</span>
+          <h3 className="text-sm font-semibold text-ink">
+            Active Habits ({state.habits.length})
+          </h3>
+          <span className="text-xs text-ink-muted tabular-nums">14-day view</span>
         </div>
 
         {state.habits.length === 0 ? (
@@ -120,7 +116,7 @@ export const HabitsView: React.FC = () => {
             No habits configured yet.
           </div>
         ) : (
-          <div className="space-y-3">
+          <div className="divide-y divide-line">
             <AnimatePresence initial={false}>
               {state.habits.map(habit => {
                 const streak = calculateHabitStreak(habit, state.habitCompletions, todayStr);
@@ -133,13 +129,13 @@ export const HabitsView: React.FC = () => {
                     animate={{ opacity: 1, y: 0 }}
                     exit={prefersReduced ? { opacity: 0 } : { opacity: 0, x: -12 }}
                     transition={{ duration: prefersReduced ? 0.01 : 0.18, ease: MOMENTUM_EASE }}
-                    className="p-4 rounded-xl bg-canvas border border-line flex flex-col lg:flex-row lg:items-center justify-between gap-4 card-hover"
+                    className="py-4 first:pt-3 last:pb-1 flex flex-col lg:flex-row lg:items-center justify-between gap-4"
                   >
                     {/* Left: Habit Info & Streaks */}
-                    <div className="space-y-1.5 min-w-[240px]">
+                    <div className="space-y-1 min-w-[240px]">
                       <div className="flex items-center gap-2">
                         <span className="text-sm font-semibold text-ink">{habit.name}</span>
-                        <span className="text-[10px] uppercase font-mono text-ink-muted">
+                        <span className="text-xs text-ink-muted capitalize">
                           · {habit.frequency}
                         </span>
                       </div>

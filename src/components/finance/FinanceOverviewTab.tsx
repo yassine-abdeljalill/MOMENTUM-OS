@@ -80,20 +80,20 @@ export const FinanceOverviewTab: React.FC<Props> = ({
       <StaggerContainer className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
         <StaggerItem className="card-hover p-4 rounded-2xl bg-surface-warm text-ink border border-line flex flex-col justify-between">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] font-mono uppercase tracking-wider text-ink-muted">
+            <span className="text-xs font-medium text-ink-muted">
               Available Balance
             </span>
-            <Wallet className="w-4 h-4 text-stone" />
+            <Wallet className="w-4 h-4 text-ink-muted" />
           </div>
           <div className="my-2 font-mono text-xl xl:text-2xl font-bold truncate tabular-nums">
             <AnimatedNumber value={summary.totalBalance} formatter={v => formatCurrency(v, currency)} />
           </div>
-          <span className="text-[11px] text-accent">Net all-time position</span>
+          <span className="text-[11px] text-ink-muted">Net all-time position</span>
         </StaggerItem>
 
         <StaggerItem className="card-hover p-4 rounded-2xl bg-surface border border-line flex flex-col justify-between">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] font-mono uppercase tracking-wider text-ink-muted">
+            <span className="text-xs font-medium text-ink-muted">
               Income ({rangeLabel})
             </span>
             <ArrowDownLeft className="w-4 h-4 text-success" />
@@ -106,7 +106,7 @@ export const FinanceOverviewTab: React.FC<Props> = ({
 
         <StaggerItem className="card-hover p-4 rounded-2xl bg-surface border border-line flex flex-col justify-between">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] font-mono uppercase tracking-wider text-ink-muted">
+            <span className="text-xs font-medium text-ink-muted">
               Expenses ({rangeLabel})
             </span>
             <ArrowUpRight className="w-4 h-4 text-danger" />
@@ -119,7 +119,7 @@ export const FinanceOverviewTab: React.FC<Props> = ({
 
         <StaggerItem className="card-hover p-4 rounded-2xl bg-surface border border-line flex flex-col justify-between">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] font-mono uppercase tracking-wider text-ink-muted">
+            <span className="text-xs font-medium text-ink-muted">
               Net Savings
             </span>
             <TrendingUp className="w-4 h-4 text-accent" />
@@ -136,7 +136,7 @@ export const FinanceOverviewTab: React.FC<Props> = ({
 
         <StaggerItem className="card-hover p-4 rounded-2xl bg-surface border border-line flex flex-col justify-between">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] font-mono uppercase tracking-wider text-ink-muted">
+            <span className="text-xs font-medium text-ink-muted">
               Savings Rate
             </span>
             <PieChart className="w-4 h-4 text-accent" />
@@ -162,7 +162,7 @@ export const FinanceOverviewTab: React.FC<Props> = ({
         >
           <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-line">
             <div>
-              <h3 className="text-sm font-bold uppercase tracking-wider text-ink">
+              <h3 className="text-sm font-semibold text-ink">
                 Income vs. Expenses (6 Months)
               </h3>
               <p className="text-xs text-ink-muted">
@@ -246,7 +246,7 @@ export const FinanceOverviewTab: React.FC<Props> = ({
           className="lg:col-span-5 p-6 rounded-2xl bg-surface border border-line flex flex-col justify-between space-y-4"
         >
           <div className="flex items-center justify-between pb-3 border-b border-line">
-            <h3 className="text-sm font-bold uppercase tracking-wider text-ink">
+            <h3 className="text-sm font-semibold text-ink">
               Monthly Budget Overview
             </h3>
             <button
@@ -323,7 +323,7 @@ export const FinanceOverviewTab: React.FC<Props> = ({
           className="lg:col-span-7 p-6 rounded-2xl bg-surface border border-line space-y-4"
         >
           <div className="flex items-center justify-between pb-3 border-b border-line">
-            <h3 className="text-sm font-bold uppercase tracking-wider text-ink">
+            <h3 className="text-sm font-semibold text-ink">
               Recent Transactions
             </h3>
             <div className="flex items-center gap-3">
@@ -403,7 +403,7 @@ export const FinanceOverviewTab: React.FC<Props> = ({
           <div className="flex items-center justify-between pb-3 border-b border-line">
             <div className="flex items-center gap-2">
               <CalendarClock className="w-4 h-4 text-accent" />
-              <h3 className="text-sm font-bold uppercase tracking-wider text-ink">
+              <h3 className="text-sm font-semibold text-ink">
                 Upcoming Payments
               </h3>
             </div>
@@ -432,7 +432,7 @@ export const FinanceOverviewTab: React.FC<Props> = ({
               </button>
             </div>
           ) : (
-            <div className="space-y-2.5">
+            <div className="divide-y divide-line">
               {upcomingPayments.slice(0, 5).map(rec => {
                 const days = getDaysUntilDate(rec.nextDueDate);
                 const badgeText =
@@ -445,7 +445,7 @@ export const FinanceOverviewTab: React.FC<Props> = ({
                 return (
                   <div
                     key={rec.id}
-                    className="p-3 rounded-xl bg-canvas border border-line flex items-center justify-between gap-3"
+                    className="py-3 flex items-center justify-between gap-3"
                   >
                     <div className="min-w-0">
                       <div className="text-xs font-semibold text-ink truncate">{rec.title}</div>
@@ -480,7 +480,7 @@ export const FinanceOverviewTab: React.FC<Props> = ({
                         disabled={payingId === rec.id}
                         title="Record payment now & advance schedule"
                         aria-label={`Record ${rec.title}`}
-                        className="btn-press p-1.5 rounded-lg bg-surface hover:bg-accent hover:text-accent-ink border border-line text-ink transition-colors"
+                        className="btn-press p-1.5 rounded-lg bg-surface-warm hover:bg-accent hover:text-accent-ink border border-line text-ink transition-colors"
                       >
                         <Check className="w-3.5 h-3.5" />
                       </button>

@@ -4,7 +4,6 @@ import {
   Plus,
   Bell,
   Timer,
-  ChevronRight,
   Play,
   Pause,
 } from 'lucide-react';
@@ -63,45 +62,31 @@ export const Header: React.FC = () => {
     : state.profile.fullName;
 
   return (
-    <header className="sticky top-0 z-20 shrink-0 bg-[#242629]/82 backdrop-blur-xl border-b border-line pt-[env(safe-area-inset-top)] select-none glass-specular-rim">
-      <div className="h-[52px] md:h-[60px] px-3 sm:px-4 md:px-7 flex items-center justify-between gap-2 min-w-0">
-        {/* Left: Mobile Brand Mark + Title / Desktop Breadcrumb */}
-        <div className="flex items-center gap-2 sm:gap-2.5 min-w-0 shrink">
+    <header className="shrink-0 bg-[#242629]/90 backdrop-blur-xl border-b border-line pt-[env(safe-area-inset-top)] select-none">
+      <div className="h-14 px-3 sm:px-6 md:px-8 flex items-center justify-between gap-2 min-w-0">
+        {/* Left: Mobile Brand Mark + Single-Line View Title */}
+        <div className="flex items-center gap-2.5 min-w-0 flex-1">
           <img
             src="/brand-logo.png"
             alt="MOMENTUM"
             className="md:hidden w-7 h-7 rounded-lg object-contain shrink-0"
           />
           <AnimatePresence mode="wait" initial={false}>
-            <motion.div
+            <motion.h1
               key={currentView}
-              initial={prefersReduced ? { opacity: 1 } : { opacity: 0, y: 4 }}
+              initial={prefersReduced ? { opacity: 1 } : { opacity: 0, y: 3 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={prefersReduced ? { opacity: 1 } : { opacity: 0, y: -3 }}
+              exit={prefersReduced ? { opacity: 1 } : { opacity: 0, y: -2 }}
               transition={{ duration: prefersReduced ? 0.01 : 0.14, ease: MOMENTUM_EASE }}
-              className="flex flex-col min-w-0"
+              className="text-sm sm:text-[15px] font-semibold text-ink tracking-tight truncate font-heading"
             >
-              <div className="hidden md:flex items-center gap-1.5 text-[11px] text-ink-muted">
-                <span className="font-mono font-semibold text-ink-muted">MOMENTUM</span>
-                <ChevronRight className="w-3 h-3 text-ink-muted/60" />
-                <span className="font-semibold text-stone capitalize">
-                  {currentMeta.title}
-                </span>
-              </div>
-              <div className="flex items-baseline gap-2 min-w-0">
-                <h1 className="text-[15px] sm:text-base md:text-lg font-bold text-ink tracking-tight truncate font-heading">
-                  {currentMeta.title}
-                </h1>
-                <span className="hidden lg:inline-block text-xs font-normal text-ink-muted truncate">
-                  · {currentMeta.subtitle}
-                </span>
-              </div>
-            </motion.div>
+              {currentMeta.title}
+            </motion.h1>
           </AnimatePresence>
         </div>
 
         {/* Right Controls */}
-        <div className="flex items-center gap-1 sm:gap-1.5 md:gap-2 min-w-0 overflow-x-auto no-scrollbar py-1 -my-1 shrink-0 max-w-[66vw] sm:max-w-none">
+        <div className="flex items-center gap-1 sm:gap-2 shrink-0">
           {/* Global Focus Timer */}
           <AnimatePresence mode="wait" initial={false}>
             {focusTimer.isActive ? (
@@ -148,55 +133,52 @@ export const Header: React.FC = () => {
                 exit={prefersReduced ? { opacity: 0 } : { opacity: 0, scale: 0.95 }}
                 transition={{ duration: prefersReduced ? 0.01 : 0.14 }}
                 onClick={() => setIsFocusTimerOpen(true)}
-                className="h-[30px] w-[30px] min-[360px]:h-8 min-[360px]:w-8 sm:w-auto sm:px-2.5 rounded-[10px] sm:rounded-xl glass-control text-ink text-xs font-medium btn-press flex items-center justify-center gap-1.5 whitespace-nowrap shrink-0"
-                title="Focus Timer"
-                aria-label="Open Focus Timer"
-              >
-                <Timer className="w-3.5 h-3.5 text-stone" />
-                <span className="hidden sm:inline">Focus</span>
-              </motion.button>
-            )}
-          </AnimatePresence>
+            className="h-8 w-8 sm:h-9 sm:w-auto sm:px-2.5 rounded-xl glass-control text-ink text-xs font-medium btn-press flex items-center justify-center gap-1.5 whitespace-nowrap shrink-0"
+            title="Focus Timer"
+            aria-label="Open Focus Timer"
+          >
+            <Timer className="w-4 h-4 text-ink-muted" />
+            <span className="hidden sm:inline">Focus</span>
+          </motion.button>
+        )}
+      </AnimatePresence>
 
           {/* Global Search Button */}
           <button
             type="button"
             onClick={() => setIsSearchOpen(true)}
-            className="h-[30px] w-[30px] min-[360px]:h-8 min-[360px]:w-8 md:w-auto md:px-3 rounded-[10px] md:rounded-xl glass-control text-ink-muted hover:text-ink text-xs font-medium btn-press flex items-center justify-center gap-2 whitespace-nowrap shrink-0"
+            className="h-8 w-8 sm:h-9 sm:w-9 md:w-auto md:px-3 rounded-xl glass-control text-ink-muted hover:text-ink text-xs font-medium btn-press flex items-center justify-center gap-2 whitespace-nowrap shrink-0"
             title="Search anything (Cmd+K)"
             aria-label="Search workspace"
           >
-            <Search className="w-3.5 h-3.5 text-ink" />
-            <span className="hidden md:inline">Search...</span>
-            <kbd className="hidden md:inline-block px-1.5 py-0.2 text-[10px] font-mono rounded bg-canvas/80 text-ink-muted border border-line">
+            <Search className="w-4 h-4 text-ink" />
+            <span className="hidden md:inline">Search</span>
+            <span className="hidden lg:inline text-[11px] font-mono text-ink-muted/75">
               ⌘K
-            </kbd>
+            </span>
           </button>
 
           {/* Quick Add Button */}
           <button
             type="button"
             onClick={() => setIsQuickAddOpen(true)}
-            className="h-[30px] w-[30px] min-[360px]:h-8 min-[360px]:w-8 sm:w-auto sm:px-2.5 rounded-[10px] sm:rounded-xl bg-accent hover:bg-accent-hover text-accent-ink text-xs font-bold btn-press group flex items-center justify-center gap-1.5 whitespace-nowrap shrink-0"
+            className="h-8 w-8 sm:h-9 sm:w-auto sm:px-3 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink text-xs font-semibold btn-press group flex items-center justify-center gap-1.5 whitespace-nowrap shrink-0"
             title="Quick Add (Cmd+N)"
             aria-label="Quick add item"
           >
-            <Plus className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[2.5] transition-transform duration-150 group-hover:rotate-90" />
+            <Plus className="w-4 h-4 stroke-[2.25]" />
             <span className="hidden sm:inline">Add</span>
-            <kbd className="hidden lg:inline-block px-1 py-0.2 text-[9px] font-mono rounded bg-black/15 text-accent-ink">
-              ⌘N
-            </kbd>
           </button>
 
           {/* Notification Bell */}
           <button
             type="button"
             onClick={() => setIsNotificationsOpen(true)}
-            className="h-[30px] w-[30px] min-[360px]:h-8 min-[360px]:w-8 rounded-[10px] sm:rounded-xl glass-control text-ink relative btn-press group flex items-center justify-center shrink-0"
+            className="h-8 w-8 sm:h-9 sm:w-9 rounded-xl glass-control text-ink relative btn-press group flex items-center justify-center shrink-0"
             aria-label="Notifications"
             title="Notifications"
           >
-            <Bell className="w-3.5 h-3.5 sm:w-4 sm:h-4 transition-transform duration-150 group-hover:scale-105" />
+            <Bell className="w-4 h-4 transition-transform duration-150 group-hover:scale-105" />
             <AnimatePresence>
               {unreadNotificationsCount > 0 && (
                 <motion.span
@@ -216,7 +198,7 @@ export const Header: React.FC = () => {
           <button
             type="button"
             onClick={() => setIsAuthModalOpen(true)}
-            className="h-[30px] w-[30px] min-[360px]:h-8 min-[360px]:w-8 rounded-full glass-control border-[1.5px] border-stone/70 flex items-center justify-center text-[11px] sm:text-xs font-bold text-ink hover:border-accent btn-press shrink-0"
+            className="h-8 w-8 sm:h-9 sm:w-9 rounded-full glass-control border border-line-strong flex items-center justify-center text-xs font-semibold text-ink hover:border-accent btn-press shrink-0"
             title="Account profile"
             aria-label="Open account profile"
           >

@@ -107,7 +107,7 @@ export const AnalyticsView: React.FC = () => {
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-16">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 rounded-2xl bg-surface border border-line">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-2">
         <div className="space-y-1">
           <h1 className="text-xl md:text-2xl font-bold text-ink tracking-tight">
             Personal Analytics & Trajectory
@@ -118,7 +118,7 @@ export const AnalyticsView: React.FC = () => {
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
-          <div className="flex bg-canvas p-1 rounded-xl border border-line text-xs">
+          <div className="flex bg-surface p-1 rounded-xl border border-line text-xs">
             {(['7d', '30d', '90d'] as const).map(range => {
               const isActive = dateRange === range;
               return (
@@ -147,19 +147,19 @@ export const AnalyticsView: React.FC = () => {
             <button
               type="button"
               onClick={handleExportTasks}
-              className="btn-press flex items-center gap-1.5 px-3 py-2 rounded-xl bg-canvas hover:bg-surface-warm text-xs font-medium text-ink border border-line transition-colors whitespace-nowrap"
+              className="btn-press flex items-center gap-1.5 px-3 py-2 rounded-xl bg-surface hover:bg-surface-warm text-xs font-medium text-ink border border-line transition-colors whitespace-nowrap"
               title="Export tasks to CSV"
             >
-              <Download className="w-3.5 h-3.5 text-accent" />
+              <Download className="w-3.5 h-3.5 text-ink-muted" />
               <span className="hidden sm:inline">Tasks CSV</span>
             </button>
             <button
               type="button"
               onClick={handleExportGoals}
-              className="btn-press flex items-center gap-1.5 px-3 py-2 rounded-xl bg-canvas hover:bg-surface-warm text-xs font-medium text-ink border border-line transition-colors whitespace-nowrap"
+              className="btn-press flex items-center gap-1.5 px-3 py-2 rounded-xl bg-surface hover:bg-surface-warm text-xs font-medium text-ink border border-line transition-colors whitespace-nowrap"
               title="Export goals to CSV"
             >
-              <Download className="w-3.5 h-3.5 text-accent" />
+              <Download className="w-3.5 h-3.5 text-ink-muted" />
               <span className="hidden sm:inline">Goals CSV</span>
             </button>
           </div>
@@ -169,7 +169,7 @@ export const AnalyticsView: React.FC = () => {
       {/* KPI 4-Card Overview */}
       <StaggerContainer className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <StaggerItem className="card-hover p-5 rounded-2xl bg-surface border border-line">
-          <span className="text-[10px] font-mono uppercase tracking-wider text-ink-muted">Task Execution Rate</span>
+          <span className="text-xs font-medium text-ink-muted">Task Execution Rate</span>
           <div className="my-2 flex items-baseline gap-2">
             <span className="font-mono text-3xl font-bold text-ink tabular-nums">
               <AnimatedNumber value={taskCompletionRate} formatter={v => `${Math.round(v)}%`} />
@@ -186,7 +186,7 @@ export const AnalyticsView: React.FC = () => {
         </StaggerItem>
 
         <StaggerItem className="card-hover p-5 rounded-2xl bg-surface border border-line">
-          <span className="text-[10px] font-mono uppercase tracking-wider text-ink-muted">Recorded Deep Work</span>
+          <span className="text-xs font-medium text-ink-muted">Recorded Deep Work</span>
           <div className="my-2 flex items-baseline gap-2">
             <span className="font-mono text-3xl font-bold text-accent tabular-nums">
               <AnimatedNumber value={totalFocusMinutes} formatter={v => formatMinutes(Math.round(v))} />
@@ -198,7 +198,7 @@ export const AnalyticsView: React.FC = () => {
         </StaggerItem>
 
         <StaggerItem className="card-hover p-5 rounded-2xl bg-surface border border-line">
-          <span className="text-[10px] font-mono uppercase tracking-wider text-ink-muted">Milestone Completion</span>
+          <span className="text-xs font-medium text-ink-muted">Milestone Completion</span>
           <div className="my-2 flex items-baseline gap-2">
             <span className="font-mono text-3xl font-bold text-ink tabular-nums">
               <AnimatedNumber
@@ -218,7 +218,7 @@ export const AnalyticsView: React.FC = () => {
         </StaggerItem>
 
         <StaggerItem className="card-hover p-5 rounded-2xl bg-surface border border-line">
-          <span className="text-[10px] font-mono uppercase tracking-wider text-ink-muted">Training Volume</span>
+          <span className="text-xs font-medium text-ink-muted">Training Volume</span>
           <div className="my-2 flex items-baseline gap-2">
             <span className="font-mono text-3xl font-bold text-ink tabular-nums">
               <AnimatedNumber value={totalVolumeKg} formatter={v => Math.round(v).toLocaleString()} />
@@ -233,8 +233,8 @@ export const AnalyticsView: React.FC = () => {
       <div className="p-6 rounded-2xl bg-surface border border-line space-y-4">
         <div className="flex items-center justify-between pb-3 border-b border-line">
           <div className="flex items-center gap-2">
-            <BarChart3 className="w-4 h-4 text-stone" />
-            <h3 className="text-sm font-bold uppercase tracking-wider text-ink">
+            <BarChart3 className="w-4 h-4 text-ink-muted" />
+            <h3 className="text-sm font-semibold text-ink">
               Invested Effort Across Domains ({dateRange} window)
             </h3>
           </div>
@@ -275,7 +275,7 @@ export const AnalyticsView: React.FC = () => {
         >
           <div className="flex items-center gap-2 pb-3 border-b border-line">
             <Clock className="w-4 h-4 text-accent" />
-            <h3 className="text-sm font-bold uppercase tracking-wider text-ink">
+            <h3 className="text-sm font-semibold text-ink">
               Productivity & Focus Trends
             </h3>
           </div>
@@ -307,8 +307,8 @@ export const AnalyticsView: React.FC = () => {
           className="card-hover p-6 rounded-2xl bg-surface border border-line space-y-4"
         >
           <div className="flex items-center gap-2 pb-3 border-b border-line">
-            <BookOpen className="w-4 h-4 text-stone" />
-            <h3 className="text-sm font-bold uppercase tracking-wider text-ink">
+            <BookOpen className="w-4 h-4 text-ink-muted" />
+            <h3 className="text-sm font-semibold text-ink">
               Knowledge & Course Progress
             </h3>
           </div>

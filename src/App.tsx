@@ -30,7 +30,7 @@ import { PageTransition } from './components/common/MotionPrimitives';
 import { ToastContainer } from './components/common/ToastContainer';
 
 const MainContent: React.FC = () => {
-  const { currentView } = useApp();
+  const { currentView, setCurrentView } = useApp();
   const mainRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -79,34 +79,53 @@ const MainContent: React.FC = () => {
       {/* Animated Liquid Glass Intro Splash (session-gated, bypassed with ?autostart=1) */}
       <IntroSplash />
 
-      {/* Desktop Translucent Liquid Glass Sidebar */}
+      {/* Desktop / Tablet Sidebar */}
       <Sidebar />
 
-      {/* Main App Canvas with Floating Liquid Glass Header & Scroll-Under Layer */}
-      <div className="relative flex-1 min-w-0 h-full overflow-hidden bg-canvas">
-        {/* Ultra-subtle atmospheric radial light strictly using official blue & beige */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 z-0"
-          style={{
-            background:
-              'radial-gradient(ellipse 65% 45% at 15% 0%, rgba(158, 204, 253, 0.045) 0%, transparent 70%), radial-gradient(ellipse 55% 45% at 88% 8%, rgba(210, 146, 91, 0.04) 0%, transparent 70%)',
-          }}
-        />
-
-        {/* Floating Liquid Glass Top Toolbar */}
+      {/* Main App Canvas */}
+      <div className="relative flex-1 min-w-0 h-full flex flex-col overflow-hidden bg-canvas">
+        {/* Minimal Top Bar */}
         <Header />
 
-        {/* Full-Height Scrollable Content Layer gliding behind floating glass controls */}
+        {/* Scrollable Content Viewport */}
         <main
           ref={mainRef}
-          className="relative z-10 h-full w-full overflow-y-auto px-3.5 sm:px-5 md:px-7 pt-[calc(5.15rem+env(safe-area-inset-top))] md:pt-[5.75rem] pb-[calc(6.75rem+env(safe-area-inset-bottom))] md:pb-10"
+          className="relative z-10 flex-1 min-h-0 w-full overflow-y-auto flex flex-col px-4 sm:px-6 md:px-8 pt-6 md:pt-8 pb-[calc(4.75rem+env(safe-area-inset-bottom))] md:pb-8"
         >
-          <AnimatePresence mode="wait" initial={false}>
-            <PageTransition viewKey={currentView}>
-              {renderCurrentView()}
-            </PageTransition>
-          </AnimatePresence>
+          <div className="flex-1">
+            <AnimatePresence mode="wait" initial={false}>
+              <PageTransition viewKey={currentView}>
+                {renderCurrentView()}
+              </PageTransition>
+            </AnimatePresence>
+          </div>
+
+          <footer className="hidden md:flex flex-wrap w-full max-w-7xl mx-auto mt-10 pt-5 border-t border-line items-center justify-between gap-x-6 gap-y-2 text-xs text-ink-muted shrink-0">
+            <span>MOMENTUM · Personal Workspace</span>
+            <nav aria-label="Footer quick links" className="flex flex-wrap items-center gap-x-5 gap-y-1">
+              {(
+                [
+                  { id: 'overview', label: 'Overview' },
+                  { id: 'today', label: 'Today' },
+                  { id: 'tasks', label: 'Tasks' },
+                  { id: 'calendar', label: 'Calendar' },
+                  { id: 'finance', label: 'Finance' },
+                  { id: 'settings', label: 'Settings' },
+                ] as const
+              ).map(link => (
+                <button
+                  key={link.id}
+                  type="button"
+                  onClick={() => setCurrentView(link.id)}
+                  className={`transition-colors whitespace-nowrap hover:text-ink ${
+                    currentView === link.id ? 'text-stone font-medium' : ''
+                  }`}
+                >
+                  {link.label}
+                </button>
+              ))}
+            </nav>
+          </footer>
         </main>
       </div>
 

@@ -1,11 +1,8 @@
 import React, { useState } from 'react';
 import {
-  CheckCircle2,
   Clock,
   Target,
-  Sparkles,
   Timer,
-  TrendingUp,
   Plus,
   Flame,
   ChevronRight,
@@ -126,208 +123,173 @@ export const OverviewView: React.FC = () => {
   });
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto pb-8">
-      {/* Welcome Hero Banner */}
-      <section className="relative overflow-hidden rounded-2xl bg-surface border border-line p-5 sm:p-7 shadow-sm">
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-5">
-          <div className="space-y-1.5 min-w-0">
-            <p className="text-xs font-mono tracking-wide text-stone tabular-nums">
-              {new Date().toLocaleDateString(undefined, {
-                weekday: 'long',
-                month: 'long',
-                day: 'numeric',
-                year: 'numeric',
-              })}
-            </p>
-            <h1 className="text-2xl sm:text-3xl font-bold text-ink tracking-tight text-balance">
-              {getGreeting()}, {state.profile.fullName.split(' ')[0]}.
-            </h1>
-            <p className="text-sm text-ink-muted max-w-xl leading-relaxed">
-              &ldquo;Don&apos;t just track what you do. Track who you&apos;re becoming.&rdquo; Focus on your 3 core priorities today.
-            </p>
-          </div>
+    <div className="space-y-7 max-w-7xl mx-auto">
+      {/* Unboxed Canvas Greeting & Actions */}
+      <section className="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-1">
+        <div className="space-y-1 min-w-0">
+          <p className="text-xs text-ink-muted tabular-nums">
+            {new Date().toLocaleDateString(undefined, {
+              weekday: 'long',
+              month: 'long',
+              day: 'numeric',
+            })}
+          </p>
+          <h2 className="text-2xl sm:text-3xl font-semibold text-ink tracking-tight text-balance">
+            {getGreeting()}, {state.profile.fullName.split(' ')[0]}.
+          </h2>
+        </div>
 
-          {/* Quick Action Buttons */}
-          <div className="flex flex-wrap items-center gap-2 shrink-0">
+        {/* Quick Action Buttons */}
+        <div className="flex flex-wrap items-center gap-2 shrink-0">
+          <button
+            type="button"
+            onClick={() => setIsQuickAddOpen(true)}
+            className="btn-press group flex items-center gap-1.5 px-4 py-2 min-h-[40px] sm:min-h-0 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink text-xs font-semibold whitespace-nowrap shrink-0"
+          >
+            <Plus className="w-4 h-4 stroke-[2.25]" />
+            <span>Add Task</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setIsFocusTimerOpen(true)}
+            className="btn-press flex items-center gap-1.5 px-3.5 py-2 min-h-[40px] sm:min-h-0 rounded-xl bg-surface hover:bg-surface-warm border border-line text-ink text-xs font-medium whitespace-nowrap shrink-0"
+          >
+            <Timer className="w-3.5 h-3.5 text-stone" />
+            <span>Focus Timer</span>
+          </button>
+          <div className="relative">
             <button
               type="button"
-              onClick={() => setIsQuickAddOpen(true)}
-              className="btn-press group flex items-center gap-1.5 px-4 py-2.5 min-h-[44px] sm:min-h-0 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink text-xs font-semibold shadow-sm whitespace-nowrap shrink-0"
+              onClick={() => setShowSettingsPopover(!showSettingsPopover)}
+              className="btn-press flex items-center justify-center w-9 h-9 rounded-xl bg-surface hover:bg-surface-warm border border-line text-ink-muted hover:text-ink transition-colors"
+              title="Configure Dashboard Widgets"
+              aria-label="Configure dashboard widgets"
+              aria-expanded={showSettingsPopover}
             >
-              <Plus className="w-4 h-4 stroke-[2.25] transition-transform duration-200 group-hover:rotate-90" />
-              <span>Add Task</span>
+              <Settings2 className="w-4 h-4" />
             </button>
-            <button
-              type="button"
-              onClick={() => setIsFocusTimerOpen(true)}
-              className="btn-press flex items-center gap-1.5 px-3.5 py-2.5 min-h-[44px] sm:min-h-0 rounded-xl bg-stone hover:bg-stone-hover text-stone-ink text-xs font-semibold whitespace-nowrap shrink-0"
-            >
-              <Timer className="w-4 h-4 text-stone-ink" />
-              <span>Focus Timer</span>
-            </button>
-            <div className="relative">
-              <button
-                type="button"
-                onClick={() => setShowSettingsPopover(!showSettingsPopover)}
-                className="btn-press flex items-center justify-center w-10 h-10 min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0 sm:w-9 sm:h-9 rounded-xl glass-control text-ink transition-colors"
-                title="Configure Dashboard Widgets"
-                aria-label="Configure dashboard widgets"
-                aria-expanded={showSettingsPopover}
-              >
-                <Settings2 className="w-4 h-4 text-stone" />
-              </button>
-              <AnimatePresence>
-                {showSettingsPopover && (
-                  <motion.div
-                    initial={prefersReduced ? { opacity: 1 } : { opacity: 0, scale: 0.95, y: -4 }}
-                    animate={{ opacity: 1, scale: 1, y: 0 }}
-                    exit={prefersReduced ? { opacity: 0 } : { opacity: 0, scale: 0.96, y: -4 }}
-                    transition={{ duration: prefersReduced ? 0.01 : 0.15, ease: MOMENTUM_EASE }}
-                    className="absolute right-0 mt-2 w-52 glass-elevated rounded-xl p-3 z-30 space-y-2 text-xs origin-top-right"
-                  >
-                    <span className="font-semibold text-ink block border-b border-line pb-1.5">
-                      Toggle Widgets
-                    </span>
-                    <label className="flex items-center gap-2 text-ink-muted hover:text-ink transition-colors cursor-pointer py-1">
-                      <input
-                        type="checkbox"
-                        checked={showWeeklyChart}
-                        onChange={e => setShowWeeklyChart(e.target.checked)}
-                        className="rounded accent-accent"
-                      />
-                      Weekly Activity
-                    </label>
-                    <label className="flex items-center gap-2 text-ink-muted hover:text-ink transition-colors cursor-pointer py-1">
-                      <input
-                        type="checkbox"
-                        checked={showGoalsWidget}
-                        onChange={e => setShowGoalsWidget(e.target.checked)}
-                        className="rounded accent-accent"
-                      />
-                      Active Goals
-                    </label>
-                    <label className="flex items-center gap-2 text-ink-muted hover:text-ink transition-colors cursor-pointer py-1">
-                      <input
-                        type="checkbox"
-                        checked={showHabitsWidget}
-                        onChange={e => setShowHabitsWidget(e.target.checked)}
-                        className="rounded accent-accent"
-                      />
-                      Daily Habits
-                    </label>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
+            <AnimatePresence>
+              {showSettingsPopover && (
+                <motion.div
+                  initial={prefersReduced ? { opacity: 1 } : { opacity: 0, scale: 0.95, y: -4 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={prefersReduced ? { opacity: 0 } : { opacity: 0, scale: 0.96, y: -4 }}
+                  transition={{ duration: prefersReduced ? 0.01 : 0.15, ease: MOMENTUM_EASE }}
+                  className="absolute right-0 mt-2 w-52 glass-elevated rounded-xl p-3 z-30 space-y-2 text-xs origin-top-right"
+                >
+                  <span className="font-semibold text-ink block border-b border-line pb-1.5">
+                    Widgets
+                  </span>
+                  <label className="flex items-center gap-2 text-ink-muted hover:text-ink transition-colors cursor-pointer py-1">
+                    <input
+                      type="checkbox"
+                      checked={showWeeklyChart}
+                      onChange={e => setShowWeeklyChart(e.target.checked)}
+                      className="rounded accent-accent"
+                    />
+                    Weekly Activity
+                  </label>
+                  <label className="flex items-center gap-2 text-ink-muted hover:text-ink transition-colors cursor-pointer py-1">
+                    <input
+                      type="checkbox"
+                      checked={showGoalsWidget}
+                      onChange={e => setShowGoalsWidget(e.target.checked)}
+                      className="rounded accent-accent"
+                    />
+                    Active Goals
+                  </label>
+                  <label className="flex items-center gap-2 text-ink-muted hover:text-ink transition-colors cursor-pointer py-1">
+                    <input
+                      type="checkbox"
+                      checked={showHabitsWidget}
+                      onChange={e => setShowHabitsWidget(e.target.checked)}
+                      className="rounded accent-accent"
+                    />
+                    Daily Habits
+                  </label>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
       </section>
 
-      {/* Progress KPI Row */}
+      {/* Clean Minimal KPI Row */}
       <StaggerContainer className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <StaggerItem className="p-4 sm:p-5 rounded-2xl bg-surface border border-line flex flex-col justify-between card-hover">
-          <div className="flex items-center justify-between gap-2">
-            <span className="text-xs font-medium text-ink-muted">Daily Progress</span>
-            <div className="p-1.5 rounded-lg bg-accent/15 text-accent">
-              <TrendingUp className="w-4 h-4" />
-            </div>
-          </div>
-          <div className="my-3 flex items-baseline gap-2">
+          <span className="text-xs font-medium text-ink-muted">Daily Progress</span>
+          <div className="my-2.5 flex items-baseline gap-2">
             <AnimatedNumber
               value={dailyScore.overallPercentage}
               formatter={v => `${v}%`}
-              className="font-mono text-2xl sm:text-3xl font-bold text-ink tabular-nums"
+              className="font-mono text-2xl sm:text-3xl font-semibold text-ink tabular-nums"
             />
-            <span className="text-xs text-ink-muted">score</span>
           </div>
           <AnimatedProgressBar
             percentage={dailyScore.overallPercentage}
-            trackClassName="w-full bg-surface-inset h-1.5 rounded-full overflow-hidden"
+            trackClassName="w-full bg-surface-inset h-1 rounded-full overflow-hidden"
             fillClassName="bg-accent h-full rounded-full"
           />
         </StaggerItem>
 
         <StaggerItem className="p-4 sm:p-5 rounded-2xl bg-surface border border-line flex flex-col justify-between card-hover">
-          <div className="flex items-center justify-between gap-2">
-            <span className="text-xs font-medium text-ink-muted">Tasks Completed</span>
-            <div className="p-1.5 rounded-lg bg-success/15 text-success">
-              <CheckCircle2 className="w-4 h-4" />
-            </div>
-          </div>
-          <div className="my-3 flex items-baseline gap-2">
+          <span className="text-xs font-medium text-ink-muted">Tasks Completed</span>
+          <div className="my-2.5 flex items-baseline gap-2">
             <AnimatedNumber
               value={tasksCompleted}
-              className="font-mono text-2xl sm:text-3xl font-bold text-ink tabular-nums"
+              className="font-mono text-2xl sm:text-3xl font-semibold text-ink tabular-nums"
             />
-            <span className="text-xs text-ink-muted tabular-nums">/ {todayTasks.length} planned</span>
+            <span className="text-xs text-ink-muted tabular-nums">/ {todayTasks.length}</span>
           </div>
           <div className="text-xs text-ink-muted">
-            {tasksRemaining === 0 ? 'All scheduled tasks done' : `${tasksRemaining} remaining today`}
+            {tasksRemaining === 0 ? 'All done' : `${tasksRemaining} remaining`}
           </div>
         </StaggerItem>
 
         <StaggerItem className="p-4 sm:p-5 rounded-2xl bg-surface border border-line flex flex-col justify-between card-hover">
-          <div className="flex items-center justify-between gap-2">
-            <span className="text-xs font-medium text-ink-muted">Habits Checked</span>
-            <div className="p-1.5 rounded-lg bg-sage/20 text-sage">
-              <Sparkles className="w-4 h-4" />
-            </div>
-          </div>
-          <div className="my-3 flex items-baseline gap-2">
+          <span className="text-xs font-medium text-ink-muted">Habits Checked</span>
+          <div className="my-2.5 flex items-baseline gap-2">
             <AnimatedNumber
               value={habitsCompletedToday}
-              className="font-mono text-2xl sm:text-3xl font-bold text-ink tabular-nums"
+              className="font-mono text-2xl sm:text-3xl font-semibold text-ink tabular-nums"
             />
-            <span className="text-xs text-ink-muted tabular-nums">/ {activeHabits.length} habits</span>
+            <span className="text-xs text-ink-muted tabular-nums">/ {activeHabits.length}</span>
           </div>
           <div className="text-xs text-ink-muted tabular-nums">
-            {Math.round((habitsCompletedToday / (activeHabits.length || 1)) * 100)}% consistency today
+            {Math.round((habitsCompletedToday / (activeHabits.length || 1)) * 100)}% today
           </div>
         </StaggerItem>
 
         <StaggerItem className="p-4 sm:p-5 rounded-2xl bg-surface border border-line flex flex-col justify-between card-hover">
-          <div className="flex items-center justify-between gap-2">
-            <span className="text-xs font-medium text-ink-muted">Focus Time</span>
-            <div className="p-1.5 rounded-lg bg-stone/15 text-stone">
-              <Timer className="w-4 h-4" />
-            </div>
-          </div>
-          <div className="my-3 flex items-baseline gap-2">
+          <span className="text-xs font-medium text-ink-muted">Focus Time</span>
+          <div className="my-2.5 flex items-baseline gap-2">
             <AnimatedNumber
               value={todayFocusMinutes}
               formatter={formatMinutes}
-              className="font-mono text-2xl sm:text-3xl font-bold text-ink tabular-nums"
+              className="font-mono text-2xl sm:text-3xl font-semibold text-ink tabular-nums"
             />
           </div>
           <div className="text-xs text-ink-muted tabular-nums">
-            {state.focusSessions.filter(s => s.startTime.startsWith(todayStr)).length} deep work sessions
+            {state.focusSessions.filter(s => s.startTime.startsWith(todayStr)).length} sessions today
           </div>
         </StaggerItem>
       </StaggerContainer>
 
       {/* Main Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6">
         {/* Left Column (7 cols): Core Priorities & Weekly Rhythm */}
-        <div className="lg:col-span-7 space-y-6">
+        <div className="lg:col-span-7 space-y-5 sm:space-y-6">
           <section className="p-5 sm:p-6 rounded-2xl bg-surface border border-line space-y-4">
             <div className="flex items-center justify-between gap-3">
-              <div className="flex items-center gap-2.5">
-                <div className="p-1.5 rounded-lg bg-accent/15 text-accent">
-                  <Flame className="w-4 h-4" />
-                </div>
-                <div>
-                  <h2 className="text-sm font-semibold text-ink">
-                    Today&apos;s Core Priorities
-                  </h2>
-                  <p className="text-xs text-ink-muted">Rule of 3 daily anchors</p>
-                </div>
-              </div>
+              <h2 className="text-sm font-semibold text-ink">
+                Today&apos;s Core Priorities
+              </h2>
               <button
                 type="button"
                 onClick={() => setCurrentView('today')}
-                className="text-xs text-stone font-medium hover:underline flex items-center gap-1 whitespace-nowrap shrink-0 min-h-[36px]"
+                className="text-xs text-stone font-medium hover:underline flex items-center gap-1 whitespace-nowrap shrink-0"
               >
-                <span>Manage Today</span>
+                <span>Manage</span>
                 <ChevronRight className="w-3.5 h-3.5" />
               </button>
             </div>
@@ -499,7 +461,7 @@ export const OverviewView: React.FC = () => {
         </div>
 
         {/* Right Column (5 cols): Active Goals, Habits, Projects */}
-        <div className="lg:col-span-5 space-y-6">
+        <div className="lg:col-span-5 space-y-5 sm:space-y-6">
           <AnimatePresence>
             {showGoalsWidget && (
               <motion.section
@@ -507,13 +469,10 @@ export const OverviewView: React.FC = () => {
                 animate={{ opacity: 1, y: 0 }}
                 exit={prefersReduced ? { opacity: 0 } : { opacity: 0, y: -4 }}
                 transition={{ duration: prefersReduced ? 0.01 : 0.2, ease: MOMENTUM_EASE }}
-                className="p-5 sm:p-6 rounded-2xl bg-surface border border-line space-y-4"
+                className="p-5 sm:p-6 rounded-2xl bg-surface border border-line space-y-3"
               >
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Target className="w-4 h-4 text-accent" />
-                    <h2 className="text-sm font-semibold text-ink">Active Goals</h2>
-                  </div>
+                  <h2 className="text-sm font-semibold text-ink">Active Goals</h2>
                   <button
                     type="button"
                     onClick={() => setCurrentView('goals')}
@@ -526,7 +485,7 @@ export const OverviewView: React.FC = () => {
                 {activeGoals.length === 0 ? (
                   <p className="text-xs text-ink-muted py-4 text-center">No active goals set.</p>
                 ) : (
-                  <div className="space-y-3">
+                  <div className="divide-y divide-line border-t border-line">
                     {activeGoals.map(goal => {
                       const progress = calculateGoalProgress(goal, state.tasks);
                       return (
@@ -537,10 +496,10 @@ export const OverviewView: React.FC = () => {
                             setSelectedGoalId(goal.id);
                             setCurrentView('goals');
                           }}
-                          className="w-full text-left p-3.5 rounded-xl bg-surface-warm/60 hover:bg-surface-warm border border-line transition-colors space-y-2 group"
+                          className="w-full text-left py-3 first:pt-3.5 last:pb-1 transition-colors space-y-2 group"
                         >
                           <div className="flex items-start justify-between gap-2">
-                            <span className="text-xs font-semibold text-ink group-hover:text-accent truncate transition-colors">
+                            <span className="text-xs font-medium text-ink group-hover:text-accent truncate transition-colors">
                               {goal.title}
                             </span>
                             <span className="text-xs font-mono font-semibold text-accent shrink-0 tabular-nums">
@@ -549,7 +508,7 @@ export const OverviewView: React.FC = () => {
                           </div>
                           <AnimatedProgressBar
                             percentage={progress}
-                            trackClassName="w-full bg-surface-inset h-1.5 rounded-full overflow-hidden"
+                            trackClassName="w-full bg-surface-inset h-1 rounded-full overflow-hidden"
                             fillClassName="bg-accent h-full rounded-full"
                           />
                           <div className="flex items-center justify-between text-[11px] text-ink-muted">
@@ -572,13 +531,10 @@ export const OverviewView: React.FC = () => {
                 animate={{ opacity: 1, y: 0 }}
                 exit={prefersReduced ? { opacity: 0 } : { opacity: 0, y: -4 }}
                 transition={{ duration: prefersReduced ? 0.01 : 0.2, ease: MOMENTUM_EASE }}
-                className="p-5 sm:p-6 rounded-2xl bg-surface border border-line space-y-4"
+                className="p-5 sm:p-6 rounded-2xl bg-surface border border-line space-y-3"
               >
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Sparkles className="w-4 h-4 text-sage" />
-                    <h2 className="text-sm font-semibold text-ink">Daily Habits</h2>
-                  </div>
+                  <h2 className="text-sm font-semibold text-ink">Daily Habits</h2>
                   <button
                     type="button"
                     onClick={() => setCurrentView('habits')}
@@ -616,7 +572,7 @@ export const OverviewView: React.FC = () => {
                           </span>
                         </div>
                         <span className="inline-flex items-center gap-1 text-xs font-mono text-ink-muted shrink-0 tabular-nums">
-                          <Flame className="w-3.5 h-3.5 text-accent" />
+                          <Flame className="w-3 h-3 text-accent" />
                           {streak.currentStreak}d
                         </span>
                       </div>
@@ -630,10 +586,7 @@ export const OverviewView: React.FC = () => {
           {activeProjects.length > 0 && (
             <section className="p-5 sm:p-6 rounded-2xl bg-surface border border-line space-y-3">
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <FolderGit2 className="w-4 h-4 text-stone" />
-                  <h2 className="text-sm font-semibold text-ink">Active Projects</h2>
-                </div>
+                <h2 className="text-sm font-semibold text-ink">Active Projects</h2>
                 <button
                   type="button"
                   onClick={() => setCurrentView('projects')}

@@ -526,9 +526,9 @@ export const LearningView: React.FC = () => {
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-8">
-      {/* Header Card */}
-      <div className="p-5 sm:p-6 rounded-2xl bg-surface border border-line space-y-4">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+      {/* Header */}
+      <div className="space-y-4">
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4">
           <div className="space-y-1">
             <h1 className="text-xl md:text-2xl font-bold text-ink tracking-tight">
               Learning Management Center
@@ -539,7 +539,7 @@ export const LearningView: React.FC = () => {
           </div>
 
           <div className="flex flex-wrap items-center gap-2.5 shrink-0">
-            <div className="flex bg-surface-warm p-1 rounded-xl border border-line text-xs relative">
+            <div className="flex bg-surface p-1 rounded-xl border border-line text-xs relative">
               {([
                 { id: 'overview', label: `Modules (${modules.length})` },
                 { id: 'sessions', label: `Study Logs (${studySessions.length})` },
@@ -584,7 +584,7 @@ export const LearningView: React.FC = () => {
         </div>
 
         {dashboardTab === 'overview' && (
-          <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-line">
+          <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="flex flex-wrap items-center gap-1.5">
               {(['all', 'not_started', 'in_progress', 'completed'] as const).map(st => (
                 <button
@@ -594,7 +594,7 @@ export const LearningView: React.FC = () => {
                   className={`px-3 py-1.5 rounded-xl text-xs font-medium border transition-colors whitespace-nowrap ${
                     statusFilter === st
                       ? 'bg-accent text-accent-ink border-accent font-semibold'
-                      : 'bg-canvas text-ink-muted border-line hover:text-ink'
+                      : 'bg-surface text-ink-muted border-line hover:text-ink'
                   }`}
                 >
                   {st === 'all' ? 'All Statuses' : LEARNING_STATUS_META[st].label}
@@ -610,7 +610,7 @@ export const LearningView: React.FC = () => {
                 onChange={e => setSearchQuery(e.target.value)}
                 placeholder="Search modules, lessons, or teachers..."
                 aria-label="Search modules, lessons, or teachers"
-                className="w-full pl-8 pr-3 py-2 rounded-xl bg-canvas border border-line text-xs text-ink placeholder:text-ink-muted focus:ring-2 focus:ring-accent focus:outline-hidden"
+                className="w-full pl-8 pr-3 py-2 rounded-xl bg-surface border border-line text-xs text-ink placeholder:text-ink-muted focus:ring-2 focus:ring-accent focus:outline-hidden"
               />
             </div>
           </div>
@@ -621,7 +621,7 @@ export const LearningView: React.FC = () => {
       <StaggerContainer className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <StaggerItem className="p-4 rounded-2xl bg-surface border border-line card-hover space-y-2">
           <div className="flex items-center justify-between gap-2">
-            <span className="text-[11px] font-mono uppercase text-ink-muted">Overall Progress</span>
+            <span className="text-xs font-medium text-ink-muted">Overall Progress</span>
             <span className="font-mono text-xs font-semibold text-accent tabular-nums">
               {globalStats.overallProgressPct}%
             </span>
@@ -637,7 +637,7 @@ export const LearningView: React.FC = () => {
         </StaggerItem>
 
         <StaggerItem className="p-4 rounded-2xl bg-surface border border-line card-hover">
-          <span className="text-[11px] font-mono uppercase text-ink-muted">Completed Lessons</span>
+          <span className="text-xs font-medium text-ink-muted">Completed Lessons</span>
           <div className="font-mono text-2xl font-bold text-accent tabular-nums mt-1">
             <AnimatedNumber value={globalStats.completedLessons} /> / {globalStats.totalLessons}
           </div>
@@ -647,7 +647,7 @@ export const LearningView: React.FC = () => {
         </StaggerItem>
 
         <StaggerItem className="p-4 rounded-2xl bg-surface border border-line card-hover">
-          <span className="text-[11px] font-mono uppercase text-ink-muted">Pending Assignments</span>
+          <span className="text-xs font-medium text-ink-muted">Pending Assignments</span>
           <div className="font-mono text-2xl font-bold text-ink tabular-nums mt-1">
             <AnimatedNumber value={globalStats.pendingAssignments} />
           </div>
@@ -655,7 +655,7 @@ export const LearningView: React.FC = () => {
         </StaggerItem>
 
         <StaggerItem className="p-4 rounded-2xl bg-surface border border-line card-hover">
-          <span className="text-[11px] font-mono uppercase text-ink-muted">Logged Study Time</span>
+          <span className="text-xs font-medium text-ink-muted">Logged Study Time</span>
           <div className="font-mono text-2xl font-bold text-success tabular-nums mt-1">
             <AnimatedNumber value={globalStats.totalStudyMinutes} formatter={formatMinutes} />
           </div>

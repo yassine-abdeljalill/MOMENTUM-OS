@@ -81,7 +81,7 @@ export const ResourcesView: React.FC = () => {
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-16">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 rounded-2xl bg-surface border border-line">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-2">
         <div className="space-y-1">
           <h1 className="text-xl md:text-2xl font-bold text-ink tracking-tight">
             Reference Vault & Knowledge Library
@@ -94,15 +94,15 @@ export const ResourcesView: React.FC = () => {
         <button
           type="button"
           onClick={() => setShowAddModal(true)}
-          className="btn-press flex items-center gap-1.5 px-4 py-2 min-h-[44px] sm:min-h-0 rounded-xl glass-accent-pill text-xs transition-all whitespace-nowrap shrink-0"
+          className="btn-press flex items-center gap-1.5 px-4 py-2 min-h-[40px] rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs transition-all whitespace-nowrap shrink-0"
         >
-          <Plus className="w-4 h-4 stroke-[2.5]" />
+          <Plus className="w-4 h-4 stroke-[2.25]" />
           <span>Save Resource</span>
         </button>
       </div>
 
       {/* Filter Bar */}
-      <div className="p-4 rounded-2xl bg-surface border border-line flex flex-wrap items-center justify-between gap-3">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="relative flex-1 min-w-[200px]">
           <Search className="w-3.5 h-3.5 text-ink-muted absolute left-3 top-2.5" />
           <input
@@ -110,7 +110,7 @@ export const ResourcesView: React.FC = () => {
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
             placeholder="Search vault references..."
-            className="w-full pl-8 pr-3 py-2 rounded-xl bg-canvas border border-line text-xs text-ink placeholder:text-ink-muted focus:ring-2 focus:ring-accent focus:outline-hidden"
+            className="w-full pl-8 pr-3 py-2 rounded-xl bg-surface border border-line text-xs text-ink placeholder:text-ink-muted focus:ring-2 focus:ring-accent focus:outline-hidden"
           />
         </div>
 
@@ -118,7 +118,7 @@ export const ResourcesView: React.FC = () => {
           <select
             value={typeFilter}
             onChange={e => setTypeFilter(e.target.value)}
-            className="px-2.5 py-2 rounded-xl bg-canvas border border-line text-xs text-ink focus:ring-2 focus:ring-accent focus:outline-hidden"
+            className="px-2.5 py-2 rounded-xl bg-surface border border-line text-xs text-ink focus:ring-2 focus:ring-accent focus:outline-hidden"
             aria-label="Filter by resource type"
           >
             <option value="all">All Types</option>
@@ -132,7 +132,7 @@ export const ResourcesView: React.FC = () => {
           <select
             value={categoryFilter}
             onChange={e => setCategoryFilter(e.target.value)}
-            className="px-2.5 py-2 rounded-xl bg-canvas border border-line text-xs text-ink focus:ring-2 focus:ring-accent focus:outline-hidden"
+            className="px-2.5 py-2 rounded-xl bg-surface border border-line text-xs text-ink focus:ring-2 focus:ring-accent focus:outline-hidden"
             aria-label="Filter by category"
           >
             <option value="all">All Categories</option>
@@ -160,10 +160,8 @@ export const ResourcesView: React.FC = () => {
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <div className="p-1.5 rounded-lg bg-surface-warm border border-line">
-                      {getIcon(res.resourceType)}
-                    </div>
-                    <span className="text-[10px] uppercase font-mono text-accent font-semibold">
+                    {getIcon(res.resourceType)}
+                    <span className="text-xs capitalize text-ink-muted font-medium">
                       {res.resourceType}
                     </span>
                   </div>

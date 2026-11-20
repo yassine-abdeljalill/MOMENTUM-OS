@@ -52,9 +52,9 @@ export const MobileNav: React.FC = () => {
       {/* Fixed 5-Tab Bottom Navigation Bar (Mobile < md) */}
       <nav
         aria-label="Mobile bottom navigation"
-        className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#1E2023]/88 backdrop-blur-xl border-t border-line pb-[env(safe-area-inset-bottom)] select-none glass-specular-rim"
+        className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#1E2023]/92 backdrop-blur-xl border-t border-line pb-[env(safe-area-inset-bottom)] select-none"
       >
-        <div className="grid grid-cols-5 items-stretch h-16 px-1">
+        <div className="grid grid-cols-5 items-stretch h-14 px-1">
           {primaryItems.map(item => {
             const Icon = item.icon;
             const isActive = currentView === item.id && !moreOpen;
@@ -65,34 +65,34 @@ export const MobileNav: React.FC = () => {
                 key={item.id}
                 type="button"
                 onClick={() => handleSelect(item.id)}
-                className="relative flex flex-col items-center justify-center gap-1 h-full min-h-[44px] transition-colors btn-press focus-visible:outline-none"
+                className="relative flex flex-col items-center justify-center gap-0.5 h-full min-h-[44px] transition-colors btn-press focus-visible:outline-none"
                 aria-current={isActive ? 'page' : undefined}
               >
                 {isActive && (
                   <motion.span
                     layoutId="mobile-bottom-active-indicator"
                     transition={{ duration: prefersReduced ? 0.01 : 0.18, ease: MOMENTUM_EASE }}
-                    className="absolute top-0 w-7 h-[2px] rounded-full bg-[#397BFF]"
+                    className="absolute top-0 w-6 h-[2px] rounded-full bg-[#397BFF]"
                   />
                 )}
                 <div className="relative flex items-center justify-center">
                   <Icon
-                    className={`w-[22px] h-[22px] transition-colors ${
-                      isActive ? 'text-[#397BFF]' : 'text-[#D2C4AC]'
+                    className={`w-5 h-5 transition-colors ${
+                      isActive ? 'text-[#397BFF]' : 'text-ink-muted'
                     }`}
-                    strokeWidth={isActive ? 2.15 : 1.75}
+                    strokeWidth={isActive ? 2.1 : 1.75}
                   />
                   {badgeCount !== null && (
-                    <span className="absolute -top-1 -right-2 min-w-[15px] h-[15px] px-1 rounded-full bg-[#397BFF] text-white font-mono text-[9px] font-bold flex items-center justify-center tabular-nums leading-none">
+                    <span className="absolute -top-1 -right-2 min-w-[14px] h-[14px] px-1 rounded-full bg-[#397BFF] text-white font-mono text-[9px] font-bold flex items-center justify-center tabular-nums leading-none">
                       {badgeCount > 9 ? '9+' : badgeCount}
                     </span>
                   )}
                 </div>
                 <span
-                  className={`text-[11px] leading-[13px] tracking-tight whitespace-nowrap transition-colors ${
+                  className={`text-[10.5px] leading-tight tracking-tight whitespace-nowrap transition-colors ${
                     isActive
                       ? 'text-[#397BFF] font-semibold'
-                      : 'text-[#D2C4AC] font-medium'
+                      : 'text-ink-muted font-medium'
                   }`}
                 >
                   {item.shortLabel || item.label}
@@ -105,7 +105,7 @@ export const MobileNav: React.FC = () => {
           <button
             type="button"
             onClick={() => setMoreOpen(prev => !prev)}
-            className="relative flex flex-col items-center justify-center gap-1 h-full min-h-[44px] transition-colors btn-press focus-visible:outline-none"
+            className="relative flex flex-col items-center justify-center gap-0.5 h-full min-h-[44px] transition-colors btn-press focus-visible:outline-none"
             aria-expanded={moreOpen}
             aria-label="Open more modules menu"
           >
@@ -113,20 +113,20 @@ export const MobileNav: React.FC = () => {
               <motion.span
                 layoutId="mobile-bottom-active-indicator"
                 transition={{ duration: prefersReduced ? 0.01 : 0.18, ease: MOMENTUM_EASE }}
-                className="absolute top-0 w-7 h-[2px] rounded-full bg-[#397BFF]"
+                className="absolute top-0 w-6 h-[2px] rounded-full bg-[#397BFF]"
               />
             )}
             <Grid2x2
-              className={`w-[22px] h-[22px] transition-colors ${
-                isMoreActive ? 'text-[#397BFF]' : 'text-[#D2C4AC]'
+              className={`w-5 h-5 transition-colors ${
+                isMoreActive ? 'text-[#397BFF]' : 'text-ink-muted'
               }`}
-              strokeWidth={isMoreActive ? 2.15 : 1.75}
+              strokeWidth={isMoreActive ? 2.1 : 1.75}
             />
             <span
-              className={`text-[11px] leading-[13px] tracking-tight whitespace-nowrap transition-colors ${
+              className={`text-[10.5px] leading-tight tracking-tight whitespace-nowrap transition-colors ${
                 isMoreActive
                   ? 'text-[#397BFF] font-semibold'
-                  : 'text-[#D2C4AC] font-medium'
+                  : 'text-ink-muted font-medium'
               }`}
             >
               More
@@ -166,7 +166,7 @@ export const MobileNav: React.FC = () => {
                     <h2 className="text-sm font-bold text-ink font-heading leading-tight">
                       All Workspaces
                     </h2>
-                    <p className="text-[11px] text-stone">MOMENTUM Life OS</p>
+                    <p className="text-[11px] text-ink-muted">MOMENTUM Life OS</p>
                   </div>
                 </div>
                 <button
@@ -183,9 +183,8 @@ export const MobileNav: React.FC = () => {
               <div className="flex-1 overflow-y-auto p-4 space-y-5">
                 {NAV_GROUPS.map(group => (
                   <div key={group.id} className="space-y-2">
-                    <div className="px-1 flex items-center justify-between text-[10px] font-mono uppercase tracking-[0.14em] text-ink-muted">
-                      <span>{group.label}</span>
-                      <span className="tabular-nums">{group.items.length}</span>
+                    <div className="px-1 text-[11px] font-medium text-ink-muted">
+                      {group.label}
                     </div>
                     <div className="grid grid-cols-3 gap-2">
                       {group.items.map(item => {
@@ -199,12 +198,12 @@ export const MobileNav: React.FC = () => {
                             onClick={() => handleSelect(item.id)}
                             className={`relative flex flex-col items-center justify-center gap-1.5 p-3 rounded-2xl border text-center transition-colors btn-press min-h-[72px] ${
                               active
-                                ? 'bg-accent/15 border-accent text-ink font-bold'
+                                ? 'bg-accent/15 border-accent text-ink font-semibold'
                                 : 'glass-control text-ink font-medium'
                             }`}
                           >
                             {badgeCount !== null && (
-                              <span className="absolute top-2 right-2 px-1.5 py-0.2 rounded-md bg-stone text-stone-ink font-mono text-[9px] font-bold tabular-nums">
+                              <span className="absolute top-2 right-2.5 font-mono text-[10px] font-semibold text-stone tabular-nums">
                                 {badgeCount}
                               </span>
                             )}
@@ -225,7 +224,7 @@ export const MobileNav: React.FC = () => {
 
                 {/* System Actions */}
                 <div className="space-y-2 pt-2 border-t border-line">
-                  <div className="px-1 text-[10px] font-mono uppercase tracking-[0.14em] text-ink-muted">
+                  <div className="px-1 text-[11px] font-medium text-ink-muted">
                     System & Account
                   </div>
                   <button

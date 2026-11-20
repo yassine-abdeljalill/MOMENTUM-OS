@@ -520,15 +520,12 @@ export const FinanceView: React.FC = () => {
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-16">
       {/* Top Finance Command Header */}
-      <div className="p-5 md:p-6 rounded-2xl bg-surface border border-line space-y-4">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+      <div className="space-y-4">
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4">
           <div className="space-y-1">
-            <div className="flex items-center gap-2">
-              <Wallet className="w-5 h-5 text-accent" />
-              <h1 className="text-xl md:text-2xl font-bold text-ink tracking-tight">
-                Finance Management Center
-              </h1>
-            </div>
+            <h1 className="text-xl md:text-2xl font-bold text-ink tracking-tight">
+              Finance Management Center
+            </h1>
             <p className="text-xs text-ink-muted">
               Track cash flow, enforce category budgets, grow savings goals, and manage recurring obligations.
             </p>
@@ -536,13 +533,13 @@ export const FinanceView: React.FC = () => {
 
           <div className="flex flex-wrap items-center gap-2 w-full lg:w-auto">
             {/* Currency Selector */}
-            <div className="flex items-center gap-1.5 bg-canvas px-2.5 py-2 rounded-xl border border-line text-xs shrink-0">
-              <SlidersHorizontal className="w-3.5 h-3.5 text-accent" />
+            <div className="flex items-center gap-1.5 bg-surface px-2.5 py-2 rounded-xl border border-line text-xs shrink-0">
+              <SlidersHorizontal className="w-3.5 h-3.5 text-ink-muted" />
               <select
                 value={currency}
                 onChange={e => handleCurrencyChange(e.target.value as CurrencyCode)}
                 aria-label="Preferred currency"
-                className="bg-transparent font-mono font-bold text-ink focus:outline-hidden cursor-pointer"
+                className="bg-transparent font-mono font-semibold text-ink focus:outline-hidden cursor-pointer"
               >
                 {CURRENCY_OPTIONS.map(opt => (
                   <option key={opt.code} value={opt.code}>
@@ -557,7 +554,7 @@ export const FinanceView: React.FC = () => {
               value={rangePreset}
               onChange={e => setRangePreset(e.target.value as DateRangePreset)}
               aria-label="Date range filter"
-              className="flex-1 sm:flex-initial min-w-[120px] px-3 py-2 rounded-xl bg-canvas border border-line text-xs font-semibold text-ink focus:ring-2 focus:ring-accent focus:outline-hidden"
+              className="flex-1 sm:flex-initial min-w-[120px] px-3 py-2 rounded-xl bg-surface border border-line text-xs font-medium text-ink focus:ring-2 focus:ring-accent focus:outline-hidden"
             >
               <option value="this_month">This Month</option>
               <option value="last_month">Last Month</option>
@@ -571,9 +568,9 @@ export const FinanceView: React.FC = () => {
               type="button"
               onClick={handleExportCsv}
               aria-label="Export transactions to CSV"
-              className="btn-press flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-canvas hover:bg-surface-warm border border-line text-xs font-semibold text-ink whitespace-nowrap shrink-0"
+              className="btn-press flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-surface hover:bg-surface-warm border border-line text-xs font-medium text-ink whitespace-nowrap shrink-0"
             >
-              <Download className="w-3.5 h-3.5 text-accent" />
+              <Download className="w-3.5 h-3.5 text-ink-muted" />
               <span className="hidden sm:inline">Export CSV</span>
             </button>
 
@@ -583,9 +580,9 @@ export const FinanceView: React.FC = () => {
                 setEditingTx(null);
                 setTxModalOpen(true);
               }}
-              className="btn-press w-full sm:w-auto flex items-center justify-center gap-1.5 px-4 py-2 min-h-[44px] sm:min-h-0 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs whitespace-nowrap shrink-0"
+              className="btn-press w-full sm:w-auto flex items-center justify-center gap-1.5 px-4 py-2 min-h-[40px] rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs whitespace-nowrap shrink-0"
             >
-              <Plus className="w-4 h-4 stroke-[2.5]" />
+              <Plus className="w-4 h-4 stroke-[2.25]" />
               <span>Add Transaction</span>
             </button>
           </div>
@@ -606,14 +603,14 @@ export const FinanceView: React.FC = () => {
                   type="date"
                   value={customStart}
                   onChange={e => setCustomStart(e.target.value)}
-                  className="px-2.5 py-1.5 rounded-xl bg-canvas border border-line text-ink font-mono"
+                  className="px-2.5 py-1.5 rounded-xl bg-surface border border-line text-ink font-mono"
                 />
                 <span className="font-semibold text-ink-muted">To:</span>
                 <input
                   type="date"
                   value={customEnd}
                   onChange={e => setCustomEnd(e.target.value)}
-                  className="px-2.5 py-1.5 rounded-xl bg-canvas border border-line text-ink font-mono"
+                  className="px-2.5 py-1.5 rounded-xl bg-surface border border-line text-ink font-mono"
                 />
               </div>
             </motion.div>
@@ -621,7 +618,7 @@ export const FinanceView: React.FC = () => {
         </AnimatePresence>
 
         {/* Sub-Navigation Tabs */}
-        <div className="flex overflow-x-auto sm:flex-wrap gap-1 bg-canvas p-1 rounded-xl border border-line text-xs">
+        <div className="flex overflow-x-auto sm:flex-wrap gap-1 bg-surface p-1 rounded-xl border border-line text-xs">
           {(
             [
               { id: 'overview', label: 'Dashboard', icon: LayoutGrid },
@@ -639,8 +636,8 @@ export const FinanceView: React.FC = () => {
                 key={tab.id}
                 type="button"
                 onClick={() => setActiveTab(tab.id)}
-                className={`relative flex items-center gap-1.5 px-3.5 py-2 sm:py-1.5 rounded-lg font-semibold transition-colors btn-press whitespace-nowrap shrink-0 ${
-                  isActive ? 'text-accent-ink' : 'text-ink-muted hover:text-ink'
+                className={`relative flex items-center gap-1.5 px-3.5 py-2 sm:py-1.5 rounded-lg font-medium transition-colors btn-press whitespace-nowrap shrink-0 ${
+                  isActive ? 'text-accent-ink font-semibold' : 'text-ink-muted hover:text-ink'
                 }`}
               >
                 {isActive && (

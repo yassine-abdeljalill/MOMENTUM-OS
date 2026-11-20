@@ -119,117 +119,115 @@ export const TasksView: React.FC = () => {
   ];
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto pb-8">
-      {/* View Header & Controls */}
-      <div className="p-5 sm:p-6 rounded-2xl bg-surface border border-line space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="space-y-1">
-            <h1 className="text-xl md:text-2xl font-bold text-ink tracking-tight">
-              Task Management
-            </h1>
-            <p className="text-xs text-ink-muted">
-              Track execution, configure subtasks, and organize work into Kanban or list view.
-            </p>
-          </div>
-
-          <div className="flex bg-surface-warm p-1 rounded-xl border border-line relative self-start sm:self-auto">
-            {(['board', 'list'] as const).map(mode => {
-              const isActive = viewMode === mode;
-              return (
-                <button
-                  key={mode}
-                  type="button"
-                  onClick={() => setViewMode(mode)}
-                  className={`relative z-10 px-3 py-1.5 min-h-[36px] rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors whitespace-nowrap ${
-                    isActive ? 'text-accent-ink' : 'text-ink-muted hover:text-ink'
-                  }`}
-                >
-                  {isActive && (
-                    <motion.span
-                      layoutId="tasks-view-mode-pill"
-                      transition={{ duration: prefersReduced ? 0.01 : 0.2, ease: MOMENTUM_EASE }}
-                      className="absolute inset-0 bg-accent rounded-lg -z-10"
-                    />
-                  )}
-                  {mode === 'board' ? (
-                    <LayoutGrid className="w-3.5 h-3.5" />
-                  ) : (
-                    <List className="w-3.5 h-3.5" />
-                  )}
-                  <span className="capitalize">{mode}</span>
-                </button>
-              );
-            })}
-          </div>
+    <div className="space-y-5 max-w-7xl mx-auto">
+      {/* Unboxed Header & View Switcher */}
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+        <div className="space-y-1">
+          <h2 className="text-2xl font-semibold text-ink tracking-tight">
+            Tasks
+          </h2>
+          <p className="text-xs text-ink-muted">
+            Organize action items across board columns or a clean list.
+          </p>
         </div>
 
-        {/* Filter Bar */}
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 pt-3 border-t border-line">
-          <div className="flex bg-surface-warm p-1 rounded-xl border border-line text-xs relative overflow-x-auto max-w-full">
-            {(['all', 'today', 'upcoming', 'completed'] as const).map(tab => {
-              const isActive = filterTab === tab;
-              return (
-                <button
-                  key={tab}
-                  type="button"
-                  onClick={() => setFilterTab(tab)}
-                  className={`relative z-10 px-3 py-1.5 rounded-lg font-semibold capitalize transition-colors whitespace-nowrap shrink-0 ${
-                    isActive ? 'text-ink' : 'text-ink-muted hover:text-ink'
-                  }`}
-                >
-                  {isActive && (
-                    <motion.span
-                      layoutId="tasks-filter-tab-pill"
-                      transition={{ duration: prefersReduced ? 0.01 : 0.2, ease: MOMENTUM_EASE }}
-                      className="absolute inset-0 bg-surface-inset border border-line rounded-lg -z-10"
-                    />
-                  )}
-                  {tab}
-                </button>
-              );
-            })}
+        <div className="flex bg-surface p-1 rounded-xl border border-line relative self-start sm:self-auto">
+          {(['board', 'list'] as const).map(mode => {
+            const isActive = viewMode === mode;
+            return (
+              <button
+                key={mode}
+                type="button"
+                onClick={() => setViewMode(mode)}
+                className={`relative z-10 px-3 py-1.5 min-h-[34px] rounded-lg text-xs font-medium flex items-center gap-1.5 transition-colors whitespace-nowrap ${
+                  isActive ? 'text-accent-ink font-semibold' : 'text-ink-muted hover:text-ink'
+                }`}
+              >
+                {isActive && (
+                  <motion.span
+                    layoutId="tasks-view-mode-pill"
+                    transition={{ duration: prefersReduced ? 0.01 : 0.2, ease: MOMENTUM_EASE }}
+                    className="absolute inset-0 bg-accent rounded-lg -z-10"
+                  />
+                )}
+                {mode === 'board' ? (
+                  <LayoutGrid className="w-3.5 h-3.5" />
+                ) : (
+                  <List className="w-3.5 h-3.5" />
+                )}
+                <span className="capitalize">{mode}</span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Minimal Filter Bar */}
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+        <div className="flex bg-surface p-1 rounded-xl border border-line text-xs relative overflow-x-auto max-w-full">
+          {(['all', 'today', 'upcoming', 'completed'] as const).map(tab => {
+            const isActive = filterTab === tab;
+            return (
+              <button
+                key={tab}
+                type="button"
+                onClick={() => setFilterTab(tab)}
+                className={`relative z-10 px-3 py-1.5 rounded-lg font-medium capitalize transition-colors whitespace-nowrap shrink-0 ${
+                  isActive ? 'text-ink font-semibold' : 'text-ink-muted hover:text-ink'
+                }`}
+              >
+                {isActive && (
+                  <motion.span
+                    layoutId="tasks-filter-tab-pill"
+                    transition={{ duration: prefersReduced ? 0.01 : 0.2, ease: MOMENTUM_EASE }}
+                    className="absolute inset-0 bg-surface-inset border border-line rounded-lg -z-10"
+                  />
+                )}
+                {tab}
+              </button>
+            );
+          })}
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="relative flex-1 sm:flex-initial min-w-[160px]">
+            <Search className="w-3.5 h-3.5 text-ink-muted absolute left-3 top-1/2 -translate-y-1/2" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+              placeholder="Search tasks..."
+              aria-label="Search tasks"
+              className="w-full sm:w-48 pl-8 pr-3 py-2 rounded-xl bg-surface border border-line text-ink text-xs placeholder:text-ink-muted focus:outline-hidden focus:ring-2 focus:ring-accent"
+            />
           </div>
 
-          <div className="flex flex-wrap items-center gap-2">
-            <div className="relative flex-1 sm:flex-initial min-w-[160px]">
-              <Search className="w-3.5 h-3.5 text-ink-muted absolute left-3 top-1/2 -translate-y-1/2" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={e => setSearchQuery(e.target.value)}
-                placeholder="Search tasks..."
-                aria-label="Search tasks"
-                className="w-full sm:w-48 pl-8 pr-3 py-2 rounded-xl bg-canvas border border-line text-ink text-xs placeholder:text-ink-muted focus:outline-hidden focus:ring-2 focus:ring-accent"
-              />
-            </div>
+          <select
+            value={categoryFilter}
+            onChange={e => setCategoryFilter(e.target.value)}
+            aria-label="Filter by life area"
+            className="px-3 py-2 rounded-xl bg-surface border border-line text-ink text-xs focus:outline-hidden focus:ring-2 focus:ring-accent"
+          >
+            <option value="all">All Areas</option>
+            <option value="education">Education</option>
+            <option value="career">Career</option>
+            <option value="fitness">Fitness</option>
+            <option value="health">Health</option>
+            <option value="personal_development">Personal</option>
+          </select>
 
-            <select
-              value={categoryFilter}
-              onChange={e => setCategoryFilter(e.target.value)}
-              aria-label="Filter by life area"
-              className="px-3 py-2 rounded-xl bg-canvas border border-line text-ink text-xs focus:outline-hidden focus:ring-2 focus:ring-accent"
-            >
-              <option value="all">All Areas</option>
-              <option value="education">Education</option>
-              <option value="career">Career</option>
-              <option value="fitness">Fitness</option>
-              <option value="health">Health</option>
-              <option value="personal_development">Personal</option>
-            </select>
-
-            <select
-              value={priorityFilter}
-              onChange={e => setPriorityFilter(e.target.value)}
-              aria-label="Filter by priority"
-              className="px-3 py-2 rounded-xl bg-canvas border border-line text-ink text-xs focus:outline-hidden focus:ring-2 focus:ring-accent"
-            >
-              <option value="all">All Priorities</option>
-              <option value="urgent">Urgent</option>
-              <option value="high">High</option>
-              <option value="medium">Medium</option>
-              <option value="low">Low</option>
-            </select>
-          </div>
+          <select
+            value={priorityFilter}
+            onChange={e => setPriorityFilter(e.target.value)}
+            aria-label="Filter by priority"
+            className="px-3 py-2 rounded-xl bg-surface border border-line text-ink text-xs focus:outline-hidden focus:ring-2 focus:ring-accent"
+          >
+            <option value="all">All Priorities</option>
+            <option value="urgent">Urgent</option>
+            <option value="high">High</option>
+            <option value="medium">Medium</option>
+            <option value="low">Low</option>
+          </select>
         </div>
       </div>
 

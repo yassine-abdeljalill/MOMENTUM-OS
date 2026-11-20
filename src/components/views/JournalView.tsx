@@ -62,13 +62,13 @@ export const JournalView: React.FC = () => {
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-16">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 rounded-2xl bg-surface border border-line">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-2">
         <div className="space-y-1">
           <div className="flex flex-wrap items-center gap-2.5">
             <h1 className="text-xl md:text-2xl font-bold text-ink tracking-tight">
               Personal Journal & Reflection
             </h1>
-            <span className="inline-flex items-center gap-1 text-[11px] font-mono text-ink-muted">
+            <span className="inline-flex items-center gap-1 text-xs text-ink-muted">
               <Lock className="w-3 h-3 text-accent" />
               <span>Private & Local</span>
             </span>
@@ -82,9 +82,9 @@ export const JournalView: React.FC = () => {
           <button
             type="button"
             onClick={() => setShowNewEntryModal(true)}
-            className="btn-press flex items-center gap-1.5 px-4 py-2 min-h-[44px] sm:min-h-0 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs transition-all whitespace-nowrap shrink-0"
+            className="btn-press flex items-center gap-1.5 px-4 py-2 min-h-[40px] rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs transition-all whitespace-nowrap shrink-0"
           >
-            <Plus className="w-4 h-4 stroke-[2.5]" />
+            <Plus className="w-4 h-4 stroke-[2.25]" />
             <span>New Reflection</span>
           </button>
         </div>
@@ -153,7 +153,7 @@ export const JournalView: React.FC = () => {
                       {entry.content}
                     </p>
 
-                    <div className="flex items-center gap-2 pt-1 text-[10px] font-mono uppercase">
+                    <div className="flex items-center gap-2 pt-1 text-[11px] capitalize">
                       <span className={isSelected ? 'text-stone' : 'text-ink-muted'}>
                         {entry.category.replace('_', ' ')}
                       </span>
@@ -209,22 +209,22 @@ export const JournalView: React.FC = () => {
                 </div>
 
                 {selectedEntry.reflectionQuestions && (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-4 rounded-xl bg-canvas border border-line text-xs">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pb-5 border-b border-line text-xs">
                     {selectedEntry.reflectionQuestions.wentWell && (
                       <div>
-                        <span className="font-semibold text-success block">Went Well:</span>
+                        <span className="font-semibold text-success block">Went Well</span>
                         <p className="text-ink-muted mt-0.5">{selectedEntry.reflectionQuestions.wentWell}</p>
                       </div>
                     )}
                     {selectedEntry.reflectionQuestions.learned && (
                       <div>
-                        <span className="font-semibold text-accent block">Learned:</span>
+                        <span className="font-semibold text-accent block">Learned</span>
                         <p className="text-ink-muted mt-0.5">{selectedEntry.reflectionQuestions.learned}</p>
                       </div>
                     )}
                     {selectedEntry.reflectionQuestions.tomorrowPriority && (
                       <div className="sm:col-span-2 pt-2 border-t border-line">
-                        <span className="font-semibold text-ink block">Tomorrow Priority:</span>
+                        <span className="font-semibold text-ink block">Tomorrow Priority</span>
                         <p className="text-accent font-medium mt-0.5">
                           {selectedEntry.reflectionQuestions.tomorrowPriority}
                         </p>

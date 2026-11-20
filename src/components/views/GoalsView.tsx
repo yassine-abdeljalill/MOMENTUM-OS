@@ -101,35 +101,22 @@ export const GoalsView: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto pb-8">
-      {/* Vision Statement Banner */}
-      <section className="p-5 sm:p-6 rounded-2xl bg-surface border border-line space-y-2 shadow-sm">
-        <div className="flex items-center gap-2">
-          <Compass className="w-4 h-4 text-stone" />
-          <span className="text-xs font-mono font-semibold uppercase tracking-wider text-stone">
-            Long-Term Vision
-          </span>
-        </div>
-        <p className="font-serif text-sm sm:text-base text-ink italic max-w-3xl leading-relaxed">
-          &ldquo;{state.profile.visionStatement || "Don't just track what you do. Track who you're becoming."}&rdquo;
-        </p>
-      </section>
-
-      {/* Navigation & Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-5 sm:p-6 rounded-2xl bg-surface border border-line">
-        <div className="space-y-1">
-          <h1 className="text-xl md:text-2xl font-bold text-ink tracking-tight">
-            Goals & Strategic Objectives
-          </h1>
-          <p className="text-xs text-ink-muted">
-            Connect long-term vision to 90-day execution sprints, milestones, and projects.
+    <div className="space-y-6 max-w-7xl mx-auto">
+      {/* Unboxed Header */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div className="space-y-1 min-w-0">
+          <h2 className="text-2xl font-semibold text-ink tracking-tight">
+            Goals
+          </h2>
+          <p className="text-xs sm:text-sm text-ink-muted italic max-w-2xl leading-relaxed">
+            &ldquo;{state.profile.visionStatement || "Don't just track what you do. Track who you're becoming."}&rdquo;
           </p>
         </div>
 
-        <div className="flex items-center gap-3 flex-wrap">
-          <div className="flex bg-surface-warm p-1 rounded-xl border border-line text-xs relative overflow-x-auto max-w-full">
+        <div className="flex items-center gap-2.5 flex-wrap shrink-0">
+          <div className="flex bg-surface p-1 rounded-xl border border-line text-xs relative overflow-x-auto max-w-full">
             {([
-              { id: 'all', label: 'Active Goals' },
+              { id: 'all', label: 'Active' },
               { id: '90day', label: '90-Day Plans' },
               { id: 'hierarchy', label: 'Hierarchy' },
             ] as const).map(tab => {
@@ -159,9 +146,9 @@ export const GoalsView: React.FC = () => {
           <button
             type="button"
             onClick={() => setShowNewGoalModal(true)}
-            className="btn-press group flex items-center gap-1.5 px-4 py-2 min-h-[40px] rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs transition-colors whitespace-nowrap shrink-0"
+            className="btn-press group flex items-center gap-1.5 px-4 py-2 min-h-[38px] rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs transition-colors whitespace-nowrap shrink-0"
           >
-            <Plus className="w-4 h-4 stroke-[2.25] transition-transform duration-200 group-hover:rotate-90" />
+            <Plus className="w-4 h-4 stroke-[2.25]" />
             <span>New Goal</span>
           </button>
         </div>
