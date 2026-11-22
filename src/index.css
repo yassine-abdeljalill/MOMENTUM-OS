@@ -235,12 +235,40 @@ h3,
   }
 }
 
+@keyframes specularSweep {
+  0% {
+    transform: translateX(-120%);
+  }
+  100% {
+    transform: translateX(220%);
+  }
+}
+
+@keyframes ambientBreathe {
+  0%, 100% {
+    opacity: 0.72;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.035);
+  }
+}
+
 .animate-fade-in {
   animation: fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .animate-check-pop {
   animation: checkPop 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.animate-ambient-breathe {
+  animation: ambientBreathe 9s ease-in-out infinite;
+}
+
+.animate-specular-sweep {
+  animation: specularSweep 0.85s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 /* Tactile button press & Apple card elevation */
@@ -260,16 +288,18 @@ h3,
 .card-hover {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
   transition:
+    transform 200ms cubic-bezier(0.16, 1, 0.3, 1),
     border-color 160ms ease,
     background-color 160ms ease,
-    box-shadow 180ms ease,
+    box-shadow 200ms ease,
     opacity 160ms ease;
 }
 
 @media (hover: hover) {
   .card-hover:hover {
-    border-color: rgba(0, 0, 0, 0.14);
-    box-shadow: 0 6px 18px -6px rgba(0, 0, 0, 0.08);
+    transform: translateY(-1.5px);
+    border-color: rgba(0, 0, 0, 0.16);
+    box-shadow: 0 8px 22px -8px rgba(0, 0, 0, 0.1);
   }
 }
 

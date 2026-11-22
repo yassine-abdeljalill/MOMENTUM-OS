@@ -24,7 +24,8 @@ import {
   getCurrentTimeLinePercentage,
   layoutOverlappingBlocks,
 } from '../../lib/calendar';
-import { ModalShell, MOMENTUM_EASE } from '../common/MotionPrimitives';
+import { ModalShell, MOMENTUM_EASE, MOMENTUM_SPRING } from '../common/MotionPrimitives';
+import { getStaggerDelay } from '../../lib/motion';
 import type { LifeArea } from '../../types';
 
 type CalendarViewMode = 'day' | 'week' | 'month';
@@ -354,7 +355,7 @@ export const CalendarView: React.FC = () => {
                     {isActive && (
                       <motion.span
                         layoutId="apple-calendar-mode-pill"
-                        transition={{ duration: prefersReduced ? 0.01 : 0.18, ease: MOMENTUM_EASE }}
+                        transition={prefersReduced ? { duration: 0.01 } : MOMENTUM_SPRING}
                         className="absolute inset-0 bg-surface rounded-[7px] shadow-[0_1px_3px_rgba(0,0,0,0.1)] -z-10"
                       />
                     )}
@@ -384,10 +385,10 @@ export const CalendarView: React.FC = () => {
               {viewMode === 'month' && (
                 <motion.div
                   key={`month-${year}-${month}`}
-                  initial={prefersReduced ? { opacity: 1 } : { opacity: 0 }}
-                  animate={{ opacity: 1 }}
+                  initial={prefersReduced ? { opacity: 1 } : { opacity: 0, scale: 0.994 }}
+                  animate={{ opacity: 1, scale: 1 }}
                   exit={prefersReduced ? { opacity: 0 } : { opacity: 0 }}
-                  transition={{ duration: prefersReduced ? 0.01 : 0.14 }}
+                  transition={{ duration: prefersReduced ? 0.01 : 0.18, ease: MOMENTUM_EASE }}
                   className="flex-1 flex flex-col"
                 >
                   {/* Desktop / Tablet Edge-to-Edge Apple Hairline Month Grid */}
@@ -784,13 +785,22 @@ export const CalendarView: React.FC = () => {
                               )}
 
                               {/* Side-by-Side Non-Colliding Timed Schedule Blocks */}
-                              {positionedBlocks.map(({ item: block, topPct, heightPct, lane, totalLanes }) => {
+                              {positionedBlocks.map(({ item: block, topPct, heightPct, lane, totalLanes }, bIdx) => {
                                 const laneWidth = 100 / totalLanes;
                                 const laneLeft = lane * laneWidth;
                                 return (
-                                  <button
+                                  <motion.button
                                     key={block.id}
                                     type="button"
+                                    initial={prefersReduced ? { opacity: 1 } : { opacity: 0, scale: 0.96 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    transition={{
+                                      duration: prefersReduced ? 0.01 : 0.2,
+                                      delay: prefersReduced ? 0 : getStaggerDelay(bIdx, 0.02, 0.03),
+                                      ease: MOMENTUM_EASE,
+                                    }}
+                                    whileHover={prefersReduced ? undefined : { scale: 1.015 }}
+                                    whileTap={prefersReduced ? undefined : { scale: 0.985 }}
                                     onClick={e => {
                                       e.stopPropagation();
                                       setSelectedDateStr(dateStr);
@@ -818,7 +828,7 @@ export const CalendarView: React.FC = () => {
                                     >
                                       {formatTimeCompact(block.startTime, timeFormat)}
                                     </div>
-                                  </button>
+                                  </motion.button>
                                 );
                               })}
                             </div>
@@ -1374,6 +1384,7 @@ const DayTimelineCanvas: React.FC<DayTimelineCanvasProps> = ({
   onToggleTask,
   onOpenLesson,
 }) => {
+  const prefersReduced = useReducedMotion();
   const hasAllDay =
     items.tasks.length > 0 || items.learningLessons.length > 0 || items.goalsDue.length > 0;
 
@@ -1482,13 +1493,22 @@ const DayTimelineCanvas: React.FC<DayTimelineCanvasProps> = ({
               </div>
             )}
 
-            {positionedDayBlocks.map(({ item: block, topPct, heightPct, lane, totalLanes }) => {
+            {positionedDayBlocks.map(({ item: block, topPct, heightPct, lane, totalLanes }, bIdx) => {
               const laneWidth = 100 / totalLanes;
               const laneLeft = lane * laneWidth;
               return (
-                <button
+                <motion.button
                   key={block.id}
                   type="button"
+                  initial={prefersReduced ? { opacity: 1 } : { opacity: 0, scale: 0.97 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{
+                    duration: prefersReduced ? 0.01 : 0.2,
+                    delay: prefersReduced ? 0 : getStaggerDelay(bIdx, 0.02, 0.03),
+                    ease: MOMENTUM_EASE,
+                  }}
+                  whileHover={prefersReduced ? undefined : { scale: 1.01 }}
+                  whileTap={prefersReduced ? undefined : { scale: 0.99 }}
                   onClick={() => onToggleSchedule(block.id)}
                   style={{
                     top: `${topPct}%`,
@@ -1517,7 +1537,7 @@ const DayTimelineCanvas: React.FC<DayTimelineCanvasProps> = ({
                     {formatTimeCompact(block.startTime, timeFormat)} –{' '}
                     {formatTimeCompact(block.endTime, timeFormat)}
                   </span>
-                </button>
+                </motion.button>
               );
             })}
           </div>

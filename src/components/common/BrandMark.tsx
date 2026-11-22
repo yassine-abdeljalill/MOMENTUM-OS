@@ -1,9 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { motion, useReducedMotion } from 'motion/react';
+import { MOMENTUM_EASE } from '../../lib/motion';
 
 interface BrandMarkProps {
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
   variant?: 'dark' | 'light';
   className?: string;
+  interactive?: boolean;
+  active?: boolean;
 }
 
 const SIZE_CLASSES: Record<NonNullable<BrandMarkProps['size']>, string> = {
@@ -18,15 +22,26 @@ export const BrandMark: React.FC<BrandMarkProps> = ({
   size = 'sm',
   variant = 'dark',
   className = '',
+  interactive = false,
+  active = false,
 }) => {
   const isLight = variant === 'light';
+  const prefersReduced = useReducedMotion();
+  const [hovered, setHovered] = useState(false);
+
+  const triggerWave = !prefersReduced && (hovered || active);
 
   return (
-    <svg
+    <motion.svg
       viewBox="0 0 64 64"
       fill="none"
       aria-hidden="true"
-      className={`${SIZE_CLASSES[size]} shrink-0 ${className}`}
+      onMouseEnter={interactive ? () => setHovered(true) : undefined}
+      onMouseLeave={interactive ? () => setHovered(false) : undefined}
+      whileHover={interactive && !prefersReduced ? { scale: 1.05 } : undefined}
+      whileTap={interactive && !prefersReduced ? { scale: 0.94 } : undefined}
+      transition={{ duration: 0.18, ease: MOMENTUM_EASE }}
+      className={`${SIZE_CLASSES[size]} shrink-0 ${interactive ? 'cursor-pointer' : ''} ${className}`}
     >
       <rect
         width="64"
@@ -45,30 +60,69 @@ export const BrandMark: React.FC<BrandMarkProps> = ({
         strokeWidth="1.5"
       />
       {/* Three ascending precision bars representing Discipline -> Focus -> Momentum */}
-      <rect
+      <motion.rect
         x="16"
         y="31"
         width="8"
         height="17"
         rx="2.5"
         fill={isLight ? '#AEAEB2' : '#8E8E93'}
+        style={{ transformOrigin: '20px 48px' }}
+        animate={
+          triggerWave
+            ? { scaleY: [1, 1.24, 0.94, 1] }
+            : { scaleY: 1 }
+        }
+        transition={{
+          duration: 0.55,
+          delay: 0,
+          ease: MOMENTUM_EASE,
+          repeat: active && !prefersReduced ? Infinity : 0,
+          repeatDelay: 1.8,
+        }}
       />
-      <rect
+      <motion.rect
         x="28"
         y="23"
         width="8"
         height="25"
         rx="2.5"
         fill={isLight ? '#6E6E73' : '#D1D1D6'}
+        style={{ transformOrigin: '32px 48px' }}
+        animate={
+          triggerWave
+            ? { scaleY: [1, 1.16, 0.95, 1] }
+            : { scaleY: 1 }
+        }
+        transition={{
+          duration: 0.55,
+          delay: 0.07,
+          ease: MOMENTUM_EASE,
+          repeat: active && !prefersReduced ? Infinity : 0,
+          repeatDelay: 1.8,
+        }}
       />
-      <rect
+      <motion.rect
         x="40"
         y="15"
         width="8"
         height="33"
         rx="2.5"
         fill={isLight ? '#1D1D1F' : '#FFFFFF'}
+        style={{ transformOrigin: '44px 48px' }}
+        animate={
+          triggerWave
+            ? { scaleY: [1, 1.1, 0.96, 1] }
+            : { scaleY: 1 }
+        }
+        transition={{
+          duration: 0.55,
+          delay: 0.14,
+          ease: MOMENTUM_EASE,
+          repeat: active && !prefersReduced ? Infinity : 0,
+          repeatDelay: 1.8,
+        }}
       />
-    </svg>
+    </motion.svg>
   );
 };

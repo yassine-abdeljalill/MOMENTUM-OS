@@ -17,7 +17,9 @@ import {
   AnimatedCheckButton,
   AnimatedNumber,
   MOMENTUM_EASE,
+  MOMENTUM_SPRING,
 } from '../common/MotionPrimitives';
+import { getStaggerDelay } from '../../lib/motion';
 
 export const GoalsView: React.FC = () => {
   const prefersReduced = useReducedMotion();
@@ -133,7 +135,7 @@ export const GoalsView: React.FC = () => {
                   {isActive && (
                     <motion.span
                       layoutId="goals-tab-pill"
-                      transition={{ duration: prefersReduced ? 0.01 : 0.2, ease: MOMENTUM_EASE }}
+                      transition={prefersReduced ? { duration: 0.01 } : MOMENTUM_SPRING}
                       className="absolute inset-0 bg-accent rounded-lg -z-10"
                     />
                   )}
@@ -170,16 +172,24 @@ export const GoalsView: React.FC = () => {
                 Active Objectives ({state.goals.length})
               </span>
 
-              {state.goals.map(goal => {
+              {state.goals.map((goal, idx) => {
                 const isSelected = currentGoal && currentGoal.id === goal.id;
                 const progress = calculateGoalProgress(goal, state.tasks);
 
                 return (
-                  <button
+                  <motion.button
                     key={goal.id}
                     type="button"
+                    initial={prefersReduced ? { opacity: 1 } : { opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{
+                      duration: prefersReduced ? 0.01 : 0.2,
+                      delay: prefersReduced ? 0 : getStaggerDelay(idx, 0, 0.045),
+                      ease: MOMENTUM_EASE,
+                    }}
+                    whileTap={prefersReduced ? undefined : { scale: 0.99 }}
                     onClick={() => setSelectedGoalId(goal.id)}
-                    className={`w-full text-left p-4 rounded-2xl border transition-all duration-200 space-y-2.5 card-hover ${
+                    className={`relative w-full text-left p-4 rounded-2xl border transition-all duration-200 space-y-2.5 card-hover ${
                       isSelected
                         ? 'bg-surface border-accent ring-1 ring-accent shadow-sm'
                         : 'bg-surface border-line hover:border-accent/60'
@@ -210,7 +220,7 @@ export const GoalsView: React.FC = () => {
                       <span className="capitalize">{goal.category.replace('_', ' ')}</span>
                       <span className="font-mono tabular-nums">Target {goal.targetDate}</span>
                     </div>
-                  </button>
+                  </motion.button>
                 );
               })}
             </div>

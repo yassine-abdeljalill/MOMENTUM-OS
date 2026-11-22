@@ -13,7 +13,8 @@ import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { useApp } from '../../lib/context';
 import { Task, TaskStatus, Priority, LifeArea } from '../../types';
 import { getPriorityColor } from '../../lib/logic';
-import { ModalShell, AnimatedCheckButton, MOMENTUM_EASE } from '../common/MotionPrimitives';
+import { ModalShell, AnimatedCheckButton, MOMENTUM_EASE, MOMENTUM_SPRING } from '../common/MotionPrimitives';
+import { getStaggerDelay } from '../../lib/motion';
 
 type TaskViewMode = 'board' | 'list';
 type QuickFilterTab = 'all' | 'today' | 'upcoming' | 'completed';
@@ -146,7 +147,7 @@ export const TasksView: React.FC = () => {
                 {isActive && (
                   <motion.span
                     layoutId="tasks-view-mode-pill"
-                    transition={{ duration: prefersReduced ? 0.01 : 0.2, ease: MOMENTUM_EASE }}
+                    transition={prefersReduced ? { duration: 0.01 } : MOMENTUM_SPRING}
                     className="absolute inset-0 bg-accent rounded-lg -z-10"
                   />
                 )}
@@ -179,7 +180,7 @@ export const TasksView: React.FC = () => {
                 {isActive && (
                   <motion.span
                     layoutId="tasks-filter-tab-pill"
-                    transition={{ duration: prefersReduced ? 0.01 : 0.2, ease: MOMENTUM_EASE }}
+                    transition={prefersReduced ? { duration: 0.01 } : MOMENTUM_SPRING}
                     className="absolute inset-0 bg-surface-inset border border-line rounded-lg -z-10"
                   />
                 )}
@@ -295,18 +296,31 @@ export const TasksView: React.FC = () => {
             transition={{ duration: prefersReduced ? 0.01 : 0.16, ease: MOMENTUM_EASE }}
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"
           >
-            {columns.map(col => {
+            {columns.map((col, colIdx) => {
               const colTasks = filteredTasks.filter(t => t.status === col.status);
               return (
-                <div
+                <motion.div
                   key={col.status}
+                  initial={prefersReduced ? { opacity: 1 } : { opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{
+                    duration: prefersReduced ? 0.01 : 0.22,
+                    delay: prefersReduced ? 0 : getStaggerDelay(colIdx, 0, 0.045),
+                    ease: MOMENTUM_EASE,
+                  }}
                   className="p-4 rounded-2xl bg-surface border border-line flex flex-col min-h-[320px] lg:min-h-[480px]"
                 >
                   <div className="flex items-center justify-between pb-3 mb-3 border-b border-line">
                     <span className="text-xs font-semibold text-ink">{col.label}</span>
-                    <span className="font-mono text-xs text-ink-muted tabular-nums">
+                    <motion.span
+                      key={colTasks.length}
+                      initial={prefersReduced ? false : { scale: 0.85 }}
+                      animate={{ scale: 1 }}
+                      transition={MOMENTUM_SPRING}
+                      className="font-mono text-xs text-ink-muted tabular-nums"
+                    >
                       {colTasks.length}
-                    </span>
+                    </motion.span>
                   </div>
 
                   <div className="flex-1 space-y-2.5 overflow-y-auto pr-0.5">
@@ -382,7 +396,7 @@ export const TasksView: React.FC = () => {
                       </AnimatePresence>
                     )}
                   </div>
-                </div>
+                </motion.div>
               );
             })}
           </motion.div>

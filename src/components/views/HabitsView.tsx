@@ -14,7 +14,8 @@ import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { useApp } from '../../lib/context';
 import { LifeArea } from '../../types';
 import { calculateHabitStreak } from '../../lib/logic';
-import { ModalShell, MOMENTUM_EASE } from '../common/MotionPrimitives';
+import { ModalShell, MOMENTUM_EASE, MOMENTUM_SPRING } from '../common/MotionPrimitives';
+import { getStaggerDelay } from '../../lib/motion';
 
 export const HabitsView: React.FC = () => {
   const prefersReduced = useReducedMotion();
@@ -97,7 +98,7 @@ export const HabitsView: React.FC = () => {
           onClick={() => setShowNewHabitModal(true)}
           className="btn-press group self-start sm:self-auto flex items-center gap-1.5 px-4 py-2 min-h-[40px] sm:min-h-0 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs shrink-0 whitespace-nowrap"
         >
-          <Plus className="w-4 h-4 stroke-[2.25]" />
+          <Plus className="w-4 h-4 stroke-[2.25] transition-transform duration-200 group-hover:rotate-90" />
           <span>New Habit</span>
         </button>
       </div>
@@ -118,17 +119,21 @@ export const HabitsView: React.FC = () => {
         ) : (
           <div className="divide-y divide-line">
             <AnimatePresence initial={false}>
-              {state.habits.map(habit => {
+              {state.habits.map((habit, habitIdx) => {
                 const streak = calculateHabitStreak(habit, state.habitCompletions, todayStr);
 
                 return (
                   <motion.div
                     key={habit.id}
                     layout={!prefersReduced}
-                    initial={prefersReduced ? { opacity: 1 } : { opacity: 0, y: 6 }}
+                    initial={prefersReduced ? { opacity: 1 } : { opacity: 0, y: 8 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={prefersReduced ? { opacity: 0 } : { opacity: 0, x: -12 }}
-                    transition={{ duration: prefersReduced ? 0.01 : 0.18, ease: MOMENTUM_EASE }}
+                    transition={{
+                      duration: prefersReduced ? 0.01 : 0.2,
+                      delay: prefersReduced ? 0 : getStaggerDelay(habitIdx, 0, 0.05),
+                      ease: MOMENTUM_EASE,
+                    }}
                     className="py-4 first:pt-3 last:pb-1 flex flex-col lg:flex-row lg:items-center justify-between gap-4"
                   >
                     {/* Left: Habit Info & Streaks */}
@@ -147,9 +152,9 @@ export const HabitsView: React.FC = () => {
                       <div className="flex flex-wrap items-center gap-3 text-xs font-mono text-ink-muted pt-1 tabular-nums">
                         <motion.span
                           key={streak.currentStreak}
-                          initial={prefersReduced ? false : { scale: 0.9 }}
+                          initial={prefersReduced ? false : { scale: 0.84 }}
                           animate={{ scale: 1 }}
-                          transition={{ duration: 0.18, ease: MOMENTUM_EASE }}
+                          transition={prefersReduced ? { duration: 0.01 } : MOMENTUM_SPRING}
                           className="text-accent font-bold flex items-center gap-1"
                         >
                           <Flame className="w-3.5 h-3.5 fill-current" />
@@ -162,7 +167,7 @@ export const HabitsView: React.FC = () => {
 
                     {/* Right: 14-Day Interactive Matrix */}
                     <div className="flex items-center gap-1.5 overflow-x-auto pb-1">
-                      {past14Days.map(day => {
+                      {past14Days.map((day, dayIdx) => {
                         const completion = state.habitCompletions.find(
                           c => c.habitId === habit.id && c.date === day.dateStr
                         );
@@ -180,6 +185,14 @@ export const HabitsView: React.FC = () => {
                             </span>
                             <motion.button
                               type="button"
+                              initial={prefersReduced ? false : { opacity: 0, scale: 0.8 }}
+                              animate={{ opacity: 1, scale: 1 }}
+                              transition={{
+                                duration: prefersReduced ? 0.01 : 0.18,
+                                delay: prefersReduced ? 0 : getStaggerDelay(dayIdx, 0.03, 0.014, 0.24),
+                                ease: MOMENTUM_EASE,
+                              }}
+                              whileHover={prefersReduced ? undefined : { scale: 1.08 }}
                               whileTap={prefersReduced ? undefined : { scale: 0.84 }}
                               onClick={() => toggleHabitCompletion(habit.id, day.dateStr)}
                               className={`w-7 h-7 rounded-lg flex items-center justify-center transition-colors duration-200 ${

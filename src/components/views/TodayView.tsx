@@ -16,7 +16,7 @@ import {
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { useApp } from '../../lib/context';
 import { getPriorityColor } from '../../lib/logic';
-import { ModalShell, AnimatedCheckButton, MOMENTUM_EASE } from '../common/MotionPrimitives';
+import { ModalShell, AnimatedCheckButton, MOMENTUM_EASE, MOMENTUM_SPRING } from '../common/MotionPrimitives';
 
 export const TodayView: React.FC = () => {
   const prefersReduced = useReducedMotion();
@@ -231,7 +231,7 @@ export const TodayView: React.FC = () => {
                 return (
                   <motion.div
                     layout={!prefersReduced}
-                    transition={{ duration: prefersReduced ? 0.01 : 0.22, ease: MOMENTUM_EASE }}
+                    transition={prefersReduced ? { duration: 0.01 } : MOMENTUM_SPRING}
                     key={task.id}
                     className={`p-4 rounded-xl border transition-all duration-200 flex items-start gap-3 ${
                       isDone

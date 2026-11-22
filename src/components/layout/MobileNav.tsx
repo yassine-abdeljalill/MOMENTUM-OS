@@ -7,7 +7,7 @@ import {
 } from 'lucide-react';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { useApp, NavigationTab } from '../../lib/context';
-import { MOMENTUM_EASE } from '../common/MotionPrimitives';
+import { MOMENTUM_EASE, MOMENTUM_SPRING } from '../common/MotionPrimitives';
 import { PWAInstallButton } from '../common/PWAInstallButton';
 import { BrandMark } from '../common/BrandMark';
 import { ALL_NAV_ITEMS, MOBILE_PRIMARY_TAB_IDS, NAV_GROUPS } from './navConfig';
@@ -72,11 +72,15 @@ export const MobileNav: React.FC = () => {
                 {isActive && (
                   <motion.span
                     layoutId="mobile-bottom-active-indicator"
-                    transition={{ duration: prefersReduced ? 0.01 : 0.18, ease: MOMENTUM_EASE }}
+                    transition={prefersReduced ? { duration: 0.01 } : MOMENTUM_SPRING}
                     className="absolute top-0 w-6 h-[2px] rounded-full bg-accent"
                   />
                 )}
-                <div className="relative flex items-center justify-center">
+                <motion.div
+                  animate={prefersReduced ? undefined : { scale: isActive ? 1.08 : 1, y: isActive ? -1 : 0 }}
+                  transition={MOMENTUM_SPRING}
+                  className="relative flex items-center justify-center"
+                >
                   <Icon
                     className={`w-5 h-5 transition-colors ${
                       isActive ? 'text-accent' : 'text-ink-muted'
@@ -88,7 +92,7 @@ export const MobileNav: React.FC = () => {
                       {badgeCount > 9 ? '9+' : badgeCount}
                     </span>
                   )}
-                </div>
+                </motion.div>
                 <span
                   className={`text-[10.5px] leading-tight tracking-tight whitespace-nowrap transition-colors ${
                     isActive
@@ -113,7 +117,7 @@ export const MobileNav: React.FC = () => {
             {isMoreActive && (
               <motion.span
                 layoutId="mobile-bottom-active-indicator"
-                transition={{ duration: prefersReduced ? 0.01 : 0.18, ease: MOMENTUM_EASE }}
+                transition={prefersReduced ? { duration: 0.01 } : MOMENTUM_SPRING}
                 className="absolute top-0 w-6 h-[2px] rounded-full bg-accent"
               />
             )}
@@ -158,7 +162,7 @@ export const MobileNav: React.FC = () => {
               {/* Drag Handle & Sheet Header */}
               <div className="pt-2.5 pb-3 px-5 border-b border-line flex items-center justify-between shrink-0">
                 <div className="flex items-center gap-2.5">
-                  <BrandMark size="sm" />
+                  <BrandMark size="sm" interactive />
                   <div>
                     <h2 className="text-sm font-bold text-ink font-heading leading-tight">
                       All Workspaces

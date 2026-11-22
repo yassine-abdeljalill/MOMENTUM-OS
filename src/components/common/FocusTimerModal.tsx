@@ -16,7 +16,7 @@ import {
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import confetti from 'canvas-confetti';
 import { useApp } from '../../lib/context';
-import { ModalShell, MOMENTUM_EASE } from './MotionPrimitives';
+import { ModalShell, MOMENTUM_EASE, MOMENTUM_SPRING } from './MotionPrimitives';
 
 export const FocusTimerModal: React.FC = () => {
   const {
@@ -165,7 +165,7 @@ export const FocusTimerModal: React.FC = () => {
       <div className="flex items-center justify-between px-6 py-4 border-b border-line bg-surface-warm/50">
         <div className="flex items-center gap-2 min-w-0">
           <Timer className="w-5 h-5 text-accent shrink-0" />
-          <h2 className="font-semibold text-sm text-ink tracking-wide truncate font-heading">
+          <h2 className="font-semibold text-sm text-ink tracking-tight truncate font-heading">
             {focusTimer.sessionType === 'focus' ? 'Deep Work Focus Timer' : 'Restorative Break'}
           </h2>
           {focusTimer.linkedTaskTitle && (
@@ -207,15 +207,34 @@ export const FocusTimerModal: React.FC = () => {
       <div className="flex-1 flex flex-col items-center justify-center p-6 sm:p-8 select-none">
         <div className="relative w-60 h-60 sm:w-72 sm:h-72 flex items-center justify-center">
           <AnimatePresence>
-            {((focusTimer.isActive && !focusTimer.isPaused) || justCompleted) && !prefersReduced && (
+            {focusTimer.isActive && !focusTimer.isPaused && !prefersReduced && (
+              <>
+                <motion.div
+                  aria-hidden="true"
+                  initial={{ opacity: 0, scale: 0.94 }}
+                  animate={{ opacity: [0.18, 0.36, 0.18], scale: [0.98, 1.03, 0.98] }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 3.8, repeat: Infinity, ease: 'easeInOut' }}
+                  className="absolute inset-[10px] rounded-full border border-[#1D1D1F]/28 pointer-events-none"
+                />
+                <motion.div
+                  aria-hidden="true"
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: [0.24, 0.08, 0.24], scale: [1, 1.07, 1] }}
+                  exit={{ opacity: 0, scale: 0.96 }}
+                  transition={{ duration: 3.8, delay: 0.55, repeat: Infinity, ease: 'easeInOut' }}
+                  className="absolute inset-[2px] rounded-full border border-[#1D1D1F]/18 pointer-events-none"
+                />
+              </>
+            )}
+            {justCompleted && !prefersReduced && (
               <motion.div
-                initial={{ opacity: 0, scale: 0.92 }}
-                animate={{ opacity: justCompleted ? 0.35 : 0.2, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                transition={{ duration: 0.4, ease: MOMENTUM_EASE }}
-                className={`absolute inset-4 rounded-full blur-xl pointer-events-none ${
-                  justCompleted ? 'bg-success' : 'bg-accent'
-                }`}
+                aria-hidden="true"
+                initial={{ opacity: 0.45, scale: 0.9 }}
+                animate={{ opacity: 0, scale: 1.24 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.75, ease: MOMENTUM_EASE }}
+                className="absolute inset-2 rounded-full border-2 border-[#1D1D1F]/60 pointer-events-none"
               />
             )}
           </AnimatePresence>
@@ -252,10 +271,10 @@ export const FocusTimerModal: React.FC = () => {
               {justCompleted ? (
                 <motion.div
                   key="completed-badge"
-                  initial={prefersReduced ? { opacity: 1 } : { opacity: 0, scale: 0.85 }}
+                  initial={prefersReduced ? { opacity: 1 } : { opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.9 }}
-                  transition={{ duration: prefersReduced ? 0.01 : 0.22, ease: MOMENTUM_EASE }}
+                  transition={prefersReduced ? { duration: 0.01 } : MOMENTUM_SPRING}
                   className="flex flex-col items-center text-center px-4"
                 >
                   <CheckCircle2 className="w-12 h-12 text-success mb-2" />
@@ -297,10 +316,10 @@ export const FocusTimerModal: React.FC = () => {
             {focusTimer.isActive ? (
               <motion.div
                 key="active-controls"
-                initial={prefersReduced ? { opacity: 1 } : { opacity: 0, y: 6 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={prefersReduced ? { opacity: 0 } : { opacity: 0, y: 4 }}
-                transition={{ duration: prefersReduced ? 0.01 : 0.16, ease: MOMENTUM_EASE }}
+                initial={prefersReduced ? { opacity: 1 } : { opacity: 0, scale: 0.97 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={prefersReduced ? { opacity: 0 } : { opacity: 0, scale: 0.97 }}
+                transition={{ duration: prefersReduced ? 0.01 : 0.12, ease: MOMENTUM_EASE }}
                 className="flex items-center gap-3"
               >
                 <button
@@ -341,10 +360,10 @@ export const FocusTimerModal: React.FC = () => {
             ) : (
               <motion.div
                 key="idle-controls"
-                initial={prefersReduced ? { opacity: 1 } : { opacity: 0, y: 6 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={prefersReduced ? { opacity: 0 } : { opacity: 0, y: 4 }}
-                transition={{ duration: prefersReduced ? 0.01 : 0.16, ease: MOMENTUM_EASE }}
+                initial={prefersReduced ? { opacity: 1 } : { opacity: 0, scale: 0.97 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={prefersReduced ? { opacity: 0 } : { opacity: 0, scale: 0.97 }}
+                transition={{ duration: prefersReduced ? 0.01 : 0.12, ease: MOMENTUM_EASE }}
               >
                 <button
                   type="button"

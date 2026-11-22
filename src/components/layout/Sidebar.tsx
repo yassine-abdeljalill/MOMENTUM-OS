@@ -5,7 +5,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { useApp, NavigationTab } from '../../lib/context';
-import { MOMENTUM_EASE } from '../common/MotionPrimitives';
+import { MOMENTUM_EASE, MOMENTUM_SPRING } from '../common/MotionPrimitives';
 import { PWAInstallButton } from '../common/PWAInstallButton';
 import { BrandMark } from '../common/BrandMark';
 import { NAV_GROUPS } from './navConfig';
@@ -61,7 +61,7 @@ export const Sidebar: React.FC = () => {
       {/* Brand Header */}
       <div className="h-14 flex items-center justify-between px-3.5 border-b border-sidebar-border shrink-0">
         <div className={`flex items-center gap-2.5 min-w-0 ${isCollapsed ? 'mx-auto' : ''}`}>
-          <BrandMark size="sm" />
+          <BrandMark size="sm" interactive />
           <AnimatePresence initial={false}>
             {!isCollapsed && (
               <motion.span
@@ -140,12 +140,7 @@ export const Sidebar: React.FC = () => {
                     {isActive && (
                       <motion.div
                         layoutId="desktop-sidebar-active-pill"
-                        transition={{
-                          type: 'spring',
-                          stiffness: 420,
-                          damping: 34,
-                          mass: 0.8,
-                        }}
+                        transition={prefersReduced ? { duration: 0.01 } : MOMENTUM_SPRING}
                         className="absolute inset-0 rounded-xl bg-accent shadow-sm z-0"
                       />
                     )}
@@ -199,12 +194,7 @@ export const Sidebar: React.FC = () => {
           {currentView === 'settings' && (
             <motion.div
               layoutId="desktop-sidebar-active-pill"
-              transition={{
-                type: 'spring',
-                stiffness: 420,
-                damping: 34,
-                mass: 0.8,
-              }}
+              transition={prefersReduced ? { duration: 0.01 } : MOMENTUM_SPRING}
               className="absolute inset-0 rounded-xl bg-accent shadow-sm z-0"
             />
           )}

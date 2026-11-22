@@ -23,10 +23,13 @@ import {
   AnimatedNumber,
   AnimatedProgressBar,
   AnimatedCheckButton,
+  MomentumVelocityBars,
   StaggerContainer,
   StaggerItem,
   MOMENTUM_EASE,
+  MOMENTUM_SPRING,
 } from '../common/MotionPrimitives';
+import { getStaggerDelay } from '../../lib/motion';
 
 export const OverviewView: React.FC = () => {
   const prefersReduced = useReducedMotion();
@@ -146,7 +149,7 @@ export const OverviewView: React.FC = () => {
             onClick={() => setIsQuickAddOpen(true)}
             className="btn-press group flex items-center gap-1.5 px-4 py-2 min-h-[40px] sm:min-h-0 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink text-xs font-semibold whitespace-nowrap shrink-0"
           >
-            <Plus className="w-4 h-4 stroke-[2.25]" />
+            <Plus className="w-4 h-4 stroke-[2.25] transition-transform duration-200 group-hover:rotate-90" />
             <span>Add Task</span>
           </button>
           <button
@@ -217,7 +220,10 @@ export const OverviewView: React.FC = () => {
       {/* Clean Minimal KPI Row */}
       <StaggerContainer className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <StaggerItem className="p-4 sm:p-5 rounded-2xl bg-surface border border-line flex flex-col justify-between card-hover">
-          <span className="text-xs font-medium text-ink-muted">Daily Progress</span>
+          <div className="flex items-center justify-between gap-2">
+            <span className="text-xs font-medium text-ink-muted">Daily Progress</span>
+            <MomentumVelocityBars percentage={dailyScore.overallPercentage} showLabel />
+          </div>
           <div className="my-2.5 flex items-baseline gap-2">
             <AnimatedNumber
               value={dailyScore.overallPercentage}
@@ -318,8 +324,16 @@ export const OverviewView: React.FC = () => {
                   const relatedProject = state.projects.find(p => p.id === task.relatedProjectId);
 
                   return (
-                    <div
+                    <motion.div
                       key={task.id}
+                      layout={!prefersReduced}
+                      initial={prefersReduced ? { opacity: 1 } : { opacity: 0, y: 6 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{
+                        duration: prefersReduced ? 0.01 : 0.2,
+                        delay: prefersReduced ? 0 : getStaggerDelay(idx, 0, 0.05),
+                        ease: MOMENTUM_EASE,
+                      }}
                       className={`py-3.5 first:pt-4 last:pb-1 flex items-start gap-3 transition-opacity ${
                         isDone ? 'opacity-65' : ''
                       }`}
@@ -387,7 +401,7 @@ export const OverviewView: React.FC = () => {
                           )}
                         </div>
                       </div>
-                    </div>
+                    </motion.div>
                   );
                 })}
               </div>
@@ -425,7 +439,7 @@ export const OverviewView: React.FC = () => {
                       key={day.dayStr}
                       className="flex-1 flex flex-col items-center gap-2 h-full justify-end group"
                     >
-                      <span className="text-[11px] font-mono text-ink-muted tabular-nums opacity-0 group-hover:opacity-100 transition-opacity">
+                      <span className="text-[11px] font-mono text-ink-muted tabular-nums opacity-0 -translate-y-0.5 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-150">
                         {day.heightPct}%
                       </span>
                       <div className="w-full max-w-[38px] bg-surface-inset rounded-t-lg h-full flex items-end p-0.5 overflow-hidden">
@@ -436,11 +450,12 @@ export const OverviewView: React.FC = () => {
                               : 'bg-ink-muted/45 group-hover:bg-ink-muted/75'
                           }`}
                           initial={prefersReduced ? { height: `${day.heightPct}%` } : { height: '0%' }}
-                          whileInView={{ height: `${day.heightPct}%` }}
-                          viewport={{ once: true, amount: 0.1 }}
+                          animate={{ height: `${day.heightPct}%` }}
+                          whileHover={prefersReduced ? undefined : { scaleY: 1.04 }}
+                          style={{ transformOrigin: 'bottom' }}
                           transition={{
                             duration: prefersReduced ? 0.01 : 0.45,
-                            delay: prefersReduced ? 0 : i * 0.04,
+                            delay: prefersReduced ? 0 : getStaggerDelay(i, 0.04, 0.045),
                             ease: MOMENTUM_EASE,
                           }}
                         />
@@ -571,10 +586,16 @@ export const OverviewView: React.FC = () => {
                             {habit.name}
                           </span>
                         </div>
-                        <span className="inline-flex items-center gap-1 text-xs font-mono text-ink-muted shrink-0 tabular-nums">
+                        <motion.span
+                          key={streak.currentStreak}
+                          initial={prefersReduced ? false : { scale: 0.86 }}
+                          animate={{ scale: 1 }}
+                          transition={prefersReduced ? { duration: 0.01 } : MOMENTUM_SPRING}
+                          className="inline-flex items-center gap-1 text-xs font-mono text-ink-muted shrink-0 tabular-nums"
+                        >
                           <Flame className="w-3 h-3 text-accent" />
                           {streak.currentStreak}d
-                        </span>
+                        </motion.span>
                       </div>
                     );
                   })}

@@ -2,7 +2,7 @@ import React from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { CheckCircle2, AlertCircle, Info, X } from 'lucide-react';
 import { useApp } from '../../lib/context';
-import { MOMENTUM_EASE } from './MotionPrimitives';
+import { MOMENTUM_SPRING } from './MotionPrimitives';
 
 export const ToastContainer: React.FC = () => {
   const { toasts, dismissToast } = useApp();
@@ -23,11 +23,15 @@ export const ToastContainer: React.FC = () => {
             <motion.div
               key={toast.id}
               layout={!prefersReduced}
-              initial={prefersReduced ? { opacity: 0 } : { opacity: 0, y: 12, scale: 0.96 }}
+              initial={prefersReduced ? { opacity: 0 } : { opacity: 0, y: 16, scale: 0.94 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={prefersReduced ? { opacity: 0 } : { opacity: 0, y: 8, scale: 0.96 }}
-              transition={{ duration: prefersReduced ? 0.01 : 0.2, ease: MOMENTUM_EASE }}
-              className={`pointer-events-auto flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl glass-elevated text-xs font-medium text-ink ${
+              exit={prefersReduced ? { opacity: 0 } : { opacity: 0, y: 8, scale: 0.95 }}
+              transition={
+                prefersReduced
+                  ? { duration: 0.01 }
+                  : { ...MOMENTUM_SPRING, opacity: { duration: 0.16 } }
+              }
+              className={`pointer-events-auto relative overflow-hidden flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl glass-elevated text-xs font-medium text-ink ${
                 isError
                   ? 'border-danger'
                   : isInfo
@@ -44,12 +48,24 @@ export const ToastContainer: React.FC = () => {
               )}
               <span className="flex-1 leading-snug">{toast.message}</span>
               <button
+                type="button"
                 onClick={() => dismissToast(toast.id)}
                 className="p-0.5 rounded text-ink-muted hover:text-ink transition-colors shrink-0"
                 aria-label="Dismiss notification"
               >
                 <X className="w-3.5 h-3.5" />
               </button>
+
+              {!prefersReduced && (
+                <motion.span
+                  aria-hidden="true"
+                  initial={{ scaleX: 1 }}
+                  animate={{ scaleX: 0 }}
+                  transition={{ duration: 2.6, ease: 'linear' }}
+                  style={{ transformOrigin: 'left' }}
+                  className="pointer-events-none absolute bottom-0 inset-x-0 h-[1.5px] bg-ink/25"
+                />
+              )}
             </motion.div>
           );
         })}

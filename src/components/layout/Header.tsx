@@ -9,7 +9,7 @@ import {
 } from 'lucide-react';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { useApp } from '../../lib/context';
-import { MOMENTUM_EASE } from '../common/MotionPrimitives';
+import { MOMENTUM_EASE, MOMENTUM_SPRING } from '../common/MotionPrimitives';
 import { BrandMark } from '../common/BrandMark';
 import { VIEW_TITLES } from './navConfig';
 
@@ -67,7 +67,12 @@ export const Header: React.FC = () => {
       <div className="h-14 px-3 sm:px-6 md:px-8 flex items-center justify-between gap-2 min-w-0">
         {/* Left: Mobile Brand Mark + Single-Line View Title */}
         <div className="flex items-center gap-2.5 min-w-0 flex-1">
-          <BrandMark size="sm" className="md:hidden" />
+          <BrandMark
+            size="sm"
+            interactive
+            active={focusTimer.isActive && !focusTimer.isPaused}
+            className="md:hidden"
+          />
           <AnimatePresence mode="wait" initial={false}>
             <motion.h1
               key={currentView}
@@ -101,11 +106,21 @@ export const Header: React.FC = () => {
                   className="flex items-center gap-1 hover:text-accent transition-colors btn-press tabular-nums"
                   title="Open Focus Timer"
                 >
-                  <Timer
-                    className={`w-3.5 h-3.5 text-accent ${
-                      !focusTimer.isPaused && !prefersReduced ? 'animate-pulse' : ''
-                    }`}
-                  />
+                  <span className="relative flex items-center justify-center">
+                    {!focusTimer.isPaused && !prefersReduced && (
+                      <motion.span
+                        aria-hidden="true"
+                        animate={{ scale: [1, 1.75], opacity: [0.45, 0] }}
+                        transition={{ duration: 1.8, repeat: Infinity, ease: MOMENTUM_EASE }}
+                        className="absolute inset-0 rounded-full border border-accent"
+                      />
+                    )}
+                    <Timer
+                      className={`w-3.5 h-3.5 text-accent ${
+                        !focusTimer.isPaused && !prefersReduced ? 'animate-pulse' : ''
+                      }`}
+                    />
+                  </span>
                   <span className="font-semibold">{timerDisplay}</span>
                 </button>
                 <button
@@ -163,7 +178,7 @@ export const Header: React.FC = () => {
             title="Quick Add (Cmd+N)"
             aria-label="Quick add item"
           >
-            <Plus className="w-4 h-4 stroke-[2.25]" />
+            <Plus className="w-4 h-4 stroke-[2.25] transition-transform duration-200 group-hover:rotate-90" />
             <span className="hidden sm:inline">Add</span>
           </button>
 
@@ -175,14 +190,14 @@ export const Header: React.FC = () => {
             aria-label="Notifications"
             title="Notifications"
           >
-            <Bell className="w-4 h-4 transition-transform duration-150 group-hover:scale-105" />
+            <Bell className="w-4 h-4 transition-transform duration-200 group-hover:-rotate-12 group-hover:scale-105" />
             <AnimatePresence>
               {unreadNotificationsCount > 0 && (
                 <motion.span
                   initial={prefersReduced ? { scale: 1 } : { scale: 0 }}
                   animate={{ scale: 1 }}
                   exit={{ scale: 0 }}
-                  transition={{ duration: prefersReduced ? 0.01 : 0.16, ease: MOMENTUM_EASE }}
+                  transition={prefersReduced ? { duration: 0.01 } : MOMENTUM_SPRING}
                   className="absolute -top-0.5 -right-0.5 min-w-[14px] h-[14px] px-0.5 rounded-full bg-accent text-accent-ink border border-canvas font-mono text-[8px] font-bold flex items-center justify-center tabular-nums leading-none"
                 >
                   {unreadNotificationsCount}

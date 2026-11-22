@@ -1,11 +1,18 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { CheckCircle2, Circle } from 'lucide-react';
+import {
+  MOMENTUM_EASE,
+  MOMENTUM_SPRING,
+  MOMENTUM_GENTLE_SPRING,
+  clampProgress,
+  getMomentumBarLevels,
+} from '../../lib/motion';
 
-export const MOMENTUM_EASE = [0.16, 1, 0.3, 1] as const;
+export { MOMENTUM_EASE, MOMENTUM_SPRING, MOMENTUM_GENTLE_SPRING };
 
 /**
- * Smooth, lightweight page transition for main view navigation.
+ * Smooth, Apple-grade spatial continuity transition for main view navigation.
  */
 export const PageTransition: React.FC<{
   viewKey: string;
@@ -16,10 +23,10 @@ export const PageTransition: React.FC<{
   return (
     <motion.div
       key={viewKey}
-      initial={prefersReduced ? { opacity: 1 } : { opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={prefersReduced ? { opacity: 1 } : { opacity: 0, y: -4 }}
-      transition={{ duration: prefersReduced ? 0.01 : 0.18, ease: MOMENTUM_EASE }}
+      initial={prefersReduced ? { opacity: 1 } : { opacity: 0, y: 10, scale: 0.994 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={prefersReduced ? { opacity: 1 } : { opacity: 0, y: -6, scale: 0.996 }}
+      transition={{ duration: prefersReduced ? 0.01 : 0.22, ease: MOMENTUM_EASE }}
     >
       {children}
     </motion.div>
@@ -27,7 +34,7 @@ export const PageTransition: React.FC<{
 };
 
 /**
- * Reusable Modal shell with smooth backdrop fade + bottom-sheet adaptation on mobile.
+ * Reusable Modal shell with smooth backdrop fade + crisp Apple spring detent.
  */
 export const ModalShell: React.FC<{
   isOpen: boolean;
@@ -71,15 +78,19 @@ export const ModalShell: React.FC<{
             initial={
               prefersReduced
                 ? { opacity: 1 }
-                : { opacity: 0, scale: alignTop ? 0.97 : 0.98, y: alignTop ? -8 : 20 }
+                : { opacity: 0, scale: alignTop ? 0.96 : 0.97, y: alignTop ? -10 : 22 }
             }
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={
               prefersReduced
                 ? { opacity: 0 }
-                : { opacity: 0, scale: 0.98, y: alignTop ? -6 : 16 }
+                : { opacity: 0, scale: 0.97, y: alignTop ? -6 : 16 }
             }
-            transition={{ duration: prefersReduced ? 0.01 : 0.2, ease: MOMENTUM_EASE }}
+            transition={
+              prefersReduced
+                ? { duration: 0.01 }
+                : { ...MOMENTUM_SPRING, opacity: { duration: 0.16 } }
+            }
             onClick={e => e.stopPropagation()}
             className={`w-full ${
               fullscreen
@@ -131,7 +142,11 @@ export const DrawerShell: React.FC<{
             initial={prefersReduced ? { opacity: 0 } : { x: initialX }}
             animate={prefersReduced ? { opacity: 1 } : { x: 0 }}
             exit={prefersReduced ? { opacity: 0 } : { x: initialX }}
-            transition={{ duration: prefersReduced ? 0.01 : 0.22, ease: MOMENTUM_EASE }}
+            transition={
+              prefersReduced
+                ? { duration: 0.01 }
+                : { duration: 0.24, ease: MOMENTUM_EASE }
+            }
             onClick={e => e.stopPropagation()}
             className={panelClassName}
           >
@@ -169,7 +184,7 @@ export const AnimatedNumber: React.FC<{
       return;
     }
 
-    const duration = 380;
+    const duration = 420;
     const startTime = performance.now();
     let rafId = 0;
 
@@ -195,7 +210,8 @@ export const AnimatedNumber: React.FC<{
 };
 
 /**
- * Animated horizontal progress bar that animates smoothly on viewport entry and updates.
+ * Animated horizontal progress bar with smooth updates and a subtle monochrome
+ * specular sweep whenever progress rises.
  */
 export const AnimatedProgressBar: React.FC<{
   percentage: number;
@@ -207,23 +223,94 @@ export const AnimatedProgressBar: React.FC<{
   fillClassName = 'bg-accent h-full rounded-full',
 }) => {
   const prefersReduced = useReducedMotion();
-  const clamped = Math.max(0, Math.min(100, percentage));
+  const clamped = clampProgress(percentage);
+  const prevPctRef = useRef<number>(clamped);
+  const [sweepKey, setSweepKey] = useState<number>(0);
+
+  useEffect(() => {
+    if (!prefersReduced && clamped > prevPctRef.current) {
+      setSweepKey(k => k + 1);
+    }
+    prevPctRef.current = clamped;
+  }, [clamped, prefersReduced]);
 
   return (
     <div className={trackClassName}>
       <motion.div
-        className={fillClassName}
+        className={`relative overflow-hidden ${fillClassName}`}
         initial={prefersReduced ? { width: `${clamped}%` } : { width: '0%' }}
-        whileInView={{ width: `${clamped}%` }}
-        viewport={{ once: true, amount: 0.1 }}
-        transition={{ duration: prefersReduced ? 0.01 : 0.45, ease: MOMENTUM_EASE }}
-      />
+        animate={{ width: `${clamped}%` }}
+        transition={{ duration: prefersReduced ? 0.01 : 0.48, ease: MOMENTUM_EASE }}
+      >
+        {sweepKey > 0 && !prefersReduced && clamped > 0 && (
+          <motion.span
+            key={sweepKey}
+            aria-hidden="true"
+            initial={{ x: '-100%', opacity: 0.7 }}
+            animate={{ x: '220%', opacity: 0 }}
+            transition={{ duration: 0.7, ease: MOMENTUM_EASE }}
+            className="pointer-events-none absolute inset-y-0 w-1/2 bg-gradient-to-r from-transparent via-white/45 to-transparent"
+          />
+        )}
+      </motion.div>
     </div>
   );
 };
 
 /**
- * Satisfying checkmark toggle button with spring pop & SVG draw feel.
+ * Identity-driven 3-bar ascending momentum indicator mirroring the BrandMark silhouette.
+ * Animates height & opacity live as daily score moves through Idle -> Building -> Steady -> Peak.
+ */
+export const MomentumVelocityBars: React.FC<{
+  percentage: number;
+  showLabel?: boolean;
+  className?: string;
+}> = ({ percentage, showLabel = false, className = '' }) => {
+  const prefersReduced = useReducedMotion();
+  const { bars, activeBars, tierLabel } = getMomentumBarLevels(percentage);
+
+  return (
+    <div className={`inline-flex items-center gap-1.5 ${className}`} title={`Momentum: ${tierLabel}`}>
+      <div className="flex items-end gap-[2.5px] h-4" aria-hidden="true">
+        {bars.map((heightPct, idx) => {
+          const isLit = idx < activeBars;
+          return (
+            <motion.span
+              key={idx}
+              initial={false}
+              animate={{
+                height: `${heightPct}%`,
+                opacity: isLit ? 1 : 0.35,
+              }}
+              transition={
+                prefersReduced
+                  ? { duration: 0.01 }
+                  : { ...MOMENTUM_GENTLE_SPRING, delay: idx * 0.05 }
+              }
+              className={`w-[3.5px] rounded-[1.5px] ${
+                isLit
+                  ? idx === 2
+                    ? 'bg-[#1D1D1F]'
+                    : idx === 1
+                    ? 'bg-[#48484A]'
+                    : 'bg-[#8E8E93]'
+                  : 'bg-[#D1D1D6]'
+              }`}
+            />
+          );
+        })}
+      </div>
+      {showLabel && (
+        <span className="text-[10.5px] font-medium text-ink-muted tracking-tight">
+          {tierLabel}
+        </span>
+      )}
+    </div>
+  );
+};
+
+/**
+ * Tactile checkmark button with Apple spring pop + monochrome completion ring burst.
  */
 export const AnimatedCheckButton: React.FC<{
   checked: boolean;
@@ -234,23 +321,46 @@ export const AnimatedCheckButton: React.FC<{
 }> = ({ checked, onClick, size = 'md', ariaLabel, className = '' }) => {
   const prefersReduced = useReducedMotion();
   const dim = size === 'sm' ? 'w-4 h-4' : 'w-5 h-5';
+  const prevCheckedRef = useRef<boolean>(checked);
+  const [burstKey, setBurstKey] = useState<number>(0);
+
+  useEffect(() => {
+    if (!prefersReduced && checked && !prevCheckedRef.current) {
+      setBurstKey(k => k + 1);
+    }
+    prevCheckedRef.current = checked;
+  }, [checked, prefersReduced]);
 
   return (
     <motion.button
       type="button"
       onClick={onClick}
-      whileTap={prefersReduced ? undefined : { scale: 0.85 }}
+      whileHover={prefersReduced ? undefined : { scale: 1.08 }}
+      whileTap={prefersReduced ? undefined : { scale: 0.84 }}
+      transition={MOMENTUM_SPRING}
       className={`text-ink-muted hover:text-accent transition-colors shrink-0 relative flex items-center justify-center ${className}`}
       aria-label={ariaLabel || (checked ? 'Mark incomplete' : 'Mark completed')}
     >
+      {/* Expanding monochrome impulse ring on completion */}
+      {burstKey > 0 && !prefersReduced && (
+        <motion.span
+          key={burstKey}
+          aria-hidden="true"
+          initial={{ scale: 0.7, opacity: 0.45 }}
+          animate={{ scale: 1.95, opacity: 0 }}
+          transition={{ duration: 0.42, ease: MOMENTUM_EASE }}
+          className="pointer-events-none absolute inset-0 rounded-full border border-[#1D1D1F]/70"
+        />
+      )}
+
       <AnimatePresence mode="wait" initial={false}>
         {checked ? (
           <motion.span
             key="checked"
-            initial={prefersReduced ? { opacity: 1 } : { scale: 0.65, opacity: 0 }}
+            initial={prefersReduced ? { opacity: 1 } : { scale: 0.55, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={prefersReduced ? { opacity: 0 } : { scale: 0.7, opacity: 0 }}
-            transition={{ duration: prefersReduced ? 0.01 : 0.18, ease: MOMENTUM_EASE }}
+            transition={prefersReduced ? { duration: 0.01 } : MOMENTUM_SPRING}
             className="flex items-center justify-center"
           >
             <CheckCircle2 className={`${dim} text-accent fill-accent/15`} />
@@ -279,7 +389,7 @@ export const StaggerContainer: React.FC<{
   children: React.ReactNode;
   className?: string;
   stagger?: number;
-}> = ({ children, className = '', stagger = 0.035 }) => {
+}> = ({ children, className = '', stagger = 0.045 }) => {
   const prefersReduced = useReducedMotion();
 
   return (
@@ -310,11 +420,12 @@ export const StaggerItem: React.FC<{
   return (
     <motion.div
       variants={{
-        hidden: prefersReduced ? { opacity: 1, y: 0 } : { opacity: 0, y: 8 },
+        hidden: prefersReduced ? { opacity: 1, y: 0 } : { opacity: 0, y: 10, scale: 0.99 },
         visible: {
           opacity: 1,
           y: 0,
-          transition: { duration: prefersReduced ? 0.01 : 0.22, ease: MOMENTUM_EASE },
+          scale: 1,
+          transition: { duration: prefersReduced ? 0.01 : 0.24, ease: MOMENTUM_EASE },
         },
       }}
       className={className}
