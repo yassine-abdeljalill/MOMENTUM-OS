@@ -26,7 +26,8 @@ import {
   LearningBootstrapData,
   LearningTask,
 } from '../types';
-import { ApiError, authApi } from './financeApi';
+import { ApiError, authApi, isMissingApiEndpointError } from './financeApi';
+import { createEmptyLearningBootstrap } from './localAuthFallback';
 import { learningApi } from './learningApi';
 import {
   mapAppTaskStatusToLearningStatus,
@@ -389,6 +390,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
       setLearningDataState(boot);
       reconcileLearningTasksIntoAppState(boot);
     } catch (err: any) {
+      if (isMissingApiEndpointError(err)) {
+        const emptyBoot = createEmptyLearningBootstrap();
+        setLearningDataState(emptyBoot);
+        reconcileLearningTasksIntoAppState(emptyBoot);
+        return;
+      }
       const status = err instanceof ApiError ? err.status : err?.status;
       if (status === 401) {
         authApi.clearToken();
@@ -475,14 +482,14 @@ export function AppProvider({ children }: { children: ReactNode }) {
     sessionType: 'focus',
   });
 
-  const resolvedTheme: 'light' | 'dark' = 'dark';
+  const resolvedTheme: 'light' | 'dark' = 'light';
 
   useEffect(() => {
     if (typeof document === 'undefined') return;
     const root = document.documentElement;
-    const bg = '#242629';
-    root.classList.add('dark');
-    root.style.colorScheme = 'dark';
+    const bg = '#F5F5F7';
+    root.classList.remove('dark');
+    root.style.colorScheme = 'light';
     root.style.backgroundColor = bg;
     if (document.body) {
       document.body.style.backgroundColor = bg;
@@ -1317,10 +1324,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
       ...prev,
       preferences: {
         ...prev.preferences,
-        theme: resolvedTheme === 'dark' ? 'light' : 'dark',
+        theme: 'light',
       },
     }));
-  }, [resolvedTheme]);
+  }, []);
 
   const resetToDemoData = useCallback(() => {
     const seed = getDefaultState();

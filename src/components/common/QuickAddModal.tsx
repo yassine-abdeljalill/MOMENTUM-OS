@@ -123,7 +123,7 @@ export const QuickAddModal: React.FC = () => {
       frequency: habitFrequency,
       targetCountPerDay: 1,
       startDate: new Date().toISOString().split('T')[0],
-      color: '#397BFF',
+      color: '#1D1D1F',
       active: true,
     });
 
@@ -140,7 +140,7 @@ export const QuickAddModal: React.FC = () => {
       name: projectName.trim(),
       description: projectDescription.trim(),
       category: projectCategory,
-      color: '#397BFF',
+      color: '#1D1D1F',
       status: 'active',
       priority: 'high',
       startDate: new Date().toISOString().split('T')[0],

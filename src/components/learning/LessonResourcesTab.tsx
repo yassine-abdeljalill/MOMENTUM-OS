@@ -773,7 +773,7 @@ export const LessonResourcesTab: React.FC<{
                 />
               )}
               {!previewLoading && !previewError && previewText !== null && (
-                <pre className="w-full max-h-[70vh] overflow-auto p-4 rounded-xl bg-[#1A1C1E] text-[#F2EDE4] font-mono text-xs leading-relaxed border border-line">
+                <pre className="w-full max-h-[70vh] overflow-auto p-4 rounded-xl bg-surface-warm text-ink font-mono text-xs leading-relaxed border border-line">
                   {previewText}
                 </pre>
               )}

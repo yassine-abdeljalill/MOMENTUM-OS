@@ -198,7 +198,7 @@ export const LessonWorkspace: React.FC<{
             >
               <ModuleIconView
                 icon={module.icon}
-                className={`w-5 h-5 ${isDarkBg ? 'text-[#F2EDE4]' : 'text-[#242629]'}`}
+                className={`w-5 h-5 ${isDarkBg ? 'text-white' : 'text-[#1D1D1F]'}`}
               />
             </div>
 
@@ -323,7 +323,7 @@ export const LessonWorkspace: React.FC<{
                 {typeof tab.count === 'number' && (
                   <span
                     className={`font-mono text-[10px] px-1.5 py-0.5 rounded-md tabular-nums ${
-                      isActive ? 'bg-black/20 text-accent-ink' : 'bg-surface-inset text-ink'
+                      isActive ? 'bg-white/20 text-accent-ink' : 'bg-surface-inset text-ink'
                     }`}
                   >
                     {tab.count}

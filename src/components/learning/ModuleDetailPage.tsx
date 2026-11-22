@@ -248,7 +248,7 @@ export const ModuleDetailPage: React.FC<{
             >
               <ModuleIconView
                 icon={module.icon}
-                className={`w-5 h-5 ${isDarkBg ? 'text-[#F2EDE4]' : 'text-[#242629]'}`}
+                className={`w-5 h-5 ${isDarkBg ? 'text-white' : 'text-[#1D1D1F]'}`}
               />
             </div>
 

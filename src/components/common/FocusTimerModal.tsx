@@ -133,7 +133,7 @@ export const FocusTimerModal: React.FC = () => {
           particleCount: 36,
           spread: 55,
           origin: { y: 0.55 },
-          colors: ['#397BFF', '#D2C4AC', '#F2EDE4'],
+          colors: ['#1D1D1F', '#6E6E73', '#D1D1D6'],
         });
       } catch {
         // Ignore confetti errors

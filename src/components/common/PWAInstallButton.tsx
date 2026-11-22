@@ -58,7 +58,7 @@ export const PWAInstallButton: React.FC<PWAInstallButtonProps> = ({
           onClose={() => setShowIOSGuide(false)}
           maxWidthClass="max-w-sm"
         >
-          <div className="flex items-center justify-between px-5 py-4 bg-white/[0.03] text-ink border-b border-white/10">
+          <div className="flex items-center justify-between px-5 py-4 bg-surface-warm/70 text-ink border-b border-line">
             <div className="flex items-center gap-2.5">
               <img
                 src="/brand-logo.png"

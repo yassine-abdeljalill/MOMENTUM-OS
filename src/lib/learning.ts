@@ -10,14 +10,14 @@ import type {
 import type { Task, TaskStatus } from '../types';
 
 export const MODULE_COLOR_PALETTE = [
-  { hex: '#397BFF', label: 'Electric Blue' },
-  { hex: '#D2C4AC', label: 'Warm Champagne' },
-  { hex: '#242629', label: 'Charcoal' },
-  { hex: '#33363B', label: 'Charcoal Elevated' },
-  { hex: '#91B7FF', label: 'Soft Electric Blue' },
-  { hex: '#2558C4', label: 'Deep Electric Blue' },
-  { hex: '#B8AC96', label: 'Muted Champagne' },
-  { hex: '#DFD4BF', label: 'Pale Champagne' },
+  { hex: '#1D1D1F', label: 'Carbon Black' },
+  { hex: '#3A3A3C', label: 'Graphite Grey' },
+  { hex: '#6E6E73', label: 'Slate Grey' },
+  { hex: '#8E8E93', label: 'Silver Grey' },
+  { hex: '#AEAEB2', label: 'Ash Grey' },
+  { hex: '#D1D1D6', label: 'Cool Grey' },
+  { hex: '#E5E5EA', label: 'Soft Grey' },
+  { hex: '#000000', label: 'Pure Black' },
 ] as const;
 
 export const LEARNING_STATUS_META: Record<
@@ -26,15 +26,15 @@ export const LEARNING_STATUS_META: Record<
 > = {
   not_started: {
     label: 'Not Started',
-    badgeClass: 'text-ink-muted bg-surface-inset border-line',
+    badgeClass: 'text-ink-muted bg-surface-warm border-line',
   },
   in_progress: {
     label: 'In Progress',
-    badgeClass: 'text-accent bg-accent/14 border-accent/40',
+    badgeClass: 'text-ink bg-surface-inset border-line-strong',
   },
   completed: {
     label: 'Completed',
-    badgeClass: 'text-stone-ink bg-stone border-stone',
+    badgeClass: 'text-accent-ink bg-accent border-accent',
   },
 };
 
@@ -44,15 +44,15 @@ export const LEARNING_TASK_STATUS_META: Record<
 > = {
   todo: {
     label: 'To Do',
-    badgeClass: 'text-ink-muted bg-surface-inset border-line',
+    badgeClass: 'text-ink-muted bg-surface-warm border-line',
   },
   in_progress: {
     label: 'In Progress',
-    badgeClass: 'text-accent bg-accent/14 border-accent/40',
+    badgeClass: 'text-ink bg-surface-inset border-line-strong',
   },
   completed: {
     label: 'Completed',
-    badgeClass: 'text-stone-ink bg-stone border-stone',
+    badgeClass: 'text-accent-ink bg-accent border-accent',
   },
 };
 

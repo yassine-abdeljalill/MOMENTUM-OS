@@ -287,7 +287,7 @@ export const OverviewView: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setCurrentView('today')}
-                className="text-xs text-stone font-medium hover:underline flex items-center gap-1 whitespace-nowrap shrink-0"
+                className="text-xs text-ink-muted hover:text-ink font-medium hover:underline flex items-center gap-1 whitespace-nowrap shrink-0 transition-colors"
               >
                 <span>Manage</span>
                 <ChevronRight className="w-3.5 h-3.5" />
@@ -412,7 +412,7 @@ export const OverviewView: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setCurrentView('analytics')}
-                    className="text-xs text-stone font-medium hover:underline flex items-center gap-1 whitespace-nowrap"
+                    className="text-xs text-ink-muted hover:text-ink font-medium hover:underline flex items-center gap-1 whitespace-nowrap transition-colors"
                   >
                     <span>Analytics</span>
                     <ArrowUpRight className="w-3.5 h-3.5" />
@@ -433,7 +433,7 @@ export const OverviewView: React.FC = () => {
                           className={`w-full rounded-t-md transition-colors duration-200 ${
                             day.isToday
                               ? 'bg-accent'
-                              : 'bg-stone/75 group-hover:bg-stone'
+                              : 'bg-ink-muted/45 group-hover:bg-ink-muted/75'
                           }`}
                           initial={prefersReduced ? { height: `${day.heightPct}%` } : { height: '0%' }}
                           whileInView={{ height: `${day.heightPct}%` }}
@@ -476,7 +476,7 @@ export const OverviewView: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setCurrentView('goals')}
-                    className="text-xs text-stone font-medium hover:underline whitespace-nowrap"
+                    className="text-xs text-ink-muted hover:text-ink font-medium hover:underline whitespace-nowrap transition-colors"
                   >
                     View All
                   </button>
@@ -538,7 +538,7 @@ export const OverviewView: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setCurrentView('habits')}
-                    className="text-xs text-stone font-medium hover:underline whitespace-nowrap"
+                    className="text-xs text-ink-muted hover:text-ink font-medium hover:underline whitespace-nowrap transition-colors"
                   >
                     Habit Hub
                   </button>
@@ -590,7 +590,7 @@ export const OverviewView: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setCurrentView('projects')}
-                  className="text-xs text-stone font-medium hover:underline whitespace-nowrap"
+                  className="text-xs text-ink-muted hover:text-ink font-medium hover:underline whitespace-nowrap transition-colors"
                 >
                   All Projects
                 </button>

@@ -25,10 +25,13 @@ import { LEARNING_STATUS_META, MODULE_COLOR_PALETTE } from '../../lib/learning';
 import { ModalShell } from '../common/MotionPrimitives';
 
 export const DARK_SWATCH_HEXES = new Set([
+  '#1D1D1F',
+  '#000000',
+  '#3A3A3C',
+  '#48484A',
+  '#6E6E73',
   '#242629',
   '#33363B',
-  '#397BFF',
-  '#2558C4',
   '#4F545C',
 ]);
 
@@ -90,7 +93,7 @@ export const ModuleModal: React.FC<{
 }> = ({ isOpen, onClose, editingModule, onSubmit }) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [color, setColor] = useState<string>('#397BFF');
+  const [color, setColor] = useState<string>('#1D1D1F');
   const [icon, setIcon] = useState<LearningModuleIcon>('book');
   const [status, setStatus] = useState<LearningStatus>('not_started');
   const [saving, setSaving] = useState(false);
@@ -100,7 +103,7 @@ export const ModuleModal: React.FC<{
     if (isOpen) {
       setTitle(editingModule?.title || '');
       setDescription(editingModule?.description || '');
-      setColor(editingModule?.color || '#397BFF');
+      setColor(editingModule?.color || '#1D1D1F');
       setIcon(editingModule?.icon || 'book');
       setStatus(editingModule?.status || 'not_started');
       setError('');
@@ -138,12 +141,12 @@ export const ModuleModal: React.FC<{
       <div className="flex items-center justify-between px-5 sm:px-6 py-4 border-b border-line bg-surface-warm">
         <div className="flex items-center gap-2.5">
           <div
-            className="w-7 h-7 rounded-lg flex items-center justify-center border border-white/20"
+            className="w-7 h-7 rounded-lg flex items-center justify-center border border-black/10"
             style={{ backgroundColor: color }}
           >
             <ModuleIconView
               icon={icon}
-              className={`w-4 h-4 ${isDarkSwatch ? 'text-[#F2EDE4]' : 'text-[#242629]'}`}
+              className={`w-4 h-4 ${isDarkSwatch ? 'text-white' : 'text-[#1D1D1F]'}`}
             />
           </div>
           <h3 className="text-sm font-semibold text-ink">

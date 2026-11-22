@@ -254,7 +254,7 @@ router.post('/categories', (req: AuthedRequest, res) => {
 
   const id = `cat_${crypto.randomUUID()}`;
   const now = new Date().toISOString();
-  const finalColor = color || '#D2C4AC';
+  const finalColor = color || '#3A3A3C';
 
   db.prepare(
     `INSERT INTO finance_categories (id, user_id, name, type, color, is_default, created_at)

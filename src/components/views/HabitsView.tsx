@@ -60,7 +60,7 @@ export const HabitsView: React.FC = () => {
       frequency,
       targetCountPerDay: 1,
       startDate: new Date().toISOString().split('T')[0],
-      color: '#397BFF',
+      color: '#1D1D1F',
       active: true,
     });
 

@@ -35,10 +35,10 @@ export const AuthEntryView: React.FC = () => {
       {/* Subtle Architectural Hairline Grid matching IntroSplash */}
       <div
         aria-hidden="true"
-        className="pointer-events-none fixed inset-0 opacity-[0.045]"
+        className="pointer-events-none fixed inset-0 opacity-[0.45]"
         style={{
           backgroundImage:
-            'linear-gradient(to right, rgba(210, 196, 172, 0.7) 1px, transparent 1px), linear-gradient(to bottom, rgba(210, 196, 172, 0.7) 1px, transparent 1px)',
+            'linear-gradient(to right, rgba(0, 0, 0, 0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(0, 0, 0, 0.04) 1px, transparent 1px)',
           backgroundSize: '48px 48px',
         }}
       />
@@ -55,7 +55,7 @@ export const AuthEntryView: React.FC = () => {
             MOMENTUM
           </span>
         </div>
-        <span className="hidden sm:inline text-xs font-mono tracking-wider uppercase text-stone/80">
+        <span className="hidden sm:inline text-xs font-mono tracking-wider uppercase text-ink-muted">
           Personal Life Operating System
         </span>
       </header>
@@ -71,7 +71,7 @@ export const AuthEntryView: React.FC = () => {
             className="order-2 lg:order-1 space-y-5"
           >
             <div className="space-y-2.5 hidden lg:block">
-              <p className="text-xs font-mono uppercase tracking-[0.2em] text-stone">
+              <p className="text-xs font-mono uppercase tracking-[0.2em] text-ink-muted">
                 Focused Execution
               </p>
               <h1 className="text-3xl sm:text-4xl font-bold font-heading tracking-tight text-ink leading-[1.14]">
@@ -85,15 +85,15 @@ export const AuthEntryView: React.FC = () => {
             <div className="border-t border-line pt-4 lg:pt-5 space-y-3 max-w-md mx-auto lg:mx-0">
               <div className="flex items-baseline justify-between gap-4 border-b border-line pb-2">
                 <span className="text-xs font-medium text-ink">Daily Priorities &amp; Focus</span>
-                <span className="text-[11px] font-mono text-stone">Rule of 3</span>
+                <span className="text-[11px] font-mono text-ink-muted">Rule of 3</span>
               </div>
               <div className="flex items-baseline justify-between gap-4 border-b border-line pb-2">
                 <span className="text-xs font-medium text-ink">Learning Management Center</span>
-                <span className="text-[11px] font-mono text-stone">Modules &amp; Notes</span>
+                <span className="text-[11px] font-mono text-ink-muted">Modules &amp; Notes</span>
               </div>
               <div className="flex items-baseline justify-between gap-4">
                 <span className="text-xs font-medium text-ink">Private Finance Ledger</span>
-                <span className="text-[11px] font-mono text-stone">Encrypted Session</span>
+                <span className="text-[11px] font-mono text-ink-muted">Encrypted Session</span>
               </div>
             </div>
           </motion.section>
@@ -104,7 +104,7 @@ export const AuthEntryView: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: prefersReduced ? 0.01 : 0.4, delay: 0.05, ease: MOMENTUM_EASE }}
             aria-label="Account authentication"
-            className="order-1 lg:order-2 bg-surface border border-line rounded-2xl p-5 sm:p-8 shadow-2xl"
+            className="order-1 lg:order-2 bg-surface border border-line rounded-2xl p-5 sm:p-8 shadow-[0_12px_40px_-12px_rgba(0,0,0,0.1)]"
           >
             <div className="mb-6">
               <h2 className="text-lg font-bold font-heading text-ink">
@@ -123,21 +123,21 @@ export const AuthEntryView: React.FC = () => {
               </p>
             </div>
 
-            {/* Clean Segmented Switcher */}
+            {/* Apple Segmented Control Switcher */}
             {mode !== 'forgot' && (
               <div
                 role="tablist"
                 aria-label="Authentication mode"
-                className="grid grid-cols-2 gap-1 p-1 rounded-xl bg-surface-warm/70 border border-line mb-5"
+                className="grid grid-cols-2 gap-1 p-1 rounded-xl bg-surface-inset/80 border border-line mb-5"
               >
                 <button
                   type="button"
                   role="tab"
                   aria-selected={mode === 'login'}
                   onClick={() => setMode('login')}
-                  className={`py-2 px-3 rounded-lg text-xs font-semibold transition-colors whitespace-nowrap ${
+                  className={`py-2 px-3 rounded-lg text-xs font-semibold transition-all whitespace-nowrap ${
                     mode === 'login'
-                      ? 'bg-accent text-accent-ink shadow-sm'
+                      ? 'bg-surface text-ink shadow-xs'
                       : 'text-ink-muted hover:text-ink'
                   }`}
                 >
@@ -148,9 +148,9 @@ export const AuthEntryView: React.FC = () => {
                   role="tab"
                   aria-selected={mode === 'signup'}
                   onClick={() => setMode('signup')}
-                  className={`py-2 px-3 rounded-lg text-xs font-semibold transition-colors whitespace-nowrap ${
+                  className={`py-2 px-3 rounded-lg text-xs font-semibold transition-all whitespace-nowrap ${
                     mode === 'signup'
-                      ? 'bg-accent text-accent-ink shadow-sm'
+                      ? 'bg-surface text-ink shadow-xs'
                       : 'text-ink-muted hover:text-ink'
                   }`}
                 >
@@ -170,9 +170,9 @@ export const AuthEntryView: React.FC = () => {
       </main>
 
       {/* Quiet Minimal Footer */}
-      <footer className="relative z-10 w-full max-w-5xl mx-auto px-5 sm:px-8 pb-6 pt-3 flex items-center justify-between text-[11px] text-ink-muted/80">
+      <footer className="relative z-10 w-full max-w-5xl mx-auto px-5 sm:px-8 pb-6 pt-3 flex items-center justify-between text-[11px] text-ink-muted">
         <span>MOMENTUM · Personal Workspace</span>
-        <span className="font-mono">Charcoal · Champagne · Cobalt</span>
+        <span className="font-mono">White · Grey · Black</span>
       </footer>
     </div>
   );

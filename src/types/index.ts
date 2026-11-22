@@ -28,7 +28,7 @@ export interface UserProfile {
 
 export interface UserPreferences {
   theme: 'dark' | 'light' | 'system';
-  accentColor: string; // '#397BFF'
+  accentColor: string; // '#1D1D1F'
   startOfWeek: 'monday' | 'sunday';
   timeFormat: '12h' | '24h';
   dateFormat: 'YYYY-MM-DD' | 'MM/DD/YYYY' | 'DD/MM/YYYY';

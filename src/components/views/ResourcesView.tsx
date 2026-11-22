@@ -219,7 +219,7 @@ export const ResourcesView: React.FC = () => {
         onClose={() => setShowAddModal(false)}
         maxWidthClass="max-w-md"
       >
-        <div className="px-5 py-4 border-b border-white/10 bg-white/[0.03] flex items-center justify-between">
+        <div className="px-5 py-4 border-b border-line bg-surface-warm/70 flex items-center justify-between">
           <span className="text-xs font-bold text-ink">Save to Resource Vault</span>
           <button
             type="button"
@@ -298,7 +298,7 @@ export const ResourcesView: React.FC = () => {
             />
           </div>
 
-          <div className="flex justify-end gap-2 pt-3 border-t border-white/10">
+          <div className="flex justify-end gap-2 pt-3 border-t border-line">
             <button
               type="button"
               onClick={() => setShowAddModal(false)}

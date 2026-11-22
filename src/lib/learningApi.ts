@@ -36,11 +36,19 @@ async function learningRequest<T>(path: string, options: RequestInit = {}): Prom
     credentials: 'include',
     headers: buildHeaders(options.headers, isFormData),
   });
-  const data = await res.json().catch(() => ({}));
+  const data = await res.json().catch(() => null);
   if (!res.ok) {
-    throw new ApiError(data.error || `Request failed (${res.status})`, res.status);
+    const serverMessage =
+      data && typeof data === 'object' && typeof (data as { error?: unknown }).error === 'string'
+        ? (data as { error: string }).error
+        : '';
+    throw new ApiError(
+      serverMessage || `Request failed (${res.status})`,
+      res.status,
+      Boolean(serverMessage)
+    );
   }
-  return data as T;
+  return (data ?? {}) as T;
 }
 
 export const learningApi = {

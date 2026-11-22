@@ -402,7 +402,7 @@ export const LessonTasksTab: React.FC<{
 
       {/* Create / Edit Task Modal */}
       <ModalShell isOpen={showCreateModal} onClose={() => setShowCreateModal(false)} maxWidthClass="max-w-lg">
-        <div className="px-6 py-4 border-b border-white/10 bg-white/[0.03] flex items-center justify-between">
+        <div className="px-6 py-4 border-b border-line bg-surface-warm/70 flex items-center justify-between">
           <h3 className="text-sm font-bold text-ink">
             {editingTask ? 'Edit Learning Task' : 'New Task / Exercise'}
           </h3>
@@ -493,7 +493,7 @@ export const LessonTasksTab: React.FC<{
             />
           </div>
 
-          <div className="flex justify-end gap-2 pt-3 border-t border-white/10">
+          <div className="flex justify-end gap-2 pt-3 border-t border-line">
             <button
               type="button"
               onClick={() => setShowCreateModal(false)}

@@ -11,8 +11,8 @@ const TIER_CLASS: Record<GlassTier, string> = {
 };
 
 /**
- * Reusable Liquid Glass container for floating navigation bars, toolbars, popovers, and control clusters.
- * Content cards should stay solid/subtle (#2B2D31) for maximum legibility.
+ * Reusable Apple Frosted Material container for floating navigation bars, toolbars, popovers, and control clusters.
+ * Content cards should stay solid pure white (#FFFFFF) on the light grey canvas (#F5F5F7) for maximum legibility.
  */
 export const GlassSurface: React.FC<{
   tier?: GlassTier;
@@ -92,7 +92,7 @@ export function GlassSegmentedControl<T extends string>({
             {typeof opt.count === 'number' && (
               <span
                 className={`font-mono text-[10px] px-1.5 py-0.5 rounded-md tabular-nums ${
-                  isActive ? 'bg-black/20 text-accent-ink' : 'bg-surface-inset text-ink'
+                  isActive ? 'bg-white/20 text-accent-ink' : 'bg-surface-inset text-ink'
                 }`}
               >
                 {opt.count}

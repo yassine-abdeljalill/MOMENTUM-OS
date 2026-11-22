@@ -1,3 +1,4 @@
+import { localAuthFallback } from './localAuthFallback';
 import type {
   AuthUser,
   CurrencyCode,
@@ -17,11 +18,17 @@ const SESSION_TOKEN_KEY = 'momentum_session_token';
 
 export class ApiError extends Error {
   status: number;
-  constructor(message: string, status: number) {
+  hasJsonPayload: boolean;
+  constructor(message: string, status: number, hasJsonPayload = true) {
     super(message);
     this.name = 'ApiError';
     this.status = status;
+    this.hasJsonPayload = hasJsonPayload;
   }
+}
+
+export function isMissingApiEndpointError(err: unknown): boolean {
+  return err instanceof ApiError && err.status === 404 && !err.hasJsonPayload;
 }
 
 export function getStoredSessionToken(): string | null {
@@ -69,22 +76,41 @@ async function apiRequest<T>(path: string, options: RequestInit = {}): Promise<T
     headers: buildAuthHeaders(options.headers),
   });
 
-  const data = await res.json().catch(() => ({}));
+  const data = await res.json().catch(() => null);
   if (!res.ok) {
-    throw new ApiError(data.error || `Request failed (${res.status})`, res.status);
+    const serverMessage =
+      data && typeof data === 'object' && typeof (data as { error?: unknown }).error === 'string'
+        ? (data as { error: string }).error
+        : '';
+    throw new ApiError(
+      serverMessage || `Request failed (${res.status})`,
+      res.status,
+      Boolean(serverMessage)
+    );
   }
-  return data as T;
+  return (data ?? {}) as T;
 }
 
 let inFlightWorkspacePromise: Promise<{ user: AuthUser }> | null = null;
 
 export const authApi = {
   me: async () => {
-    const res = await apiRequest<{ user: AuthUser | null }>('/api/auth/me');
-    if (!res.user) {
-      setStoredSessionToken(null);
+    try {
+      const res = await apiRequest<{ user: AuthUser | null }>('/api/auth/me');
+      if (!res.user) {
+        const local = localAuthFallback.me();
+        if (local.user && getStoredSessionToken()?.startsWith('local_')) {
+          return local;
+        }
+        setStoredSessionToken(null);
+      }
+      return res;
+    } catch (err) {
+      if (isMissingApiEndpointError(err)) {
+        return localAuthFallback.me();
+      }
+      throw err;
     }
-    return res;
   },
   ensureWorkspaceSession: (fullName?: string) => {
     if (!inFlightWorkspacePromise) {
@@ -101,6 +127,14 @@ export const authApi = {
           }
           return { user: res.user };
         })
+        .catch(err => {
+          if (isMissingApiEndpointError(err)) {
+            const local = localAuthFallback.ensureWorkspaceSession(fullName);
+            setStoredSessionToken(local.sessionToken);
+            return { user: local.user };
+          }
+          throw err;
+        })
         .finally(() => {
           inFlightWorkspacePromise = null;
         });
@@ -108,31 +142,64 @@ export const authApi = {
     return inFlightWorkspacePromise;
   },
   login: async (payload: { email: string; password: string }) => {
-    const res = await apiRequest<{ user: AuthUser; sessionToken?: string }>('/api/auth/login', {
-      method: 'POST',
-      body: JSON.stringify(payload),
-    });
-    if (res.sessionToken) {
-      setStoredSessionToken(res.sessionToken);
+    try {
+      const res = await apiRequest<{ user: AuthUser; sessionToken?: string }>('/api/auth/login', {
+        method: 'POST',
+        body: JSON.stringify(payload),
+      });
+      if (res.sessionToken) {
+        setStoredSessionToken(res.sessionToken);
+      }
+      return { user: res.user };
+    } catch (err) {
+      if (isMissingApiEndpointError(err)) {
+        try {
+          const local = await localAuthFallback.login(payload);
+          setStoredSessionToken(local.sessionToken);
+          return { user: local.user };
+        } catch (localErr: any) {
+          throw new ApiError(localErr?.message || 'Invalid email or password.', 401);
+        }
+      }
+      throw err;
     }
-    return { user: res.user };
   },
   signup: async (payload: { email: string; password: string; fullName: string }) => {
-    const res = await apiRequest<{ user: AuthUser; sessionToken?: string }>('/api/auth/signup', {
-      method: 'POST',
-      body: JSON.stringify(payload),
-    });
-    if (res.sessionToken) {
-      setStoredSessionToken(res.sessionToken);
+    try {
+      const res = await apiRequest<{ user: AuthUser; sessionToken?: string }>('/api/auth/signup', {
+        method: 'POST',
+        body: JSON.stringify(payload),
+      });
+      if (res.sessionToken) {
+        setStoredSessionToken(res.sessionToken);
+      }
+      return { user: res.user };
+    } catch (err) {
+      if (isMissingApiEndpointError(err)) {
+        try {
+          const local = await localAuthFallback.signup(payload);
+          setStoredSessionToken(local.sessionToken);
+          return { user: local.user };
+        } catch (localErr: any) {
+          const msg = localErr?.message || 'Unable to create account.';
+          throw new ApiError(msg, msg.includes('already exists') ? 409 : 400);
+        }
+      }
+      throw err;
     }
-    return { user: res.user };
   },
   logout: async () => {
     try {
       return await apiRequest<{ success: boolean }>('/api/auth/logout', {
         method: 'POST',
       });
+    } catch (err) {
+      if (isMissingApiEndpointError(err)) {
+        return localAuthFallback.logout();
+      }
+      throw err;
     } finally {
+      localAuthFallback.logout();
       setStoredSessionToken(null);
     }
   },

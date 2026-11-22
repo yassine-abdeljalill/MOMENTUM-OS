@@ -159,7 +159,7 @@ export const AuthCredentialsForm: React.FC<AuthCredentialsFormProps> = ({
   };
 
   const inputCls =
-    'w-full pl-9 pr-3 py-2.5 rounded-xl bg-surface-warm/70 border border-line text-ink text-xs placeholder:text-ink-muted/60 focus:border-accent focus:ring-2 focus:ring-accent/30 focus:outline-hidden transition-colors';
+    'w-full pl-9 pr-3 py-2.5 rounded-xl bg-surface-warm border border-line text-ink text-xs placeholder:text-ink-muted/60 focus:bg-surface focus:border-ink focus:ring-2 focus:ring-ink/15 focus:outline-hidden transition-colors';
 
   return (
     <div>
@@ -483,7 +483,7 @@ export const AuthCredentialsForm: React.FC<AuthCredentialsFormProps> = ({
             type="button"
             disabled={loading || guestLoading}
             onClick={handleContinueAsGuest}
-            className="w-full py-2.5 px-4 rounded-xl bg-surface-warm/60 hover:bg-surface-warm border border-line text-xs font-medium text-stone hover:text-ink transition-colors btn-press disabled:opacity-60 flex items-center justify-center gap-2 whitespace-nowrap"
+            className="w-full py-2.5 px-4 rounded-xl bg-surface-warm hover:bg-surface-inset border border-line text-xs font-medium text-ink transition-colors btn-press disabled:opacity-60 flex items-center justify-center gap-2 whitespace-nowrap"
           >
             {guestLoading ? (
               <Loader2 className="w-3.5 h-3.5 animate-spin" />

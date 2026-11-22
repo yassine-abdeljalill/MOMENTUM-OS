@@ -62,7 +62,7 @@ export const Header: React.FC = () => {
     : state.profile.fullName;
 
   return (
-    <header className="shrink-0 bg-[#242629]/90 backdrop-blur-xl border-b border-line pt-[env(safe-area-inset-top)] select-none">
+    <header className="shrink-0 bg-[#FBFBFD]/85 backdrop-blur-xl border-b border-line pt-[env(safe-area-inset-top)] select-none">
       <div className="h-14 px-3 sm:px-6 md:px-8 flex items-center justify-between gap-2 min-w-0">
         {/* Left: Mobile Brand Mark + Single-Line View Title */}
         <div className="flex items-center gap-2.5 min-w-0 flex-1">

@@ -54,7 +54,7 @@ export const Sidebar: React.FC = () => {
       initial={false}
       animate={{ width: isCollapsed ? 64 : 232 }}
       transition={{ duration: prefersReduced ? 0.01 : 0.2, ease: MOMENTUM_EASE }}
-      className="hidden md:flex flex-col shrink-0 bg-sidebar text-sidebar-ink h-dvh sticky top-0 z-30 border-r border-sidebar-border overflow-x-hidden select-none"
+      className="hidden md:flex flex-col shrink-0 bg-sidebar/95 backdrop-blur-xl text-sidebar-ink h-dvh sticky top-0 z-30 border-r border-sidebar-border overflow-x-hidden select-none"
       aria-label="Primary sidebar"
     >
       {/* Brand Header */}
@@ -230,7 +230,7 @@ export const Sidebar: React.FC = () => {
           }`}
           title={displayName}
         >
-          <div className="w-7 h-7 rounded-full bg-stone/18 border border-stone/50 flex items-center justify-center text-xs font-bold text-stone shrink-0">
+          <div className="w-7 h-7 rounded-full bg-surface-inset border border-line-strong flex items-center justify-center text-xs font-bold text-ink shrink-0">
             {displayName.charAt(0).toUpperCase()}
           </div>
           {!isCollapsed && (

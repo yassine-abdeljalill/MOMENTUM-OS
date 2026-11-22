@@ -23,7 +23,8 @@ import {
   getMonthKey,
   type DateRangePreset,
 } from '../../lib/finance';
-import { ApiError, financeApi, authApi } from '../../lib/financeApi';
+import { ApiError, financeApi, authApi, isMissingApiEndpointError } from '../../lib/financeApi';
+import { createEmptyFinanceBootstrap } from '../../lib/localAuthFallback';
 import type {
   CurrencyCode,
   FinanceBootstrapData,
@@ -99,6 +100,10 @@ export const FinanceView: React.FC = () => {
       const boot = await financeApi.bootstrap();
       setData(boot);
     } catch (err: any) {
+      if (isMissingApiEndpointError(err)) {
+        setData(createEmptyFinanceBootstrap(authUser));
+        return;
+      }
       const status = err instanceof ApiError ? err.status : err?.status;
       console.error('[Finance] Workspace load failed:', status || 'network', err?.message);
 

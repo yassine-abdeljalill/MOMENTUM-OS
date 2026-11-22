@@ -88,12 +88,12 @@ export const SettingsView: React.FC = () => {
   };
 
   const paletteSwatches = [
-    { name: 'Charcoal (60%)', hex: '#242629', bg: 'bg-[#242629] text-[#F2EDE4] border-[#D2C4AC]/30' },
-    { name: 'Warm Champagne (30%)', hex: '#D2C4AC', bg: 'bg-[#D2C4AC] text-[#242629] border-[#DFD4BF]' },
-    { name: 'Electric Blue (10%)', hex: '#397BFF', bg: 'bg-[#397BFF] text-white border-[#528CFF]' },
-    { name: 'Charcoal Surface', hex: '#2B2D31', bg: 'bg-[#2B2D31] text-[#F2EDE4] border-[#D2C4AC]/25' },
-    { name: 'Charcoal Elevated', hex: '#33363B', bg: 'bg-[#33363B] text-[#F2EDE4] border-[#D2C4AC]/25' },
-    { name: 'Champagne Ivory Ink', hex: '#F2EDE4', bg: 'bg-[#F2EDE4] text-[#242629] border-[#D2C4AC]' },
+    { name: 'Pure White', hex: '#FFFFFF', bg: 'bg-[#FFFFFF] text-[#1D1D1F] border-[#E5E5EA]' },
+    { name: 'Apple Light Grey', hex: '#F5F5F7', bg: 'bg-[#F5F5F7] text-[#1D1D1F] border-[#D1D1D6]' },
+    { name: 'System Grey', hex: '#E5E5EA', bg: 'bg-[#E5E5EA] text-[#1D1D1F] border-[#D1D1D6]' },
+    { name: 'Mid Grey', hex: '#6E6E73', bg: 'bg-[#6E6E73] text-white border-[#8E8E93]' },
+    { name: 'Graphite', hex: '#3A3A3C', bg: 'bg-[#3A3A3C] text-white border-[#48484A]' },
+    { name: 'Carbon Black', hex: '#1D1D1F', bg: 'bg-[#1D1D1F] text-white border-[#000000]' },
   ];
 
   return (
@@ -267,22 +267,22 @@ export const SettingsView: React.FC = () => {
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
                 <h2 className="text-sm font-semibold text-ink">
-                  Official 60–30–10 Color System
+                  Apple Monochrome Color System
                 </h2>
                 <p className="text-xs text-ink-muted mt-0.5">
-                  Charcoal (#242629) foundation, Warm Champagne (#D2C4AC) secondary surfaces, and Electric Blue (#397BFF) action accents.
+                  Apple Light Grey (#F5F5F7) grouped canvas, Pure White (#FFFFFF) cards, and Carbon Black (#1D1D1F) ink &amp; controls.
                 </p>
               </div>
 
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-stone/15 border border-stone/35 text-xs font-mono font-semibold text-stone">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-surface-warm border border-line text-xs font-mono font-semibold text-ink">
                 <Sparkles className="w-3.5 h-3.5" />
-                Official Palette Active
+                Apple Monochrome Active
               </span>
             </div>
 
             <div className="space-y-3 pt-4 border-t border-line">
               <span className="text-xs font-semibold text-ink-muted block">
-                Official MOMENTUM Palette Tokens:
+                MOMENTUM Monochrome Tokens:
               </span>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                 {paletteSwatches.map(swatch => (
@@ -485,7 +485,7 @@ export const SettingsView: React.FC = () => {
                           setShowClearConfirm(false);
                           notify('All local data cleared.', 'info');
                         }}
-                        className="btn-press px-3 py-1.5 rounded-xl bg-danger text-stone-ink text-xs font-bold"
+                        className="btn-press px-3 py-1.5 rounded-xl bg-danger text-accent-ink text-xs font-bold"
                       >
                         Yes, Wipe Data
                       </button>

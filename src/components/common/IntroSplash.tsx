@@ -96,12 +96,12 @@ export const IntroSplash: React.FC = () => {
           <motion.div
             aria-hidden="true"
             initial={{ opacity: 0 }}
-            animate={{ opacity: 0.06 }}
+            animate={{ opacity: 0.45 }}
             transition={{ duration: prefersReduced ? 0.01 : 0.7, ease: MOMENTUM_EASE }}
             className="pointer-events-none absolute inset-0"
             style={{
               backgroundImage:
-                'linear-gradient(to right, rgba(210, 196, 172, 0.75) 1px, transparent 1px), linear-gradient(to bottom, rgba(210, 196, 172, 0.75) 1px, transparent 1px)',
+                'linear-gradient(to right, rgba(0, 0, 0, 0.045) 1px, transparent 1px), linear-gradient(to bottom, rgba(0, 0, 0, 0.045) 1px, transparent 1px)',
               backgroundSize: '56px 56px',
             }}
           />
@@ -109,17 +109,17 @@ export const IntroSplash: React.FC = () => {
           {/* Horizontal & Vertical Center Hairline Axis Flash */}
           <motion.div
             aria-hidden="true"
-            initial={prefersReduced ? { opacity: 0 } : { scaleX: 0, opacity: 0.3 }}
-            animate={{ scaleX: 1, opacity: 0.09 }}
+            initial={prefersReduced ? { opacity: 0 } : { scaleX: 0, opacity: 0.25 }}
+            animate={{ scaleX: 1, opacity: 0.08 }}
             transition={{ duration: prefersReduced ? 0.01 : 0.85, ease: MOMENTUM_EASE }}
-            className="pointer-events-none absolute inset-x-0 top-1/2 h-px bg-stone origin-center"
+            className="pointer-events-none absolute inset-x-0 top-1/2 h-px bg-ink origin-center"
           />
           <motion.div
             aria-hidden="true"
-            initial={prefersReduced ? { opacity: 0 } : { scaleY: 0, opacity: 0.3 }}
-            animate={{ scaleY: 1, opacity: 0.09 }}
+            initial={prefersReduced ? { opacity: 0 } : { scaleY: 0, opacity: 0.25 }}
+            animate={{ scaleY: 1, opacity: 0.08 }}
             transition={{ duration: prefersReduced ? 0.01 : 0.85, ease: MOMENTUM_EASE }}
-            className="pointer-events-none absolute inset-y-0 left-1/2 w-px bg-stone origin-center"
+            className="pointer-events-none absolute inset-y-0 left-1/2 w-px bg-ink origin-center"
           />
 
           {/* Four Architectural Corner Registration Brackets */}
@@ -129,49 +129,49 @@ export const IntroSplash: React.FC = () => {
           >
             <motion.span
               initial={prefersReduced ? { opacity: 0.5 } : { opacity: 0, x: -8, y: -8 }}
-              animate={{ opacity: 0.55, x: 0, y: 0 }}
+              animate={{ opacity: 0.45, x: 0, y: 0 }}
               transition={{ duration: prefersReduced ? 0.01 : 0.45, ease: MOMENTUM_EASE }}
-              className="w-4 h-4 border-l border-t border-stone/60"
+              className="w-4 h-4 border-l border-t border-line-strong"
             />
             <motion.span
               initial={prefersReduced ? { opacity: 0.7 } : { opacity: 0, y: -4 }}
               animate={{ opacity: 0.75, y: 0 }}
               transition={{ duration: prefersReduced ? 0.01 : 0.45, delay: 0.1, ease: MOMENTUM_EASE }}
-              className="text-[10px] font-mono tracking-[0.26em] uppercase text-stone/80"
+              className="text-[10px] font-mono tracking-[0.26em] uppercase text-ink-muted"
             >
               Life OS · v2
             </motion.span>
             <motion.span
               initial={prefersReduced ? { opacity: 0.5 } : { opacity: 0, x: 8, y: -8 }}
-              animate={{ opacity: 0.55, x: 0, y: 0 }}
+              animate={{ opacity: 0.45, x: 0, y: 0 }}
               transition={{ duration: prefersReduced ? 0.01 : 0.45, ease: MOMENTUM_EASE }}
-              className="w-4 h-4 border-r border-t border-stone/60"
+              className="w-4 h-4 border-r border-t border-line-strong"
             />
           </div>
 
           {/* Centerpiece Kinetic Orbital Emblem + Masked Wordmark */}
           <div className="relative z-10 flex flex-col items-center text-center my-auto py-8">
             <div className="relative w-36 h-36 sm:w-40 sm:h-40 flex items-center justify-center mb-7">
-              {/* Subtle Electric Blue Ambient Halo */}
+              {/* Soft Monochrome Ambient Depth Glow */}
               <motion.div
                 aria-hidden="true"
                 initial={{ opacity: 0, scale: 0.7 }}
                 animate={
                   prefersReduced
-                    ? { opacity: 0.16, scale: 1 }
-                    : { opacity: [0, 0.22, 0.14], scale: [0.7, 1.08, 1] }
+                    ? { opacity: 0.14, scale: 1 }
+                    : { opacity: [0, 0.2, 0.12], scale: [0.7, 1.08, 1] }
                 }
                 transition={{ duration: prefersReduced ? 0.01 : 1.15, ease: MOMENTUM_EASE }}
-                className="absolute inset-4 rounded-full bg-accent/25 blur-2xl"
+                className="absolute inset-4 rounded-full bg-black/10 blur-2xl"
               />
 
-              {/* Outer Precision Champagne Dial Ring */}
+              {/* Outer Precision Silver Dial Ring */}
               <motion.svg
                 aria-hidden="true"
                 viewBox="0 0 160 160"
                 className="absolute inset-0 w-full h-full"
                 initial={prefersReduced ? { rotate: 0, opacity: 0.7 } : { rotate: -75, scale: 0.86, opacity: 0 }}
-                animate={{ rotate: 12, scale: 1, opacity: 0.85 }}
+                animate={{ rotate: 12, scale: 1, opacity: 0.9 }}
                 transition={{ duration: prefersReduced ? 0.01 : 1.25, ease: MOMENTUM_EASE }}
               >
                 <circle
@@ -179,7 +179,7 @@ export const IntroSplash: React.FC = () => {
                   cy="80"
                   r="74"
                   fill="none"
-                  stroke="rgba(210, 196, 172, 0.22)"
+                  stroke="rgba(0, 0, 0, 0.14)"
                   strokeWidth="1"
                   strokeDasharray="3 7"
                 />
@@ -188,17 +188,17 @@ export const IntroSplash: React.FC = () => {
                   cy="80"
                   r="64"
                   fill="none"
-                  stroke="rgba(210, 196, 172, 0.16)"
+                  stroke="rgba(0, 0, 0, 0.1)"
                   strokeWidth="1"
                 />
                 {/* Cardinal Precision Ticks */}
-                <line x1="80" y1="2" x2="80" y2="11" stroke="#D2C4AC" strokeWidth="1.5" />
-                <line x1="80" y1="149" x2="80" y2="158" stroke="#D2C4AC" strokeWidth="1.5" />
-                <line x1="2" y1="80" x2="11" y2="80" stroke="#D2C4AC" strokeWidth="1.5" />
-                <line x1="149" y1="80" x2="158" y2="80" stroke="#D2C4AC" strokeWidth="1.5" />
+                <line x1="80" y1="2" x2="80" y2="11" stroke="#6E6E73" strokeWidth="1.5" />
+                <line x1="80" y1="149" x2="80" y2="158" stroke="#6E6E73" strokeWidth="1.5" />
+                <line x1="2" y1="80" x2="11" y2="80" stroke="#6E6E73" strokeWidth="1.5" />
+                <line x1="149" y1="80" x2="158" y2="80" stroke="#6E6E73" strokeWidth="1.5" />
               </motion.svg>
 
-              {/* Inner Electric Blue Kinetic Sweep Arc */}
+              {/* Inner Carbon Black Kinetic Sweep Arc */}
               <motion.svg
                 aria-hidden="true"
                 viewBox="0 0 160 160"
@@ -212,7 +212,7 @@ export const IntroSplash: React.FC = () => {
                   cy="80"
                   r="54"
                   fill="none"
-                  stroke="#397BFF"
+                  stroke="#1D1D1F"
                   strokeWidth="2.25"
                   strokeLinecap="round"
                   strokeDasharray="339.29"
@@ -222,12 +222,12 @@ export const IntroSplash: React.FC = () => {
                 />
               </motion.svg>
 
-              {/* Crisp Brand Mark */}
+              {/* Crisp Apple White Squircle Brand Mark */}
               <motion.div
                 initial={prefersReduced ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.78 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: prefersReduced ? 0.01 : 0.55, delay: 0.08, ease: MOMENTUM_EASE }}
-                className="relative w-20 h-20 rounded-2xl bg-surface/95 border border-stone/25 shadow-2xl p-2 flex items-center justify-center"
+                className="relative w-20 h-20 rounded-[22px] bg-surface border border-line shadow-[0_18px_38px_-12px_rgba(0,0,0,0.16)] p-2 flex items-center justify-center"
               >
                 <img
                   src="/brand-logo.png"
@@ -256,20 +256,20 @@ export const IntroSplash: React.FC = () => {
               ))}
             </h1>
 
-            {/* Expanding Champagne Hairline Divider */}
+            {/* Expanding Monochrome Hairline Divider */}
             <motion.div
               aria-hidden="true"
-              initial={prefersReduced ? { scaleX: 1, opacity: 0.5 } : { scaleX: 0, opacity: 0 }}
-              animate={{ scaleX: 1, opacity: 0.6 }}
+              initial={prefersReduced ? { scaleX: 1, opacity: 0.4 } : { scaleX: 0, opacity: 0 }}
+              animate={{ scaleX: 1, opacity: 0.3 }}
               transition={{ duration: prefersReduced ? 0.01 : 0.55, delay: 0.42, ease: MOMENTUM_EASE }}
-              className="mt-3.5 h-px w-48 bg-gradient-to-r from-transparent via-stone to-transparent origin-center"
+              className="mt-3.5 h-px w-48 bg-gradient-to-r from-transparent via-ink to-transparent origin-center"
             />
 
             <motion.p
               initial={prefersReduced ? { opacity: 1, y: 0 } : { opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: prefersReduced ? 0.01 : 0.4, delay: 0.48, ease: MOMENTUM_EASE }}
-              className="mt-3 text-xs font-medium tracking-[0.18em] text-stone uppercase"
+              className="mt-3 text-xs font-medium tracking-[0.18em] text-ink-muted uppercase"
             >
               Personal Life Operating System
             </motion.p>
@@ -281,8 +281,8 @@ export const IntroSplash: React.FC = () => {
               transition={{ duration: prefersReduced ? 0.01 : 0.35, delay: 0.55 }}
               className="mt-7 flex items-center gap-2.5 text-[11px] font-mono tracking-wider uppercase text-ink-muted tabular-nums"
             >
-              <span className="w-1.5 h-1.5 rounded-full bg-accent" aria-hidden="true" />
-              <span className="text-stone">{phase.step}</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-ink" aria-hidden="true" />
+              <span className="text-ink font-semibold">{phase.step}</span>
               <span className="text-ink-muted/50">/</span>
               <span>{phase.label}</span>
             </motion.div>
@@ -293,15 +293,15 @@ export const IntroSplash: React.FC = () => {
             <motion.span
               aria-hidden="true"
               initial={prefersReduced ? { opacity: 0.5 } : { opacity: 0, x: -8, y: 8 }}
-              animate={{ opacity: 0.55, x: 0, y: 0 }}
+              animate={{ opacity: 0.45, x: 0, y: 0 }}
               transition={{ duration: prefersReduced ? 0.01 : 0.45, ease: MOMENTUM_EASE }}
-              className="w-4 h-4 border-l border-b border-stone/60"
+              className="w-4 h-4 border-l border-b border-line-strong"
             />
 
             <button
               type="button"
               onClick={dismissSplash}
-              className="text-[11px] font-mono uppercase tracking-[0.18em] text-ink-muted hover:text-ink transition-colors px-3 py-1.5 rounded-lg hover:bg-surface-warm/70 btn-press"
+              className="text-[11px] font-mono uppercase tracking-[0.18em] text-ink-muted hover:text-ink transition-colors px-3 py-1.5 rounded-lg hover:bg-surface-inset/70 btn-press"
             >
               Skip intro
             </button>
@@ -309,9 +309,9 @@ export const IntroSplash: React.FC = () => {
             <motion.span
               aria-hidden="true"
               initial={prefersReduced ? { opacity: 0.5 } : { opacity: 0, x: 8, y: 8 }}
-              animate={{ opacity: 0.55, x: 0, y: 0 }}
+              animate={{ opacity: 0.45, x: 0, y: 0 }}
               transition={{ duration: prefersReduced ? 0.01 : 0.45, ease: MOMENTUM_EASE }}
-              className="w-4 h-4 border-r border-b border-stone/60"
+              className="w-4 h-4 border-r border-b border-line-strong"
             />
           </div>
         </motion.div>
