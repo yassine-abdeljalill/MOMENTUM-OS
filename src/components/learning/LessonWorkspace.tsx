@@ -323,7 +323,7 @@ export const LessonWorkspace: React.FC<{
                 {typeof tab.count === 'number' && (
                   <span
                     className={`font-mono text-[10px] px-1.5 py-0.5 rounded-md tabular-nums ${
-                      isActive ? 'bg-white/20 text-accent-ink' : 'bg-surface-inset text-ink'
+                      isActive ? 'bg-accent-ink/15 text-accent-ink' : 'bg-surface-inset text-ink'
                     }`}
                   >
                     {tab.count}

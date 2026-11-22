@@ -11,6 +11,7 @@ import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { useApp } from '../../lib/context';
 import { MOMENTUM_EASE, MOMENTUM_SPRING } from '../common/MotionPrimitives';
 import { BrandMark } from '../common/BrandMark';
+import { ThemeToggle } from '../common/ThemeToggle';
 import { VIEW_TITLES } from './navConfig';
 
 export const Header: React.FC = () => {
@@ -63,7 +64,7 @@ export const Header: React.FC = () => {
     : state.profile.fullName;
 
   return (
-    <header className="shrink-0 bg-[#FBFBFD]/85 backdrop-blur-xl border-b border-line pt-[env(safe-area-inset-top)] select-none">
+    <header className="shrink-0 bg-sidebar/85 backdrop-blur-xl border-b border-line pt-[env(safe-area-inset-top)] select-none">
       <div className="h-14 px-3 sm:px-6 md:px-8 flex items-center justify-between gap-2 min-w-0">
         {/* Left: Mobile Brand Mark + Single-Line View Title */}
         <div className="flex items-center gap-2.5 min-w-0 flex-1">
@@ -181,6 +182,9 @@ export const Header: React.FC = () => {
             <Plus className="w-4 h-4 stroke-[2.25] transition-transform duration-200 group-hover:rotate-90" />
             <span className="hidden sm:inline">Add</span>
           </button>
+
+          {/* Theme Switcher */}
+          <ThemeToggle />
 
           {/* Notification Bell */}
           <button

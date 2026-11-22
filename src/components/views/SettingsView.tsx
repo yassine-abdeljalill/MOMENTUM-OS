@@ -10,15 +10,20 @@ import {
   Compass,
   AlertTriangle,
   Sparkles,
+  Sun,
+  Moon,
+  Monitor,
 } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useApp } from '../../lib/context';
 import { exportStateToJson } from '../../lib/storage';
-import { MOMENTUM_EASE } from '../common/MotionPrimitives';
+import { MOMENTUM_EASE, MOMENTUM_SPRING } from '../common/MotionPrimitives';
+import type { ThemePreference } from '../../lib/theme';
 
 export const SettingsView: React.FC = () => {
   const {
     state,
+    resolvedTheme,
     updateProfile,
     updatePreferences,
     resetToDemoData,
@@ -261,22 +266,87 @@ export const SettingsView: React.FC = () => {
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -6 }}
-            transition={{ duration: 0.2, ease: MOMENTUM_EASE }}
+            transition={{ duration: 0.24, ease: MOMENTUM_EASE }}
             className="p-6 rounded-2xl bg-surface border border-line space-y-6"
           >
-            <div className="flex flex-wrap items-center justify-between gap-3">
+            {/* Interactive Light / Dark / System Theme Selector */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-line">
               <div>
                 <h2 className="text-sm font-semibold text-ink">
-                  Apple Monochrome Color System
+                  Appearance Mode
                 </h2>
                 <p className="text-xs text-ink-muted mt-0.5">
-                  Apple Light Grey (#F5F5F7) grouped canvas, Pure White (#FFFFFF) cards, and Carbon Black (#1D1D1F) ink &amp; controls.
+                  Choose Light, Dark, or follow your macOS / iOS system appearance automatically.
+                </p>
+              </div>
+
+              <div
+                role="radiogroup"
+                aria-label="Appearance mode"
+                className="glass-segmented inline-flex items-center gap-1 p-1 rounded-2xl shrink-0"
+              >
+                {(
+                  [
+                    { id: 'light', label: 'Light', icon: Sun },
+                    { id: 'dark', label: 'Dark', icon: Moon },
+                    { id: 'system', label: 'System', icon: Monitor },
+                  ] as const satisfies readonly {
+                    id: ThemePreference;
+                    label: string;
+                    icon: React.ElementType;
+                  }[]
+                ).map(opt => {
+                  const Icon = opt.icon;
+                  const isActive = state.preferences.theme === opt.id;
+                  return (
+                    <button
+                      key={opt.id}
+                      type="button"
+                      role="radio"
+                      aria-checked={isActive}
+                      onClick={() => {
+                        updatePreferences({ theme: opt.id });
+                        showToast(
+                          opt.id === 'system'
+                            ? 'Appearance synced with system settings.'
+                            : `${opt.label} mode enabled.`,
+                          'info'
+                        );
+                      }}
+                      className={`relative z-10 inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold transition-colors btn-press whitespace-nowrap ${
+                        isActive ? 'text-accent-ink' : 'text-ink-muted hover:text-ink'
+                      }`}
+                    >
+                      {isActive && (
+                        <motion.span
+                          layoutId="settings-theme-mode-pill"
+                          transition={MOMENTUM_SPRING}
+                          className="absolute inset-0 rounded-xl glass-accent-pill -z-10"
+                        />
+                      )}
+                      <Icon className="w-3.5 h-3.5 shrink-0" />
+                      <span>{opt.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h3 className="text-sm font-semibold text-ink">
+                  Apple Monochrome Color System
+                </h3>
+                <p className="text-xs text-ink-muted mt-0.5">
+                  {resolvedTheme === 'dark'
+                    ? 'True OLED Black (#000000) canvas, Elevated Charcoal (#161618) cards, and crisp Light Grey (#F5F5F7) ink & controls.'
+                    : 'Apple Light Grey (#F5F5F7) grouped canvas, Pure White (#FFFFFF) cards, and Carbon Black (#1D1D1F) ink & controls.'}
                 </p>
               </div>
 
               <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-surface-warm border border-line text-xs font-mono font-semibold text-ink">
                 <Sparkles className="w-3.5 h-3.5" />
-                Apple Monochrome Active
+                {resolvedTheme === 'dark' ? 'Dark Monochrome Active' : 'Light Monochrome Active'}
               </span>
             </div>
 

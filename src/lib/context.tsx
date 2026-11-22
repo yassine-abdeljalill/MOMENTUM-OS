@@ -40,6 +40,13 @@ import {
   shouldTriggerOnboardingModal,
   type EntryScreenState,
 } from './authGate';
+import {
+  getThemeSurfaceTokens,
+  normalizeThemePreference,
+  resolveThemeMode,
+  THEME_STORAGE_KEY,
+  toggleThemePreference,
+} from './theme';
 
 export type NavigationTab =
   | 'overview'
@@ -487,23 +494,63 @@ export function AppProvider({ children }: { children: ReactNode }) {
     sessionType: 'focus',
   });
 
-  const resolvedTheme: 'light' | 'dark' = 'light';
+  const [systemPrefersDark, setSystemPrefersDark] = useState<boolean>(() =>
+    typeof window !== 'undefined' && window.matchMedia
+      ? window.matchMedia('(prefers-color-scheme: dark)').matches
+      : false
+  );
+
+  useEffect(() => {
+    if (typeof window === 'undefined' || !window.matchMedia) return;
+    const mq = window.matchMedia('(prefers-color-scheme: dark)');
+    setSystemPrefersDark(mq.matches);
+    const onChange = (e: MediaQueryListEvent) => setSystemPrefersDark(e.matches);
+    mq.addEventListener('change', onChange);
+    return () => mq.removeEventListener('change', onChange);
+  }, []);
+
+  const themePreference = normalizeThemePreference(state.preferences.theme);
+  const resolvedTheme: 'light' | 'dark' = resolveThemeMode(themePreference, systemPrefersDark);
+  const themeSwitchTimerRef = useRef<number | null>(null);
+
+  const triggerSmoothThemeTransition = useCallback(() => {
+    if (typeof document === 'undefined' || typeof window === 'undefined') return;
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
+    const root = document.documentElement;
+    root.classList.add('theme-switching');
+    if (themeSwitchTimerRef.current !== null) {
+      window.clearTimeout(themeSwitchTimerRef.current);
+    }
+    themeSwitchTimerRef.current = window.setTimeout(() => {
+      root.classList.remove('theme-switching');
+      themeSwitchTimerRef.current = null;
+    }, 360);
+  }, []);
 
   useEffect(() => {
     if (typeof document === 'undefined') return;
     const root = document.documentElement;
-    const bg = '#F5F5F7';
-    root.classList.remove('dark');
-    root.style.colorScheme = 'light';
-    root.style.backgroundColor = bg;
+    const tokens = getThemeSurfaceTokens(resolvedTheme);
+    root.classList.toggle('dark', resolvedTheme === 'dark');
+    root.style.colorScheme = tokens.colorScheme;
+    root.style.backgroundColor = tokens.canvasBg;
     if (document.body) {
-      document.body.style.backgroundColor = bg;
+      document.body.style.backgroundColor = tokens.canvasBg;
     }
     const metaTheme = document.querySelector('meta[name="theme-color"]');
     if (metaTheme) {
-      metaTheme.setAttribute('content', bg);
+      metaTheme.setAttribute('content', tokens.metaThemeColor);
     }
-  }, []);
+    const appleStatus = document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]');
+    if (appleStatus) {
+      appleStatus.setAttribute('content', tokens.appleStatusBarStyle);
+    }
+    try {
+      localStorage.setItem(THEME_STORAGE_KEY, themePreference);
+    } catch {
+      // Ignore storage quota restrictions
+    }
+  }, [resolvedTheme, themePreference]);
 
   // Persist state changes
   useEffect(() => {
@@ -1317,22 +1364,34 @@ export function AppProvider({ children }: { children: ReactNode }) {
     }));
   }, []);
 
-  const updatePreferences = useCallback((updates: Partial<UserPreferences>) => {
-    setState(prev => ({
-      ...prev,
-      preferences: { ...prev.preferences, ...updates },
-    }));
-  }, []);
+  const updatePreferences = useCallback(
+    (updates: Partial<UserPreferences>) => {
+      if (updates.theme) {
+        triggerSmoothThemeTransition();
+      }
+      setState(prev => ({
+        ...prev,
+        preferences: { ...prev.preferences, ...updates },
+      }));
+    },
+    [triggerSmoothThemeTransition]
+  );
 
   const toggleTheme = useCallback(() => {
-    setState(prev => ({
-      ...prev,
-      preferences: {
-        ...prev.preferences,
-        theme: 'light',
-      },
-    }));
-  }, []);
+    triggerSmoothThemeTransition();
+    setState(prev => {
+      const currentPref = normalizeThemePreference(prev.preferences.theme);
+      const currentResolved = resolveThemeMode(currentPref, systemPrefersDark);
+      const nextTheme = toggleThemePreference(currentPref, currentResolved);
+      return {
+        ...prev,
+        preferences: {
+          ...prev.preferences,
+          theme: nextTheme,
+        },
+      };
+    });
+  }, [systemPrefersDark, triggerSmoothThemeTransition]);
 
   const resetToDemoData = useCallback(() => {
     const seed = getDefaultState();

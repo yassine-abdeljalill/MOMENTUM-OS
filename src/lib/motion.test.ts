@@ -1,6 +1,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { clampProgress, getMomentumBarLevels, getStaggerDelay } from './motion';
+import {
+  clampProgress,
+  easeOutQuart,
+  getMomentumBarLevels,
+  getStaggerDelay,
+} from './motion';
 
 test('clampProgress clamps values cleanly to 0..100', () => {
   assert.equal(clampProgress(-15), 0);
@@ -8,6 +13,14 @@ test('clampProgress clamps values cleanly to 0..100', () => {
   assert.equal(clampProgress(64.5), 64.5);
   assert.equal(clampProgress(140), 100);
   assert.equal(clampProgress(Number.NaN), 0);
+});
+
+test('easeOutQuart decelerates smoothly across 0..1', () => {
+  assert.equal(easeOutQuart(-0.5), 0);
+  assert.equal(easeOutQuart(0), 0);
+  assert.ok(easeOutQuart(0.5) > 0.9);
+  assert.equal(easeOutQuart(1), 1);
+  assert.equal(easeOutQuart(2), 1);
 });
 
 test('getStaggerDelay increments monotonically and caps at maxDelay', () => {

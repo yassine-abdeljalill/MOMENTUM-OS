@@ -441,8 +441,8 @@ export const FinanceView: React.FC = () => {
   if (!authChecked || (loading && !data)) {
     return (
       <div className="max-w-7xl mx-auto py-20 flex flex-col items-center justify-center text-ink-muted gap-3">
-        <div className="w-12 h-12 rounded-2xl bg-[#1D1D1F] flex items-center justify-center shadow-md">
-          <Loader2 className="w-5 h-5 animate-spin text-white" />
+        <div className="w-12 h-12 rounded-2xl bg-accent flex items-center justify-center shadow-md">
+          <Loader2 className="w-5 h-5 animate-spin text-accent-ink" />
         </div>
         <span className="text-xs font-medium text-ink-muted">Loading Finance workspace...</span>
       </div>

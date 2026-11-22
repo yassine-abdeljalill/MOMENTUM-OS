@@ -10,6 +10,7 @@ import { useApp, NavigationTab } from '../../lib/context';
 import { MOMENTUM_EASE, MOMENTUM_SPRING } from '../common/MotionPrimitives';
 import { PWAInstallButton } from '../common/PWAInstallButton';
 import { BrandMark } from '../common/BrandMark';
+import { ThemeToggle } from '../common/ThemeToggle';
 import { ALL_NAV_ITEMS, MOBILE_PRIMARY_TAB_IDS, NAV_GROUPS } from './navConfig';
 
 export const MobileNav: React.FC = () => {
@@ -53,7 +54,7 @@ export const MobileNav: React.FC = () => {
       {/* Fixed 5-Tab Bottom Navigation Bar (Mobile < md) */}
       <nav
         aria-label="Mobile bottom navigation"
-        className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#FBFBFD]/88 backdrop-blur-xl border-t border-line pb-[env(safe-area-inset-bottom)] select-none"
+        className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-sidebar/88 backdrop-blur-xl border-t border-line pb-[env(safe-area-inset-bottom)] select-none"
       >
         <div className="grid grid-cols-5 items-stretch h-14 px-1">
           {primaryItems.map(item => {
@@ -147,9 +148,9 @@ export const MobileNav: React.FC = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: prefersReduced ? 0.01 : 0.18 }}
+            transition={{ duration: prefersReduced ? 0.01 : 0.2 }}
             onClick={() => setMoreOpen(false)}
-            className="md:hidden fixed inset-0 z-50 bg-black/28 backdrop-blur-xs flex items-end"
+            className="md:hidden fixed inset-0 z-50 bg-black/35 dark:bg-black/65 backdrop-blur-sm flex items-end"
           >
             <motion.div
               initial={prefersReduced ? { opacity: 1 } : { y: '100%' }}
@@ -248,6 +249,11 @@ export const MobileNav: React.FC = () => {
                     />
                     <span>Settings & Preferences</span>
                   </button>
+
+                  <div className="flex items-center justify-between gap-2 px-3.5 py-2.5 rounded-xl glass-control min-h-[44px]">
+                    <span className="text-xs font-semibold text-ink">Appearance</span>
+                    <ThemeToggle showLabel />
+                  </div>
 
                   <PWAInstallButton variant="sheet" />
 

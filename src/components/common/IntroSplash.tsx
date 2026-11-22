@@ -101,7 +101,8 @@ export const IntroSplash: React.FC = () => {
               ? { opacity: 0, transition: { duration: 0.08 } }
               : {
                   opacity: 0,
-                  transition: { duration: 0.28, ease: MOMENTUM_EASE },
+                  scale: 1.022,
+                  transition: { duration: 0.34, ease: MOMENTUM_EASE },
                 }
           }
           className="fixed inset-0 z-[100] bg-canvas text-ink flex flex-col items-center justify-between px-6 pt-[calc(1.5rem+env(safe-area-inset-top))] pb-[calc(1.75rem+env(safe-area-inset-bottom))] select-none overflow-hidden"
@@ -109,13 +110,12 @@ export const IntroSplash: React.FC = () => {
           aria-modal="true"
           aria-label="MOMENTUM startup presentation"
         >
-          {/* Soft Apple Keynote Radial Spotlight */}
+          {/* Soft Apple Keynote Radial Spotlight (Light & Dark aware) */}
           <div
             aria-hidden="true"
             className="pointer-events-none absolute inset-0"
             style={{
-              background:
-                'radial-gradient(circle at 50% 42%, rgba(255, 255, 255, 0.96) 0%, rgba(245, 245, 247, 0) 62%)',
+              background: 'var(--splash-spotlight)',
             }}
           />
 
@@ -134,7 +134,7 @@ export const IntroSplash: React.FC = () => {
               initial={prefersReduced ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.88, y: 8 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               transition={{ duration: prefersReduced ? 0.01 : 0.44, ease: MOMENTUM_EASE }}
-              className="relative w-20 h-20 sm:w-[88px] sm:h-[88px] rounded-[22px] bg-[#1D1D1F] shadow-[0_22px_48px_-14px_rgba(0,0,0,0.28)] border border-white/15 flex items-center justify-center mb-7"
+              className="relative w-20 h-20 sm:w-[88px] sm:h-[88px] rounded-[22px] bg-[#1D1D1F] shadow-[0_22px_48px_-14px_rgba(0,0,0,0.45)] border border-black/15 dark:border-white/20 flex items-center justify-center mb-7"
             >
               <svg
                 viewBox="0 0 64 64"

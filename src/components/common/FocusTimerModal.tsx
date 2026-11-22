@@ -28,6 +28,7 @@ export const FocusTimerModal: React.FC = () => {
     resumeFocusTimer,
     resetFocusTimer,
     completeFocusSession,
+    resolvedTheme,
     state,
   } = useApp();
 
@@ -133,7 +134,10 @@ export const FocusTimerModal: React.FC = () => {
           particleCount: 36,
           spread: 55,
           origin: { y: 0.55 },
-          colors: ['#1D1D1F', '#6E6E73', '#D1D1D6'],
+          colors:
+            resolvedTheme === 'dark'
+              ? ['#FFFFFF', '#AEAEB2', '#6E6E73']
+              : ['#1D1D1F', '#6E6E73', '#D1D1D6'],
         });
       } catch {
         // Ignore confetti errors
@@ -215,7 +219,7 @@ export const FocusTimerModal: React.FC = () => {
                   animate={{ opacity: [0.18, 0.36, 0.18], scale: [0.98, 1.03, 0.98] }}
                   exit={{ opacity: 0, scale: 0.95 }}
                   transition={{ duration: 3.8, repeat: Infinity, ease: 'easeInOut' }}
-                  className="absolute inset-[10px] rounded-full border border-[#1D1D1F]/28 pointer-events-none"
+                  className="absolute inset-[10px] rounded-full border border-ink/28 pointer-events-none"
                 />
                 <motion.div
                   aria-hidden="true"
@@ -223,7 +227,7 @@ export const FocusTimerModal: React.FC = () => {
                   animate={{ opacity: [0.24, 0.08, 0.24], scale: [1, 1.07, 1] }}
                   exit={{ opacity: 0, scale: 0.96 }}
                   transition={{ duration: 3.8, delay: 0.55, repeat: Infinity, ease: 'easeInOut' }}
-                  className="absolute inset-[2px] rounded-full border border-[#1D1D1F]/18 pointer-events-none"
+                  className="absolute inset-[2px] rounded-full border border-ink/18 pointer-events-none"
                 />
               </>
             )}
@@ -234,7 +238,7 @@ export const FocusTimerModal: React.FC = () => {
                 animate={{ opacity: 0, scale: 1.24 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.75, ease: MOMENTUM_EASE }}
-                className="absolute inset-2 rounded-full border-2 border-[#1D1D1F]/60 pointer-events-none"
+                className="absolute inset-2 rounded-full border-2 border-ink/60 pointer-events-none"
               />
             )}
           </AnimatePresence>

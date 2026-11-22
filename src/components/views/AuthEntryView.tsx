@@ -4,6 +4,7 @@ import { useApp } from '../../lib/context';
 import { MOMENTUM_EASE, MOMENTUM_SPRING } from '../common/MotionPrimitives';
 import { getStaggerDelay } from '../../lib/motion';
 import { BrandMark } from '../common/BrandMark';
+import { ThemeToggle } from '../common/ThemeToggle';
 import { AuthCredentialsForm, type CredentialsMode } from './AuthCredentialsForm';
 import type { AuthUser } from '../../types';
 
@@ -41,22 +42,24 @@ export const AuthEntryView: React.FC = () => {
           !prefersReduced ? 'animate-ambient-breathe' : ''
         }`}
         style={{
-          background:
-            'radial-gradient(ellipse 75% 55% at 50% 18%, rgba(255, 255, 255, 0.92) 0%, rgba(245, 245, 247, 0) 70%)',
+          background: 'var(--spotlight-radial)',
         }}
       />
 
       {/* Minimal Apple Top Brand Header */}
-      <header className="relative z-10 w-full max-w-5xl mx-auto px-5 sm:px-8 pt-6 pb-2 flex items-center justify-between">
+      <header className="relative z-10 w-full max-w-5xl mx-auto px-5 sm:px-8 pt-6 pb-2 flex items-center justify-between gap-3">
         <div className="flex items-center gap-2.5">
           <BrandMark size="md" interactive />
           <span className="font-heading font-semibold text-sm tracking-[0.12em] uppercase text-ink">
             MOMENTUM
           </span>
         </div>
-        <span className="hidden sm:inline text-xs font-medium text-ink-muted">
-          Personal Workspace
-        </span>
+        <div className="flex items-center gap-3">
+          <span className="hidden sm:inline text-xs font-medium text-ink-muted">
+            Personal Workspace
+          </span>
+          <ThemeToggle showLabel />
+        </div>
       </header>
 
       {/* Main Centered Split Entry */}
@@ -114,7 +117,7 @@ export const AuthEntryView: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: prefersReduced ? 0.01 : 0.36, delay: 0.04, ease: MOMENTUM_EASE }}
             aria-label="Account authentication"
-            className="order-1 lg:order-2 bg-surface border border-line rounded-[22px] p-5 sm:p-8 shadow-[0_16px_44px_-14px_rgba(0,0,0,0.1)]"
+            className="order-1 lg:order-2 bg-surface border border-line rounded-[22px] p-5 sm:p-8 shadow-[0_16px_44px_-14px_rgba(0,0,0,0.1)] dark:shadow-[0_24px_64px_-14px_rgba(0,0,0,0.75)]"
           >
             <AnimatePresence mode="wait" initial={false}>
               <motion.div

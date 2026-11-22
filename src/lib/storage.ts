@@ -76,11 +76,16 @@ export function getInitialState(): AppState {
           parsed.preferences?.accentColor === '#D2925B' ||
           parsed.preferences?.accentColor === '#FF7048' ||
           parsed.preferences?.accentColor === '#397BFF' ||
-          parsed.preferences?.theme !== 'light'
+          (parsed.preferences?.theme !== 'light' &&
+            parsed.preferences?.theme !== 'dark' &&
+            parsed.preferences?.theme !== 'system')
         ) {
           parsed.preferences = {
             ...parsed.preferences,
-            theme: 'light',
+            theme:
+              parsed.preferences?.theme === 'dark' || parsed.preferences?.theme === 'system'
+                ? parsed.preferences.theme
+                : 'light',
             accentColor: '#1D1D1F',
           };
         }

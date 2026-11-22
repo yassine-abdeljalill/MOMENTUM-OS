@@ -12,10 +12,26 @@
     <meta name="apple-mobile-web-app-title" content="MOMENTUM" />
     <script>
       (function () {
-        var bg = '#F5F5F7';
+        var pref = null;
+        try {
+          pref = localStorage.getItem('momentum_theme_mode_v1');
+          if (!pref) {
+            var raw = localStorage.getItem('momentum_life_os_state_v1');
+            if (raw) {
+              var parsed = JSON.parse(raw);
+              pref = parsed && parsed.preferences && parsed.preferences.theme;
+            }
+          }
+        } catch (e) {}
+        var prefersDark =
+          typeof window !== 'undefined' &&
+          window.matchMedia &&
+          window.matchMedia('(prefers-color-scheme: dark)').matches;
+        var isDark = pref === 'dark' || (pref === 'system' && prefersDark);
+        var bg = isDark ? '#000000' : '#F5F5F7';
         var root = document.documentElement;
-        root.classList.remove('dark');
-        root.style.colorScheme = 'light';
+        root.classList.toggle('dark', isDark);
+        root.style.colorScheme = isDark ? 'dark' : 'light';
         root.style.backgroundColor = bg;
         var metaTheme = document.querySelector('meta[name="theme-color"]');
         if (metaTheme) metaTheme.setAttribute('content', bg);

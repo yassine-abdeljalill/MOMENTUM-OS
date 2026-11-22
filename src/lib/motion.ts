@@ -1,16 +1,23 @@
-export const MOMENTUM_EASE = [0.16, 1, 0.3, 1] as const;
+export const MOMENTUM_EASE = [0.22, 1, 0.36, 1] as const;
 
 export const MOMENTUM_SPRING = {
   type: 'spring' as const,
-  stiffness: 420,
+  stiffness: 360,
   damping: 32,
   mass: 0.85,
 };
 
 export const MOMENTUM_GENTLE_SPRING = {
   type: 'spring' as const,
-  stiffness: 280,
+  stiffness: 240,
   damping: 28,
+  mass: 0.95,
+};
+
+export const MOMENTUM_MODAL_SPRING = {
+  type: 'spring' as const,
+  stiffness: 320,
+  damping: 30,
   mass: 0.9,
 };
 
@@ -19,11 +26,16 @@ export const clampProgress = (value: number): number => {
   return Math.max(0, Math.min(100, value));
 };
 
+export const easeOutQuart = (t: number): number => {
+  const clamped = Math.max(0, Math.min(1, Number.isFinite(t) ? t : 0));
+  return 1 - Math.pow(1 - clamped, 4);
+};
+
 export const getStaggerDelay = (
   index: number,
   baseDelay = 0,
-  step = 0.035,
-  maxDelay = 0.32
+  step = 0.04,
+  maxDelay = 0.34
 ): number => {
   const safeIndex = Math.max(0, Number.isFinite(index) ? Math.floor(index) : 0);
   const safeBase = Math.max(0, Number.isFinite(baseDelay) ? baseDelay : 0);

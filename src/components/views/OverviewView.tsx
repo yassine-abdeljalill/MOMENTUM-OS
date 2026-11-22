@@ -24,6 +24,7 @@ import {
   AnimatedProgressBar,
   AnimatedCheckButton,
   MomentumVelocityBars,
+  SpotlightCard,
   StaggerContainer,
   StaggerItem,
   MOMENTUM_EASE,
@@ -217,67 +218,75 @@ export const OverviewView: React.FC = () => {
         </div>
       </section>
 
-      {/* Clean Minimal KPI Row */}
+      {/* Clean Minimal KPI Row with Interactive Apple Spotlight */}
       <StaggerContainer className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        <StaggerItem className="p-4 sm:p-5 rounded-2xl bg-surface border border-line flex flex-col justify-between card-hover">
-          <div className="flex items-center justify-between gap-2">
-            <span className="text-xs font-medium text-ink-muted">Daily Progress</span>
-            <MomentumVelocityBars percentage={dailyScore.overallPercentage} showLabel />
-          </div>
-          <div className="my-2.5 flex items-baseline gap-2">
-            <AnimatedNumber
-              value={dailyScore.overallPercentage}
-              formatter={v => `${v}%`}
-              className="font-mono text-2xl sm:text-3xl font-semibold text-ink tabular-nums"
+        <StaggerItem>
+          <SpotlightCard className="h-full p-4 sm:p-5 rounded-2xl bg-surface border border-line card-hover">
+            <div className="flex items-center justify-between gap-2">
+              <span className="text-xs font-medium text-ink-muted">Daily Progress</span>
+              <MomentumVelocityBars percentage={dailyScore.overallPercentage} showLabel />
+            </div>
+            <div className="my-2.5 flex items-baseline gap-2">
+              <AnimatedNumber
+                value={dailyScore.overallPercentage}
+                formatter={v => `${v}%`}
+                className="font-mono text-2xl sm:text-3xl font-semibold text-ink tabular-nums"
+              />
+            </div>
+            <AnimatedProgressBar
+              percentage={dailyScore.overallPercentage}
+              trackClassName="w-full bg-surface-inset h-1 rounded-full overflow-hidden"
+              fillClassName="bg-accent h-full rounded-full"
             />
-          </div>
-          <AnimatedProgressBar
-            percentage={dailyScore.overallPercentage}
-            trackClassName="w-full bg-surface-inset h-1 rounded-full overflow-hidden"
-            fillClassName="bg-accent h-full rounded-full"
-          />
+          </SpotlightCard>
         </StaggerItem>
 
-        <StaggerItem className="p-4 sm:p-5 rounded-2xl bg-surface border border-line flex flex-col justify-between card-hover">
-          <span className="text-xs font-medium text-ink-muted">Tasks Completed</span>
-          <div className="my-2.5 flex items-baseline gap-2">
-            <AnimatedNumber
-              value={tasksCompleted}
-              className="font-mono text-2xl sm:text-3xl font-semibold text-ink tabular-nums"
-            />
-            <span className="text-xs text-ink-muted tabular-nums">/ {todayTasks.length}</span>
-          </div>
-          <div className="text-xs text-ink-muted">
-            {tasksRemaining === 0 ? 'All done' : `${tasksRemaining} remaining`}
-          </div>
+        <StaggerItem>
+          <SpotlightCard className="h-full p-4 sm:p-5 rounded-2xl bg-surface border border-line card-hover">
+            <span className="text-xs font-medium text-ink-muted">Tasks Completed</span>
+            <div className="my-2.5 flex items-baseline gap-2">
+              <AnimatedNumber
+                value={tasksCompleted}
+                className="font-mono text-2xl sm:text-3xl font-semibold text-ink tabular-nums"
+              />
+              <span className="text-xs text-ink-muted tabular-nums">/ {todayTasks.length}</span>
+            </div>
+            <div className="text-xs text-ink-muted">
+              {tasksRemaining === 0 ? 'All done' : `${tasksRemaining} remaining`}
+            </div>
+          </SpotlightCard>
         </StaggerItem>
 
-        <StaggerItem className="p-4 sm:p-5 rounded-2xl bg-surface border border-line flex flex-col justify-between card-hover">
-          <span className="text-xs font-medium text-ink-muted">Habits Checked</span>
-          <div className="my-2.5 flex items-baseline gap-2">
-            <AnimatedNumber
-              value={habitsCompletedToday}
-              className="font-mono text-2xl sm:text-3xl font-semibold text-ink tabular-nums"
-            />
-            <span className="text-xs text-ink-muted tabular-nums">/ {activeHabits.length}</span>
-          </div>
-          <div className="text-xs text-ink-muted tabular-nums">
-            {Math.round((habitsCompletedToday / (activeHabits.length || 1)) * 100)}% today
-          </div>
+        <StaggerItem>
+          <SpotlightCard className="h-full p-4 sm:p-5 rounded-2xl bg-surface border border-line card-hover">
+            <span className="text-xs font-medium text-ink-muted">Habits Checked</span>
+            <div className="my-2.5 flex items-baseline gap-2">
+              <AnimatedNumber
+                value={habitsCompletedToday}
+                className="font-mono text-2xl sm:text-3xl font-semibold text-ink tabular-nums"
+              />
+              <span className="text-xs text-ink-muted tabular-nums">/ {activeHabits.length}</span>
+            </div>
+            <div className="text-xs text-ink-muted tabular-nums">
+              {Math.round((habitsCompletedToday / (activeHabits.length || 1)) * 100)}% today
+            </div>
+          </SpotlightCard>
         </StaggerItem>
 
-        <StaggerItem className="p-4 sm:p-5 rounded-2xl bg-surface border border-line flex flex-col justify-between card-hover">
-          <span className="text-xs font-medium text-ink-muted">Focus Time</span>
-          <div className="my-2.5 flex items-baseline gap-2">
-            <AnimatedNumber
-              value={todayFocusMinutes}
-              formatter={formatMinutes}
-              className="font-mono text-2xl sm:text-3xl font-semibold text-ink tabular-nums"
-            />
-          </div>
-          <div className="text-xs text-ink-muted tabular-nums">
-            {state.focusSessions.filter(s => s.startTime.startsWith(todayStr)).length} sessions today
-          </div>
+        <StaggerItem>
+          <SpotlightCard className="h-full p-4 sm:p-5 rounded-2xl bg-surface border border-line card-hover">
+            <span className="text-xs font-medium text-ink-muted">Focus Time</span>
+            <div className="my-2.5 flex items-baseline gap-2">
+              <AnimatedNumber
+                value={todayFocusMinutes}
+                formatter={formatMinutes}
+                className="font-mono text-2xl sm:text-3xl font-semibold text-ink tabular-nums"
+              />
+            </div>
+            <div className="text-xs text-ink-muted tabular-nums">
+              {state.focusSessions.filter(s => s.startTime.startsWith(todayStr)).length} sessions today
+            </div>
+          </SpotlightCard>
         </StaggerItem>
       </StaggerContainer>
 

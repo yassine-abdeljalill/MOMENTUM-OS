@@ -291,7 +291,7 @@ export const CalendarView: React.FC = () => {
       {/* Unified Apple Calendar Workspace Surface */}
       <div className="rounded-2xl bg-surface border border-line overflow-hidden shadow-[0_4px_24px_-8px_rgba(0,0,0,0.06)]">
         {/* Top Apple Calendar Toolbar */}
-        <div className="px-4 sm:px-6 py-3.5 border-b border-line bg-[#FBFBFD] flex flex-wrap items-center justify-between gap-3">
+        <div className="px-4 sm:px-6 py-3.5 border-b border-line bg-sidebar flex flex-wrap items-center justify-between gap-3">
           {/* Left: Period Heading + Joined Apple Navigation Stepper */}
           <div className="flex items-center gap-3 sm:gap-4 min-w-0">
             <h1 className="text-lg sm:text-xl font-bold text-ink tracking-tight font-heading whitespace-nowrap">
@@ -335,7 +335,7 @@ export const CalendarView: React.FC = () => {
             <div
               role="tablist"
               aria-label="Calendar view mode"
-              className="inline-flex p-0.5 rounded-lg bg-[#E5E5EA]/75 border border-line relative"
+              className="inline-flex p-0.5 rounded-lg bg-surface-inset/75 border border-line relative"
             >
               {(['day', 'week', 'month'] as const).map(mode => {
                 const isActive = viewMode === mode;
@@ -385,15 +385,15 @@ export const CalendarView: React.FC = () => {
               {viewMode === 'month' && (
                 <motion.div
                   key={`month-${year}-${month}`}
-                  initial={prefersReduced ? { opacity: 1 } : { opacity: 0, scale: 0.994 }}
+                  initial={prefersReduced ? { opacity: 1 } : { opacity: 0, scale: 0.992 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={prefersReduced ? { opacity: 0 } : { opacity: 0 }}
-                  transition={{ duration: prefersReduced ? 0.01 : 0.18, ease: MOMENTUM_EASE }}
+                  transition={{ duration: prefersReduced ? 0.01 : 0.24, ease: MOMENTUM_EASE }}
                   className="flex-1 flex flex-col"
                 >
                   {/* Desktop / Tablet Edge-to-Edge Apple Hairline Month Grid */}
                   <div className="hidden sm:flex sm:flex-col flex-1">
-                    <div className="grid grid-cols-7 border-b border-line bg-[#FBFBFD] shrink-0">
+                    <div className="grid grid-cols-7 border-b border-line bg-sidebar shrink-0">
                       {weekdayHeaders.map(d => (
                         <div
                           key={d}
@@ -475,10 +475,10 @@ export const CalendarView: React.FC = () => {
                               !isLastCol ? 'border-r border-line' : ''
                             } ${!isLastRow ? 'border-b border-line' : ''} ${
                               isSelected
-                                ? 'bg-[#F2F2F7]/85'
+                                ? 'bg-surface-warm/85'
                                 : cell.inCurrentMonth
                                 ? 'bg-surface hover:bg-surface-warm/45'
-                                : 'bg-[#FBFBFD] hover:bg-surface-warm/35'
+                                : 'bg-sidebar hover:bg-surface-warm/35'
                             }`}
                           >
                             {/* Top Row: Subtle hover + button & Apple Date Number */}
@@ -506,9 +506,9 @@ export const CalendarView: React.FC = () => {
                                 aria-pressed={isSelected}
                                 className={`w-6 h-6 rounded-full flex items-center justify-center text-xs tabular-nums transition-colors ${
                                   isToday
-                                    ? 'bg-[#1D1D1F] text-white font-semibold'
+                                    ? 'bg-accent text-accent-ink font-semibold'
                                     : isSelected
-                                    ? 'bg-[#E5E5EA] text-ink font-semibold'
+                                    ? 'bg-surface-inset text-ink font-semibold'
                                     : cell.inCurrentMonth
                                     ? 'text-ink font-medium'
                                     : 'text-ink-muted/45 font-normal'
@@ -527,9 +527,9 @@ export const CalendarView: React.FC = () => {
                                     bar.done
                                       ? 'bg-surface-inset/70 text-ink-muted line-through'
                                       : bar.tone === 'solid'
-                                      ? 'bg-[#1D1D1F] text-white font-medium'
+                                      ? 'bg-accent text-accent-ink font-medium'
                                       : bar.tone === 'tinted'
-                                      ? 'bg-[#F2F2F7] text-ink border border-line font-medium'
+                                      ? 'bg-surface-warm text-ink border border-line font-medium'
                                       : 'bg-surface text-ink border border-line-strong font-medium'
                                   }`}
                                 >
@@ -537,7 +537,7 @@ export const CalendarView: React.FC = () => {
                                     <span
                                       className={`font-mono text-[9.5px] tabular-nums shrink-0 ${
                                         bar.tone === 'solid' && !bar.done
-                                          ? 'text-white/75'
+                                          ? 'text-accent-ink/75'
                                           : 'text-ink-muted'
                                       }`}
                                     >
@@ -591,9 +591,9 @@ export const CalendarView: React.FC = () => {
                             <span
                               className={`w-8 h-8 rounded-full flex items-center justify-center text-xs tabular-nums transition-colors ${
                                 isSelected
-                                  ? 'bg-[#1D1D1F] text-white font-semibold'
+                                  ? 'bg-accent text-accent-ink font-semibold'
                                   : isToday
-                                  ? 'border border-[#1D1D1F] text-ink font-semibold'
+                                  ? 'border border-accent text-ink font-semibold'
                                   : cell.inCurrentMonth
                                   ? 'text-ink font-medium'
                                   : 'text-ink-muted/40'
@@ -606,7 +606,7 @@ export const CalendarView: React.FC = () => {
                                 <span
                                   key={i}
                                   className={`w-1 h-1 rounded-full ${
-                                    isSelected ? 'bg-[#1D1D1F]' : 'bg-ink-muted/70'
+                                    isSelected ? 'bg-accent' : 'bg-ink-muted/70'
                                   }`}
                                 />
                               ))}
@@ -631,7 +631,7 @@ export const CalendarView: React.FC = () => {
                   {/* Desktop / Tablet True Apple Hourly Week Grid */}
                   <div className="hidden sm:flex flex-col">
                     {/* Sticky 7-Day Header */}
-                    <div className="grid grid-cols-[56px_repeat(7,minmax(0,1fr))] border-b border-line bg-[#FBFBFD]">
+                    <div className="grid grid-cols-[56px_repeat(7,minmax(0,1fr))] border-b border-line bg-sidebar">
                       <div className="px-2 py-2.5 text-[10px] font-mono text-ink-muted flex items-end justify-end">
                         Time
                       </div>
@@ -645,7 +645,7 @@ export const CalendarView: React.FC = () => {
                             type="button"
                             onClick={() => setSelectedDateStr(dateStr)}
                             className={`py-2 px-1.5 border-l border-line flex flex-col items-center gap-1 transition-colors ${
-                              isSelected ? 'bg-[#F2F2F7]/85' : 'hover:bg-surface-warm/50'
+                              isSelected ? 'bg-surface-warm/85' : 'hover:bg-surface-warm/50'
                             }`}
                           >
                             <span className="text-[10.5px] font-medium text-ink-muted uppercase">
@@ -654,9 +654,9 @@ export const CalendarView: React.FC = () => {
                             <span
                               className={`w-7 h-7 rounded-full flex items-center justify-center text-xs tabular-nums ${
                                 isToday
-                                  ? 'bg-[#1D1D1F] text-white font-semibold'
+                                  ? 'bg-accent text-accent-ink font-semibold'
                                   : isSelected
-                                  ? 'bg-[#E5E5EA] text-ink font-semibold'
+                                  ? 'bg-surface-inset text-ink font-semibold'
                                   : 'text-ink font-medium'
                               }`}
                             >
@@ -669,7 +669,7 @@ export const CalendarView: React.FC = () => {
 
                     {/* All-Day / Deadlines Strip */}
                     {weekHasAllDayItems && (
-                      <div className="grid grid-cols-[56px_repeat(7,minmax(0,1fr))] border-b border-line bg-[#FBFBFD]/70">
+                      <div className="grid grid-cols-[56px_repeat(7,minmax(0,1fr))] border-b border-line bg-sidebar/70">
                         <div className="px-2 py-2 text-[10px] font-medium text-ink-muted text-right">
                           All Day
                         </div>
@@ -695,7 +695,7 @@ export const CalendarView: React.FC = () => {
                               {items.learningLessons.slice(0, 1).map(l => (
                                 <div
                                   key={l.id}
-                                  className="px-1.5 py-0.5 rounded text-[10px] truncate bg-[#F2F2F7] text-ink border border-line"
+                                  className="px-1.5 py-0.5 rounded text-[10px] truncate bg-surface-warm text-ink border border-line"
                                 >
                                   {l.title}
                                 </div>
@@ -703,7 +703,7 @@ export const CalendarView: React.FC = () => {
                               {items.goalsDue.slice(0, 1).map(g => (
                                 <div
                                   key={g.id}
-                                  className="px-1.5 py-0.5 rounded text-[10px] truncate bg-[#1D1D1F] text-white"
+                                  className="px-1.5 py-0.5 rounded text-[10px] truncate bg-accent text-accent-ink"
                                 >
                                   {g.title}
                                 </div>
@@ -721,7 +721,7 @@ export const CalendarView: React.FC = () => {
                         style={{ height: `${TIMELINE_TOTAL_PX}px` }}
                       >
                         {/* Left Hour Gutter */}
-                        <div className="bg-[#FBFBFD]">
+                        <div className="bg-sidebar">
                           {DAY_HOURS.map((hour, hourIdx) => (
                             <div
                               key={hour}
@@ -730,7 +730,7 @@ export const CalendarView: React.FC = () => {
                             >
                               <span
                                 className={`block leading-none ${
-                                  hourIdx === 0 ? 'pt-1' : '-translate-y-1.5 bg-[#FBFBFD] pl-1'
+                                  hourIdx === 0 ? 'pt-1' : '-translate-y-1.5 bg-sidebar pl-1'
                                 }`}
                               >
                                 {formatHourSlot(hour, timeFormat)}
@@ -754,7 +754,7 @@ export const CalendarView: React.FC = () => {
                             <div
                               key={dateStr}
                               className={`relative border-l border-line ${
-                                isSelected ? 'bg-[#F5F5F7]/45' : 'bg-surface'
+                                isSelected ? 'bg-canvas/45' : 'bg-surface'
                               }`}
                             >
                               {/* Clickable Empty Hourly Rows */}
@@ -779,8 +779,8 @@ export const CalendarView: React.FC = () => {
                                   style={{ top: `${currentTimePct}%` }}
                                   className="pointer-events-none absolute inset-x-0 z-20 flex items-center"
                                 >
-                                  <span className="w-2 h-2 -ml-1 rounded-full bg-[#1D1D1F] shrink-0" />
-                                  <span className="flex-1 h-[1.5px] bg-[#1D1D1F]" />
+                                  <span className="w-2 h-2 -ml-1 rounded-full bg-accent shrink-0" />
+                                  <span className="flex-1 h-[1.5px] bg-accent" />
                                 </div>
                               )}
 
@@ -795,7 +795,7 @@ export const CalendarView: React.FC = () => {
                                     initial={prefersReduced ? { opacity: 1 } : { opacity: 0, scale: 0.96 }}
                                     animate={{ opacity: 1, scale: 1 }}
                                     transition={{
-                                      duration: prefersReduced ? 0.01 : 0.2,
+                                      duration: prefersReduced ? 0.01 : 0.24,
                                       delay: prefersReduced ? 0 : getStaggerDelay(bIdx, 0.02, 0.03),
                                       ease: MOMENTUM_EASE,
                                     }}
@@ -814,8 +814,8 @@ export const CalendarView: React.FC = () => {
                                     title={`${block.title} (${formatTimeCompact(block.startTime, timeFormat)} – ${formatTimeCompact(block.endTime, timeFormat)})`}
                                     className={`absolute z-10 rounded-lg px-1.5 py-1 text-left overflow-hidden border transition-opacity ${
                                       block.completed
-                                        ? 'bg-[#E5E5EA] text-ink-muted border-line-strong opacity-85'
-                                        : 'bg-[#1D1D1F] text-white border-black/15 shadow-xs'
+                                        ? 'bg-surface-inset text-ink-muted border-line-strong opacity-85'
+                                        : 'bg-accent text-accent-ink border-line shadow-xs'
                                     }`}
                                   >
                                     <div className="text-[10.5px] font-semibold truncate leading-tight">
@@ -823,7 +823,7 @@ export const CalendarView: React.FC = () => {
                                     </div>
                                     <div
                                       className={`text-[9.5px] font-mono tabular-nums truncate ${
-                                        block.completed ? 'text-ink-muted' : 'text-white/75'
+                                        block.completed ? 'text-ink-muted' : 'text-accent-ink/75'
                                       }`}
                                     >
                                       {formatTimeCompact(block.startTime, timeFormat)}
@@ -840,7 +840,7 @@ export const CalendarView: React.FC = () => {
 
                   {/* Mobile Week Strip + Day Timeline */}
                   <div className="sm:hidden">
-                    <div className="grid grid-cols-7 gap-1 px-3 py-2.5 border-b border-line bg-[#FBFBFD]">
+                    <div className="grid grid-cols-7 gap-1 px-3 py-2.5 border-b border-line bg-sidebar">
                       {weekDays.map(dateStr => {
                         const dt = parseIsoDate(dateStr);
                         const isSelected = selectedDateStr === dateStr;
@@ -858,9 +858,9 @@ export const CalendarView: React.FC = () => {
                             <span
                               className={`w-8 h-8 rounded-full flex items-center justify-center text-xs tabular-nums ${
                                 isSelected
-                                  ? 'bg-[#1D1D1F] text-white font-semibold'
+                                  ? 'bg-accent text-accent-ink font-semibold'
                                   : isToday
-                                  ? 'border border-[#1D1D1F] text-ink font-semibold'
+                                  ? 'border border-accent text-ink font-semibold'
                                   : 'text-ink font-medium'
                               }`}
                             >
@@ -921,7 +921,7 @@ export const CalendarView: React.FC = () => {
           {/* Right Apple Day Inspector (3-4 cols) */}
           <aside
             aria-label="Selected day inspector"
-            className="lg:col-span-4 xl:col-span-3 bg-[#FBFBFD] p-5 flex flex-col gap-5"
+            className="lg:col-span-4 xl:col-span-3 bg-sidebar p-5 flex flex-col gap-5"
           >
             {/* Date Header */}
             <div className="flex items-start justify-between gap-2 pb-3.5 border-b border-line">
@@ -971,7 +971,7 @@ export const CalendarView: React.FC = () => {
                 initial={prefersReduced ? { opacity: 1 } : { opacity: 0, y: 4 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={prefersReduced ? { opacity: 0 } : { opacity: 0, y: -4 }}
-                transition={{ duration: prefersReduced ? 0.01 : 0.14, ease: MOMENTUM_EASE }}
+                transition={{ duration: prefersReduced ? 0.01 : 0.18, ease: MOMENTUM_EASE }}
                 className="space-y-4 flex-1"
               >
                 {/* Scheduled Time Blocks */}
@@ -992,7 +992,7 @@ export const CalendarView: React.FC = () => {
                             aria-label={`Toggle ${s.title} completion`}
                             className={`mt-0.5 w-4 h-4 rounded-full border flex items-center justify-center shrink-0 transition-colors ${
                               s.completed
-                                ? 'bg-[#1D1D1F] border-[#1D1D1F] text-white'
+                                ? 'bg-accent border-accent text-accent-ink'
                                 : 'border-line-strong hover:border-ink'
                             }`}
                           >
@@ -1048,7 +1048,7 @@ export const CalendarView: React.FC = () => {
                               aria-label={`Mark ${t.title} as ${done ? 'incomplete' : 'complete'}`}
                               className={`mt-0.5 w-4 h-4 rounded-full border flex items-center justify-center shrink-0 transition-colors ${
                                 done
-                                  ? 'bg-[#1D1D1F] border-[#1D1D1F] text-white'
+                                  ? 'bg-accent border-accent text-accent-ink'
                                   : 'border-line-strong hover:border-ink'
                               }`}
                             >
@@ -1191,7 +1191,7 @@ export const CalendarView: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => openScheduleModal(selectedDateStr)}
-                      className="btn-press inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#1D1D1F] hover:bg-black text-white text-xs font-medium"
+                      className="btn-press inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-accent hover:bg-accent-hover text-accent-ink text-xs font-medium"
                     >
                       <Plus className="w-3.5 h-3.5" />
                       <span>Schedule Event</span>
@@ -1210,7 +1210,7 @@ export const CalendarView: React.FC = () => {
         onClose={() => setShowAddEventModal(false)}
         maxWidthClass="max-w-sm"
       >
-        <div className="px-5 py-3.5 border-b border-line bg-[#FBFBFD] flex items-center justify-between">
+        <div className="px-5 py-3.5 border-b border-line bg-sidebar flex items-center justify-between">
           <span className="text-sm font-semibold text-ink font-heading tracking-tight">
             New Calendar Event
           </span>
@@ -1326,7 +1326,7 @@ export const CalendarView: React.FC = () => {
             </button>
             <button
               type="submit"
-              className="btn-press px-4 py-2 rounded-lg bg-[#1D1D1F] hover:bg-black text-white font-semibold text-xs transition-colors"
+              className="btn-press px-4 py-2 rounded-lg bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs transition-colors"
             >
               Save Event
             </button>
@@ -1396,7 +1396,7 @@ const DayTimelineCanvas: React.FC<DayTimelineCanvasProps> = ({
   return (
     <div>
       {hasAllDay && (
-        <div className="px-4 py-3 border-b border-line bg-[#FBFBFD] flex flex-wrap items-center gap-2">
+        <div className="px-4 py-3 border-b border-line bg-sidebar flex flex-wrap items-center gap-2">
           <span className="text-[11px] font-medium text-ink-muted mr-1">All-Day:</span>
           {items.tasks.map(t => {
             const done = t.status === 'completed';
@@ -1413,7 +1413,7 @@ const DayTimelineCanvas: React.FC<DayTimelineCanvasProps> = ({
               >
                 <span
                   className={`w-3.5 h-3.5 rounded-full border flex items-center justify-center shrink-0 ${
-                    done ? 'bg-[#1D1D1F] border-[#1D1D1F] text-white' : 'border-line-strong'
+                    done ? 'bg-accent border-accent text-accent-ink' : 'border-line-strong'
                   }`}
                 >
                   {done && <Check className="w-2 h-2 stroke-[2.5]" />}
@@ -1427,7 +1427,7 @@ const DayTimelineCanvas: React.FC<DayTimelineCanvasProps> = ({
               key={l.id}
               type="button"
               onClick={() => onOpenLesson(l.moduleId, l.id)}
-              className="px-2.5 py-1 rounded-lg bg-[#F2F2F7] border border-line hover:border-line-strong text-xs text-ink flex items-center gap-1.5 transition-colors"
+              className="px-2.5 py-1 rounded-lg bg-surface-warm border border-line hover:border-line-strong text-xs text-ink flex items-center gap-1.5 transition-colors"
             >
               <BookOpen className="w-3.5 h-3.5 text-ink" />
               <span>{l.title}</span>
@@ -1436,7 +1436,7 @@ const DayTimelineCanvas: React.FC<DayTimelineCanvasProps> = ({
           {items.goalsDue.map(g => (
             <span
               key={g.id}
-              className="px-2.5 py-1 rounded-lg bg-[#1D1D1F] text-white text-xs flex items-center gap-1.5"
+              className="px-2.5 py-1 rounded-lg bg-accent text-accent-ink text-xs flex items-center gap-1.5"
             >
               <Target className="w-3.5 h-3.5" />
               <span>{g.title}</span>
@@ -1451,7 +1451,7 @@ const DayTimelineCanvas: React.FC<DayTimelineCanvasProps> = ({
           style={{ height: `${TIMELINE_TOTAL_PX}px` }}
         >
           {/* Left Hour Labels */}
-          <div className="bg-[#FBFBFD] border-r border-line">
+          <div className="bg-sidebar border-r border-line">
             {DAY_HOURS.map((hour, hourIdx) => (
               <div
                 key={hour}
@@ -1460,7 +1460,7 @@ const DayTimelineCanvas: React.FC<DayTimelineCanvasProps> = ({
               >
                 <span
                   className={`block leading-none ${
-                    hourIdx === 0 ? 'pt-1' : '-translate-y-1.5 bg-[#FBFBFD] pl-1'
+                    hourIdx === 0 ? 'pt-1' : '-translate-y-1.5 bg-sidebar pl-1'
                   }`}
                 >
                   {formatHourSlot(hour, timeFormat)}
@@ -1488,8 +1488,8 @@ const DayTimelineCanvas: React.FC<DayTimelineCanvasProps> = ({
                 style={{ top: `${currentTimePct}%` }}
                 className="pointer-events-none absolute inset-x-0 z-20 flex items-center"
               >
-                <span className="w-2.5 h-2.5 -ml-1.5 rounded-full bg-[#1D1D1F] shrink-0" />
-                <span className="flex-1 h-[1.5px] bg-[#1D1D1F]" />
+                <span className="w-2.5 h-2.5 -ml-1.5 rounded-full bg-accent shrink-0" />
+                <span className="flex-1 h-[1.5px] bg-accent" />
               </div>
             )}
 
@@ -1503,7 +1503,7 @@ const DayTimelineCanvas: React.FC<DayTimelineCanvasProps> = ({
                   initial={prefersReduced ? { opacity: 1 } : { opacity: 0, scale: 0.97 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{
-                    duration: prefersReduced ? 0.01 : 0.2,
+                    duration: prefersReduced ? 0.01 : 0.24,
                     delay: prefersReduced ? 0 : getStaggerDelay(bIdx, 0.02, 0.03),
                     ease: MOMENTUM_EASE,
                   }}
@@ -1518,8 +1518,8 @@ const DayTimelineCanvas: React.FC<DayTimelineCanvasProps> = ({
                   }}
                   className={`absolute z-10 rounded-xl px-3 py-1.5 text-left flex items-center justify-between gap-2 border transition-opacity ${
                     block.completed
-                      ? 'bg-[#E5E5EA] text-ink-muted border-line-strong'
-                      : 'bg-[#1D1D1F] text-white border-black/15 shadow-xs'
+                      ? 'bg-surface-inset text-ink-muted border-line-strong'
+                      : 'bg-accent text-accent-ink border-line shadow-xs'
                   }`}
                 >
                   <span
@@ -1531,7 +1531,7 @@ const DayTimelineCanvas: React.FC<DayTimelineCanvasProps> = ({
                   </span>
                   <span
                     className={`text-[11px] font-mono tabular-nums shrink-0 ${
-                      block.completed ? 'text-ink-muted' : 'text-white/75'
+                      block.completed ? 'text-ink-muted' : 'text-accent-ink/75'
                     }`}
                   >
                     {formatTimeCompact(block.startTime, timeFormat)} –{' '}

@@ -1,18 +1,26 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
+import {
+  motion,
+  AnimatePresence,
+  useMotionTemplate,
+  useMotionValue,
+  useReducedMotion,
+} from 'motion/react';
 import { CheckCircle2, Circle } from 'lucide-react';
 import {
   MOMENTUM_EASE,
   MOMENTUM_SPRING,
   MOMENTUM_GENTLE_SPRING,
+  MOMENTUM_MODAL_SPRING,
   clampProgress,
+  easeOutQuart,
   getMomentumBarLevels,
 } from '../../lib/motion';
 
-export { MOMENTUM_EASE, MOMENTUM_SPRING, MOMENTUM_GENTLE_SPRING };
+export { MOMENTUM_EASE, MOMENTUM_SPRING, MOMENTUM_GENTLE_SPRING, MOMENTUM_MODAL_SPRING };
 
 /**
- * Smooth, Apple-grade spatial continuity transition for main view navigation.
+ * Ultra-smooth, GPU-composited Apple spatial continuity transition for main view navigation.
  */
 export const PageTransition: React.FC<{
   viewKey: string;
@@ -23,10 +31,11 @@ export const PageTransition: React.FC<{
   return (
     <motion.div
       key={viewKey}
-      initial={prefersReduced ? { opacity: 1 } : { opacity: 0, y: 10, scale: 0.994 }}
+      initial={prefersReduced ? { opacity: 1 } : { opacity: 0, y: 12, scale: 0.988 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
-      exit={prefersReduced ? { opacity: 1 } : { opacity: 0, y: -6, scale: 0.996 }}
-      transition={{ duration: prefersReduced ? 0.01 : 0.22, ease: MOMENTUM_EASE }}
+      exit={prefersReduced ? { opacity: 1 } : { opacity: 0, y: -6, scale: 0.994 }}
+      transition={{ duration: prefersReduced ? 0.01 : 0.28, ease: MOMENTUM_EASE }}
+      style={{ willChange: prefersReduced ? 'auto' : 'transform, opacity' }}
     >
       {children}
     </motion.div>
@@ -34,7 +43,53 @@ export const PageTransition: React.FC<{
 };
 
 /**
- * Reusable Modal shell with smooth backdrop fade + crisp Apple spring detent.
+ * Interactive Apple surface card with GPU pointer-tracking monochrome specular sheen
+ * and silky damped hover lift (zero re-renders per mousemove).
+ */
+export const SpotlightCard: React.FC<{
+  children: React.ReactNode;
+  className?: string;
+}> = ({ children, className = '' }) => {
+  const prefersReduced = useReducedMotion();
+  const mouseX = useMotionValue(-999);
+  const mouseY = useMotionValue(-999);
+
+  const spotlightBg = useMotionTemplate`radial-gradient(260px circle at ${mouseX}px ${mouseY}px, var(--spotlight-sheen), transparent 72%)`;
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (prefersReduced) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    mouseX.set(e.clientX - rect.left);
+    mouseY.set(e.clientY - rect.top);
+  };
+
+  const handleMouseLeave = () => {
+    mouseX.set(-999);
+    mouseY.set(-999);
+  };
+
+  return (
+    <motion.div
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      whileHover={prefersReduced ? undefined : { y: -2 }}
+      transition={MOMENTUM_GENTLE_SPRING}
+      className={`relative overflow-hidden group/spotlight ${className}`}
+    >
+      {!prefersReduced && (
+        <motion.div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 opacity-0 group-hover/spotlight:opacity-100 transition-opacity duration-300"
+          style={{ background: spotlightBg }}
+        />
+      )}
+      <div className="relative z-10 h-full flex flex-col justify-between">{children}</div>
+    </motion.div>
+  );
+};
+
+/**
+ * Reusable Modal shell with smooth backdrop blur fade + silky Apple spring detent.
  */
 export const ModalShell: React.FC<{
   isOpen: boolean;
@@ -53,7 +108,7 @@ export const ModalShell: React.FC<{
   panelClassName = 'glass-elevated text-ink rounded-t-2xl sm:rounded-2xl overflow-hidden',
   alignTop = false,
   fullscreen = false,
-  backdropClassName = 'bg-black/28 backdrop-blur-sm',
+  backdropClassName = 'bg-black/35 dark:bg-black/65 backdrop-blur-md',
 }) => {
   const prefersReduced = useReducedMotion();
 
@@ -64,7 +119,7 @@ export const ModalShell: React.FC<{
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: prefersReduced ? 0.01 : 0.16, ease: 'easeOut' }}
+          transition={{ duration: prefersReduced ? 0.01 : 0.22, ease: MOMENTUM_EASE }}
           onClick={onClose}
           className={`fixed inset-0 z-50 flex justify-center ${
             fullscreen
@@ -78,18 +133,18 @@ export const ModalShell: React.FC<{
             initial={
               prefersReduced
                 ? { opacity: 1 }
-                : { opacity: 0, scale: alignTop ? 0.96 : 0.97, y: alignTop ? -10 : 22 }
+                : { opacity: 0, scale: alignTop ? 0.96 : 0.965, y: alignTop ? -12 : 24 }
             }
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={
               prefersReduced
                 ? { opacity: 0 }
-                : { opacity: 0, scale: 0.97, y: alignTop ? -6 : 16 }
+                : { opacity: 0, scale: 0.97, y: alignTop ? -8 : 18 }
             }
             transition={
               prefersReduced
                 ? { duration: 0.01 }
-                : { ...MOMENTUM_SPRING, opacity: { duration: 0.16 } }
+                : { ...MOMENTUM_MODAL_SPRING, opacity: { duration: 0.2, ease: MOMENTUM_EASE } }
             }
             onClick={e => e.stopPropagation()}
             className={`w-full ${
@@ -132,11 +187,11 @@ export const DrawerShell: React.FC<{
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: prefersReduced ? 0.01 : 0.18 }}
+          transition={{ duration: prefersReduced ? 0.01 : 0.22, ease: MOMENTUM_EASE }}
           onClick={onClose}
           className={`fixed inset-0 z-50 flex ${
             side === 'right' ? 'justify-end' : 'justify-start'
-          } bg-black/28 backdrop-blur-xs`}
+          } bg-black/35 dark:bg-black/65 backdrop-blur-sm`}
         >
           <motion.div
             initial={prefersReduced ? { opacity: 0 } : { x: initialX }}
@@ -145,7 +200,7 @@ export const DrawerShell: React.FC<{
             transition={
               prefersReduced
                 ? { duration: 0.01 }
-                : { duration: 0.24, ease: MOMENTUM_EASE }
+                : { duration: 0.3, ease: MOMENTUM_EASE }
             }
             onClick={e => e.stopPropagation()}
             className={panelClassName}
@@ -159,7 +214,7 @@ export const DrawerShell: React.FC<{
 };
 
 /**
- * Animated numeric count-up that respects prefers-reduced-motion.
+ * Silky 60fps quartic-eased numeric count-up that respects prefers-reduced-motion.
  */
 export const AnimatedNumber: React.FC<{
   value: number;
@@ -184,14 +239,14 @@ export const AnimatedNumber: React.FC<{
       return;
     }
 
-    const duration = 420;
+    const duration = 560;
     const startTime = performance.now();
     let rafId = 0;
 
     const tick = (now: number) => {
       const elapsed = Math.max(0, now - startTime);
       const t = Math.max(0, Math.min(1, elapsed / duration));
-      const eased = 1 - Math.pow(1 - t, 3);
+      const eased = easeOutQuart(t);
       const current = startVal + (endVal - startVal) * eased;
       setDisplayValue(t >= 1 ? endVal : Math.round(current));
       if (t < 1) {
@@ -210,7 +265,7 @@ export const AnimatedNumber: React.FC<{
 };
 
 /**
- * Animated horizontal progress bar with smooth updates and a subtle monochrome
+ * Animated horizontal progress bar with silky updates and a soft monochrome
  * specular sweep whenever progress rises.
  */
 export const AnimatedProgressBar: React.FC<{
@@ -240,16 +295,16 @@ export const AnimatedProgressBar: React.FC<{
         className={`relative overflow-hidden ${fillClassName}`}
         initial={prefersReduced ? { width: `${clamped}%` } : { width: '0%' }}
         animate={{ width: `${clamped}%` }}
-        transition={{ duration: prefersReduced ? 0.01 : 0.48, ease: MOMENTUM_EASE }}
+        transition={{ duration: prefersReduced ? 0.01 : 0.62, ease: MOMENTUM_EASE }}
       >
         {sweepKey > 0 && !prefersReduced && clamped > 0 && (
           <motion.span
             key={sweepKey}
             aria-hidden="true"
-            initial={{ x: '-100%', opacity: 0.7 }}
+            initial={{ x: '-100%', opacity: 0.75 }}
             animate={{ x: '220%', opacity: 0 }}
-            transition={{ duration: 0.7, ease: MOMENTUM_EASE }}
-            className="pointer-events-none absolute inset-y-0 w-1/2 bg-gradient-to-r from-transparent via-white/45 to-transparent"
+            transition={{ duration: 0.85, ease: MOMENTUM_EASE }}
+            className="pointer-events-none absolute inset-y-0 w-1/2 bg-gradient-to-r from-transparent via-accent-ink/45 to-transparent"
           />
         )}
       </motion.div>
@@ -259,7 +314,7 @@ export const AnimatedProgressBar: React.FC<{
 
 /**
  * Identity-driven 3-bar ascending momentum indicator mirroring the BrandMark silhouette.
- * Animates height & opacity live as daily score moves through Idle -> Building -> Steady -> Peak.
+ * Adapts crisply to Light & Dark modes.
  */
 export const MomentumVelocityBars: React.FC<{
   percentage: number;
@@ -285,16 +340,16 @@ export const MomentumVelocityBars: React.FC<{
               transition={
                 prefersReduced
                   ? { duration: 0.01 }
-                  : { ...MOMENTUM_GENTLE_SPRING, delay: idx * 0.05 }
+                  : { ...MOMENTUM_GENTLE_SPRING, delay: idx * 0.055 }
               }
-              className={`w-[3.5px] rounded-[1.5px] ${
+              className={`w-[3.5px] rounded-[1.5px] transition-colors ${
                 isLit
                   ? idx === 2
-                    ? 'bg-[#1D1D1F]'
+                    ? 'bg-ink'
                     : idx === 1
-                    ? 'bg-[#48484A]'
-                    : 'bg-[#8E8E93]'
-                  : 'bg-[#D1D1D6]'
+                    ? 'bg-ink/70'
+                    : 'bg-ink-muted'
+                  : 'bg-surface-hover'
               }`}
             />
           );
@@ -335,21 +390,20 @@ export const AnimatedCheckButton: React.FC<{
     <motion.button
       type="button"
       onClick={onClick}
-      whileHover={prefersReduced ? undefined : { scale: 1.08 }}
-      whileTap={prefersReduced ? undefined : { scale: 0.84 }}
+      whileHover={prefersReduced ? undefined : { scale: 1.09 }}
+      whileTap={prefersReduced ? undefined : { scale: 0.85 }}
       transition={MOMENTUM_SPRING}
       className={`text-ink-muted hover:text-accent transition-colors shrink-0 relative flex items-center justify-center ${className}`}
       aria-label={ariaLabel || (checked ? 'Mark incomplete' : 'Mark completed')}
     >
-      {/* Expanding monochrome impulse ring on completion */}
       {burstKey > 0 && !prefersReduced && (
         <motion.span
           key={burstKey}
           aria-hidden="true"
-          initial={{ scale: 0.7, opacity: 0.45 }}
-          animate={{ scale: 1.95, opacity: 0 }}
-          transition={{ duration: 0.42, ease: MOMENTUM_EASE }}
-          className="pointer-events-none absolute inset-0 rounded-full border border-[#1D1D1F]/70"
+          initial={{ scale: 0.7, opacity: 0.5 }}
+          animate={{ scale: 2.05, opacity: 0 }}
+          transition={{ duration: 0.48, ease: MOMENTUM_EASE }}
+          className="pointer-events-none absolute inset-0 rounded-full border border-ink/60"
         />
       )}
 
@@ -371,7 +425,7 @@ export const AnimatedCheckButton: React.FC<{
             initial={prefersReduced ? { opacity: 1 } : { scale: 0.85, opacity: 0.6 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={prefersReduced ? { opacity: 0 } : { scale: 0.85, opacity: 0 }}
-            transition={{ duration: prefersReduced ? 0.01 : 0.14 }}
+            transition={{ duration: prefersReduced ? 0.01 : 0.16, ease: MOMENTUM_EASE }}
             className="flex items-center justify-center"
           >
             <Circle className={dim} />
@@ -383,13 +437,13 @@ export const AnimatedCheckButton: React.FC<{
 };
 
 /**
- * Staggered grid/list container & item wrappers for dashboard cards and lists.
+ * Staggered grid/list container & item wrappers for silky dashboard cards and lists.
  */
 export const StaggerContainer: React.FC<{
   children: React.ReactNode;
   className?: string;
   stagger?: number;
-}> = ({ children, className = '', stagger = 0.045 }) => {
+}> = ({ children, className = '', stagger = 0.055 }) => {
   const prefersReduced = useReducedMotion();
 
   return (
@@ -420,12 +474,12 @@ export const StaggerItem: React.FC<{
   return (
     <motion.div
       variants={{
-        hidden: prefersReduced ? { opacity: 1, y: 0 } : { opacity: 0, y: 10, scale: 0.99 },
+        hidden: prefersReduced ? { opacity: 1, y: 0 } : { opacity: 0, y: 12, scale: 0.986 },
         visible: {
           opacity: 1,
           y: 0,
           scale: 1,
-          transition: { duration: prefersReduced ? 0.01 : 0.24, ease: MOMENTUM_EASE },
+          transition: { duration: prefersReduced ? 0.01 : 0.32, ease: MOMENTUM_EASE },
         },
       }}
       className={className}
