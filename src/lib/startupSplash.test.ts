@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {
   computeRemainingSplashDelayMs,
   DEFAULT_SPLASH_MIN_DURATION_MS,
+  getStartupPhaseInfo,
   isWorkspaceInitializationReady,
   shouldBypassStartupSplash,
 } from './startupSplash.ts';
@@ -86,6 +87,49 @@ describe('startupSplash logic', () => {
         timedOut: true,
       }),
       true
+    );
+  });
+
+  it('maps real workspace initialization states to clear phase indicators', () => {
+    assert.deepEqual(
+      getStartupPhaseInfo({
+        authChecked: false,
+        hasAuthUser: false,
+        hasLearningData: false,
+        hasLearningError: false,
+        timedOut: false,
+      }),
+      { step: '01', label: 'Verifying session' }
+    );
+    assert.deepEqual(
+      getStartupPhaseInfo({
+        authChecked: true,
+        hasAuthUser: true,
+        hasLearningData: false,
+        hasLearningError: false,
+        timedOut: false,
+      }),
+      { step: '02', label: 'Syncing workspace' }
+    );
+    assert.deepEqual(
+      getStartupPhaseInfo({
+        authChecked: true,
+        hasAuthUser: true,
+        hasLearningData: true,
+        hasLearningError: false,
+        timedOut: false,
+      }),
+      { step: '03', label: 'Entering MOMENTUM' }
+    );
+    assert.deepEqual(
+      getStartupPhaseInfo({
+        authChecked: true,
+        hasAuthUser: false,
+        hasLearningData: false,
+        hasLearningError: false,
+        timedOut: false,
+      }),
+      { step: '03', label: 'Ready' }
     );
   });
 

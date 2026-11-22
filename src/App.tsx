@@ -26,18 +26,19 @@ import { FocusTimerModal } from './components/common/FocusTimerModal';
 import { NotificationsDrawer } from './components/common/NotificationsDrawer';
 import { OnboardingModal } from './components/common/OnboardingModal';
 import { AuthModal } from './components/views/AuthModal';
+import { AuthEntryView } from './components/views/AuthEntryView';
 import { PageTransition } from './components/common/MotionPrimitives';
 import { ToastContainer } from './components/common/ToastContainer';
 
 const MainContent: React.FC = () => {
-  const { currentView, setCurrentView } = useApp();
+  const { currentView, setCurrentView, entryScreen } = useApp();
   const mainRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     if (mainRef.current) {
       mainRef.current.scrollTo({ top: 0, behavior: 'auto' });
     }
-  }, [currentView]);
+  }, [currentView, entryScreen]);
 
   const renderCurrentView = () => {
     switch (currentView) {
@@ -75,72 +76,84 @@ const MainContent: React.FC = () => {
   };
 
   return (
-    <div className="flex h-dvh w-full overflow-hidden bg-canvas text-ink">
-      {/* Animated Liquid Glass Intro Splash (session-gated, bypassed with ?autostart=1) */}
+    <>
+      {/* Creative Architectural Intro Splash (stays mounted while auth check resolves) */}
       <IntroSplash />
 
-      {/* Desktop / Tablet Sidebar */}
-      <Sidebar />
-
-      {/* Main App Canvas */}
-      <div className="relative flex-1 min-w-0 h-full flex flex-col overflow-hidden bg-canvas">
-        {/* Minimal Top Bar */}
-        <Header />
-
-        {/* Scrollable Content Viewport */}
-        <main
-          ref={mainRef}
-          className="relative z-10 flex-1 min-h-0 w-full overflow-y-auto flex flex-col px-4 sm:px-6 md:px-8 pt-6 md:pt-8 pb-[calc(4.75rem+env(safe-area-inset-bottom))] md:pb-8"
+      {entryScreen === 'splash' ? (
+        <div className="min-h-dvh w-full bg-canvas" aria-hidden="true" />
+      ) : entryScreen === 'auth_gate' ? (
+        <AuthEntryView />
+      ) : (
+        <div
+          data-testid="authenticated-workspace"
+          className="flex h-dvh w-full overflow-hidden bg-canvas text-ink"
         >
-          <div className="flex-1">
-            <AnimatePresence mode="wait" initial={false}>
-              <PageTransition viewKey={currentView}>
-                {renderCurrentView()}
-              </PageTransition>
-            </AnimatePresence>
+          {/* Desktop / Tablet Sidebar */}
+          <Sidebar />
+
+          {/* Main App Canvas */}
+          <div className="relative flex-1 min-w-0 h-full flex flex-col overflow-hidden bg-canvas">
+            {/* Minimal Top Bar */}
+            <Header />
+
+            {/* Scrollable Content Viewport */}
+            <main
+              ref={mainRef}
+              className="relative z-10 flex-1 min-h-0 w-full overflow-y-auto flex flex-col px-4 sm:px-6 md:px-8 pt-6 md:pt-8 pb-[calc(4.75rem+env(safe-area-inset-bottom))] md:pb-8"
+            >
+              <div className="flex-1">
+                <AnimatePresence mode="wait" initial={false}>
+                  <PageTransition viewKey={currentView}>
+                    {renderCurrentView()}
+                  </PageTransition>
+                </AnimatePresence>
+              </div>
+
+              <footer className="hidden md:flex flex-wrap w-full max-w-7xl mx-auto mt-10 pt-5 border-t border-line items-center justify-between gap-x-6 gap-y-2 text-xs text-ink-muted shrink-0">
+                <span>MOMENTUM · Personal Workspace</span>
+                <nav aria-label="Footer quick links" className="flex flex-wrap items-center gap-x-5 gap-y-1">
+                  {(
+                    [
+                      { id: 'overview', label: 'Overview' },
+                      { id: 'today', label: 'Today' },
+                      { id: 'tasks', label: 'Tasks' },
+                      { id: 'calendar', label: 'Calendar' },
+                      { id: 'finance', label: 'Finance' },
+                      { id: 'settings', label: 'Settings' },
+                    ] as const
+                  ).map(link => (
+                    <button
+                      key={link.id}
+                      type="button"
+                      onClick={() => setCurrentView(link.id)}
+                      className={`transition-colors whitespace-nowrap hover:text-ink ${
+                        currentView === link.id ? 'text-stone font-medium' : ''
+                      }`}
+                    >
+                      {link.label}
+                    </button>
+                  ))}
+                </nav>
+              </footer>
+            </main>
           </div>
 
-          <footer className="hidden md:flex flex-wrap w-full max-w-7xl mx-auto mt-10 pt-5 border-t border-line items-center justify-between gap-x-6 gap-y-2 text-xs text-ink-muted shrink-0">
-            <span>MOMENTUM · Personal Workspace</span>
-            <nav aria-label="Footer quick links" className="flex flex-wrap items-center gap-x-5 gap-y-1">
-              {(
-                [
-                  { id: 'overview', label: 'Overview' },
-                  { id: 'today', label: 'Today' },
-                  { id: 'tasks', label: 'Tasks' },
-                  { id: 'calendar', label: 'Calendar' },
-                  { id: 'finance', label: 'Finance' },
-                  { id: 'settings', label: 'Settings' },
-                ] as const
-              ).map(link => (
-                <button
-                  key={link.id}
-                  type="button"
-                  onClick={() => setCurrentView(link.id)}
-                  className={`transition-colors whitespace-nowrap hover:text-ink ${
-                    currentView === link.id ? 'text-stone font-medium' : ''
-                  }`}
-                >
-                  {link.label}
-                </button>
-              ))}
-            </nav>
-          </footer>
-        </main>
-      </div>
+          {/* Floating Mobile Liquid Glass Capsule & More Sheet */}
+          <MobileNav />
 
-      {/* Floating Mobile Liquid Glass Capsule & More Sheet */}
-      <MobileNav />
+          {/* Global Modals & Overlays */}
+          <GlobalSearchModal />
+          <QuickAddModal />
+          <FocusTimerModal />
+          <NotificationsDrawer />
+          <OnboardingModal />
+          <AuthModal />
+        </div>
+      )}
 
-      {/* Global Modals & Overlays */}
-      <GlobalSearchModal />
-      <QuickAddModal />
-      <FocusTimerModal />
-      <NotificationsDrawer />
-      <OnboardingModal />
-      <AuthModal />
       <ToastContainer />
-    </div>
+    </>
   );
 };
 

@@ -32,8 +32,13 @@ import {
   mapAppTaskStatusToLearningStatus,
   mapLearningTaskToAppTask,
 } from './learning';
-
-const EXPLICIT_SIGNOUT_KEY = 'momentum_explicit_signed_out';
+import { shouldBypassStartupSplash } from './startupSplash';
+import {
+  isAuthPath,
+  resolveEntryScreenState,
+  shouldTriggerOnboardingModal,
+  type EntryScreenState,
+} from './authGate';
 
 export type NavigationTab =
   | 'overview'
@@ -140,9 +145,12 @@ interface AppContextType {
   isOnboardingOpen: boolean;
   setIsOnboardingOpen: (open: boolean) => void;
 
-  // Server Authentication Session
+  // Server Authentication Session & Entry Gate
   authUser: AuthUser | null;
   authChecked: boolean;
+  splashDismissed: boolean;
+  dismissSplash: () => void;
+  entryScreen: EntryScreenState;
   setAuthUser: (user: AuthUser | null) => void;
   logoutAuth: () => Promise<void>;
 
@@ -260,13 +268,24 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isFocusTimerOpen, setIsFocusTimerOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
-  const [isAuthModalOpen, setIsAuthModalOpen] = useState(initialRoute.current.openAuth);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [authModalMode, setAuthModalMode] = useState<AuthModalMode>(initialRoute.current.authMode);
   const [isOnboardingOpen, setIsOnboardingOpen] = useState(false);
 
-  // Server Authentication Session
+  // Server Authentication Session & Startup Presentation Gate
   const [authUser, setAuthUserState] = useState<AuthUser | null>(null);
   const [authChecked, setAuthChecked] = useState(false);
+  const [splashDismissed, setSplashDismissed] = useState<boolean>(() =>
+    typeof window !== 'undefined' ? shouldBypassStartupSplash(window.location.search) : false
+  );
+  const dismissSplash = useCallback(() => {
+    setSplashDismissed(true);
+  }, []);
+  const entryScreen = resolveEntryScreenState({
+    authChecked,
+    authUser,
+    splashDismissed,
+  });
   const profileNameRef = useRef(state.profile.fullName);
   profileNameRef.current = state.profile.fullName;
 
@@ -319,9 +338,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const setAuthUser = useCallback((user: AuthUser | null) => {
     setAuthUserState(user);
     if (user) {
-      if (typeof window !== 'undefined') {
-        localStorage.removeItem(EXPLICIT_SIGNOUT_KEY);
-      }
+      setIsAuthModalOpen(false);
+      setAuthModalMode('profile');
       if (!user.isWorkspace) {
         setState(prev => ({
           ...prev,
@@ -343,15 +361,15 @@ export function AppProvider({ children }: { children: ReactNode }) {
   }, [reconcileLearningTasksIntoAppState]);
 
   const logoutAuth = useCallback(async () => {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem(EXPLICIT_SIGNOUT_KEY, '1');
-    }
     try {
       await authApi.logout();
     } catch {
       // Ignore network errors on logout
     }
     setAuthUserState(null);
+    setIsAuthModalOpen(false);
+    setIsOnboardingOpen(false);
+    setAuthModalMode('login');
     setLearningDataState(null);
     setSelectedLearningModuleId(null);
     setSelectedLearningLessonId(null);
@@ -387,7 +405,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
           }
         } else {
           setAuthUser(null);
-          setIsAuthModalOpen(true);
           return;
         }
       }
@@ -401,18 +418,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
     let cancelled = false;
     authApi
       .me()
-      .then(async ({ user }) => {
+      .then(({ user }) => {
         if (cancelled) return;
         if (user) {
           setAuthUser(user);
-          return;
-        }
-        const explicitlySignedOut =
-          typeof window !== 'undefined' && localStorage.getItem(EXPLICIT_SIGNOUT_KEY) === '1';
-        if (!explicitlySignedOut) {
-          const { user: wsUser } = await authApi.ensureWorkspaceSession(profileNameRef.current);
-          if (!cancelled && wsUser) {
-            setAuthUser(wsUser);
+          if (typeof window !== 'undefined' && isAuthPath(window.location.pathname)) {
+            window.history.replaceState(null, '', '/');
           }
         }
       })
@@ -487,8 +498,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
     saveStateToStorage(state);
   }, [state]);
 
-  // Global Keyboard shortcuts
+  // Global Keyboard shortcuts (only active inside entered workspace)
   useEffect(() => {
+    if (entryScreen !== 'app') return;
     const handleKeyDown = (e: KeyboardEvent) => {
       // Ignore if user is inside an input, textarea, or contentEditable
       const target = e.target as HTMLElement | null;
@@ -522,14 +534,20 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
+  }, [entryScreen]);
 
-  // Check onboarding on mount
+  // Check onboarding only after entering authenticated workspace
   useEffect(() => {
-    if (state.profile && !state.profile.onboardingCompleted) {
+    if (
+      shouldTriggerOnboardingModal({
+        entryScreen,
+        hasProfile: Boolean(state.profile),
+        onboardingCompleted: Boolean(state.profile?.onboardingCompleted),
+      })
+    ) {
       setIsOnboardingOpen(true);
     }
-  }, [state.profile]);
+  }, [entryScreen, state.profile]);
 
   // Timer Actions
   const startFocusTimer = useCallback(
@@ -1372,6 +1390,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
         authUser,
         authChecked,
+        splashDismissed,
+        dismissSplash,
+        entryScreen,
         setAuthUser,
         logoutAuth,
 

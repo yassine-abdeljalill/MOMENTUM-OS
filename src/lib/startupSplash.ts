@@ -1,4 +1,5 @@
 export const DEFAULT_SPLASH_MIN_DURATION_MS = 650;
+export const CREATIVE_SPLASH_MIN_DURATION_MS = 1500;
 export const DEFAULT_SPLASH_FAILSAFE_MS = 3800;
 
 export interface WorkspaceInitializationSnapshot {
@@ -7,6 +8,11 @@ export interface WorkspaceInitializationSnapshot {
   hasLearningData: boolean;
   hasLearningError: boolean;
   timedOut: boolean;
+}
+
+export interface StartupPhaseInfo {
+  step: '01' | '02' | '03';
+  label: string;
 }
 
 /**
@@ -30,6 +36,21 @@ export function isWorkspaceInitializationReady(
   if (!snapshot.authChecked) return false;
   if (!snapshot.hasAuthUser) return true;
   return snapshot.hasLearningData || snapshot.hasLearningError;
+}
+
+/**
+ * Maps real initialization readiness to a deterministic phase readout.
+ */
+export function getStartupPhaseInfo(
+  snapshot: WorkspaceInitializationSnapshot
+): StartupPhaseInfo {
+  if (!snapshot.authChecked && !snapshot.timedOut) {
+    return { step: '01', label: 'Verifying session' };
+  }
+  if (!isWorkspaceInitializationReady(snapshot)) {
+    return { step: '02', label: 'Syncing workspace' };
+  }
+  return { step: '03', label: snapshot.hasAuthUser ? 'Entering MOMENTUM' : 'Ready' };
 }
 
 /**
