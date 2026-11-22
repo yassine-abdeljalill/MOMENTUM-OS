@@ -4,6 +4,7 @@ import {
   computeRemainingSplashDelayMs,
   DEFAULT_SPLASH_MIN_DURATION_MS,
   getStartupPhaseInfo,
+  getStartupProgressPercent,
   isWorkspaceInitializationReady,
   shouldBypassStartupSplash,
 } from './startupSplash.ts';
@@ -90,7 +91,7 @@ describe('startupSplash logic', () => {
     );
   });
 
-  it('maps real workspace initialization states to clear phase indicators', () => {
+  it('maps real workspace initialization states to clear phase indicators and progress', () => {
     assert.deepEqual(
       getStartupPhaseInfo({
         authChecked: false,
@@ -101,6 +102,17 @@ describe('startupSplash logic', () => {
       }),
       { step: '01', label: 'Verifying session' }
     );
+    assert.equal(
+      getStartupProgressPercent({
+        authChecked: false,
+        hasAuthUser: false,
+        hasLearningData: false,
+        hasLearningError: false,
+        timedOut: false,
+      }),
+      38
+    );
+
     assert.deepEqual(
       getStartupPhaseInfo({
         authChecked: true,
@@ -111,6 +123,17 @@ describe('startupSplash logic', () => {
       }),
       { step: '02', label: 'Syncing workspace' }
     );
+    assert.equal(
+      getStartupProgressPercent({
+        authChecked: true,
+        hasAuthUser: true,
+        hasLearningData: false,
+        hasLearningError: false,
+        timedOut: false,
+      }),
+      72
+    );
+
     assert.deepEqual(
       getStartupPhaseInfo({
         authChecked: true,
@@ -121,6 +144,17 @@ describe('startupSplash logic', () => {
       }),
       { step: '03', label: 'Entering MOMENTUM' }
     );
+    assert.equal(
+      getStartupProgressPercent({
+        authChecked: true,
+        hasAuthUser: true,
+        hasLearningData: true,
+        hasLearningError: false,
+        timedOut: false,
+      }),
+      100
+    );
+
     assert.deepEqual(
       getStartupPhaseInfo({
         authChecked: true,

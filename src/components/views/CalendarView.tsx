@@ -1,13 +1,15 @@
-import React, { useState, useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
   ChevronLeft,
   ChevronRight,
   Plus,
   Dumbbell,
   BookOpen,
-  Clock,
-  CheckCircle2,
+  Check,
+  Trash2,
   X,
+  Calendar as CalendarIcon,
+  Target,
 } from 'lucide-react';
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { useApp } from '../../lib/context';
@@ -16,15 +18,32 @@ import {
   parseIsoDate,
   addDaysToIso,
   getWeekDays,
-  getMonthGridCells,
-  parseTimeToMinutes,
+  getFullMonthMatrix,
   formatHourSlot,
+  formatTimeCompact,
+  getCurrentTimeLinePercentage,
+  layoutOverlappingBlocks,
 } from '../../lib/calendar';
 import { ModalShell, MOMENTUM_EASE } from '../common/MotionPrimitives';
+import type { LifeArea } from '../../types';
 
-type CalendarViewMode = 'month' | 'week' | 'day';
+type CalendarViewMode = 'day' | 'week' | 'month';
 
-const DAY_HOURS = Array.from({ length: 17 }, (_, i) => i + 6); // 06:00 to 22:00
+const DAY_START_HOUR = 6;
+const DAY_END_HOUR_EXCLUSIVE = 23; // 06:00 through 22:00 slots (17 hours)
+const DAY_HOURS = Array.from(
+  { length: DAY_END_HOUR_EXCLUSIVE - DAY_START_HOUR },
+  (_, i) => i + DAY_START_HOUR
+);
+const HOUR_ROW_PX = 52;
+const TIMELINE_TOTAL_PX = DAY_HOURS.length * HOUR_ROW_PX;
+
+const SCHEDULE_CATEGORIES: { value: LifeArea; label: string }[] = [
+  { value: 'career', label: 'Deep Work' },
+  { value: 'education', label: 'Learning' },
+  { value: 'fitness', label: 'Fitness' },
+  { value: 'personal_development', label: 'Personal' },
+];
 
 export const CalendarView: React.FC = () => {
   const prefersReduced = useReducedMotion();
@@ -32,22 +51,28 @@ export const CalendarView: React.FC = () => {
     state,
     learningData,
     addScheduleActivity,
+    toggleScheduleActivityCompleted,
+    deleteScheduleActivity,
+    toggleTaskCompleted,
     setCurrentView,
     setSelectedLearningModuleId,
     setSelectedLearningLessonId,
     showToast,
   } = useApp();
 
-  const todayStr = formatIsoDate(new Date());
+  const now = new Date();
+  const todayStr = formatIsoDate(now);
   const startOfWeek = state.preferences.startOfWeek || 'monday';
   const timeFormat = state.preferences.timeFormat || '24h';
 
   const [viewMode, setViewMode] = useState<CalendarViewMode>('month');
   const [selectedDateStr, setSelectedDateStr] = useState(todayStr);
   const [showAddEventModal, setShowAddEventModal] = useState(false);
+  const [eventDateStr, setEventDateStr] = useState(todayStr);
   const [newEventTitle, setNewEventTitle] = useState('');
   const [newEventStartTime, setNewEventStartTime] = useState('09:00');
   const [newEventEndTime, setNewEventEndTime] = useState('10:00');
+  const [newEventCategory, setNewEventCategory] = useState<LifeArea>('career');
 
   const anchorDate = useMemo(() => parseIsoDate(selectedDateStr), [selectedDateStr]);
   const year = anchorDate.getFullYear();
@@ -58,8 +83,8 @@ export const CalendarView: React.FC = () => {
     [selectedDateStr, startOfWeek]
   );
 
-  const monthGrid = useMemo(
-    () => getMonthGridCells(year, month, startOfWeek),
+  const monthMatrix = useMemo(
+    () => getFullMonthMatrix(year, month, startOfWeek),
     [year, month, startOfWeek]
   );
 
@@ -68,11 +93,31 @@ export const CalendarView: React.FC = () => {
       ? ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
       : ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
-  // Navigation stepper adapts to Month / Week / Day
+  const currentTimePct = useMemo(
+    () => getCurrentTimeLinePercentage(now, DAY_START_HOUR, DAY_END_HOUR_EXCLUSIVE),
+    // Re-evaluate when selected date changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [selectedDateStr]
+  );
+
+  const openScheduleModal = (dateStr: string = selectedDateStr, startHour?: number) => {
+    setEventDateStr(dateStr);
+    if (typeof startHour === 'number') {
+      const clampedStart = Math.max(0, Math.min(22, startHour));
+      const endHour = Math.min(23, clampedStart + 1);
+      setNewEventStartTime(`${String(clampedStart).padStart(2, '0')}:00`);
+      setNewEventEndTime(`${String(endHour).padStart(2, '0')}:00`);
+    } else {
+      setNewEventStartTime('09:00');
+      setNewEventEndTime('10:00');
+    }
+    setNewEventTitle('');
+    setShowAddEventModal(true);
+  };
+
   const handlePrev = () => {
     if (viewMode === 'month') {
-      const prev = new Date(year, month - 1, 1);
-      setSelectedDateStr(formatIsoDate(prev));
+      setSelectedDateStr(formatIsoDate(new Date(year, month - 1, 1)));
     } else if (viewMode === 'week') {
       setSelectedDateStr(addDaysToIso(selectedDateStr, -7));
     } else {
@@ -82,8 +127,7 @@ export const CalendarView: React.FC = () => {
 
   const handleNext = () => {
     if (viewMode === 'month') {
-      const next = new Date(year, month + 1, 1);
-      setSelectedDateStr(formatIsoDate(next));
+      setSelectedDateStr(formatIsoDate(new Date(year, month + 1, 1)));
     } else if (viewMode === 'week') {
       setSelectedDateStr(addDaysToIso(selectedDateStr, 7));
     } else {
@@ -95,130 +139,170 @@ export const CalendarView: React.FC = () => {
     setSelectedDateStr(todayStr);
   };
 
-  const periodTitle = useMemo(() => {
+  const periodMonthLabel = useMemo(() => {
     if (viewMode === 'month') {
-      return anchorDate.toLocaleDateString([], { month: 'long', year: 'numeric' });
+      return anchorDate.toLocaleDateString([], { month: 'long' });
     }
     if (viewMode === 'week') {
       const start = parseIsoDate(weekDays[0]);
       const end = parseIsoDate(weekDays[6]);
-      return `${start.toLocaleDateString([], { month: 'short', day: 'numeric' })} — ${end.toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' })}`;
+      if (start.getMonth() === end.getMonth()) {
+        return start.toLocaleDateString([], { month: 'long' });
+      }
+      return `${start.toLocaleDateString([], { month: 'short' })} – ${end.toLocaleDateString([], { month: 'short' })}`;
     }
-    return anchorDate.toLocaleDateString([], {
-      weekday: 'long',
-      month: 'long',
-      day: 'numeric',
-      year: 'numeric',
-    });
+    return anchorDate.toLocaleDateString([], { month: 'long', day: 'numeric' });
   }, [viewMode, anchorDate, weekDays]);
 
-  const getItemsForDate = (dateStr: string) => {
-    const tasks = state.tasks.filter(t => t.dueDate === dateStr);
-    const schedule = (state.dailySchedule || [])
-      .filter(s => s.date === dateStr)
-      .sort((a, b) => a.startTime.localeCompare(b.startTime));
-    const workouts = state.workoutSessions.filter(w => w.date === dateStr);
-    const study = state.studySessions.filter(s => s.date === dateStr);
-    const learningLessons = (learningData?.lessons || []).filter(l => l.lessonDate === dateStr);
-    const learningStudy = (learningData?.studySessions || []).filter(s => s.date === dateStr);
-    const goalsDue = state.goals.filter(g => g.targetDate === dateStr);
+  const periodYearLabel = useMemo(() => String(year), [year]);
 
-    return { tasks, schedule, workouts, study, learningLessons, learningStudy, goalsDue };
-  };
+  const itemsByDate = useMemo(() => {
+    const map = new Map<
+      string,
+      {
+        tasks: typeof state.tasks;
+        schedule: typeof state.dailySchedule;
+        workouts: typeof state.workoutSessions;
+        study: typeof state.studySessions;
+        learningLessons: NonNullable<typeof learningData>['lessons'];
+        learningStudy: NonNullable<typeof learningData>['studySessions'];
+        goalsDue: typeof state.goals;
+      }
+    >();
+
+    const ensure = (d: string) => {
+      let bucket = map.get(d);
+      if (!bucket) {
+        bucket = {
+          tasks: [],
+          schedule: [],
+          workouts: [],
+          study: [],
+          learningLessons: [],
+          learningStudy: [],
+          goalsDue: [],
+        };
+        map.set(d, bucket);
+      }
+      return bucket;
+    };
+
+    for (const t of state.tasks) {
+      if (t.dueDate) ensure(t.dueDate).tasks.push(t);
+    }
+    for (const s of state.dailySchedule || []) {
+      ensure(s.date).schedule.push(s);
+    }
+    for (const bucket of map.values()) {
+      bucket.schedule.sort((a, b) => a.startTime.localeCompare(b.startTime));
+    }
+    for (const w of state.workoutSessions) {
+      ensure(w.date).workouts.push(w);
+    }
+    for (const st of state.studySessions) {
+      ensure(st.date).study.push(st);
+    }
+    for (const l of learningData?.lessons || []) {
+      if (l.lessonDate) ensure(l.lessonDate).learningLessons.push(l);
+    }
+    for (const ls of learningData?.studySessions || []) {
+      ensure(ls.date).learningStudy.push(ls);
+    }
+    for (const g of state.goals) {
+      if (g.targetDate) ensure(g.targetDate).goalsDue.push(g);
+    }
+
+    return map;
+  }, [
+    state.tasks,
+    state.dailySchedule,
+    state.workoutSessions,
+    state.studySessions,
+    state.goals,
+    learningData,
+  ]);
+
+  const getItemsForDate = (dateStr: string) =>
+    itemsByDate.get(dateStr) || {
+      tasks: [],
+      schedule: [],
+      workouts: [],
+      study: [],
+      learningLessons: [],
+      learningStudy: [],
+      goalsDue: [],
+    };
 
   const handleCreateEvent = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newEventTitle.trim()) return;
 
     addScheduleActivity({
-      date: selectedDateStr,
+      date: eventDateStr,
       title: newEventTitle.trim(),
       startTime: newEventStartTime,
       endTime: newEventEndTime,
-      category: 'personal_development',
+      category: newEventCategory,
       completed: false,
     });
 
+    setSelectedDateStr(eventDateStr);
     setNewEventTitle('');
     setShowAddEventModal(false);
-    showToast('Activity scheduled');
+    showToast('Event scheduled.');
   };
 
   const selectedItems = getItemsForDate(selectedDateStr);
+  const selectedTotalCount =
+    selectedItems.schedule.length +
+    selectedItems.tasks.length +
+    selectedItems.learningLessons.length +
+    selectedItems.learningStudy.length +
+    selectedItems.study.length +
+    selectedItems.workouts.length +
+    selectedItems.goalsDue.length;
+
+  const weekHasAllDayItems = useMemo(
+    () =>
+      weekDays.some(d => {
+        const it = getItemsForDate(d);
+        return it.tasks.length > 0 || it.learningLessons.length > 0 || it.goalsDue.length > 0;
+      }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [weekDays, itemsByDate]
+  );
+
+  const selectedDateFormatted = anchorDate.toLocaleDateString([], {
+    weekday: 'long',
+    month: 'short',
+    day: 'numeric',
+  });
+
+  const relativeDayLabel = useMemo(() => {
+    if (selectedDateStr === todayStr) return 'Today';
+    if (selectedDateStr === addDaysToIso(todayStr, 1)) return 'Tomorrow';
+    if (selectedDateStr === addDaysToIso(todayStr, -1)) return 'Yesterday';
+    return anchorDate.toLocaleDateString([], { year: 'numeric' });
+  }, [selectedDateStr, todayStr, anchorDate]);
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto pb-8">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-2">
-        <div className="space-y-1">
-          <h1 className="text-xl md:text-2xl font-bold text-ink tracking-tight">
-            Integrated Master Calendar
-          </h1>
-          <p className="text-xs text-ink-muted">
-            Synchronized Month, Week, and Day planning across tasks, workouts, lessons, and time blocks.
-          </p>
-        </div>
+    <div className="max-w-7xl mx-auto pb-8">
+      {/* Unified Apple Calendar Workspace Surface */}
+      <div className="rounded-2xl bg-surface border border-line overflow-hidden shadow-[0_4px_24px_-8px_rgba(0,0,0,0.06)]">
+        {/* Top Apple Calendar Toolbar */}
+        <div className="px-4 sm:px-6 py-3.5 border-b border-line bg-[#FBFBFD] flex flex-wrap items-center justify-between gap-3">
+          {/* Left: Period Heading + Joined Apple Navigation Stepper */}
+          <div className="flex items-center gap-3 sm:gap-4 min-w-0">
+            <h1 className="text-lg sm:text-xl font-bold text-ink tracking-tight font-heading whitespace-nowrap">
+              {periodMonthLabel}{' '}
+              <span className="font-normal text-ink-muted tabular-nums">{periodYearLabel}</span>
+            </h1>
 
-        <div className="flex flex-wrap items-center gap-3">
-          {/* Month | Week | Day Switcher */}
-          <div
-            role="tablist"
-            aria-label="Calendar view mode"
-            className="flex bg-surface p-1 rounded-xl border border-line text-xs relative"
-          >
-            {(['month', 'week', 'day'] as const).map(mode => {
-              const isActive = viewMode === mode;
-              return (
-                <button
-                  key={mode}
-                  type="button"
-                  role="tab"
-                  aria-selected={isActive}
-                  onClick={() => setViewMode(mode)}
-                  className={`relative z-10 px-3 py-1.5 min-h-[36px] rounded-lg capitalize transition-colors whitespace-nowrap ${
-                    isActive ? 'text-accent-ink font-semibold' : 'text-ink-muted hover:text-ink font-medium'
-                  }`}
-                >
-                  {isActive && (
-                    <motion.span
-                      layoutId="calendar-view-mode-pill"
-                      transition={{ duration: prefersReduced ? 0.01 : 0.2, ease: MOMENTUM_EASE }}
-                      className="absolute inset-0 bg-accent rounded-lg -z-10"
-                    />
-                  )}
-                  {mode}
-                </button>
-              );
-            })}
-          </div>
-
-          <button
-            type="button"
-            onClick={() => setShowAddEventModal(true)}
-            className="btn-press group flex items-center gap-1.5 px-4 py-2 min-h-[40px] rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs transition-colors whitespace-nowrap shrink-0"
-          >
-            <Plus className="w-4 h-4 stroke-[2.25] transition-transform duration-200 group-hover:rotate-90" />
-            <span>Schedule Activity</span>
-          </button>
-        </div>
-      </div>
-
-      {/* Main Calendar Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Left/Main Calendar Surface */}
-        <div
-          className={`${
-            viewMode === 'day' ? 'lg:col-span-8' : 'lg:col-span-8'
-          } p-4 sm:p-6 rounded-2xl bg-surface border border-line space-y-4`}
-        >
-          {/* Period Stepper */}
-          <div className="flex items-center justify-between gap-2 pb-3 border-b border-line">
-            <h2 className="text-sm sm:text-base font-bold text-ink truncate">{periodTitle}</h2>
-            <div className="flex items-center gap-1 shrink-0">
+            <div className="inline-flex items-center rounded-lg border border-line bg-surface divide-x divide-line shadow-2xs shrink-0">
               <button
                 type="button"
                 onClick={handlePrev}
-                className="btn-press p-2 rounded-lg text-ink-muted hover:text-ink hover:bg-surface-warm transition-colors"
+                className="px-2 py-1.5 text-ink-muted hover:text-ink hover:bg-surface-warm transition-colors rounded-l-lg"
                 aria-label={`Previous ${viewMode}`}
               >
                 <ChevronLeft className="w-4 h-4" />
@@ -226,14 +310,18 @@ export const CalendarView: React.FC = () => {
               <button
                 type="button"
                 onClick={handleToday}
-                className="btn-press px-3 py-1.5 rounded-lg text-xs font-semibold text-accent hover:bg-surface-warm transition-colors"
+                className={`px-3 py-1.5 text-xs font-medium transition-colors whitespace-nowrap ${
+                  selectedDateStr === todayStr
+                    ? 'text-ink font-semibold bg-surface-warm/60'
+                    : 'text-ink-muted hover:text-ink hover:bg-surface-warm'
+                }`}
               >
                 Today
               </button>
               <button
                 type="button"
                 onClick={handleNext}
-                className="btn-press p-2 rounded-lg text-ink-muted hover:text-ink hover:bg-surface-warm transition-colors"
+                className="px-2 py-1.5 text-ink-muted hover:text-ink hover:bg-surface-warm transition-colors rounded-r-lg"
                 aria-label={`Next ${viewMode}`}
               >
                 <ChevronRight className="w-4 h-4" />
@@ -241,525 +329,979 @@ export const CalendarView: React.FC = () => {
             </div>
           </div>
 
-          <AnimatePresence mode="wait" initial={false}>
-            {viewMode === 'month' && (
-              <motion.div
-                key={`month-${year}-${month}`}
-                initial={prefersReduced ? { opacity: 1 } : { opacity: 0, y: 4 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={prefersReduced ? { opacity: 0 } : { opacity: 0, y: -4 }}
-                transition={{ duration: prefersReduced ? 0.01 : 0.16, ease: MOMENTUM_EASE }}
-                className="space-y-2"
-              >
-                <div className="grid grid-cols-7 gap-1 text-center font-mono text-[11px] text-ink-muted pb-1">
-                  {weekdayHeaders.map(d => (
-                    <span key={d}>{d}</span>
-                  ))}
-                </div>
-
-                <div className="grid grid-cols-7 gap-1">
-                  {Array.from({ length: monthGrid.leadingEmpty }).map((_, i) => (
-                    <div
-                      key={`empty-${i}`}
-                      className="h-14 sm:h-20 rounded-xl bg-surface-warm/30 opacity-40"
-                    />
-                  ))}
-
-                  {monthGrid.dates.map(dateStr => {
-                    const dayNum = Number(dateStr.split('-')[2]);
-                    const isSelected = selectedDateStr === dateStr;
-                    const isToday = todayStr === dateStr;
-                    const items = getItemsForDate(dateStr);
-                    const totalItems =
-                      items.tasks.length +
-                      items.schedule.length +
-                      items.workouts.length +
-                      items.study.length +
-                      items.learningLessons.length +
-                      items.learningStudy.length +
-                      items.goalsDue.length;
-
-                    return (
-                      <button
-                        key={dateStr}
-                        type="button"
-                        onClick={() => setSelectedDateStr(dateStr)}
-                        aria-label={`Select ${dateStr} (${totalItems} items)`}
-                        aria-pressed={isSelected}
-                        className={`h-14 sm:h-20 rounded-xl p-1.5 flex flex-col justify-between border text-left transition-all duration-150 ${
-                          isSelected
-                            ? 'bg-accent/20 text-ink border-accent ring-1 ring-accent shadow-xs'
-                            : isToday
-                            ? 'bg-stone/12 border-stone text-ink'
-                            : 'bg-surface-warm/50 border-line text-ink hover:border-stone/60'
-                        }`}
-                      >
-                        <div className="flex items-center justify-between w-full">
-                          <span
-                            className={`text-xs font-mono font-semibold tabular-nums ${
-                              isSelected
-                                ? 'text-accent'
-                                : isToday
-                                ? 'text-stone'
-                                : 'text-ink'
-                            }`}
-                          >
-                            {dayNum}
-                          </span>
-                          {totalItems > 0 && (
-                            <span
-                              className={`text-[10px] font-mono tabular-nums ${
-                                isSelected ? 'text-ink' : 'text-ink-muted'
-                              }`}
-                            >
-                              {totalItems}
-                            </span>
-                          )}
-                        </div>
-
-                        <div className="hidden sm:block space-y-0.5 overflow-hidden w-full">
-                          {items.tasks.slice(0, 1).map(t => (
-                            <div
-                              key={t.id}
-                              className={`text-[10px] truncate px-1 rounded ${
-                                isSelected
-                                  ? 'bg-accent/25 text-ink'
-                                  : 'bg-accent/20 text-ink'
-                              }`}
-                            >
-                              {t.title}
-                            </div>
-                          ))}
-                          {items.learningLessons.slice(0, 1).map(l => (
-                            <div
-                              key={l.id}
-                              className={`text-[10px] truncate px-1 rounded ${
-                                isSelected
-                                  ? 'bg-stone/20 text-stone'
-                                  : 'bg-stone/15 text-stone'
-                              }`}
-                            >
-                              {l.title}
-                            </div>
-                          ))}
-                          {items.workouts.slice(0, 1).map(w => (
-                            <div
-                              key={w.id}
-                              className={`text-[10px] truncate px-1 rounded flex items-center gap-1 ${
-                                isSelected
-                                  ? 'bg-surface-inset text-ink'
-                                  : 'bg-surface-inset text-ink-muted'
-                              }`}
-                            >
-                              <Dumbbell className="w-2.5 h-2.5 shrink-0" />
-                              <span className="truncate">{w.routineName.split(' ')[0]}</span>
-                            </div>
-                          ))}
-                        </div>
-                      </button>
-                    );
-                  })}
-                </div>
-              </motion.div>
-            )}
-
-            {viewMode === 'week' && (
-              <motion.div
-                key={`week-${weekDays[0]}`}
-                initial={prefersReduced ? { opacity: 1 } : { opacity: 0, y: 4 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={prefersReduced ? { opacity: 0 } : { opacity: 0, y: -4 }}
-                transition={{ duration: prefersReduced ? 0.01 : 0.16, ease: MOMENTUM_EASE }}
-                className="space-y-3"
-              >
-                <div className="grid grid-cols-1 sm:grid-cols-7 gap-2">
-                  {weekDays.map(dateStr => {
-                    const dt = parseIsoDate(dateStr);
-                    const isSelected = selectedDateStr === dateStr;
-                    const isToday = todayStr === dateStr;
-                    const items = getItemsForDate(dateStr);
-                    const total =
-                      items.schedule.length +
-                      items.tasks.length +
-                      items.learningLessons.length +
-                      items.workouts.length +
-                      items.learningStudy.length;
-
-                    return (
-                      <div
-                        key={dateStr}
-                        className={`rounded-xl border p-2.5 flex flex-col gap-2 min-h-[120px] sm:min-h-[260px] transition-colors ${
-                          isSelected
-                            ? 'bg-surface-warm border-accent'
-                            : isToday
-                            ? 'bg-accent/10 border-accent/40'
-                            : 'bg-surface-warm/40 border-line'
-                        }`}
-                      >
-                        <button
-                          type="button"
-                          onClick={() => setSelectedDateStr(dateStr)}
-                          className="flex sm:flex-col items-center sm:items-start justify-between gap-1 pb-2 border-b border-line text-left w-full"
-                        >
-                          <span className="text-[11px] font-mono text-ink-muted uppercase">
-                            {dt.toLocaleDateString([], { weekday: 'short' })}
-                          </span>
-                          <span
-                            className={`text-sm font-mono font-bold tabular-nums ${
-                              isSelected || isToday ? 'text-accent' : 'text-ink'
-                            }`}
-                          >
-                            {dt.getDate()}
-                          </span>
-                        </button>
-
-                        <div className="space-y-1.5 flex-1">
-                          {items.schedule.map(s => (
-                            <div
-                              key={s.id}
-                              className="p-1.5 rounded-lg bg-surface border border-line text-[11px]"
-                            >
-                              <span className="font-mono text-[10px] text-accent block tabular-nums">
-                                {s.startTime}
-                              </span>
-                              <span className="text-ink font-medium line-clamp-2">{s.title}</span>
-                            </div>
-                          ))}
-
-                          {items.tasks.map(t => (
-                            <div
-                              key={t.id}
-                              className="p-1.5 rounded-lg bg-accent/15 border border-accent/25 text-[11px] text-ink"
-                            >
-                              <span className="font-medium line-clamp-2">{t.title}</span>
-                            </div>
-                          ))}
-
-                          {items.learningLessons.map(l => (
-                            <button
-                              key={l.id}
-                              type="button"
-                              onClick={() => {
-                                setSelectedLearningModuleId(l.moduleId);
-                                setSelectedLearningLessonId(l.id);
-                                setCurrentView('learning');
-                              }}
-                              className="w-full text-left p-1.5 rounded-lg bg-surface border border-line hover:border-accent text-[11px] text-ink transition-colors"
-                            >
-                              <span className="text-[10px] text-accent block">Lesson</span>
-                              <span className="font-medium line-clamp-1">{l.title}</span>
-                            </button>
-                          ))}
-
-                          {items.workouts.map(w => (
-                            <div
-                              key={w.id}
-                              className="p-1.5 rounded-lg bg-surface-inset text-[11px] text-ink-muted flex items-center gap-1"
-                            >
-                              <Dumbbell className="w-3 h-3 shrink-0 text-sage" />
-                              <span className="truncate">{w.routineName}</span>
-                            </div>
-                          ))}
-
-                          {total === 0 && (
-                            <span className="text-[11px] text-ink-muted/60 block pt-1">
-                              Clear
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </motion.div>
-            )}
-
-            {viewMode === 'day' && (
-              <motion.div
-                key={`day-${selectedDateStr}`}
-                initial={prefersReduced ? { opacity: 1 } : { opacity: 0, y: 4 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={prefersReduced ? { opacity: 0 } : { opacity: 0, y: -4 }}
-                transition={{ duration: prefersReduced ? 0.01 : 0.16, ease: MOMENTUM_EASE }}
-                className="space-y-4"
-              >
-                {/* All-Day / Due Date Strip */}
-                {(selectedItems.tasks.length > 0 ||
-                  selectedItems.learningLessons.length > 0 ||
-                  selectedItems.goalsDue.length > 0) && (
-                  <div className="p-3 rounded-xl bg-surface-warm/60 border border-line space-y-2">
-                    <span className="text-xs font-semibold text-ink block">
-                      Due & Scheduled Milestones
-                    </span>
-                    <div className="flex flex-wrap gap-2">
-                      {selectedItems.tasks.map(t => (
-                        <div
-                          key={t.id}
-                          className="px-2.5 py-1.5 rounded-lg bg-surface border border-line text-xs text-ink flex items-center gap-1.5"
-                        >
-                          <CheckCircle2 className="w-3.5 h-3.5 text-accent" />
-                          <span>{t.title}</span>
-                        </div>
-                      ))}
-                      {selectedItems.learningLessons.map(l => (
-                        <button
-                          key={l.id}
-                          type="button"
-                          onClick={() => {
-                            setSelectedLearningModuleId(l.moduleId);
-                            setSelectedLearningLessonId(l.id);
-                            setCurrentView('learning');
-                          }}
-                          className="px-2.5 py-1.5 rounded-lg bg-surface border border-line hover:border-accent text-xs text-ink flex items-center gap-1.5 transition-colors"
-                        >
-                          <BookOpen className="w-3.5 h-3.5 text-accent" />
-                          <span>{l.title}</span>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Hourly Timeline */}
-                <div className="divide-y divide-line border border-line rounded-xl overflow-hidden max-h-[520px] overflow-y-auto">
-                  {DAY_HOURS.map(hour => {
-                    const slotBlocks = selectedItems.schedule.filter(s => {
-                      const mins = parseTimeToMinutes(s.startTime);
-                      return mins !== null && Math.floor(mins / 60) === hour;
-                    });
-
-                    return (
-                      <div
-                        key={hour}
-                        className="flex items-stretch min-h-[52px] bg-surface hover:bg-surface-warm/30 transition-colors"
-                      >
-                        <div className="w-16 sm:w-20 px-2.5 py-2 border-r border-line text-[11px] font-mono text-ink-muted tabular-nums shrink-0 flex items-start">
-                          {formatHourSlot(hour, timeFormat)}
-                        </div>
-                        <div className="flex-1 p-1.5 flex flex-col gap-1">
-                          {slotBlocks.map(block => (
-                            <div
-                              key={block.id}
-                              className="px-3 py-2 rounded-lg bg-accent/20 border border-accent/35 text-xs flex items-center justify-between gap-2"
-                            >
-                              <span className="font-semibold text-ink truncate">{block.title}</span>
-                              <span className="font-mono text-[11px] text-ink-muted tabular-nums shrink-0">
-                                {block.startTime} — {block.endTime}
-                              </span>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-
-        {/* Selected Date Inspector (4 cols) */}
-        <aside className="lg:col-span-4 p-5 sm:p-6 rounded-2xl bg-surface border border-line space-y-4">
-          <div className="flex items-center justify-between pb-3 border-b border-line">
-            <div>
-              <span className="text-xs font-medium text-accent block">
-                Selected Day
-              </span>
-              <h3 className="text-sm font-bold text-ink font-mono tabular-nums">
-                {selectedDateStr}
-              </h3>
-            </div>
-            <button
-              type="button"
-              onClick={() => setShowAddEventModal(true)}
-              className="btn-press text-xs font-semibold text-stone hover:underline"
+          {/* Right: Apple Segmented View Control + New Event CTA */}
+          <div className="flex items-center gap-2.5 sm:gap-3 ml-auto">
+            <div
+              role="tablist"
+              aria-label="Calendar view mode"
+              className="inline-flex p-0.5 rounded-lg bg-[#E5E5EA]/75 border border-line relative"
             >
-              + Add Block
-            </button>
-          </div>
-
-          <AnimatePresence mode="wait" initial={false}>
-            <motion.div
-              key={selectedDateStr}
-              initial={prefersReduced ? { opacity: 1 } : { opacity: 0, y: 4 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={prefersReduced ? { opacity: 0 } : { opacity: 0, y: -4 }}
-              transition={{ duration: prefersReduced ? 0.01 : 0.15, ease: MOMENTUM_EASE }}
-              className="space-y-3"
-            >
-              {selectedItems.schedule.map(s => (
-                <div
-                  key={s.id}
-                  className="p-3 rounded-xl bg-surface-warm/60 border border-line text-xs space-y-1"
-                >
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="font-semibold text-ink">{s.title}</span>
-                    <span className="font-mono text-[11px] font-semibold text-accent tabular-nums shrink-0">
-                      {s.startTime} - {s.endTime}
-                    </span>
-                  </div>
-                  <span className="text-[11px] text-ink-muted flex items-center gap-1">
-                    <Clock className="w-3 h-3" />
-                    Scheduled Activity
-                  </span>
-                </div>
-              ))}
-
-              {selectedItems.tasks.map(t => (
-                <div
-                  key={t.id}
-                  className="p-3 rounded-xl bg-surface-warm/60 border border-line text-xs space-y-1"
-                >
-                  <div className="flex items-center justify-between gap-2">
-                    {t.learningModuleId ? (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setSelectedLearningModuleId(t.learningModuleId!);
-                          setSelectedLearningLessonId(t.learningLessonId || null);
-                          setCurrentView('learning');
-                        }}
-                        className="font-semibold text-ink hover:text-accent text-left"
-                      >
-                        {t.title}
-                      </button>
-                    ) : (
-                      <span className="font-semibold text-ink">{t.title}</span>
-                    )}
-                    <span className="text-[11px] font-mono capitalize font-semibold text-accent shrink-0">
-                      {t.priority}
-                    </span>
-                  </div>
-                  <span className="text-[11px] text-ink-muted block">
-                    {t.learningModuleTitle
-                      ? `Learning Deadline · ${t.learningModuleTitle}`
-                      : 'Task Deadline'}
-                  </span>
-                </div>
-              ))}
-
-              {selectedItems.learningLessons.map(l => {
-                const mod = learningData?.modules.find(m => m.id === l.moduleId);
+              {(['day', 'week', 'month'] as const).map(mode => {
+                const isActive = viewMode === mode;
                 return (
                   <button
-                    key={l.id}
+                    key={mode}
                     type="button"
-                    onClick={() => {
-                      setSelectedLearningModuleId(l.moduleId);
-                      setSelectedLearningLessonId(l.id);
-                      setCurrentView('learning');
-                    }}
-                    className="w-full text-left p-3 rounded-xl bg-surface-warm/60 border border-line hover:border-accent text-xs space-y-1 transition-colors"
+                    role="tab"
+                    aria-selected={isActive}
+                    onClick={() => setViewMode(mode)}
+                    className={`relative z-10 px-3 py-1.5 min-h-[30px] rounded-[7px] capitalize text-xs transition-colors whitespace-nowrap ${
+                      isActive
+                        ? 'text-ink font-semibold'
+                        : 'text-ink-muted hover:text-ink font-medium'
+                    }`}
                   >
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="font-semibold text-ink truncate">{l.title}</span>
-                      <span className="text-[11px] font-mono text-accent tabular-nums shrink-0">
-                        {l.studyDurationMinutes}m
-                      </span>
-                    </div>
-                    <span className="text-[11px] text-ink-muted block truncate">
-                      Lesson{mod ? ` · ${mod.title}` : ''}
-                      {l.teacherName ? ` · ${l.teacherName}` : ''}
-                    </span>
+                    {isActive && (
+                      <motion.span
+                        layoutId="apple-calendar-mode-pill"
+                        transition={{ duration: prefersReduced ? 0.01 : 0.18, ease: MOMENTUM_EASE }}
+                        className="absolute inset-0 bg-surface rounded-[7px] shadow-[0_1px_3px_rgba(0,0,0,0.1)] -z-10"
+                      />
+                    )}
+                    {mode}
                   </button>
                 );
               })}
+            </div>
 
-              {selectedItems.learningStudy.map(s => (
-                <div
-                  key={s.id}
-                  className="p-3 rounded-xl bg-surface-warm/60 border border-line text-xs space-y-1"
+            <button
+              type="button"
+              onClick={() => openScheduleModal(selectedDateStr)}
+              className="btn-press flex items-center gap-1.5 px-3.5 py-2 min-h-[34px] rounded-lg bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs transition-colors whitespace-nowrap shrink-0"
+            >
+              <Plus className="w-3.5 h-3.5 stroke-[2.25]" />
+              <span>New Event</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Main Split Calendar Body */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 lg:items-stretch">
+          {/* Calendar Canvas (8-9 cols) */}
+          <div className="lg:col-span-8 xl:col-span-9 bg-surface border-b lg:border-b-0 lg:border-r border-line min-w-0 flex flex-col">
+            <AnimatePresence mode="wait" initial={false}>
+              {/* ==================== MONTH VIEW ==================== */}
+              {viewMode === 'month' && (
+                <motion.div
+                  key={`month-${year}-${month}`}
+                  initial={prefersReduced ? { opacity: 1 } : { opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={prefersReduced ? { opacity: 0 } : { opacity: 0 }}
+                  transition={{ duration: prefersReduced ? 0.01 : 0.14 }}
+                  className="flex-1 flex flex-col"
                 >
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="font-semibold text-ink">{s.subject}</span>
-                    <span className="text-[11px] font-mono text-success tabular-nums">
-                      {s.durationMinutes}m
-                    </span>
-                  </div>
-                  <span className="text-[11px] text-ink-muted block">Study Session</span>
-                </div>
-              ))}
+                  {/* Desktop / Tablet Edge-to-Edge Apple Hairline Month Grid */}
+                  <div className="hidden sm:flex sm:flex-col flex-1">
+                    <div className="grid grid-cols-7 border-b border-line bg-[#FBFBFD] shrink-0">
+                      {weekdayHeaders.map(d => (
+                        <div
+                          key={d}
+                          className="px-2.5 py-2 text-right text-[11px] font-medium text-ink-muted tracking-tight"
+                        >
+                          {d}
+                        </div>
+                      ))}
+                    </div>
 
-              {selectedItems.workouts.map(w => (
-                <div
-                  key={w.id}
-                  className="p-3 rounded-xl bg-surface-warm/60 border border-line text-xs space-y-1"
+                    <div
+                      className="grid grid-cols-7 flex-1"
+                      style={{
+                        gridTemplateRows: `repeat(${Math.max(5, Math.ceil(monthMatrix.length / 7))}, minmax(108px, 1fr))`,
+                      }}
+                    >
+                      {monthMatrix.map((cell, idx) => {
+                        const isSelected = selectedDateStr === cell.dateStr;
+                        const isToday = todayStr === cell.dateStr;
+                        const isLastRow = idx >= monthMatrix.length - 7;
+                        const isLastCol = (idx + 1) % 7 === 0;
+                        const items = getItemsForDate(cell.dateStr);
+
+                        const visibleBars: {
+                          key: string;
+                          label: string;
+                          time?: string;
+                          tone: 'solid' | 'tinted' | 'outline';
+                          done?: boolean;
+                        }[] = [];
+
+                        for (const s of items.schedule) {
+                          visibleBars.push({
+                            key: s.id,
+                            label: s.title,
+                            time: formatTimeCompact(s.startTime, timeFormat),
+                            tone: 'solid',
+                            done: s.completed,
+                          });
+                        }
+                        for (const t of items.tasks) {
+                          visibleBars.push({
+                            key: t.id,
+                            label: t.title,
+                            tone: 'tinted',
+                            done: t.status === 'completed',
+                          });
+                        }
+                        for (const l of items.learningLessons) {
+                          visibleBars.push({
+                            key: l.id,
+                            label: l.title,
+                            tone: 'outline',
+                          });
+                        }
+                        for (const w of items.workouts) {
+                          visibleBars.push({
+                            key: w.id,
+                            label: w.routineName,
+                            tone: 'tinted',
+                          });
+                        }
+                        for (const g of items.goalsDue) {
+                          visibleBars.push({
+                            key: g.id,
+                            label: g.title,
+                            tone: 'outline',
+                          });
+                        }
+
+                        const overflowCount = Math.max(0, visibleBars.length - 3);
+
+                        return (
+                          <div
+                            key={cell.dateStr}
+                            onClick={() => setSelectedDateStr(cell.dateStr)}
+                            onDoubleClick={() => openScheduleModal(cell.dateStr)}
+                            className={`group relative min-h-[104px] p-1.5 flex flex-col justify-between transition-colors cursor-pointer select-none ${
+                              !isLastCol ? 'border-r border-line' : ''
+                            } ${!isLastRow ? 'border-b border-line' : ''} ${
+                              isSelected
+                                ? 'bg-[#F2F2F7]/85'
+                                : cell.inCurrentMonth
+                                ? 'bg-surface hover:bg-surface-warm/45'
+                                : 'bg-[#FBFBFD] hover:bg-surface-warm/35'
+                            }`}
+                          >
+                            {/* Top Row: Subtle hover + button & Apple Date Number */}
+                            <div className="flex items-center justify-between gap-1 mb-1">
+                              <button
+                                type="button"
+                                onClick={e => {
+                                  e.stopPropagation();
+                                  setSelectedDateStr(cell.dateStr);
+                                  openScheduleModal(cell.dateStr);
+                                }}
+                                aria-label={`Add event on ${cell.dateStr}`}
+                                className="opacity-0 group-hover:opacity-100 focus:opacity-100 w-5 h-5 rounded-md flex items-center justify-center text-ink-muted hover:text-ink hover:bg-surface-inset transition-all"
+                              >
+                                <Plus className="w-3 h-3" />
+                              </button>
+
+                              <button
+                                type="button"
+                                onClick={e => {
+                                  e.stopPropagation();
+                                  setSelectedDateStr(cell.dateStr);
+                                }}
+                                aria-label={`Select ${cell.dateStr} (${visibleBars.length} items)`}
+                                aria-pressed={isSelected}
+                                className={`w-6 h-6 rounded-full flex items-center justify-center text-xs tabular-nums transition-colors ${
+                                  isToday
+                                    ? 'bg-[#1D1D1F] text-white font-semibold'
+                                    : isSelected
+                                    ? 'bg-[#E5E5EA] text-ink font-semibold'
+                                    : cell.inCurrentMonth
+                                    ? 'text-ink font-medium'
+                                    : 'text-ink-muted/45 font-normal'
+                                }`}
+                              >
+                                {cell.dayNumber}
+                              </button>
+                            </div>
+
+                            {/* Compact Apple Event Rows */}
+                            <div className="space-y-0.5 overflow-hidden flex-1">
+                              {visibleBars.slice(0, 3).map(bar => (
+                                <div
+                                  key={bar.key}
+                                  className={`px-1.5 py-[2px] rounded-[5px] text-[10.5px] leading-tight flex items-center gap-1 truncate ${
+                                    bar.done
+                                      ? 'bg-surface-inset/70 text-ink-muted line-through'
+                                      : bar.tone === 'solid'
+                                      ? 'bg-[#1D1D1F] text-white font-medium'
+                                      : bar.tone === 'tinted'
+                                      ? 'bg-[#F2F2F7] text-ink border border-line font-medium'
+                                      : 'bg-surface text-ink border border-line-strong font-medium'
+                                  }`}
+                                >
+                                  {bar.time && (
+                                    <span
+                                      className={`font-mono text-[9.5px] tabular-nums shrink-0 ${
+                                        bar.tone === 'solid' && !bar.done
+                                          ? 'text-white/75'
+                                          : 'text-ink-muted'
+                                      }`}
+                                    >
+                                      {bar.time}
+                                    </span>
+                                  )}
+                                  <span className="truncate">{bar.label}</span>
+                                </div>
+                              ))}
+                              {overflowCount > 0 && (
+                                <div className="px-1 text-[10px] font-medium text-ink-muted tabular-nums">
+                                  +{overflowCount} more
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Mobile iOS Calendar Style Month Grid */}
+                  <div className="sm:hidden p-3 space-y-2">
+                    <div className="grid grid-cols-7 text-center text-[11px] font-medium text-ink-muted pb-1">
+                      {weekdayHeaders.map(d => (
+                        <span key={d}>{d.slice(0, 1)}</span>
+                      ))}
+                    </div>
+                    <div className="grid grid-cols-7 gap-y-1.5 text-center">
+                      {monthMatrix.map(cell => {
+                        const isSelected = selectedDateStr === cell.dateStr;
+                        const isToday = todayStr === cell.dateStr;
+                        const items = getItemsForDate(cell.dateStr);
+                        const itemCount =
+                          items.schedule.length +
+                          items.tasks.length +
+                          items.learningLessons.length +
+                          items.workouts.length +
+                          items.goalsDue.length;
+                        const dotCount = Math.min(3, itemCount);
+
+                        return (
+                          <button
+                            key={cell.dateStr}
+                            type="button"
+                            onClick={() => setSelectedDateStr(cell.dateStr)}
+                            aria-label={`Select ${cell.dateStr} (${itemCount} items)`}
+                            aria-pressed={isSelected}
+                            className="flex flex-col items-center justify-center py-1 gap-1"
+                          >
+                            <span
+                              className={`w-8 h-8 rounded-full flex items-center justify-center text-xs tabular-nums transition-colors ${
+                                isSelected
+                                  ? 'bg-[#1D1D1F] text-white font-semibold'
+                                  : isToday
+                                  ? 'border border-[#1D1D1F] text-ink font-semibold'
+                                  : cell.inCurrentMonth
+                                  ? 'text-ink font-medium'
+                                  : 'text-ink-muted/40'
+                              }`}
+                            >
+                              {cell.dayNumber}
+                            </span>
+                            <span className="flex items-center justify-center gap-0.5 h-1.5">
+                              {Array.from({ length: dotCount }).map((_, i) => (
+                                <span
+                                  key={i}
+                                  className={`w-1 h-1 rounded-full ${
+                                    isSelected ? 'bg-[#1D1D1F]' : 'bg-ink-muted/70'
+                                  }`}
+                                />
+                              ))}
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+
+              {/* ==================== WEEK VIEW ==================== */}
+              {viewMode === 'week' && (
+                <motion.div
+                  key={`week-${weekDays[0]}`}
+                  initial={prefersReduced ? { opacity: 1 } : { opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={prefersReduced ? { opacity: 0 } : { opacity: 0 }}
+                  transition={{ duration: prefersReduced ? 0.01 : 0.14 }}
                 >
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="font-semibold text-ink flex items-center gap-1.5">
-                      <Dumbbell className="w-3.5 h-3.5 text-sage" />
-                      {w.routineName}
-                    </span>
-                    <span className="text-[11px] font-mono text-ink-muted tabular-nums">
-                      {w.durationMinutes}m
-                    </span>
-                  </div>
-                  <span className="text-[11px] text-ink-muted block">Workout Session</span>
-                </div>
-              ))}
+                  {/* Desktop / Tablet True Apple Hourly Week Grid */}
+                  <div className="hidden sm:flex flex-col">
+                    {/* Sticky 7-Day Header */}
+                    <div className="grid grid-cols-[56px_repeat(7,minmax(0,1fr))] border-b border-line bg-[#FBFBFD]">
+                      <div className="px-2 py-2.5 text-[10px] font-mono text-ink-muted flex items-end justify-end">
+                        Time
+                      </div>
+                      {weekDays.map(dateStr => {
+                        const dt = parseIsoDate(dateStr);
+                        const isSelected = selectedDateStr === dateStr;
+                        const isToday = todayStr === dateStr;
+                        return (
+                          <button
+                            key={dateStr}
+                            type="button"
+                            onClick={() => setSelectedDateStr(dateStr)}
+                            className={`py-2 px-1.5 border-l border-line flex flex-col items-center gap-1 transition-colors ${
+                              isSelected ? 'bg-[#F2F2F7]/85' : 'hover:bg-surface-warm/50'
+                            }`}
+                          >
+                            <span className="text-[10.5px] font-medium text-ink-muted uppercase">
+                              {dt.toLocaleDateString([], { weekday: 'short' })}
+                            </span>
+                            <span
+                              className={`w-7 h-7 rounded-full flex items-center justify-center text-xs tabular-nums ${
+                                isToday
+                                  ? 'bg-[#1D1D1F] text-white font-semibold'
+                                  : isSelected
+                                  ? 'bg-[#E5E5EA] text-ink font-semibold'
+                                  : 'text-ink font-medium'
+                              }`}
+                            >
+                              {dt.getDate()}
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
 
-              {selectedItems.tasks.length === 0 &&
-                selectedItems.schedule.length === 0 &&
-                selectedItems.workouts.length === 0 &&
-                selectedItems.learningLessons.length === 0 &&
-                selectedItems.learningStudy.length === 0 && (
-                  <div className="py-8 text-center text-ink-muted text-xs">
-                    No scheduled activities on this date.
+                    {/* All-Day / Deadlines Strip */}
+                    {weekHasAllDayItems && (
+                      <div className="grid grid-cols-[56px_repeat(7,minmax(0,1fr))] border-b border-line bg-[#FBFBFD]/70">
+                        <div className="px-2 py-2 text-[10px] font-medium text-ink-muted text-right">
+                          All Day
+                        </div>
+                        {weekDays.map(dateStr => {
+                          const items = getItemsForDate(dateStr);
+                          return (
+                            <div
+                              key={dateStr}
+                              className="p-1 border-l border-line space-y-1 min-h-[34px]"
+                            >
+                              {items.tasks.slice(0, 2).map(t => (
+                                <div
+                                  key={t.id}
+                                  className={`px-1.5 py-0.5 rounded text-[10px] truncate border ${
+                                    t.status === 'completed'
+                                      ? 'bg-surface-inset text-ink-muted border-line line-through'
+                                      : 'bg-surface text-ink border-line-strong font-medium'
+                                  }`}
+                                >
+                                  {t.title}
+                                </div>
+                              ))}
+                              {items.learningLessons.slice(0, 1).map(l => (
+                                <div
+                                  key={l.id}
+                                  className="px-1.5 py-0.5 rounded text-[10px] truncate bg-[#F2F2F7] text-ink border border-line"
+                                >
+                                  {l.title}
+                                </div>
+                              ))}
+                              {items.goalsDue.slice(0, 1).map(g => (
+                                <div
+                                  key={g.id}
+                                  className="px-1.5 py-0.5 rounded text-[10px] truncate bg-[#1D1D1F] text-white"
+                                >
+                                  {g.title}
+                                </div>
+                              ))}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+
+                    {/* Scrollable Hourly Grid */}
+                    <div className="max-h-[620px] overflow-y-auto">
+                      <div
+                        className="grid grid-cols-[56px_repeat(7,minmax(0,1fr))]"
+                        style={{ height: `${TIMELINE_TOTAL_PX}px` }}
+                      >
+                        {/* Left Hour Gutter */}
+                        <div className="bg-[#FBFBFD]">
+                          {DAY_HOURS.map((hour, hourIdx) => (
+                            <div
+                              key={hour}
+                              style={{ height: `${HOUR_ROW_PX}px` }}
+                              className="relative pr-2 text-right text-[10.5px] font-mono text-ink-muted tabular-nums border-b border-line/60"
+                            >
+                              <span
+                                className={`block leading-none ${
+                                  hourIdx === 0 ? 'pt-1' : '-translate-y-1.5 bg-[#FBFBFD] pl-1'
+                                }`}
+                              >
+                                {formatHourSlot(hour, timeFormat)}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+
+                        {/* 7 Day Columns */}
+                        {weekDays.map(dateStr => {
+                          const items = getItemsForDate(dateStr);
+                          const positionedBlocks = layoutOverlappingBlocks(
+                            items.schedule,
+                            DAY_START_HOUR,
+                            DAY_END_HOUR_EXCLUSIVE
+                          );
+                          const isSelected = selectedDateStr === dateStr;
+                          const isToday = todayStr === dateStr;
+
+                          return (
+                            <div
+                              key={dateStr}
+                              className={`relative border-l border-line ${
+                                isSelected ? 'bg-[#F5F5F7]/45' : 'bg-surface'
+                              }`}
+                            >
+                              {/* Clickable Empty Hourly Rows */}
+                              {DAY_HOURS.map(hour => (
+                                <button
+                                  key={hour}
+                                  type="button"
+                                  onClick={() => {
+                                    setSelectedDateStr(dateStr);
+                                    openScheduleModal(dateStr, hour);
+                                  }}
+                                  aria-label={`Schedule on ${dateStr} at ${formatHourSlot(hour, timeFormat)}`}
+                                  style={{ height: `${HOUR_ROW_PX}px` }}
+                                  className="block w-full border-b border-line/60 hover:bg-surface-warm/55 transition-colors text-left"
+                                />
+                              ))}
+
+                              {/* Live Current Time Line */}
+                              {isToday && currentTimePct !== null && (
+                                <div
+                                  aria-hidden="true"
+                                  style={{ top: `${currentTimePct}%` }}
+                                  className="pointer-events-none absolute inset-x-0 z-20 flex items-center"
+                                >
+                                  <span className="w-2 h-2 -ml-1 rounded-full bg-[#1D1D1F] shrink-0" />
+                                  <span className="flex-1 h-[1.5px] bg-[#1D1D1F]" />
+                                </div>
+                              )}
+
+                              {/* Side-by-Side Non-Colliding Timed Schedule Blocks */}
+                              {positionedBlocks.map(({ item: block, topPct, heightPct, lane, totalLanes }) => {
+                                const laneWidth = 100 / totalLanes;
+                                const laneLeft = lane * laneWidth;
+                                return (
+                                  <button
+                                    key={block.id}
+                                    type="button"
+                                    onClick={e => {
+                                      e.stopPropagation();
+                                      setSelectedDateStr(dateStr);
+                                    }}
+                                    style={{
+                                      top: `${topPct}%`,
+                                      height: `${heightPct}%`,
+                                      left: `calc(${laneLeft}% + 2px)`,
+                                      width: `calc(${laneWidth}% - 4px)`,
+                                    }}
+                                    title={`${block.title} (${formatTimeCompact(block.startTime, timeFormat)} – ${formatTimeCompact(block.endTime, timeFormat)})`}
+                                    className={`absolute z-10 rounded-lg px-1.5 py-1 text-left overflow-hidden border transition-opacity ${
+                                      block.completed
+                                        ? 'bg-[#E5E5EA] text-ink-muted border-line-strong opacity-85'
+                                        : 'bg-[#1D1D1F] text-white border-black/15 shadow-xs'
+                                    }`}
+                                  >
+                                    <div className="text-[10.5px] font-semibold truncate leading-tight">
+                                      {block.title}
+                                    </div>
+                                    <div
+                                      className={`text-[9.5px] font-mono tabular-nums truncate ${
+                                        block.completed ? 'text-ink-muted' : 'text-white/75'
+                                      }`}
+                                    >
+                                      {formatTimeCompact(block.startTime, timeFormat)}
+                                    </div>
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Mobile Week Strip + Day Timeline */}
+                  <div className="sm:hidden">
+                    <div className="grid grid-cols-7 gap-1 px-3 py-2.5 border-b border-line bg-[#FBFBFD]">
+                      {weekDays.map(dateStr => {
+                        const dt = parseIsoDate(dateStr);
+                        const isSelected = selectedDateStr === dateStr;
+                        const isToday = todayStr === dateStr;
+                        return (
+                          <button
+                            key={dateStr}
+                            type="button"
+                            onClick={() => setSelectedDateStr(dateStr)}
+                            className="flex flex-col items-center gap-1 py-1"
+                          >
+                            <span className="text-[10px] font-medium text-ink-muted uppercase">
+                              {dt.toLocaleDateString([], { weekday: 'narrow' })}
+                            </span>
+                            <span
+                              className={`w-8 h-8 rounded-full flex items-center justify-center text-xs tabular-nums ${
+                                isSelected
+                                  ? 'bg-[#1D1D1F] text-white font-semibold'
+                                  : isToday
+                                  ? 'border border-[#1D1D1F] text-ink font-semibold'
+                                  : 'text-ink font-medium'
+                              }`}
+                            >
+                              {dt.getDate()}
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                    <DayTimelineCanvas
+                      dateStr={selectedDateStr}
+                      isToday={selectedDateStr === todayStr}
+                      items={selectedItems}
+                      timeFormat={timeFormat}
+                      currentTimePct={currentTimePct}
+                      onClickSlot={hour => openScheduleModal(selectedDateStr, hour)}
+                      onToggleSchedule={toggleScheduleActivityCompleted}
+                      onToggleTask={toggleTaskCompleted}
+                      onOpenLesson={(moduleId, lessonId) => {
+                        setSelectedLearningModuleId(moduleId);
+                        setSelectedLearningLessonId(lessonId);
+                        setCurrentView('learning');
+                      }}
+                    />
+                  </div>
+                </motion.div>
+              )}
+
+              {/* ==================== DAY VIEW ==================== */}
+              {viewMode === 'day' && (
+                <motion.div
+                  key={`day-${selectedDateStr}`}
+                  initial={prefersReduced ? { opacity: 1 } : { opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={prefersReduced ? { opacity: 0 } : { opacity: 0 }}
+                  transition={{ duration: prefersReduced ? 0.01 : 0.14 }}
+                >
+                  <DayTimelineCanvas
+                    dateStr={selectedDateStr}
+                    isToday={selectedDateStr === todayStr}
+                    items={selectedItems}
+                    timeFormat={timeFormat}
+                    currentTimePct={currentTimePct}
+                    onClickSlot={hour => openScheduleModal(selectedDateStr, hour)}
+                    onToggleSchedule={toggleScheduleActivityCompleted}
+                    onToggleTask={toggleTaskCompleted}
+                    onOpenLesson={(moduleId, lessonId) => {
+                      setSelectedLearningModuleId(moduleId);
+                      setSelectedLearningLessonId(lessonId);
+                      setCurrentView('learning');
+                    }}
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
+          {/* Right Apple Day Inspector (3-4 cols) */}
+          <aside
+            aria-label="Selected day inspector"
+            className="lg:col-span-4 xl:col-span-3 bg-[#FBFBFD] p-5 flex flex-col gap-5"
+          >
+            {/* Date Header */}
+            <div className="flex items-start justify-between gap-2 pb-3.5 border-b border-line">
+              <div className="min-w-0">
+                <span className="text-[11px] font-medium text-ink-muted block">
+                  {relativeDayLabel}
+                </span>
+                <h2 className="text-base font-bold text-ink font-heading tracking-tight truncate">
+                  {selectedDateFormatted}
+                </h2>
+              </div>
+              <button
+                type="button"
+                onClick={() => openScheduleModal(selectedDateStr)}
+                className="btn-press px-2.5 py-1 rounded-lg border border-line bg-surface hover:bg-surface-warm text-xs font-medium text-ink shrink-0"
+              >
+                + Add
+              </button>
+            </div>
+
+            {/* Compact Monochrome Summary Metrics */}
+            <div className="grid grid-cols-3 divide-x divide-line rounded-xl bg-surface border border-line py-2.5 text-center">
+              <div>
+                <div className="text-sm font-bold text-ink tabular-nums">
+                  {selectedItems.schedule.length}
+                </div>
+                <div className="text-[10.5px] text-ink-muted">Events</div>
+              </div>
+              <div>
+                <div className="text-sm font-bold text-ink tabular-nums">
+                  {selectedItems.tasks.length}
+                </div>
+                <div className="text-[10.5px] text-ink-muted">Tasks</div>
+              </div>
+              <div>
+                <div className="text-sm font-bold text-ink tabular-nums">
+                  {selectedItems.learningLessons.length + selectedItems.workouts.length}
+                </div>
+                <div className="text-[10.5px] text-ink-muted">Sessions</div>
+              </div>
+            </div>
+
+            {/* Grouped Agenda List */}
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.div
+                key={selectedDateStr}
+                initial={prefersReduced ? { opacity: 1 } : { opacity: 0, y: 4 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={prefersReduced ? { opacity: 0 } : { opacity: 0, y: -4 }}
+                transition={{ duration: prefersReduced ? 0.01 : 0.14, ease: MOMENTUM_EASE }}
+                className="space-y-4 flex-1"
+              >
+                {/* Scheduled Time Blocks */}
+                {selectedItems.schedule.length > 0 && (
+                  <section className="space-y-2">
+                    <h3 className="text-[11px] font-semibold uppercase tracking-wider text-ink-muted">
+                      Schedule
+                    </h3>
+                    <div className="space-y-1.5">
+                      {selectedItems.schedule.map(s => (
+                        <div
+                          key={s.id}
+                          className="group p-2.5 rounded-xl bg-surface border border-line flex items-start gap-2.5 text-xs"
+                        >
+                          <button
+                            type="button"
+                            onClick={() => toggleScheduleActivityCompleted(s.id)}
+                            aria-label={`Toggle ${s.title} completion`}
+                            className={`mt-0.5 w-4 h-4 rounded-full border flex items-center justify-center shrink-0 transition-colors ${
+                              s.completed
+                                ? 'bg-[#1D1D1F] border-[#1D1D1F] text-white'
+                                : 'border-line-strong hover:border-ink'
+                            }`}
+                          >
+                            {s.completed && <Check className="w-2.5 h-2.5 stroke-[2.5]" />}
+                          </button>
+                          <div className="min-w-0 flex-1">
+                            <div
+                              className={`font-medium truncate ${
+                                s.completed ? 'line-through text-ink-muted' : 'text-ink'
+                              }`}
+                            >
+                              {s.title}
+                            </div>
+                            <div className="text-[11px] font-mono text-ink-muted tabular-nums mt-0.5">
+                              {formatTimeCompact(s.startTime, timeFormat)} –{' '}
+                              {formatTimeCompact(s.endTime, timeFormat)}
+                            </div>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              deleteScheduleActivity(s.id);
+                              showToast('Event removed.', 'info');
+                            }}
+                            aria-label={`Delete ${s.title}`}
+                            className="opacity-0 group-hover:opacity-100 focus:opacity-100 p-1 rounded text-ink-muted hover:text-ink transition-opacity shrink-0"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </section>
+                )}
+
+                {/* Due Tasks */}
+                {selectedItems.tasks.length > 0 && (
+                  <section className="space-y-2">
+                    <h3 className="text-[11px] font-semibold uppercase tracking-wider text-ink-muted">
+                      Due Tasks
+                    </h3>
+                    <div className="space-y-1.5">
+                      {selectedItems.tasks.map(t => {
+                        const done = t.status === 'completed';
+                        return (
+                          <div
+                            key={t.id}
+                            className="p-2.5 rounded-xl bg-surface border border-line flex items-start gap-2.5 text-xs"
+                          >
+                            <button
+                              type="button"
+                              onClick={() => toggleTaskCompleted(t.id)}
+                              aria-label={`Mark ${t.title} as ${done ? 'incomplete' : 'complete'}`}
+                              className={`mt-0.5 w-4 h-4 rounded-full border flex items-center justify-center shrink-0 transition-colors ${
+                                done
+                                  ? 'bg-[#1D1D1F] border-[#1D1D1F] text-white'
+                                  : 'border-line-strong hover:border-ink'
+                              }`}
+                            >
+                              {done && <Check className="w-2.5 h-2.5 stroke-[2.5]" />}
+                            </button>
+                            <div className="min-w-0 flex-1">
+                              {t.learningModuleId ? (
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setSelectedLearningModuleId(t.learningModuleId!);
+                                    setSelectedLearningLessonId(t.learningLessonId || null);
+                                    setCurrentView('learning');
+                                  }}
+                                  className={`font-medium text-left hover:underline truncate block w-full ${
+                                    done ? 'line-through text-ink-muted' : 'text-ink'
+                                  }`}
+                                >
+                                  {t.title}
+                                </button>
+                              ) : (
+                                <span
+                                  className={`font-medium block truncate ${
+                                    done ? 'line-through text-ink-muted' : 'text-ink'
+                                  }`}
+                                >
+                                  {t.title}
+                                </span>
+                              )}
+                              <span className="text-[11px] text-ink-muted capitalize">
+                                {t.priority} priority
+                                {t.learningModuleTitle ? ` · ${t.learningModuleTitle}` : ''}
+                              </span>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </section>
+                )}
+
+                {/* Lessons & Study */}
+                {(selectedItems.learningLessons.length > 0 ||
+                  selectedItems.learningStudy.length > 0 ||
+                  selectedItems.study.length > 0) && (
+                  <section className="space-y-2">
+                    <h3 className="text-[11px] font-semibold uppercase tracking-wider text-ink-muted">
+                      Learning
+                    </h3>
+                    <div className="space-y-1.5">
+                      {selectedItems.learningLessons.map(l => {
+                        const mod = learningData?.modules.find(m => m.id === l.moduleId);
+                        return (
+                          <button
+                            key={l.id}
+                            type="button"
+                            onClick={() => {
+                              setSelectedLearningModuleId(l.moduleId);
+                              setSelectedLearningLessonId(l.id);
+                              setCurrentView('learning');
+                            }}
+                            className="w-full text-left p-2.5 rounded-xl bg-surface border border-line hover:border-line-strong text-xs flex items-center justify-between gap-2 transition-colors"
+                          >
+                            <div className="min-w-0 flex items-center gap-2">
+                              <BookOpen className="w-3.5 h-3.5 text-ink shrink-0" />
+                              <div className="min-w-0">
+                                <div className="font-medium text-ink truncate">{l.title}</div>
+                                {mod && (
+                                  <div className="text-[11px] text-ink-muted truncate">
+                                    {mod.title}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                            <span className="text-[11px] font-mono text-ink-muted tabular-nums shrink-0">
+                              {l.studyDurationMinutes}m
+                            </span>
+                          </button>
+                        );
+                      })}
+                      {[...selectedItems.learningStudy, ...selectedItems.study].map(s => (
+                        <div
+                          key={s.id}
+                          className="p-2.5 rounded-xl bg-surface border border-line text-xs flex items-center justify-between gap-2"
+                        >
+                          <span className="font-medium text-ink truncate">{s.subject}</span>
+                          <span className="text-[11px] font-mono text-ink-muted tabular-nums shrink-0">
+                            {s.durationMinutes}m
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </section>
+                )}
+
+                {/* Workouts & Goal Deadlines */}
+                {(selectedItems.workouts.length > 0 || selectedItems.goalsDue.length > 0) && (
+                  <section className="space-y-2">
+                    <h3 className="text-[11px] font-semibold uppercase tracking-wider text-ink-muted">
+                      Training &amp; Milestones
+                    </h3>
+                    <div className="space-y-1.5">
+                      {selectedItems.workouts.map(w => (
+                        <div
+                          key={w.id}
+                          className="p-2.5 rounded-xl bg-surface border border-line text-xs flex items-center justify-between gap-2"
+                        >
+                          <span className="font-medium text-ink flex items-center gap-1.5 truncate">
+                            <Dumbbell className="w-3.5 h-3.5 text-ink-muted shrink-0" />
+                            <span className="truncate">{w.routineName}</span>
+                          </span>
+                          <span className="text-[11px] font-mono text-ink-muted tabular-nums shrink-0">
+                            {w.durationMinutes}m
+                          </span>
+                        </div>
+                      ))}
+                      {selectedItems.goalsDue.map(g => (
+                        <div
+                          key={g.id}
+                          className="p-2.5 rounded-xl bg-surface border border-line text-xs flex items-center gap-2"
+                        >
+                          <Target className="w-3.5 h-3.5 text-ink shrink-0" />
+                          <span className="font-medium text-ink truncate">{g.title}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </section>
+                )}
+
+                {/* Empty Inspector State */}
+                {selectedTotalCount === 0 && (
+                  <div className="py-10 px-4 text-center space-y-3 rounded-xl border border-dashed border-line bg-surface/60">
+                    <CalendarIcon className="w-5 h-5 text-ink-muted mx-auto" />
+                    <div className="space-y-1">
+                      <p className="text-xs font-medium text-ink">No events scheduled</p>
+                      <p className="text-[11px] text-ink-muted">
+                        Double-click any calendar date or add a dedicated time block.
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => openScheduleModal(selectedDateStr)}
+                      className="btn-press inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#1D1D1F] hover:bg-black text-white text-xs font-medium"
+                    >
+                      <Plus className="w-3.5 h-3.5" />
+                      <span>Schedule Event</span>
+                    </button>
                   </div>
                 )}
-            </motion.div>
-          </AnimatePresence>
-        </aside>
+              </motion.div>
+            </AnimatePresence>
+          </aside>
+        </div>
       </div>
 
-      {/* Schedule Activity Modal */}
+      {/* Apple-Styled Schedule Event Modal */}
       <ModalShell
         isOpen={showAddEventModal}
         onClose={() => setShowAddEventModal(false)}
         maxWidthClass="max-w-sm"
       >
-        <div className="px-5 py-3.5 border-b border-line bg-surface-warm flex items-center justify-between">
-          <span className="text-xs font-semibold text-ink">Schedule Block</span>
+        <div className="px-5 py-3.5 border-b border-line bg-[#FBFBFD] flex items-center justify-between">
+          <span className="text-sm font-semibold text-ink font-heading tracking-tight">
+            New Calendar Event
+          </span>
           <button
             type="button"
             onClick={() => setShowAddEventModal(false)}
-            className="p-1 rounded-lg text-ink-muted hover:text-ink transition-colors"
+            className="p-1 rounded-lg text-ink-muted hover:text-ink hover:bg-surface-warm transition-colors"
             aria-label="Close schedule modal"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
-        <form onSubmit={handleCreateEvent} className="p-5 space-y-3">
+
+        <form onSubmit={handleCreateEvent} className="p-5 space-y-3.5">
           <div>
-            <label className="block text-xs font-semibold text-ink-muted mb-1">Title</label>
+            <label
+              htmlFor="calendar-event-title"
+              className="block text-xs font-medium text-ink-muted mb-1"
+            >
+              Title
+            </label>
             <input
+              id="calendar-event-title"
               type="text"
               required
               value={newEventTitle}
               onChange={e => setNewEventTitle(e.target.value)}
-              placeholder="e.g. Deep Work: Architecture Spec"
-              className="w-full px-3 py-2 rounded-xl bg-canvas border border-line text-xs text-ink placeholder:text-ink-muted focus:ring-2 focus:ring-accent focus:outline-hidden"
+              placeholder="e.g. Deep Work: Product Review"
+              className="w-full px-3 py-2 rounded-xl bg-surface-warm border border-line text-xs text-ink placeholder:text-ink-muted/60 focus:bg-surface focus:border-ink focus:ring-2 focus:ring-ink/15 focus:outline-hidden"
               autoFocus
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 gap-2.5">
             <div>
-              <label className="block text-xs font-semibold text-ink-muted mb-1">Start</label>
+              <label
+                htmlFor="calendar-event-date"
+                className="block text-xs font-medium text-ink-muted mb-1"
+              >
+                Date
+              </label>
               <input
-                type="time"
-                value={newEventStartTime}
-                onChange={e => setNewEventStartTime(e.target.value)}
-                className="w-full px-2.5 py-1.5 rounded-xl bg-canvas border border-line text-xs text-ink font-mono focus:ring-2 focus:ring-accent focus:outline-hidden"
+                id="calendar-event-date"
+                type="date"
+                required
+                value={eventDateStr}
+                onChange={e => setEventDateStr(e.target.value)}
+                className="w-full px-2.5 py-2 rounded-xl bg-surface-warm border border-line text-xs text-ink font-mono focus:bg-surface focus:border-ink focus:outline-hidden"
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-ink-muted mb-1">End</label>
+              <label
+                htmlFor="calendar-event-category"
+                className="block text-xs font-medium text-ink-muted mb-1"
+              >
+                Focus Area
+              </label>
+              <select
+                id="calendar-event-category"
+                value={newEventCategory}
+                onChange={e => setNewEventCategory(e.target.value as LifeArea)}
+                className="w-full px-2.5 py-2 rounded-xl bg-surface-warm border border-line text-xs text-ink focus:bg-surface focus:border-ink focus:outline-hidden"
+              >
+                {SCHEDULE_CATEGORIES.map(c => (
+                  <option key={c.value} value={c.value}>
+                    {c.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-2.5">
+            <div>
+              <label
+                htmlFor="calendar-event-start"
+                className="block text-xs font-medium text-ink-muted mb-1"
+              >
+                Starts
+              </label>
               <input
+                id="calendar-event-start"
+                type="time"
+                value={newEventStartTime}
+                onChange={e => setNewEventStartTime(e.target.value)}
+                className="w-full px-2.5 py-2 rounded-xl bg-surface-warm border border-line text-xs text-ink font-mono focus:bg-surface focus:border-ink focus:outline-hidden"
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="calendar-event-end"
+                className="block text-xs font-medium text-ink-muted mb-1"
+              >
+                Ends
+              </label>
+              <input
+                id="calendar-event-end"
                 type="time"
                 value={newEventEndTime}
                 onChange={e => setNewEventEndTime(e.target.value)}
-                className="w-full px-2.5 py-1.5 rounded-xl bg-canvas border border-line text-xs text-ink font-mono focus:ring-2 focus:ring-accent focus:outline-hidden"
+                className="w-full px-2.5 py-2 rounded-xl bg-surface-warm border border-line text-xs text-ink font-mono focus:bg-surface focus:border-ink focus:outline-hidden"
               />
             </div>
           </div>
@@ -768,19 +1310,219 @@ export const CalendarView: React.FC = () => {
             <button
               type="button"
               onClick={() => setShowAddEventModal(false)}
-              className="btn-press px-3 py-1.5 text-xs font-medium text-ink-muted hover:text-ink"
+              className="btn-press px-3.5 py-2 rounded-lg text-xs font-medium text-ink-muted hover:text-ink hover:bg-surface-warm"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="btn-press px-4 py-1.5 rounded-xl bg-accent hover:bg-accent-hover text-accent-ink font-semibold text-xs transition-colors"
+              className="btn-press px-4 py-2 rounded-lg bg-[#1D1D1F] hover:bg-black text-white font-semibold text-xs transition-colors"
             >
               Save Event
             </button>
           </div>
         </form>
       </ModalShell>
+    </div>
+  );
+};
+
+interface DayTimelineCanvasProps {
+  dateStr: string;
+  isToday: boolean;
+  items: {
+    tasks: {
+      id: string;
+      title: string;
+      status: string;
+      learningModuleId?: string;
+      learningLessonId?: string;
+    }[];
+    schedule: {
+      id: string;
+      title: string;
+      startTime: string;
+      endTime: string;
+      completed: boolean;
+    }[];
+    learningLessons: {
+      id: string;
+      moduleId: string;
+      title: string;
+    }[];
+    goalsDue: {
+      id: string;
+      title: string;
+    }[];
+  };
+  timeFormat: '12h' | '24h';
+  currentTimePct: number | null;
+  onClickSlot: (hour: number) => void;
+  onToggleSchedule: (id: string) => void;
+  onToggleTask: (id: string) => void;
+  onOpenLesson: (moduleId: string, lessonId: string) => void;
+}
+
+const DayTimelineCanvas: React.FC<DayTimelineCanvasProps> = ({
+  dateStr,
+  isToday,
+  items,
+  timeFormat,
+  currentTimePct,
+  onClickSlot,
+  onToggleSchedule,
+  onToggleTask,
+  onOpenLesson,
+}) => {
+  const hasAllDay =
+    items.tasks.length > 0 || items.learningLessons.length > 0 || items.goalsDue.length > 0;
+
+  const positionedDayBlocks = useMemo(
+    () => layoutOverlappingBlocks(items.schedule, DAY_START_HOUR, DAY_END_HOUR_EXCLUSIVE),
+    [items.schedule]
+  );
+
+  return (
+    <div>
+      {hasAllDay && (
+        <div className="px-4 py-3 border-b border-line bg-[#FBFBFD] flex flex-wrap items-center gap-2">
+          <span className="text-[11px] font-medium text-ink-muted mr-1">All-Day:</span>
+          {items.tasks.map(t => {
+            const done = t.status === 'completed';
+            return (
+              <button
+                key={t.id}
+                type="button"
+                onClick={() => onToggleTask(t.id)}
+                className={`px-2.5 py-1 rounded-lg border text-xs flex items-center gap-1.5 transition-colors ${
+                  done
+                    ? 'bg-surface-inset text-ink-muted border-line line-through'
+                    : 'bg-surface text-ink border-line-strong hover:bg-surface-warm'
+                }`}
+              >
+                <span
+                  className={`w-3.5 h-3.5 rounded-full border flex items-center justify-center shrink-0 ${
+                    done ? 'bg-[#1D1D1F] border-[#1D1D1F] text-white' : 'border-line-strong'
+                  }`}
+                >
+                  {done && <Check className="w-2 h-2 stroke-[2.5]" />}
+                </span>
+                <span>{t.title}</span>
+              </button>
+            );
+          })}
+          {items.learningLessons.map(l => (
+            <button
+              key={l.id}
+              type="button"
+              onClick={() => onOpenLesson(l.moduleId, l.id)}
+              className="px-2.5 py-1 rounded-lg bg-[#F2F2F7] border border-line hover:border-line-strong text-xs text-ink flex items-center gap-1.5 transition-colors"
+            >
+              <BookOpen className="w-3.5 h-3.5 text-ink" />
+              <span>{l.title}</span>
+            </button>
+          ))}
+          {items.goalsDue.map(g => (
+            <span
+              key={g.id}
+              className="px-2.5 py-1 rounded-lg bg-[#1D1D1F] text-white text-xs flex items-center gap-1.5"
+            >
+              <Target className="w-3.5 h-3.5" />
+              <span>{g.title}</span>
+            </span>
+          ))}
+        </div>
+      )}
+
+      <div className="max-h-[620px] overflow-y-auto">
+        <div
+          className="grid grid-cols-[64px_1fr]"
+          style={{ height: `${TIMELINE_TOTAL_PX}px` }}
+        >
+          {/* Left Hour Labels */}
+          <div className="bg-[#FBFBFD] border-r border-line">
+            {DAY_HOURS.map((hour, hourIdx) => (
+              <div
+                key={hour}
+                style={{ height: `${HOUR_ROW_PX}px` }}
+                className="relative pr-3 text-right text-[11px] font-mono text-ink-muted tabular-nums border-b border-line/60"
+              >
+                <span
+                  className={`block leading-none ${
+                    hourIdx === 0 ? 'pt-1' : '-translate-y-1.5 bg-[#FBFBFD] pl-1'
+                  }`}
+                >
+                  {formatHourSlot(hour, timeFormat)}
+                </span>
+              </div>
+            ))}
+          </div>
+
+          {/* Right Day Column */}
+          <div className="relative bg-surface">
+            {DAY_HOURS.map(hour => (
+              <button
+                key={hour}
+                type="button"
+                onClick={() => onClickSlot(hour)}
+                aria-label={`Schedule on ${dateStr} at ${formatHourSlot(hour, timeFormat)}`}
+                style={{ height: `${HOUR_ROW_PX}px` }}
+                className="block w-full border-b border-line/60 hover:bg-surface-warm/50 transition-colors text-left"
+              />
+            ))}
+
+            {isToday && currentTimePct !== null && (
+              <div
+                aria-hidden="true"
+                style={{ top: `${currentTimePct}%` }}
+                className="pointer-events-none absolute inset-x-0 z-20 flex items-center"
+              >
+                <span className="w-2.5 h-2.5 -ml-1.5 rounded-full bg-[#1D1D1F] shrink-0" />
+                <span className="flex-1 h-[1.5px] bg-[#1D1D1F]" />
+              </div>
+            )}
+
+            {positionedDayBlocks.map(({ item: block, topPct, heightPct, lane, totalLanes }) => {
+              const laneWidth = 100 / totalLanes;
+              const laneLeft = lane * laneWidth;
+              return (
+                <button
+                  key={block.id}
+                  type="button"
+                  onClick={() => onToggleSchedule(block.id)}
+                  style={{
+                    top: `${topPct}%`,
+                    height: `${heightPct}%`,
+                    left: `calc(${laneLeft}% + 6px)`,
+                    width: `calc(${laneWidth}% - 12px)`,
+                  }}
+                  className={`absolute z-10 rounded-xl px-3 py-1.5 text-left flex items-center justify-between gap-2 border transition-opacity ${
+                    block.completed
+                      ? 'bg-[#E5E5EA] text-ink-muted border-line-strong'
+                      : 'bg-[#1D1D1F] text-white border-black/15 shadow-xs'
+                  }`}
+                >
+                  <span
+                    className={`text-xs font-semibold truncate ${
+                      block.completed ? 'line-through' : ''
+                    }`}
+                  >
+                    {block.title}
+                  </span>
+                  <span
+                    className={`text-[11px] font-mono tabular-nums shrink-0 ${
+                      block.completed ? 'text-ink-muted' : 'text-white/75'
+                    }`}
+                  >
+                    {formatTimeCompact(block.startTime, timeFormat)} –{' '}
+                    {formatTimeCompact(block.endTime, timeFormat)}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

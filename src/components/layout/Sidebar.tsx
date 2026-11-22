@@ -7,6 +7,7 @@ import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { useApp, NavigationTab } from '../../lib/context';
 import { MOMENTUM_EASE } from '../common/MotionPrimitives';
 import { PWAInstallButton } from '../common/PWAInstallButton';
+import { BrandMark } from '../common/BrandMark';
 import { NAV_GROUPS } from './navConfig';
 
 export const Sidebar: React.FC = () => {
@@ -60,11 +61,7 @@ export const Sidebar: React.FC = () => {
       {/* Brand Header */}
       <div className="h-14 flex items-center justify-between px-3.5 border-b border-sidebar-border shrink-0">
         <div className={`flex items-center gap-2.5 min-w-0 ${isCollapsed ? 'mx-auto' : ''}`}>
-          <img
-            src="/brand-logo.png"
-            alt="MOMENTUM logo"
-            className="w-7 h-7 rounded-lg object-contain shrink-0"
-          />
+          <BrandMark size="sm" />
           <AnimatePresence initial={false}>
             {!isCollapsed && (
               <motion.span
@@ -72,7 +69,7 @@ export const Sidebar: React.FC = () => {
                 animate={{ opacity: 1, width: 'auto' }}
                 exit={prefersReduced ? { opacity: 0 } : { opacity: 0, width: 0 }}
                 transition={{ duration: prefersReduced ? 0.01 : 0.16, ease: MOMENTUM_EASE }}
-                className="font-semibold text-sm tracking-[0.14em] text-sidebar-ink uppercase font-heading overflow-hidden whitespace-nowrap"
+                className="font-semibold text-[13px] tracking-[0.08em] text-sidebar-ink uppercase font-heading overflow-hidden whitespace-nowrap"
               >
                 MOMENTUM
               </motion.span>

@@ -9,6 +9,7 @@ import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { useApp } from '../../lib/context';
 import { LifeArea } from '../../types';
 import { ModalShell, MOMENTUM_EASE } from './MotionPrimitives';
+import { BrandMark } from './BrandMark';
 
 export const OnboardingModal: React.FC = () => {
   const { isOnboardingOpen, setIsOnboardingOpen, completeOnboarding, addGoal } = useApp();
@@ -102,12 +103,8 @@ export const OnboardingModal: React.FC = () => {
       <div className="bg-surface-warm text-ink px-6 pt-5 pb-4 border-b border-line">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
-            <img
-              src="/brand-logo.png"
-              alt="MOMENTUM logo"
-              className="w-7 h-7 rounded-lg object-contain shrink-0"
-            />
-            <span className="font-mono text-xs font-bold tracking-wider uppercase">
+            <BrandMark size="sm" />
+            <span className="text-xs font-semibold tracking-tight text-ink font-heading">
               MOMENTUM Setup
             </span>
           </div>
@@ -147,11 +144,7 @@ export const OnboardingModal: React.FC = () => {
           >
             {step === 1 && (
               <div className="space-y-4 my-auto text-center">
-                <img
-                  src="/brand-logo.png"
-                  alt="MOMENTUM logo"
-                  className="w-16 h-16 rounded-2xl object-contain mx-auto shadow-lg"
-                />
+                <BrandMark size="xl" className="mx-auto shadow-lg" />
                 <h2 className="text-2xl font-bold text-ink tracking-tight font-heading">
                   Welcome to MOMENTUM
                 </h2>

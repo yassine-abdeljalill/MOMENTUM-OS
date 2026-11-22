@@ -6,11 +6,12 @@ import {
   DEFAULT_SPLASH_FAILSAFE_MS,
   computeRemainingSplashDelayMs,
   getStartupPhaseInfo,
+  getStartupProgressPercent,
   isWorkspaceInitializationReady,
 } from '../../lib/startupSplash';
 import { MOMENTUM_EASE } from './MotionPrimitives';
 
-const WORDMARK_LETTERS = ['M', 'O', 'M', 'E', 'N', 'T', 'U', 'M'] as const;
+const PILLARS = ['Priorities', 'Calendar', 'Learning', 'Vitality'] as const;
 
 export const IntroSplash: React.FC = () => {
   const {
@@ -26,15 +27,28 @@ export const IntroSplash: React.FC = () => {
   const mountedAtRef = useRef<number>(Date.now());
   const [timedOut, setTimedOut] = useState(false);
 
-  const visible = !splashDismissed || !authChecked;
+  const visible = !splashDismissed && (!authChecked || true);
+  // Keep visible until both auth check completes AND splash is dismissed (or failsafe timeout hits)
+  const shouldShow = !splashDismissed || (!authChecked && !timedOut);
 
   useEffect(() => {
-    if (!visible) return;
+    if (!shouldShow) return;
     const failsafeTimer = window.setTimeout(() => {
       setTimedOut(true);
     }, DEFAULT_SPLASH_FAILSAFE_MS);
     return () => window.clearTimeout(failsafeTimer);
-  }, [visible]);
+  }, [shouldShow]);
+
+  useEffect(() => {
+    if (!shouldShow) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ') {
+        dismissSplash();
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [shouldShow, dismissSplash]);
 
   const snapshot = useMemo(
     () => ({
@@ -49,9 +63,10 @@ export const IntroSplash: React.FC = () => {
 
   const isReady = isWorkspaceInitializationReady(snapshot);
   const phase = getStartupPhaseInfo(snapshot);
+  const progressPct = getStartupProgressPercent(snapshot);
 
   useEffect(() => {
-    if (!visible || splashDismissed) return;
+    if (!shouldShow || splashDismissed) return;
     if (!isReady) return;
 
     const remainingMs = computeRemainingSplashDelayMs(
@@ -70,249 +85,190 @@ export const IntroSplash: React.FC = () => {
       dismissSplash();
     }, remainingMs);
     return () => window.clearTimeout(timer);
-  }, [visible, splashDismissed, isReady, prefersReduced, dismissSplash]);
+  }, [shouldShow, splashDismissed, isReady, prefersReduced, dismissSplash]);
+
+  // Unused boolean guard kept silent
+  void visible;
 
   return (
     <AnimatePresence>
-      {visible && (
+      {shouldShow && (
         <motion.div
           data-testid="intro-splash"
           initial={{ opacity: 1 }}
           exit={
             prefersReduced
-              ? { opacity: 0, transition: { duration: 0.01 } }
+              ? { opacity: 0, transition: { duration: 0.08 } }
               : {
                   opacity: 0,
-                  scale: 1.015,
-                  transition: { duration: 0.38, ease: MOMENTUM_EASE },
+                  transition: { duration: 0.28, ease: MOMENTUM_EASE },
                 }
           }
           className="fixed inset-0 z-[100] bg-canvas text-ink flex flex-col items-center justify-between px-6 pt-[calc(1.5rem+env(safe-area-inset-top))] pb-[calc(1.75rem+env(safe-area-inset-bottom))] select-none overflow-hidden"
           role="dialog"
           aria-modal="true"
-          aria-label="Starting MOMENTUM"
+          aria-label="MOMENTUM startup presentation"
         >
-          {/* Architectural Precision Hairline Grid */}
-          <motion.div
+          {/* Soft Apple Keynote Radial Spotlight */}
+          <div
             aria-hidden="true"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 0.45 }}
-            transition={{ duration: prefersReduced ? 0.01 : 0.7, ease: MOMENTUM_EASE }}
             className="pointer-events-none absolute inset-0"
             style={{
-              backgroundImage:
-                'linear-gradient(to right, rgba(0, 0, 0, 0.045) 1px, transparent 1px), linear-gradient(to bottom, rgba(0, 0, 0, 0.045) 1px, transparent 1px)',
-              backgroundSize: '56px 56px',
+              background:
+                'radial-gradient(circle at 50% 42%, rgba(255, 255, 255, 0.96) 0%, rgba(245, 245, 247, 0) 62%)',
             }}
           />
 
-          {/* Horizontal & Vertical Center Hairline Axis Flash */}
-          <motion.div
-            aria-hidden="true"
-            initial={prefersReduced ? { opacity: 0 } : { scaleX: 0, opacity: 0.25 }}
-            animate={{ scaleX: 1, opacity: 0.08 }}
-            transition={{ duration: prefersReduced ? 0.01 : 0.85, ease: MOMENTUM_EASE }}
-            className="pointer-events-none absolute inset-x-0 top-1/2 h-px bg-ink origin-center"
-          />
-          <motion.div
-            aria-hidden="true"
-            initial={prefersReduced ? { opacity: 0 } : { scaleY: 0, opacity: 0.25 }}
-            animate={{ scaleY: 1, opacity: 0.08 }}
-            transition={{ duration: prefersReduced ? 0.01 : 0.85, ease: MOMENTUM_EASE }}
-            className="pointer-events-none absolute inset-y-0 left-1/2 w-px bg-ink origin-center"
-          />
-
-          {/* Four Architectural Corner Registration Brackets */}
-          <div
-            aria-hidden="true"
-            className="pointer-events-none relative z-10 w-full max-w-5xl flex items-center justify-between"
-          >
-            <motion.span
-              initial={prefersReduced ? { opacity: 0.5 } : { opacity: 0, x: -8, y: -8 }}
-              animate={{ opacity: 0.45, x: 0, y: 0 }}
-              transition={{ duration: prefersReduced ? 0.01 : 0.45, ease: MOMENTUM_EASE }}
-              className="w-4 h-4 border-l border-t border-line-strong"
-            />
-            <motion.span
-              initial={prefersReduced ? { opacity: 0.7 } : { opacity: 0, y: -4 }}
-              animate={{ opacity: 0.75, y: 0 }}
-              transition={{ duration: prefersReduced ? 0.01 : 0.45, delay: 0.1, ease: MOMENTUM_EASE }}
-              className="text-[10px] font-mono tracking-[0.26em] uppercase text-ink-muted"
-            >
-              Life OS · v2
-            </motion.span>
-            <motion.span
-              initial={prefersReduced ? { opacity: 0.5 } : { opacity: 0, x: 8, y: -8 }}
-              animate={{ opacity: 0.45, x: 0, y: 0 }}
-              transition={{ duration: prefersReduced ? 0.01 : 0.45, ease: MOMENTUM_EASE }}
-              className="w-4 h-4 border-r border-t border-line-strong"
-            />
+          {/* Top Quiet Anchor */}
+          <div className="relative z-10 w-full max-w-4xl flex items-center justify-between text-[11px] text-ink-muted">
+            <span className="font-medium tracking-tight text-ink">MOMENTUM</span>
+            <span className="font-mono tabular-nums tracking-wider uppercase text-ink-muted/80">
+              Personal Workspace
+            </span>
           </div>
 
-          {/* Centerpiece Kinetic Orbital Emblem + Masked Wordmark */}
-          <div className="relative z-10 flex flex-col items-center text-center my-auto py-8">
-            <div className="relative w-36 h-36 sm:w-40 sm:h-40 flex items-center justify-center mb-7">
-              {/* Soft Monochrome Ambient Depth Glow */}
-              <motion.div
+          {/* Centerpiece Kinetic Momentum Emblem + Wordmark */}
+          <div className="relative z-10 flex flex-col items-center text-center my-auto py-8 max-w-md w-full">
+            {/* Carbon Black Apple Squircle with Animated Ascending Momentum Bars */}
+            <motion.div
+              initial={prefersReduced ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.88, y: 8 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              transition={{ duration: prefersReduced ? 0.01 : 0.44, ease: MOMENTUM_EASE }}
+              className="relative w-20 h-20 sm:w-[88px] sm:h-[88px] rounded-[22px] bg-[#1D1D1F] shadow-[0_22px_48px_-14px_rgba(0,0,0,0.28)] border border-white/15 flex items-center justify-center mb-7"
+            >
+              <svg
+                viewBox="0 0 64 64"
+                fill="none"
                 aria-hidden="true"
-                initial={{ opacity: 0, scale: 0.7 }}
-                animate={
-                  prefersReduced
-                    ? { opacity: 0.14, scale: 1 }
-                    : { opacity: [0, 0.2, 0.12], scale: [0.7, 1.08, 1] }
-                }
-                transition={{ duration: prefersReduced ? 0.01 : 1.15, ease: MOMENTUM_EASE }}
-                className="absolute inset-4 rounded-full bg-black/10 blur-2xl"
-              />
-
-              {/* Outer Precision Silver Dial Ring */}
-              <motion.svg
-                aria-hidden="true"
-                viewBox="0 0 160 160"
-                className="absolute inset-0 w-full h-full"
-                initial={prefersReduced ? { rotate: 0, opacity: 0.7 } : { rotate: -75, scale: 0.86, opacity: 0 }}
-                animate={{ rotate: 12, scale: 1, opacity: 0.9 }}
-                transition={{ duration: prefersReduced ? 0.01 : 1.25, ease: MOMENTUM_EASE }}
+                className="w-full h-full"
               >
-                <circle
-                  cx="80"
-                  cy="80"
-                  r="74"
-                  fill="none"
-                  stroke="rgba(0, 0, 0, 0.14)"
-                  strokeWidth="1"
-                  strokeDasharray="3 7"
-                />
-                <circle
-                  cx="80"
-                  cy="80"
-                  r="64"
-                  fill="none"
-                  stroke="rgba(0, 0, 0, 0.1)"
-                  strokeWidth="1"
-                />
-                {/* Cardinal Precision Ticks */}
-                <line x1="80" y1="2" x2="80" y2="11" stroke="#6E6E73" strokeWidth="1.5" />
-                <line x1="80" y1="149" x2="80" y2="158" stroke="#6E6E73" strokeWidth="1.5" />
-                <line x1="2" y1="80" x2="11" y2="80" stroke="#6E6E73" strokeWidth="1.5" />
-                <line x1="149" y1="80" x2="158" y2="80" stroke="#6E6E73" strokeWidth="1.5" />
-              </motion.svg>
-
-              {/* Inner Carbon Black Kinetic Sweep Arc */}
-              <motion.svg
-                aria-hidden="true"
-                viewBox="0 0 160 160"
-                className="absolute inset-0 w-full h-full"
-                initial={prefersReduced ? { rotate: 0 } : { rotate: -140 }}
-                animate={{ rotate: 220 }}
-                transition={{ duration: prefersReduced ? 0.01 : 1.35, ease: MOMENTUM_EASE }}
-              >
-                <motion.circle
-                  cx="80"
-                  cy="80"
-                  r="54"
-                  fill="none"
-                  stroke="#1D1D1F"
-                  strokeWidth="2.25"
-                  strokeLinecap="round"
-                  strokeDasharray="339.29"
-                  initial={prefersReduced ? { strokeDashoffset: 110 } : { strokeDashoffset: 320 }}
-                  animate={{ strokeDashoffset: 120 }}
-                  transition={{ duration: prefersReduced ? 0.01 : 1.05, delay: 0.08, ease: MOMENTUM_EASE }}
-                />
-              </motion.svg>
-
-              {/* Crisp Apple White Squircle Brand Mark */}
-              <motion.div
-                initial={prefersReduced ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.78 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: prefersReduced ? 0.01 : 0.55, delay: 0.08, ease: MOMENTUM_EASE }}
-                className="relative w-20 h-20 rounded-[22px] bg-surface border border-line shadow-[0_18px_38px_-12px_rgba(0,0,0,0.16)] p-2 flex items-center justify-center"
-              >
-                <img
-                  src="/brand-logo.png"
-                  alt="MOMENTUM"
-                  className="w-full h-full rounded-xl object-contain"
-                />
-              </motion.div>
-            </div>
-
-            {/* Staggered Masked Typographic Reveal */}
-            <h1 className="flex items-center justify-center overflow-hidden text-2xl sm:text-3xl font-extrabold tracking-[0.26em] text-ink uppercase font-heading pl-[0.26em]">
-              {WORDMARK_LETTERS.map((char, idx) => (
-                <motion.span
-                  key={`${char}-${idx}`}
-                  initial={prefersReduced ? { y: 0, opacity: 1 } : { y: '105%', opacity: 0 }}
-                  animate={{ y: '0%', opacity: 1 }}
+                <motion.rect
+                  x="16"
+                  y="31"
+                  width="8"
+                  height="17"
+                  rx="2.5"
+                  fill="#8E8E93"
+                  style={{ transformOrigin: '20px 48px' }}
+                  initial={prefersReduced ? { scaleY: 1, opacity: 1 } : { scaleY: 0.15, opacity: 0.25 }}
+                  animate={{ scaleY: 1, opacity: 1 }}
                   transition={{
-                    duration: prefersReduced ? 0.01 : 0.45,
-                    delay: prefersReduced ? 0 : 0.18 + idx * 0.038,
+                    duration: prefersReduced ? 0.01 : 0.42,
+                    delay: prefersReduced ? 0 : 0.1,
                     ease: MOMENTUM_EASE,
                   }}
-                  className="inline-block"
-                >
-                  {char}
-                </motion.span>
-              ))}
-            </h1>
+                />
+                <motion.rect
+                  x="28"
+                  y="23"
+                  width="8"
+                  height="25"
+                  rx="2.5"
+                  fill="#D1D1D6"
+                  style={{ transformOrigin: '32px 48px' }}
+                  initial={prefersReduced ? { scaleY: 1, opacity: 1 } : { scaleY: 0.15, opacity: 0.25 }}
+                  animate={{ scaleY: 1, opacity: 1 }}
+                  transition={{
+                    duration: prefersReduced ? 0.01 : 0.44,
+                    delay: prefersReduced ? 0 : 0.19,
+                    ease: MOMENTUM_EASE,
+                  }}
+                />
+                <motion.rect
+                  x="40"
+                  y="15"
+                  width="8"
+                  height="33"
+                  rx="2.5"
+                  fill="#FFFFFF"
+                  style={{ transformOrigin: '44px 48px' }}
+                  initial={prefersReduced ? { scaleY: 1, opacity: 1 } : { scaleY: 0.15, opacity: 0.25 }}
+                  animate={{ scaleY: 1, opacity: 1 }}
+                  transition={{
+                    duration: prefersReduced ? 0.01 : 0.46,
+                    delay: prefersReduced ? 0 : 0.28,
+                    ease: MOMENTUM_EASE,
+                  }}
+                />
+              </svg>
+            </motion.div>
 
-            {/* Expanding Monochrome Hairline Divider */}
-            <motion.div
-              aria-hidden="true"
-              initial={prefersReduced ? { scaleX: 1, opacity: 0.4 } : { scaleX: 0, opacity: 0 }}
-              animate={{ scaleX: 1, opacity: 0.3 }}
-              transition={{ duration: prefersReduced ? 0.01 : 0.55, delay: 0.42, ease: MOMENTUM_EASE }}
-              className="mt-3.5 h-px w-48 bg-gradient-to-r from-transparent via-ink to-transparent origin-center"
-            />
+            {/* Clean Apple Wordmark */}
+            <motion.h1
+              initial={prefersReduced ? { opacity: 1, y: 0 } : { opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: prefersReduced ? 0.01 : 0.42, delay: 0.14, ease: MOMENTUM_EASE }}
+              className="text-2xl sm:text-[30px] font-bold tracking-[0.16em] text-ink uppercase font-heading pl-[0.16em]"
+            >
+              MOMENTUM
+            </motion.h1>
 
+            {/* Project Identity Mission Line */}
             <motion.p
               initial={prefersReduced ? { opacity: 1, y: 0 } : { opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: prefersReduced ? 0.01 : 0.4, delay: 0.48, ease: MOMENTUM_EASE }}
-              className="mt-3 text-xs font-medium tracking-[0.18em] text-ink-muted uppercase"
+              transition={{ duration: prefersReduced ? 0.01 : 0.4, delay: 0.24, ease: MOMENTUM_EASE }}
+              className="mt-2.5 text-sm font-medium text-ink-muted tracking-tight"
             >
-              Personal Life Operating System
+              Transform ambition into daily motion.
             </motion.p>
 
-            {/* Real Initialization Phase Readout */}
+            {/* Four Core Workspace Pillars */}
             <motion.div
               initial={prefersReduced ? { opacity: 1 } : { opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: prefersReduced ? 0.01 : 0.35, delay: 0.55 }}
-              className="mt-7 flex items-center gap-2.5 text-[11px] font-mono tracking-wider uppercase text-ink-muted tabular-nums"
+              transition={{ duration: prefersReduced ? 0.01 : 0.38, delay: 0.34 }}
+              className="mt-4 flex flex-wrap items-center justify-center gap-x-2.5 gap-y-1 text-[11px] font-medium text-ink-muted/80"
             >
-              <span className="w-1.5 h-1.5 rounded-full bg-ink" aria-hidden="true" />
-              <span className="text-ink font-semibold">{phase.step}</span>
-              <span className="text-ink-muted/50">/</span>
-              <span>{phase.label}</span>
+              {PILLARS.map((pillar, idx) => (
+                <React.Fragment key={pillar}>
+                  {idx > 0 && <span aria-hidden="true" className="text-line-strong">·</span>}
+                  <span>{pillar}</span>
+                </React.Fragment>
+              ))}
+            </motion.div>
+
+            {/* Apple Progress Capsule Tied to Real Initialization */}
+            <motion.div
+              initial={prefersReduced ? { opacity: 1 } : { opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: prefersReduced ? 0.01 : 0.3, delay: 0.3 }}
+              className="mt-8 w-44 sm:w-52 flex flex-col items-center gap-2.5"
+            >
+              <div
+                role="progressbar"
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-valuenow={progressPct}
+                aria-label="Workspace initialization progress"
+                className="w-full h-[3px] rounded-full bg-surface-inset overflow-hidden"
+              >
+                <motion.div
+                  className="h-full rounded-full bg-ink"
+                  initial={{ width: '24%' }}
+                  animate={{ width: `${progressPct}%` }}
+                  transition={{ duration: prefersReduced ? 0.01 : 0.38, ease: MOMENTUM_EASE }}
+                />
+              </div>
+              <span
+                role="status"
+                aria-live="polite"
+                className="text-[11px] font-medium text-ink-muted tabular-nums"
+              >
+                {phase.label}
+              </span>
             </motion.div>
           </div>
 
-          {/* Bottom Brackets & Skip Control */}
-          <div className="relative z-10 w-full max-w-5xl flex items-center justify-between">
-            <motion.span
-              aria-hidden="true"
-              initial={prefersReduced ? { opacity: 0.5 } : { opacity: 0, x: -8, y: 8 }}
-              animate={{ opacity: 0.45, x: 0, y: 0 }}
-              transition={{ duration: prefersReduced ? 0.01 : 0.45, ease: MOMENTUM_EASE }}
-              className="w-4 h-4 border-l border-b border-line-strong"
-            />
-
+          {/* Bottom Subtle Skip Action */}
+          <div className="relative z-10 w-full max-w-4xl flex items-center justify-center">
             <button
               type="button"
               onClick={dismissSplash}
-              className="text-[11px] font-mono uppercase tracking-[0.18em] text-ink-muted hover:text-ink transition-colors px-3 py-1.5 rounded-lg hover:bg-surface-inset/70 btn-press"
+              className="text-xs font-medium text-ink-muted hover:text-ink transition-colors px-4 py-1.5 rounded-full bg-surface/80 hover:bg-surface border border-line shadow-2xs btn-press"
             >
-              Skip intro
+              Skip
             </button>
-
-            <motion.span
-              aria-hidden="true"
-              initial={prefersReduced ? { opacity: 0.5 } : { opacity: 0, x: 8, y: 8 }}
-              animate={{ opacity: 0.45, x: 0, y: 0 }}
-              transition={{ duration: prefersReduced ? 0.01 : 0.45, ease: MOMENTUM_EASE }}
-              className="w-4 h-4 border-r border-b border-line-strong"
-            />
           </div>
         </motion.div>
       )}

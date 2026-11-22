@@ -441,15 +441,10 @@ export const FinanceView: React.FC = () => {
   if (!authChecked || (loading && !data)) {
     return (
       <div className="max-w-7xl mx-auto py-20 flex flex-col items-center justify-center text-ink-muted gap-3">
-        <img
-          src="/brand-logo.png"
-          alt="MOMENTUM"
-          className="w-12 h-12 rounded-xl object-contain shadow-md"
-        />
-        <div className="flex items-center gap-2">
-          <Loader2 className="w-4 h-4 animate-spin text-accent" />
-          <span className="text-xs font-mono">Loading Finance workspace...</span>
+        <div className="w-12 h-12 rounded-2xl bg-[#1D1D1F] flex items-center justify-center shadow-md">
+          <Loader2 className="w-5 h-5 animate-spin text-white" />
         </div>
+        <span className="text-xs font-medium text-ink-muted">Loading Finance workspace...</span>
       </div>
     );
   }

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Download, Share, X } from 'lucide-react';
 import { usePWAInstall } from '../../lib/usePWAInstall';
 import { ModalShell } from './MotionPrimitives';
+import { BrandMark } from './BrandMark';
 
 interface PWAInstallButtonProps {
   compact?: boolean;
@@ -60,11 +61,7 @@ export const PWAInstallButton: React.FC<PWAInstallButtonProps> = ({
         >
           <div className="flex items-center justify-between px-5 py-4 bg-surface-warm/70 text-ink border-b border-line">
             <div className="flex items-center gap-2.5">
-              <img
-                src="/brand-logo.png"
-                alt="MOMENTUM"
-                className="w-6 h-6 rounded-md object-contain"
-              />
+              <BrandMark size="xs" />
               <h3 className="text-sm font-bold">Install on iPhone / iPad</h3>
             </div>
             <button

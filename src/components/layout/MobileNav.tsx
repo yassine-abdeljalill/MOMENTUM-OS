@@ -9,6 +9,7 @@ import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { useApp, NavigationTab } from '../../lib/context';
 import { MOMENTUM_EASE } from '../common/MotionPrimitives';
 import { PWAInstallButton } from '../common/PWAInstallButton';
+import { BrandMark } from '../common/BrandMark';
 import { ALL_NAV_ITEMS, MOBILE_PRIMARY_TAB_IDS, NAV_GROUPS } from './navConfig';
 
 export const MobileNav: React.FC = () => {
@@ -157,16 +158,12 @@ export const MobileNav: React.FC = () => {
               {/* Drag Handle & Sheet Header */}
               <div className="pt-2.5 pb-3 px-5 border-b border-line flex items-center justify-between shrink-0">
                 <div className="flex items-center gap-2.5">
-                  <img
-                    src="/brand-logo.png"
-                    alt="MOMENTUM"
-                    className="w-7 h-7 rounded-lg object-contain"
-                  />
+                  <BrandMark size="sm" />
                   <div>
                     <h2 className="text-sm font-bold text-ink font-heading leading-tight">
                       All Workspaces
                     </h2>
-                    <p className="text-[11px] text-ink-muted">MOMENTUM Life OS</p>
+                    <p className="text-[11px] text-ink-muted">MOMENTUM</p>
                   </div>
                 </div>
                 <button

@@ -7,6 +7,7 @@ import {
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { useApp, type AuthModalMode } from '../../lib/context';
 import { ModalShell, MOMENTUM_EASE } from '../common/MotionPrimitives';
+import { BrandMark } from '../common/BrandMark';
 import { AuthCredentialsForm, type CredentialsMode } from './AuthCredentialsForm';
 import type { AuthUser } from '../../types';
 
@@ -68,12 +69,8 @@ export const AuthModal: React.FC = () => {
       {/* Header */}
       <div className="flex items-center justify-between px-6 py-4 border-b border-line bg-surface-warm/50 text-ink">
         <div className="flex items-center gap-2.5">
-          <img
-            src="/brand-logo.png"
-            alt="MOMENTUM logo"
-            className="w-6 h-6 rounded-md object-contain shrink-0"
-          />
-          <h2 className="font-semibold text-sm uppercase tracking-wider font-mono">
+          <BrandMark size="xs" />
+          <h2 className="font-semibold text-sm tracking-tight text-ink font-heading">
             {mode === 'profile'
               ? 'Account & Profile'
               : mode === 'login'

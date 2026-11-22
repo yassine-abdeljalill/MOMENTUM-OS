@@ -10,6 +10,7 @@ import {
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { useApp } from '../../lib/context';
 import { MOMENTUM_EASE } from '../common/MotionPrimitives';
+import { BrandMark } from '../common/BrandMark';
 import { VIEW_TITLES } from './navConfig';
 
 export const Header: React.FC = () => {
@@ -66,11 +67,7 @@ export const Header: React.FC = () => {
       <div className="h-14 px-3 sm:px-6 md:px-8 flex items-center justify-between gap-2 min-w-0">
         {/* Left: Mobile Brand Mark + Single-Line View Title */}
         <div className="flex items-center gap-2.5 min-w-0 flex-1">
-          <img
-            src="/brand-logo.png"
-            alt="MOMENTUM"
-            className="md:hidden w-7 h-7 rounded-lg object-contain shrink-0"
-          />
+          <BrandMark size="sm" className="md:hidden" />
           <AnimatePresence mode="wait" initial={false}>
             <motion.h1
               key={currentView}

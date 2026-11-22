@@ -423,6 +423,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     let cancelled = false;
+    const authTimeout = window.setTimeout(() => {
+      if (!cancelled) setAuthChecked(true);
+    }, 3000);
     authApi
       .me()
       .then(({ user }) => {
@@ -438,10 +441,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
         // Unauthenticated or offline
       })
       .finally(() => {
+        window.clearTimeout(authTimeout);
         if (!cancelled) setAuthChecked(true);
       });
     return () => {
       cancelled = true;
+      window.clearTimeout(authTimeout);
     };
   }, [setAuthUser]);
 

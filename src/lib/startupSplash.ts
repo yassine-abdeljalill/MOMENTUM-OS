@@ -1,6 +1,6 @@
 export const DEFAULT_SPLASH_MIN_DURATION_MS = 650;
-export const CREATIVE_SPLASH_MIN_DURATION_MS = 1500;
-export const DEFAULT_SPLASH_FAILSAFE_MS = 3800;
+export const CREATIVE_SPLASH_MIN_DURATION_MS = 1050;
+export const DEFAULT_SPLASH_FAILSAFE_MS = 3200;
 
 export interface WorkspaceInitializationSnapshot {
   authChecked: boolean;
@@ -51,6 +51,17 @@ export function getStartupPhaseInfo(
     return { step: '02', label: 'Syncing workspace' };
   }
   return { step: '03', label: snapshot.hasAuthUser ? 'Entering MOMENTUM' : 'Ready' };
+}
+
+/**
+ * Computes deterministic progress bar percentage (0-100) from real initialization state.
+ */
+export function getStartupProgressPercent(
+  snapshot: WorkspaceInitializationSnapshot
+): number {
+  if (isWorkspaceInitializationReady(snapshot)) return 100;
+  if (!snapshot.authChecked) return 38;
+  return 72;
 }
 
 /**
