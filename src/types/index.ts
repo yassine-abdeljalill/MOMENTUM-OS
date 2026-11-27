@@ -26,6 +26,13 @@ export interface UserProfile {
   createdAt: string;
 }
 
+export interface WeeklyTargets {
+  tasksCompleted: number;
+  learningHours: number;
+  practicalLabs: number;
+  fitnessSessions: number;
+}
+
 export interface UserPreferences {
   theme: 'dark' | 'light' | 'system';
   accentColor: string; // '#1D1D1F'
@@ -37,6 +44,7 @@ export interface UserPreferences {
   enableBrowserNotifications: boolean;
   dailyReminderTime: string;
   soundEnabled: boolean;
+  weeklyTargets?: WeeklyTargets;
 }
 
 export interface TaskSubtask {

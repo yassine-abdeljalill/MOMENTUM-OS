@@ -269,6 +269,7 @@ interface AppContextType {
   toggleTaskCompleted: (id: string) => void;
   toggleSubtaskCompleted: (taskId: string, subtaskId: string) => void;
   setDailyPriorityRank: (taskId: string, rank: number | undefined) => void;
+  reorderDailyPriority: (taskId: string, direction: 'up' | 'down') => void;
 
   // Goals
   addGoal: (goal: Omit<Goal, 'id' | 'userId' | 'createdAt'>) => Goal;
@@ -1494,6 +1495,61 @@ export function AppProvider({ children }: { children: ReactNode }) {
     [queueMutation]
   );
 
+  const reorderDailyPriority = useCallback(
+    (taskId: string, direction: 'up' | 'down') => {
+      const pinned = stateRef.current.tasks
+        .filter(t => t.isDailyPriority && t.status !== 'cancelled')
+        .sort((a, b) => (a.priorityRank || 99) - (b.priorityRank || 99));
+
+      const currentIdx = pinned.findIndex(t => t.id === taskId);
+      if (currentIdx === -1) return;
+      const targetIdx = direction === 'up' ? currentIdx - 1 : currentIdx + 1;
+      if (targetIdx < 0 || targetIdx >= pinned.length) return;
+
+      const reordered = [...pinned];
+      const [moved] = reordered.splice(currentIdx, 1);
+      reordered.splice(targetIdx, 0, moved);
+
+      const now = new Date().toISOString();
+      const updatesById = new Map<string, Task & { updatedAt: string }>();
+      const changedTasks: Array<{ record: Task & { updatedAt: string }; baseUpdatedAt?: string }> = [];
+
+      reordered.forEach((task, idx) => {
+        const nextRank = idx + 1;
+        if (task.priorityRank === nextRank) return;
+        const baseUpdatedAt = (task as Task & { updatedAt?: string }).updatedAt;
+        const updatedTask: Task & { updatedAt: string } = {
+          ...task,
+          isDailyPriority: true,
+          priorityRank: nextRank,
+          updatedAt: now,
+        };
+        updatesById.set(task.id, updatedTask);
+        if (!task.learningModuleId) {
+          changedTasks.push({ record: updatedTask, baseUpdatedAt });
+        }
+      });
+
+      if (updatesById.size === 0) return;
+
+      setState(prev => ({
+        ...prev,
+        tasks: prev.tasks.map(t => updatesById.get(t.id) || t),
+      }));
+
+      if (changedTasks.length > 0) {
+        queueMutation(outbox => {
+          let next = outbox;
+          for (const item of changedTasks) {
+            next = enqueueOutboxUpsert(next, 'tasks', item.record, item.baseUpdatedAt);
+          }
+          return next;
+        });
+      }
+    },
+    [queueMutation]
+  );
+
   // Goals Actions
   const addGoal = useCallback(
     (goalData: Omit<Goal, 'id' | 'userId' | 'createdAt'>): Goal => {
@@ -2664,6 +2720,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         toggleTaskCompleted,
         toggleSubtaskCompleted,
         setDailyPriorityRank,
+        reorderDailyPriority,
 
         addGoal,
         updateGoal,

@@ -24,6 +24,7 @@ export const TodayView: React.FC = () => {
     state,
     toggleTaskCompleted,
     setDailyPriorityRank,
+    reorderDailyPriority,
     toggleHabitCompletion,
     addScheduleActivity,
     toggleScheduleActivityCompleted,
@@ -74,16 +75,7 @@ export const TodayView: React.FC = () => {
 
   // Reorder priority handler
   const handleMovePriority = (taskId: string, direction: 'up' | 'down') => {
-    const currentIdx = dailyPriorities.findIndex(t => t.id === taskId);
-    if (currentIdx === -1) return;
-    const targetIdx = direction === 'up' ? currentIdx - 1 : currentIdx + 1;
-    if (targetIdx < 0 || targetIdx >= dailyPriorities.length) return;
-
-    const currentTask = dailyPriorities[currentIdx];
-    const targetTask = dailyPriorities[targetIdx];
-
-    setDailyPriorityRank(currentTask.id, targetIdx + 1);
-    setDailyPriorityRank(targetTask.id, currentIdx + 1);
+    reorderDailyPriority(taskId, direction);
   };
 
   const handleCreateActivity = (e: React.FormEvent) => {
