@@ -4,8 +4,6 @@ import {
   Palette,
   Sliders,
   Database,
-  Download,
-  Upload,
   Check,
   Compass,
   AlertTriangle,
@@ -20,9 +18,9 @@ import {
 } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useApp } from '../../lib/context';
-import { exportStateToJson } from '../../lib/storage';
 import { MOMENTUM_EASE, MOMENTUM_SPRING } from '../common/MotionPrimitives';
 import type { ThemePreference } from '../../lib/theme';
+import { BackupRestorePanel } from '../settings/BackupRestorePanel';
 
 export const SettingsView: React.FC = () => {
   const {
@@ -39,7 +37,6 @@ export const SettingsView: React.FC = () => {
     updatePreferences,
     resetToDemoData,
     clearAllData,
-    importStateFromJson,
     setIsOnboardingOpen,
     showToast,
   } = useApp();
@@ -72,37 +69,6 @@ export const SettingsView: React.FC = () => {
       dailyAvailabilityHours: Number(hours),
     });
     notify('Profile updated successfully.');
-  };
-
-  const handleExportJson = () => {
-    const json = exportStateToJson(state);
-    const blob = new Blob([json], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `momentum_backup_${new Date().toISOString().split('T')[0]}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
-    notify('Full JSON backup exported.');
-  };
-
-  const handleImportJson = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = event => {
-      const content = event.target?.result as string;
-      if (content) {
-        const ok = importStateFromJson(content);
-        if (ok) {
-          notify('Data imported successfully.');
-        } else {
-          showToast('Invalid backup file format.', 'error');
-        }
-      }
-    };
-    reader.readAsText(file);
   };
 
   const paletteSwatches = [
@@ -563,43 +529,7 @@ export const SettingsView: React.FC = () => {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="card-hover p-4 rounded-xl bg-canvas border border-line space-y-3">
-                <h3 className="text-xs font-bold text-ink flex items-center gap-2">
-                  <Download className="w-4 h-4 text-accent" />
-                  <span>Export Backups</span>
-                </h3>
-                <p className="text-xs text-ink-muted">
-                  Download your complete profile, goals, habits, workouts, and journal entries in JSON format.
-                </p>
-                <button
-                  type="button"
-                  onClick={handleExportJson}
-                  className="btn-press w-full py-2 rounded-xl bg-accent text-accent-ink font-semibold text-xs hover:bg-accent-hover transition-colors"
-                >
-                  Download Full JSON Backup
-                </button>
-              </div>
-
-              <div className="card-hover p-4 rounded-xl bg-canvas border border-line space-y-3">
-                <h3 className="text-xs font-bold text-ink flex items-center gap-2">
-                  <Upload className="w-4 h-4 text-ink-muted" />
-                  <span>Restore Backup</span>
-                </h3>
-                <p className="text-xs text-ink-muted">
-                  Import a previous MOMENTUM JSON state file to restore all your data.
-                </p>
-                <label className="btn-press w-full py-2 rounded-xl bg-surface border border-line text-ink font-semibold text-xs hover:bg-surface-warm cursor-pointer flex items-center justify-center transition-colors">
-                  <span>Select JSON File</span>
-                  <input
-                    type="file"
-                    accept=".json"
-                    onChange={handleImportJson}
-                    className="hidden"
-                  />
-                </label>
-              </div>
-            </div>
+            <BackupRestorePanel />
 
             <div className="p-4 rounded-xl bg-canvas border border-danger/40 space-y-3">
               <h3 className="text-xs font-bold text-danger flex items-center gap-2">

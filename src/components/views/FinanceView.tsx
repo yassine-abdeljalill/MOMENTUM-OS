@@ -60,7 +60,15 @@ type DeleteTarget =
   | null;
 
 export const FinanceView: React.FC = () => {
-  const { authUser, authChecked, setAuthUser, setIsAuthModalOpen, state, showToast } = useApp();
+  const {
+    authUser,
+    authChecked,
+    setAuthUser,
+    setIsAuthModalOpen,
+    state,
+    showToast,
+    financeRefreshVersion,
+  } = useApp();
 
   const [activeTab, setActiveTab] = useState<FinanceSubTab>('overview');
   const [data, setData] = useState<FinanceBootstrapData | null>(null);
@@ -141,7 +149,7 @@ export const FinanceView: React.FC = () => {
     } else if (authChecked && !authUser) {
       setData(null);
     }
-  }, [authChecked, authUser?.id, loadFinanceData]);
+  }, [authChecked, authUser?.id, financeRefreshVersion, loadFinanceData]);
 
   const currency: CurrencyCode = data?.settings.currency || 'MAD';
   const rangeBounds = useMemo(

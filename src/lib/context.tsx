@@ -77,6 +77,16 @@ import {
   shouldUseLocalOnlyMode,
   workspaceApi,
 } from './workspaceApi';
+import {
+  applyBackupToLocalAppState,
+  buildBackupPreview,
+  createCompleteBackupFromClientState,
+  parseAndVerifyBackupText,
+  type BackupPreviewSummary,
+  type MomentumCompleteBackupV2,
+  type RestoreStrategy,
+} from './backupEngine';
+import { backupApi, type ServerRestoreResponse } from './backupApi';
 
 export type NavigationTab =
   | 'overview'
@@ -336,6 +346,19 @@ interface AppContextType {
   clearAllData: () => void;
   importStateFromJson: (jsonStr: string) => boolean;
   completeOnboarding: (data: Partial<UserProfile>) => void;
+
+  // Complete Versioned Backup & Restore
+  financeRefreshVersion: number;
+  exportCompleteBackup: () => Promise<MomentumCompleteBackupV2>;
+  previewCompleteBackup: (rawText: string) => Promise<{
+    preview: BackupPreviewSummary;
+    normalizedBackup: MomentumCompleteBackupV2;
+  }>;
+  restoreCompleteBackup: (
+    backup: MomentumCompleteBackupV2,
+    strategy: RestoreStrategy,
+    confirmReplace?: boolean
+  ) => Promise<ServerRestoreResponse>;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -384,6 +407,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [syncStatus, setSyncStatus] = useState<WorkspaceSyncStatus>('idle');
   const [lastSyncedAt, setLastSyncedAt] = useState<string | null>(null);
   const [lastSyncConflicts, setLastSyncConflicts] = useState(0);
+  const [financeRefreshVersion, setFinanceRefreshVersion] = useState(0);
   const outboxRef = useRef<WorkspaceSyncOutbox>(createEmptyOutbox());
   const syncVersionRef = useRef<number>(0);
   const flushTimerRef = useRef<number | null>(null);
@@ -2476,6 +2500,112 @@ export function AppProvider({ children }: { children: ReactNode }) {
     [queueMutation]
   );
 
+  const exportCompleteBackup = useCallback(async (): Promise<MomentumCompleteBackupV2> => {
+    const activeUser = authUserRef.current;
+    if (activeUser && !shouldUseLocalOnlyMode()) {
+      await flushSyncOutbox().catch(() => {});
+      try {
+        return await backupApi.exportComplete();
+      } catch (err) {
+        if (!isMissingApiEndpointError(err)) {
+          throw err;
+        }
+      }
+    }
+    return createCompleteBackupFromClientState({
+      appState: stateRef.current,
+      learning: learningData,
+      finance: null,
+    });
+  }, [flushSyncOutbox, learningData]);
+
+  const previewCompleteBackup = useCallback(async (rawText: string) => {
+    const verified = await parseAndVerifyBackupText(rawText);
+    return {
+      preview: verified.preview,
+      normalizedBackup: verified.backup,
+    };
+  }, []);
+
+  const restoreCompleteBackup = useCallback(
+    async (
+      backup: MomentumCompleteBackupV2,
+      strategy: RestoreStrategy,
+      confirmReplace = false
+    ): Promise<ServerRestoreResponse> => {
+      if (flushTimerRef.current !== null && typeof window !== 'undefined') {
+        window.clearTimeout(flushTimerRef.current);
+        flushTimerRef.current = null;
+      }
+
+      const activeUser = authUserRef.current;
+      if (activeUser && !shouldUseLocalOnlyMode()) {
+        const res = await backupApi.restore({
+          backup,
+          strategy,
+          confirmReplace,
+        });
+        outboxRef.current = createEmptyOutbox();
+        clearSyncOutbox(activeUser.id);
+        markLocalCustomized(false);
+
+        const boot = await workspaceApi.bootstrap(0);
+        syncVersionRef.current = boot.syncVersion;
+        setState(prev =>
+          reconcileWorkspaceState({
+            currentState: prev,
+            bootstrap: boot,
+            outbox: outboxRef.current,
+            userId: activeUser.id,
+          })
+        );
+        setSyncStatus('synced');
+        setLastSyncedAt(boot.serverTime);
+        setIsOnboardingOpen(false);
+        await refreshLearningData();
+        setFinanceRefreshVersion(v => v + 1);
+        return res;
+      }
+
+      // Local-only / Guest mode restore
+      const nextState = applyBackupToLocalAppState({
+        currentState: stateRef.current,
+        backup,
+        strategy,
+        userId: stateRef.current.profile.id,
+      });
+      markLocalCustomized(true);
+      setState(nextState);
+      saveStateToStorage(nextState);
+      const preview = buildBackupPreview(backup);
+      return {
+        restored: true,
+        strategy,
+        preview,
+        summary: {
+          workspaceApplied:
+            preview.counts.tasks +
+            preview.counts.goals +
+            preview.counts.projects +
+            preview.counts.habits +
+            preview.counts.calendarActivities +
+            preview.counts.journalEntries +
+            preview.counts.focusSessions +
+            preview.counts.workoutSessions,
+          workspaceSkipped: 0,
+          learningApplied: 0,
+          learningSkipped: 0,
+          filesRestored: 0,
+          financeApplied: 0,
+          financeSkipped: 0,
+          warnings: preview.warnings,
+        },
+        syncVersion: syncVersionRef.current,
+      };
+    },
+    [refreshLearningData]
+  );
+
   return (
     <AppContext.Provider
       value={{
@@ -2599,6 +2729,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
         clearAllData,
         importStateFromJson,
         completeOnboarding,
+        financeRefreshVersion,
+        exportCompleteBackup,
+        previewCompleteBackup,
+        restoreCompleteBackup,
       }}
     >
       {children}

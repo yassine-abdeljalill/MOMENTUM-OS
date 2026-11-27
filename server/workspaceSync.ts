@@ -915,3 +915,235 @@ export function clearWorkspaceData(userId: string): WorkspaceSyncResponse {
     bootstrap,
   };
 }
+
+export function restoreWorkspaceInTransaction(
+  db: DatabaseSync,
+  userId: string,
+  workspace: {
+    profile?: Partial<UserProfile> & { updatedAt?: string };
+    preferences?: Partial<UserPreferences> & { updatedAt?: string };
+    collections?: Partial<Record<SyncCollectionKey, any[]>>;
+  },
+  strategy: 'merge' | 'replace',
+  now: string
+): { appliedCount: number; skippedCount: number; syncVersion: number } {
+  const nextVersion = bumpSyncVersion(db, userId, now);
+  let appliedCount = 0;
+  let skippedCount = 0;
+
+  const userRow = db
+    .prepare('SELECT email, full_name, created_at FROM users WHERE id = ?')
+    .get(userId) as { email: string; full_name: string; created_at: string } | undefined;
+
+  if (strategy === 'replace') {
+    for (const key of SYNC_COLLECTION_KEYS) {
+      const spec = COLLECTION_TABLE_SPECS[key];
+      db.prepare(
+        `UPDATE ${spec.table}
+         SET deleted_at = ?, updated_at = ?, sync_version = ?
+         WHERE user_id = ? AND deleted_at IS NULL`
+      ).run(now, now, nextVersion, userId);
+    }
+  }
+
+  // Restore profile (keep authenticated user id/email integrity intact)
+  const existingProfileRow = db
+    .prepare('SELECT * FROM workspace_profiles WHERE user_id = ?')
+    .get(userId) as any;
+
+  if (workspace.profile && (strategy === 'replace' || !existingProfileRow)) {
+    const p = workspace.profile;
+    const existingProfile = mapProfileRow(existingProfileRow);
+    const mergedProfile: UserProfile & { updatedAt: string } = {
+      id: userId,
+      email: userRow?.email || existingProfile?.email || p.email || '',
+      fullName: p.fullName || existingProfile?.fullName || userRow?.full_name || 'MOMENTUM User',
+      avatarUrl: p.avatarUrl ?? existingProfile?.avatarUrl ?? '',
+      timezone: p.timezone ?? existingProfile?.timezone ?? 'UTC',
+      preferredLanguage: p.preferredLanguage ?? existingProfile?.preferredLanguage ?? 'English',
+      lifeAreas: Array.isArray(p.lifeAreas) ? p.lifeAreas : existingProfile?.lifeAreas ?? [],
+      visionStatement: p.visionStatement ?? existingProfile?.visionStatement ?? '',
+      dailyAvailabilityHours:
+        typeof p.dailyAvailabilityHours === 'number' && Number.isFinite(p.dailyAvailabilityHours)
+          ? p.dailyAvailabilityHours
+          : existingProfile?.dailyAvailabilityHours ?? 3.5,
+      onboardingCompleted:
+        typeof p.onboardingCompleted === 'boolean'
+          ? p.onboardingCompleted
+          : existingProfile?.onboardingCompleted ?? true,
+      createdAt: existingProfile?.createdAt || userRow?.created_at || p.createdAt || now,
+      updatedAt: now,
+    };
+
+    db.prepare(
+      `INSERT INTO workspace_profiles
+        (user_id, full_name, email, avatar_url, timezone, preferred_language, life_areas_json, vision_statement, daily_availability_hours, onboarding_completed, created_at, updated_at, sync_version)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+       ON CONFLICT(user_id) DO UPDATE SET
+        full_name = excluded.full_name,
+        email = excluded.email,
+        avatar_url = excluded.avatar_url,
+        timezone = excluded.timezone,
+        preferred_language = excluded.preferred_language,
+        life_areas_json = excluded.life_areas_json,
+        vision_statement = excluded.vision_statement,
+        daily_availability_hours = excluded.daily_availability_hours,
+        onboarding_completed = excluded.onboarding_completed,
+        updated_at = excluded.updated_at,
+        sync_version = excluded.sync_version`
+    ).run(
+      userId,
+      mergedProfile.fullName,
+      mergedProfile.email,
+      mergedProfile.avatarUrl || '',
+      mergedProfile.timezone,
+      mergedProfile.preferredLanguage,
+      JSON.stringify(mergedProfile.lifeAreas),
+      mergedProfile.visionStatement,
+      mergedProfile.dailyAvailabilityHours,
+      mergedProfile.onboardingCompleted ? 1 : 0,
+      mergedProfile.createdAt,
+      now,
+      nextVersion
+    );
+    appliedCount += 1;
+  } else if (existingProfileRow && !existingProfileRow.onboarding_completed) {
+    db.prepare(
+      `UPDATE workspace_profiles
+       SET onboarding_completed = 1, updated_at = ?, sync_version = ?
+       WHERE user_id = ?`
+    ).run(now, nextVersion, userId);
+  }
+
+  // Restore preferences (in merge mode, preserve existing preferences)
+  const existingPrefRow = db
+    .prepare('SELECT * FROM workspace_preferences WHERE user_id = ?')
+    .get(userId) as any;
+
+  if (workspace.preferences && (strategy === 'replace' || !existingPrefRow)) {
+    const pref = workspace.preferences;
+    const existingPref = mapPreferencesRow(existingPrefRow);
+    const mergedPref: UserPreferences = {
+      theme: pref.theme ?? existingPref?.theme ?? 'light',
+      accentColor: pref.accentColor ?? existingPref?.accentColor ?? '#1D1D1F',
+      startOfWeek: pref.startOfWeek ?? existingPref?.startOfWeek ?? 'monday',
+      timeFormat: pref.timeFormat ?? existingPref?.timeFormat ?? '24h',
+      dateFormat: pref.dateFormat ?? existingPref?.dateFormat ?? 'YYYY-MM-DD',
+      defaultDashboard: pref.defaultDashboard ?? existingPref?.defaultDashboard ?? 'overview',
+      defaultTaskView: pref.defaultTaskView ?? existingPref?.defaultTaskView ?? 'board',
+      enableBrowserNotifications:
+        pref.enableBrowserNotifications ?? existingPref?.enableBrowserNotifications ?? false,
+      dailyReminderTime: pref.dailyReminderTime ?? existingPref?.dailyReminderTime ?? '08:00',
+      soundEnabled: pref.soundEnabled ?? existingPref?.soundEnabled ?? true,
+    };
+
+    db.prepare(
+      `INSERT INTO workspace_preferences
+        (user_id, theme, accent_color, start_of_week, time_format, date_format, default_dashboard, default_task_view, enable_browser_notifications, daily_reminder_time, sound_enabled, updated_at, sync_version)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+       ON CONFLICT(user_id) DO UPDATE SET
+        theme = excluded.theme,
+        accent_color = excluded.accent_color,
+        start_of_week = excluded.start_of_week,
+        time_format = excluded.time_format,
+        date_format = excluded.date_format,
+        default_dashboard = excluded.default_dashboard,
+        default_task_view = excluded.default_task_view,
+        enable_browser_notifications = excluded.enable_browser_notifications,
+        daily_reminder_time = excluded.daily_reminder_time,
+        sound_enabled = excluded.sound_enabled,
+        updated_at = excluded.updated_at,
+        sync_version = excluded.sync_version`
+    ).run(
+      userId,
+      mergedPref.theme,
+      mergedPref.accentColor,
+      mergedPref.startOfWeek,
+      mergedPref.timeFormat,
+      mergedPref.dateFormat,
+      mergedPref.defaultDashboard,
+      mergedPref.defaultTaskView,
+      mergedPref.enableBrowserNotifications ? 1 : 0,
+      mergedPref.dailyReminderTime,
+      mergedPref.soundEnabled ? 1 : 0,
+      now,
+      nextVersion
+    );
+    appliedCount += 1;
+  }
+
+  // Restore collections
+  const collections = workspace.collections || {};
+  for (const key of SYNC_COLLECTION_KEYS) {
+    const items = collections[key];
+    if (!Array.isArray(items) || items.length === 0) continue;
+
+    const spec = COLLECTION_TABLE_SPECS[key];
+    const existingIds = new Set<string>();
+    const existingFingerprints = new Set<string>();
+
+    if (strategy === 'merge') {
+      const existingRows = db
+        .prepare(`SELECT id, data_json, deleted_at FROM ${spec.table} WHERE user_id = ?`)
+        .all(userId) as { id: string; data_json: string; deleted_at: string | null }[];
+      for (const r of existingRows) {
+        if (!r.deleted_at) {
+          existingIds.add(r.id);
+          try {
+            const parsed = JSON.parse(r.data_json);
+            const { id: _i, userId: _u, updatedAt: _up, ...contentOnly } = parsed;
+            existingFingerprints.add(stableSerialize(contentOnly));
+          } catch {
+            // Skip malformed JSON
+          }
+        }
+      }
+    }
+
+    for (const rawItem of items) {
+      if (!rawItem || typeof rawItem !== 'object') continue;
+      if (key === 'tasks' && (rawItem as any).learningModuleId) {
+        skippedCount += 1;
+        continue;
+      }
+
+      const itemId =
+        typeof rawItem.id === 'string' && rawItem.id.trim()
+          ? rawItem.id.trim()
+          : `${key}-${appliedCount + skippedCount + 1}`;
+
+      if (strategy === 'merge' && existingIds.has(itemId)) {
+        skippedCount += 1;
+        continue;
+      }
+
+      const sanitized = sanitizeRecordData(rawItem, userId, itemId, now);
+      if (strategy === 'merge') {
+        const { id: _i, userId: _u, updatedAt: _up, ...contentOnly } = sanitized;
+        const fp = stableSerialize(contentOnly);
+        if (existingFingerprints.has(fp)) {
+          skippedCount += 1;
+          continue;
+        }
+        existingIds.add(itemId);
+        existingFingerprints.add(fp);
+      }
+
+      upsertCollectionRow(
+        db,
+        key,
+        userId,
+        {
+          id: itemId,
+          data: sanitized,
+          updatedAt: now,
+        },
+        nextVersion,
+        now
+      );
+      appliedCount += 1;
+    }
+  }
+
+  return { appliedCount, skippedCount, syncVersion: nextVersion };
+}

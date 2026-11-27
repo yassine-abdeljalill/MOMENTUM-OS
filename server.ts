@@ -8,6 +8,7 @@ import authRoutes from './server/routes/auth.ts';
 import financeRoutes from './server/routes/finance.ts';
 import learningRoutes from './server/routes/learning.ts';
 import workspaceRoutes from './server/routes/workspace.ts';
+import backupRoutes from './server/routes/backup.ts';
 
 dotenv.config();
 
@@ -48,6 +49,10 @@ async function startServer() {
 
   const app = express();
   app.set('trust proxy', 1);
+
+  // Backup endpoints allow larger payloads (base64 file attachments up to 25 MB per file)
+  app.use('/api/backup', express.json({ limit: '64mb' }), backupRoutes);
+
   app.use(express.json({ limit: '5mb' }));
 
   app.get('/api/health', (_req, res) => {
@@ -68,6 +73,10 @@ async function startServer() {
   app.use('/api', (err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
     if (err?.type === 'entity.parse.failed') {
       res.status(400).json({ error: 'Invalid JSON request body.' });
+      return;
+    }
+    if (err?.type === 'entity.too.large') {
+      res.status(413).json({ error: 'Backup payload exceeds the maximum allowed upload size.' });
       return;
     }
     console.error('API Error:', err);
