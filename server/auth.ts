@@ -172,7 +172,7 @@ export function getUserFromSessionToken(rawToken: string): AuthenticatedUser | n
 export function requireAuth(req: AuthedRequest, res: Response, next: NextFunction): void {
   const token = extractSessionToken(req);
   if (!token) {
-    res.status(401).json({ error: 'Authentication required to access financial data.' });
+    res.status(401).json({ error: 'Authentication required. Please sign in.' });
     return;
   }
   const user = getUserFromSessionToken(token);

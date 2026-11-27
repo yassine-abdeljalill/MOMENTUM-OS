@@ -1,6 +1,7 @@
-import React, { useEffect, useRef } from 'react';
-import { AnimatePresence, MotionConfig } from 'motion/react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { AnimatePresence, MotionConfig, useReducedMotion } from 'motion/react';
 import { AppProvider, useApp } from './lib/context';
+import { shouldShowScrollToTop } from './lib/scroll';
 import { Sidebar } from './components/layout/Sidebar';
 import { Header } from './components/layout/Header';
 import { MobileNav } from './components/layout/MobileNav';
@@ -33,12 +34,27 @@ import { ToastContainer } from './components/common/ToastContainer';
 const MainContent: React.FC = () => {
   const { currentView, setCurrentView, entryScreen } = useApp();
   const mainRef = useRef<HTMLElement>(null);
+  const [showScrollTop, setShowScrollTop] = useState(false);
+  const prefersReduced = useReducedMotion();
 
   useEffect(() => {
     if (mainRef.current) {
       mainRef.current.scrollTo({ top: 0, behavior: 'auto' });
     }
+    setShowScrollTop(false);
   }, [currentView, entryScreen]);
+
+  const handleMainScroll = useCallback((e: React.UIEvent<HTMLElement>) => {
+    const nextVisible = shouldShowScrollToTop(e.currentTarget.scrollTop);
+    setShowScrollTop(prev => (prev === nextVisible ? prev : nextVisible));
+  }, []);
+
+  const handleScrollToTop = useCallback(() => {
+    mainRef.current?.scrollTo({
+      top: 0,
+      behavior: prefersReduced ? 'auto' : 'smooth',
+    });
+  }, [prefersReduced]);
 
   const renderCurrentView = () => {
     switch (currentView) {
@@ -95,11 +111,15 @@ const MainContent: React.FC = () => {
           {/* Main App Canvas */}
           <div className="relative flex-1 min-w-0 h-full flex flex-col overflow-hidden bg-canvas">
             {/* Minimal Top Bar */}
-            <Header />
+            <Header
+              showScrollTop={showScrollTop}
+              onScrollToTop={handleScrollToTop}
+            />
 
             {/* Scrollable Content Viewport */}
             <main
               ref={mainRef}
+              onScroll={handleMainScroll}
               className="relative z-10 flex-1 min-h-0 w-full overflow-y-auto flex flex-col px-4 sm:px-6 md:px-8 pt-6 md:pt-8 pb-[calc(4.75rem+env(safe-area-inset-bottom))] md:pb-8"
             >
               <div className="flex-1">

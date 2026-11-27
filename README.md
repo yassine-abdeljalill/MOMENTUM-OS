@@ -2,95 +2,77 @@
 
 > **“Don’t just track what you do. Track who you’re becoming.”**
 
-MOMENTUM is a cohesive, production-grade personal productivity and life-management platform built to bridge long-term ambition with daily execution.
+MOMENTUM is a cross-device personal productivity and life-management platform built with an Apple-inspired monochrome light/dark design system, PWA installability, and authenticated SQLite cloud synchronization.
 
 ---
 
-## 1. Official Brand Identity & Visual System
+## 1. Visual Design System
 
-MOMENTUM strictly incorporates four foundational brand colors:
+MOMENTUM uses a calm, monochrome palette paired with system Light & Dark modes:
 
-| Color Role | Name | Hex Code |
+| Surface / Role | Light Mode | Dark Mode |
 | :--- | :--- | :--- |
-| **Primary Brown** | Brand Foundation & Sidebar | `#64432B` |
-| **Warm Amber** | Primary Actions & Active Indicators | `#D2925B` |
-| **Charcoal Blue** | Main Canvas Background & Cards | `#333C44` (and `#242B31` dark ground) |
-| **Muted Sage** | Secondary & Tertiary Accents | `#868A7A` |
+| **Canvas Background** | `#F5F5F7` | `#000000` |
+| **Elevated Card** | `#FFFFFF` | `#161618` |
+| **Primary Ink** | `#1D1D1F` | `#F5F5F7` |
+| **Secondary Ink** | `#6E6E73` | `#A1A1A6` |
 
 ---
 
 ## 2. Core Functional Modules
 
-1. **Overview (Command Center)**: Time-based greeting, daily execution score, Top 3 priorities, upcoming deadlines, active goals with progress rings, habit checkoff, and weekly productivity rhythm.
-2. **Today (Daily Command Center)**: 3-Priority anchor system (selection, completion, reordering), timeline schedule blocking, unscheduled task queue, and end-of-day reflection saving directly to the Journal.
-3. **Tasks**: Inbox, To Do, In Progress, and Completed states; Kanban board and list view; filter by area and priority; subtask checklist editor; duration estimates vs actuals.
-4. **Calendar**: Month view, Day detail inspector, color-coded task deadlines, workouts, study sessions, and custom schedule blocks.
-5. **Goals & Long-Term Vision**: 6-level hierarchy (Vision → Annual Goals → 90-Day Plans → Milestones → Projects → Tasks); weekly checkpoints; transparent progress calculations.
-6. **Projects**: Multi-stage initiatives with milestone tracking, direct task linkage, and progress calculations.
-7. **Learning (Knowledge Center)**: Curated courses across Cybersecurity, Systems Architecture, and Computer Networks; lessons with rich objectives; dedicated study session timer and logs.
-8. **Fitness (Physical Vitality)**: Workout routines (Upper, Lower, Push, Pull, Custom); workout logger with sets, reps, weight (kg), and volume metrics; personal record benchmarks.
-9. **Habits (Consistency Engine)**: Daily and weekday cadences; 14-day visual streak heatmap; skip-with-reason feature to prevent guilt while preserving psychological momentum.
-10. **Analytics**: Real progress tracking distinguishing planned effort, deliberate time spent, and actual outcome completions; CSV exports for tasks and goals.
-11. **Journal**: Private reflections (Daily, Weekly, Gratitude, Lessons Learned); mood logging; tag search; 100% private.
-12. **Resources**: Reference vault for technical books, research papers, and documentation links.
-13. **Focus Timer**: Accurate timestamp-based Pomodoro timer (25/5, 50/10, Custom) with task linking, chime notifications, and full-screen focus mode.
+1. **Overview & Today Command Center**: Daily execution score, Top 3 priorities, schedule timeline, quick add, and evening reflection.
+2. **Tasks & Kanban**: Inbox, To Do, In Progress, Completed states, subtask checklists, priority ranks, and Focus Timer linking.
+3. **Calendar**: Month & week/day schedule inspector unifying task deadlines, workouts, study sessions, and custom time blocks.
+4. **Goals & 90-Day Plans**: Hierarchy from Personal Vision → Goals → 90-Day Plans → Weekly Checkpoints → Milestones → Projects.
+5. **Projects**: Multi-stage initiatives with milestones and linked tasks.
+6. **Learning Management Center**: Structured modules, lessons, markdown notes, study sessions, and synced learning tasks (`/api/learning`).
+7. **Finance Tracker**: Multi-account balances, cashflow transactions, budgets, and savings goals (`/api/finance`).
+8. **Fitness & Habits**: Workout routines/sessions, daily/weekday habit cadences, streaks, and skip reasons.
+9. **Journal & Resources**: Private daily/weekly reflections and structured reference vault.
+10. **Focus Timer & Analytics**: Timestamp-accurate Pomodoro timer and completion metrics.
 
 ---
 
-## 3. Technology Stack & Architecture
+## 3. Cross-Device Synchronization Architecture
 
-- **Frontend**: React 19, TypeScript, Tailwind CSS v4, Lucide React icons.
-- **State & Persistence**: Decoupled repository architecture with local storage persistence and full Supabase client compatibility.
-- **Unit Testing**: Node built-in test runner (`node:test`, `node:assert/strict`) executed via `npx --yes tsx --test`.
-- **Database**: PostgreSQL schema with Row Level Security (`supabase/migrations/20261109000000_momentum_core.sql`).
+- **Frontend**: React 19, TypeScript, Tailwind CSS v4, Motion (`motion/react`), Lucide icons.
+- **Backend**: Express + TypeScript (`server.ts`) with Node built-in SQLite (`node:sqlite`), `WAL` mode, versioned schema migrations (`server/migrations.ts`), and strict Zod payload validation.
+- **Sync Engine**: Client-side offline outbox (`src/lib/syncEngine.ts`), duplicate-safe first-connect `localStorage` migration (`/api/workspace/migrate`), incremental delta bootstrap with delete tombstones (`/api/workspace/bootstrap`), and two-device conflict resolution (`/api/workspace/sync`).
+- **Demo Mode**: Preserved cleanly when using guest/demo mode without polluting authenticated accounts.
+
+See [`docs/HOSTING_AND_SYNC.md`](./docs/HOSTING_AND_SYNC.md) for persistent database volume requirements, shared-server deployment steps (Fly.io, Render, Railway, VPS), backup instructions, and MacBook ↔ iPhone setup.
 
 ---
 
 ## 4. Setup & Running Locally
 
-### Development
+Requires **Node.js 22.5+** (for built-in `node:sqlite`).
+
 ```bash
-# Install dependencies
+# 1. Install dependencies
 npm install
 
-# Run unit tests
-npx --yes tsx --test src/lib/logic.test.ts
+# 2. Configure environment
+cp .env.example .env
 
-# Start dev server
+# 3. Run unit & API integration tests
+npx --yes tsx --test src/lib/*.test.ts server/*.test.ts
+
+# 4. Start full-stack dev server (Express + Vite on http://localhost:3000)
 npm run dev
 ```
 
-### Production Build
+### Production Build & Start
 ```bash
 npm run build
-npm run preview
+npm start
 ```
 
 ---
 
-## 5. Database Deployment (Supabase)
+## 5. Security & Ownership Guarantees
 
-1. Create a Supabase project at [supabase.com](https://supabase.com).
-2. Navigate to the SQL Editor and execute `supabase/migrations/20261109000000_momentum_core.sql`.
-3. Set your environment variables in `.env`:
-   ```bash
-   VITE_SUPABASE_URL=https://your-project.supabase.co
-   VITE_SUPABASE_ANON_KEY=your-anon-key
-   ```
-
----
-
-## 6. Notion Life OS Integration
-
-MOMENTUM provides a modular integration boundary for Notion:
-1. Obtain an internal integration secret from `notion.so/my-integrations`.
-2. Connect your target Notion database ID via environment variables (`NOTION_API_KEY`, `NOTION_DATABASE_ID`).
-3. MOMENTUM will synchronize task updates and project milestones without hard dependencies.
-
----
-
-## 7. Security & Privacy Guarantees
-
-- **No Third-Party Telemetry**: Private journal entries and personal availability goals remain exclusively on your authenticated device or your private database.
-- **Row Level Security**: Every table enforces `auth.uid() = user_id`.
-- **Drift-Free Timers**: The focus timer calculates remaining time from system clock timestamps (`Date.now()`), avoiding JavaScript interval throttling when tabs are in the background.
+- **Strict Account Isolation**: Every workspace, learning, and finance table scopes rows by authenticated `user_id` derived solely from signed `HttpOnly` sessions / bearer tokens. Client-supplied `userId` values are ignored.
+- **Private Data Protection**: Journal entries and financial ledgers are strictly bound to the authenticated account, and signing out clears cached workspace state cleanly.
+- **Server-Side Validation**: All `/api/auth`, `/api/workspace`, `/api/learning`, and `/api/finance` inputs are validated with Zod before hitting SQLite.

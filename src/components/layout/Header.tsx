@@ -6,6 +6,7 @@ import {
   Timer,
   Play,
   Pause,
+  ArrowUp,
 } from 'lucide-react';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { useApp } from '../../lib/context';
@@ -14,7 +15,15 @@ import { BrandMark } from '../common/BrandMark';
 import { ThemeToggle } from '../common/ThemeToggle';
 import { VIEW_TITLES } from './navConfig';
 
-export const Header: React.FC = () => {
+interface HeaderProps {
+  showScrollTop?: boolean;
+  onScrollToTop?: () => void;
+}
+
+export const Header: React.FC<HeaderProps> = ({
+  showScrollTop = false,
+  onScrollToTop,
+}) => {
   const {
     currentView,
     state,
@@ -90,6 +99,28 @@ export const Header: React.FC = () => {
 
         {/* Right Controls */}
         <div className="flex items-center gap-1 sm:gap-2 shrink-0">
+          {/* Scroll to Top Interaction (> 200px scroll in MainContent) */}
+          <AnimatePresence initial={false}>
+            {showScrollTop && onScrollToTop && (
+              <motion.button
+                key="header-scroll-to-top"
+                type="button"
+                data-testid="header-scroll-to-top"
+                initial={prefersReduced ? { opacity: 1 } : { opacity: 0, scale: 0.88, y: -4 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={prefersReduced ? { opacity: 0 } : { opacity: 0, scale: 0.88, y: -4 }}
+                transition={prefersReduced ? { duration: 0.01 } : MOMENTUM_SPRING}
+                onClick={onScrollToTop}
+                className="h-8 w-8 sm:h-9 sm:w-auto sm:px-2.5 rounded-xl glass-control text-ink text-xs font-medium btn-press group flex items-center justify-center gap-1 whitespace-nowrap shrink-0"
+                title="Scroll to top"
+                aria-label="Scroll to top"
+              >
+                <ArrowUp className="w-3.5 h-3.5 text-ink transition-transform duration-200 group-hover:-translate-y-0.5" />
+                <span className="hidden sm:inline">Top</span>
+              </motion.button>
+            )}
+          </AnimatePresence>
+
           {/* Global Focus Timer */}
           <AnimatePresence mode="wait" initial={false}>
             {focusTimer.isActive ? (

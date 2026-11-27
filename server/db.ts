@@ -1,21 +1,53 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { DatabaseSync } from 'node:sqlite';
+import { runWorkspaceMigrations } from './migrations.ts';
 
-const DATA_DIR = path.resolve(process.cwd(), '.data');
-const DB_PATH = path.join(DATA_DIR, 'momentum.db');
+function resolveDataDir(): string {
+  const configured = (process.env.MOMENTUM_DATA_DIR || '').trim();
+  if (configured) {
+    return path.isAbsolute(configured)
+      ? configured
+      : path.resolve(process.cwd(), configured);
+  }
+  return path.resolve(process.cwd(), '.data');
+}
 
 let dbInstance: DatabaseSync | null = null;
+let cachedDbPath: string | null = null;
+
+export function getDbPath(): string {
+  return path.join(resolveDataDir(), 'momentum.db');
+}
+
+export function resetDbConnection(): void {
+  if (dbInstance) {
+    try {
+      dbInstance.close();
+    } catch {
+      // Best-effort close in test teardown
+    }
+    dbInstance = null;
+    cachedDbPath = null;
+  }
+}
 
 export function getDb(): DatabaseSync {
-  if (dbInstance) return dbInstance;
-
-  if (!fs.existsSync(DATA_DIR)) {
-    fs.mkdirSync(DATA_DIR, { recursive: true });
+  const dbPath = getDbPath();
+  if (dbInstance && cachedDbPath === dbPath) return dbInstance;
+  if (dbInstance && cachedDbPath !== dbPath) {
+    resetDbConnection();
   }
 
-  const db = new DatabaseSync(DB_PATH);
+  const dataDir = resolveDataDir();
+  if (!fs.existsSync(dataDir)) {
+    fs.mkdirSync(dataDir, { recursive: true });
+  }
+
+  const db = new DatabaseSync(dbPath);
   db.exec('PRAGMA journal_mode = WAL;');
+  db.exec('PRAGMA synchronous = NORMAL;');
+  db.exec('PRAGMA busy_timeout = 5000;');
   db.exec('PRAGMA foreign_keys = ON;');
 
   db.exec(`
@@ -312,15 +344,19 @@ export function getDb(): DatabaseSync {
     updateLearnMod.run(newHex, oldHex);
   }
 
+  runWorkspaceMigrations(db);
+
   dbInstance = db;
+  cachedDbPath = dbPath;
   return db;
 }
 
 export function getDataDir(): string {
-  if (!fs.existsSync(DATA_DIR)) {
-    fs.mkdirSync(DATA_DIR, { recursive: true });
+  const dir = resolveDataDir();
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
   }
-  return DATA_DIR;
+  return dir;
 }
 
 export function getLearningUploadsDir(userId?: string): string {

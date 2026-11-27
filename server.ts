@@ -7,6 +7,7 @@ import { getDb } from './server/db.ts';
 import authRoutes from './server/routes/auth.ts';
 import financeRoutes from './server/routes/finance.ts';
 import learningRoutes from './server/routes/learning.ts';
+import workspaceRoutes from './server/routes/workspace.ts';
 
 dotenv.config();
 
@@ -47,7 +48,7 @@ async function startServer() {
 
   const app = express();
   app.set('trust proxy', 1);
-  app.use(express.json({ limit: '2mb' }));
+  app.use(express.json({ limit: '5mb' }));
 
   app.get('/api/health', (_req, res) => {
     res.json({ status: 'ok', service: 'momentum-life-os' });
@@ -56,6 +57,7 @@ async function startServer() {
   app.use('/api/auth', authRoutes);
   app.use('/api/finance', financeRoutes);
   app.use('/api/learning', learningRoutes);
+  app.use('/api/workspace', workspaceRoutes);
 
   // Return structured JSON 404 for unknown API endpoints instead of falling through to SPA HTML
   app.use('/api', (_req, res) => {
